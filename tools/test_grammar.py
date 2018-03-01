@@ -2,6 +2,22 @@ import shlex, subprocess
 import os, os.path
 import sys
 
+def run_tests(dir, result, name, is_expected):
+    if name not in result:
+        result[name] = {}
+    for testFile in os.listdir(dir):
+        if os.path.isfile(os.path.join(dir, testFile)):
+            with subprocess.Popen(
+                    shlex.split('{grun} Caramel r -tree {}/{}'.format(dir, testFile, **config)),
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE
+            ) as testProcess:
+                if len(testProcess.stderr.read()) == 0:
+                    tests[name][testFile] = is_expected
+                else:
+                    tests[name][testFile] = not is_expected
+
+
 if __name__ == '__main__':
 
     config = {
@@ -12,52 +28,38 @@ if __name__ == '__main__':
 
     path = "build/grammar"
 
-    print(config["antlr4"])
-
+    print("Grammar compilation: ", end='')
     subprocess.call(shlex.split("{antlr4} grammar/Caramel.g4 -o build".format(**config)))
+    print("done")
+    print("Java compilation: ", end='')
     subprocess.call(
         shlex.split(config['javac']) +
         [os.path.join(path, file) for file in os.listdir(path) if
          os.path.isfile(os.path.join(path, file)) and file.endswith(".java")
          ])
-    subprocess.call(shlex.split('cp grammar/Caramel.g4 build/grammar/Caramel.g4'))
+    print("done")
+
+    print("Running tests...")
+
+    validTestsName = 'valids'
+    validTestFolder = "../../tests/grammar/valid"
+    invalidTestName = 'invalids'
+    invalidTestFolder = "../../tests/grammar/invalid"
     os.chdir("build/grammar")
 
-    # call(
-    #     '{grun} Caramel r -tree ../../tests/grammar/invalid/simple_declaration.c'.format(**config).split()
-    # )
+    tests = {}
+    run_tests(validTestFolder, tests, validTestsName, True)
+    run_tests(invalidTestFolder, tests, invalidTestName, False)
 
-    # call('{grun} Caramel r -tree ../../tests/grammar/valid/simple_declaration.c'.format(**config).split())
+    print("Results (empty means all tests passed): ")
 
-    test = {}
-    test['valids'] = {}
-    test['invalids'] = {}
+    validTests = tests[validTestsName]
+    for key in validTests.keys():
+        if not validTests[key]:
+            print('Valid test failed', key)
 
-    validTestFolder = "../../tests/grammar/valid"
-    invalidTestFolder = "../../tests/grammar/invalid"
+    invalidTests = tests[invalidTestName]
+    for key in invalidTests.keys():
+        if not invalidTests[key]:
+            print('Invalid test has not failed', key)
 
-    for testFile in os.listdir(validTestFolder):
-        if os.path.isfile(os.path.join(validTestFolder, testFile)):
-            with subprocess.Popen(
-                    shlex.split('{grun} Caramel r -tree {}/{}'.format(validTestFolder, testFile, **config)),
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-            ) as testProcess:
-                if len(testProcess.stderr.read()) == 0:
-                    test["valids"][testFile] = True
-                else:
-                    test["valids"][testFile] = False
-
-    for testFile in os.listdir(invalidTestFolder):
-        if os.path.isfile(os.path.join(invalidTestFolder, testFile)):
-            with subprocess.Popen(
-                    shlex.split('{grun} Caramel r -tree {}/{}'.format(invalidTestFolder, testFile, **config)),
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-            ) as testProcess:
-                if len(testProcess.stderr.read()) == 0:
-                    test["invalids"][testFile] = False
-                else:
-                    test["invalids"][testFile] = True
-
-    print(test)
