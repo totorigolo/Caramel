@@ -3,7 +3,21 @@
 ## Features V1
 
 ### Syntax
-Digit and numberLiteral
+
+#### Valid Identifier
+```antlrv4
+validIdentifier
+  : '_'? Letter anyCharacter*
+  ;
+
+anyCharacter
+  : Letter
+  | Digit
+  | '_'
+  ;
+```
+
+#### Digit and numberLiteral
 ```antlrv4
 numberLiteral
   : '-'? Digit+
@@ -21,13 +35,25 @@ Example snippets:
 -1868
 ```
 
-CharacterLiteral
+#### CharacterLiteral
 Any characters between simple quote `'`.
 ```antlrv4
-CharacterLiteral
-  : '\'\\\\\''
-  | '\'\\n\''
+characterLiteral
+  : EscpaceChar
   | '\''.'\''
+  ;
+
+EscpaceChar
+  : '\'\\\\\''
+  | '\'\\a\''
+  | '\'\\b\''
+  | '\'\\f\''
+  | '\'\\r\''
+  | '\'\\t\''
+  | '\'\\n\''
+  | '\'\\v\''
+  | '\'\\\'\''
+  | '\'\\"\''
   ;
 ```
 
@@ -36,3 +62,19 @@ Example snippets:
 'a'
 '\n'
 ```
+
+#### Comments
+Single line comment :
+```antlrv4
+LineComment
+  : '//' .*? NewLine* -> skip
+  ;
+```
+
+BlockComment
+```antlrv4
+BlockComment
+  : '/*' .*? '*/' NewLine* -> skip
+  ;
+```
+

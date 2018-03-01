@@ -1,8 +1,8 @@
 import shlex, subprocess
 import os, os.path
-import sys
 
-def run_tests(dir, result, name, is_expected):
+
+def run_tests(openOnFault, dir, result, name, is_expected, config):
     if name not in result:
         result[name] = {}
     for testFile in os.listdir(dir):
@@ -16,6 +16,11 @@ def run_tests(dir, result, name, is_expected):
                     tests[name][testFile] = is_expected
                 else:
                     tests[name][testFile] = not is_expected
+                    if openOnFault:
+                        subprocess.Popen(
+                            shlex.split('{grun} Caramel r -gui {}/{}'.format(dir, testFile, **config)),
+                            stderr=subprocess.PIPE
+                        )
 
 
 if __name__ == '__main__':
@@ -26,19 +31,7 @@ if __name__ == '__main__':
         'grun': 'java -cp ".:../../lib/antlr-lastest-complete.jar:../../lib/antlr-lastest-runtime.jar:$CLASSPATH" org.antlr.v4.gui.TestRig'
     }
 
-    path = "build/grammar"
-
-    print("Grammar compilation: ", end='')
-    subprocess.call(shlex.split("{antlr4} grammar/Caramel.g4 -o build".format(**config)))
-    print("done")
-    print("Java compilation: ", end='')
-    subprocess.call(
-        shlex.split(config['javac']) +
-        [os.path.join(path, file) for file in os.listdir(path) if
-         os.path.isfile(os.path.join(path, file)) and file.endswith(".java")
-         ])
-    print("done")
-
+    os.system("python tools/compile.py")
     print("Running tests...")
 
     validTestsName = 'valids'
@@ -48,8 +41,9 @@ if __name__ == '__main__':
     os.chdir("build/grammar")
 
     tests = {}
-    run_tests(validTestFolder, tests, validTestsName, True)
-    run_tests(invalidTestFolder, tests, invalidTestName, False)
+    openOnFault = 'y' == input("Open a gui when errors occur (y,N)? ").lower()
+    run_tests(openOnFault, validTestFolder, tests, validTestsName, True, config)
+    run_tests(openOnFault, invalidTestFolder, tests, invalidTestName, False, config)
 
     print("Results (empty means all tests passed): ")
 
