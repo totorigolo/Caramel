@@ -1,24 +1,19 @@
 grammar Caramel;
 r
-  : statements
+  : statements EOF
   ;
+
+BlockComment
+  : '/*' .*? '*/' -> skip
+  ;
+
+LineComment
+  : '//' .*? '\n' -> skip
+  ;
+
 
 statements
-  : declarations
-  | instructions
-  ;
-
-declarations
-  : InstructionSeparator* declaration (InstructionSeparator+ declaration)* InstructionSeparator*
-  ;
-
-declaration
-  : functionDeclaration
-  | variableDefinition
-  ;
-
-functionDeclaration
-  : variableDeclaration namedArguments functionBody?
+  : declarations? instructions?
   ;
 
 instructions
@@ -27,6 +22,21 @@ instructions
 
 instruction
   : expression
+  | ifCondition
+  | loop
+  ;
+
+declarations
+  : InstructionSeparator* declaration (InstructionSeparator+ declaration)* InstructionSeparator*
+  ;
+
+declaration
+  : variableDefinition
+  | functionDeclaration
+  ;
+
+functionDeclaration
+  : variableDeclaration namedArguments functionBody?
   ;
 
 namedArguments
@@ -39,11 +49,12 @@ functionBody
   ;
 
 variableDeclaration
-  : typeParameter ValidIdentifier
+  : TypeParameter ValidIdentifier
   ;
 
-typeParameter
-  : ValidIdentifier
+TypeParameter
+  : 'int'
+  | 'int64_t'
   ;
 
 variableDefinition
@@ -60,8 +71,22 @@ AnyCharacter
   | '_'
   ;
 
+BinaryAssignmentOperator
+  : '+='
+  | '-='
+  | '*='
+  | '/='
+  | '%='
+  ;
+
 expression
-  : disjunction (AssignmentOperator disjunction)*
+  : disjunction
+  | lvalue (BinaryAssignmentOperator disjunction)*
+  | lvalue '=' disjunction
+  ;
+
+lvalue
+  : ValidIdentifier
   ;
 
 disjunction
@@ -77,9 +102,9 @@ equalityComparison
   ;
 
 comparison
-  : atomicExpression (ComparisonOperation atomicExpression)*
+  : additiveExpression (ComparisonOperation additiveExpression)*
   ;
-/*
+
 additiveExpression
   : multiplicativeExpression (AdditiveOperation multiplicativeExpression)*
   ;
@@ -94,14 +119,18 @@ prefixUnaryExpression
 
 postfixUnaryExpression
   : atomicExpression postfixUnaryOperation*
+  | functionCall
   ;
-*/
+
 atomicExpression
   : '(' expression ')'
-  | LiteralConstant
+  | literalConstant
   | ValidIdentifier
-  | ifCondition
-  | loop
+  ;
+
+functionCall
+  : ValidIdentifier '()'
+  | ValidIdentifier callSuffix
   ;
 
 ifCondition
@@ -121,7 +150,7 @@ whileLoop
   ;
 
 
-LiteralConstant
+literalConstant
   : NumberLiteral
   | CharacterLiteral
   ;
@@ -144,14 +173,6 @@ ComparisonOperation
   | '<='
   ;
 
-AssignmentOperator
-  : '+='
-  | '-='
-  | '*='
-  | '/='
-  | '%='
-  ;
-
 EqualityOperation
   : '!='
   | '=='
@@ -160,19 +181,20 @@ EqualityOperation
 postfixUnaryOperation
   : '--'
   | '++'
-  | callSuffix
-//  | arrayAccess
+  | arrayAccess
   ;
 
 PrefixUnaryOperation
   : '--'
   | '++'
-  | '-'
-  | '+'
   ;
 
 callSuffix
   : valuedArguments
+  ;
+
+arrayAccess
+  : '[' expression ']'
   ;
 
 valuedArguments
@@ -211,17 +233,8 @@ Digit
 
 InstructionSeparator
   : ';'
-  | '\n'
+//  | '\n'
   ;
-
-BlockComment
-  : '/*' .*? '*/' -> skip
-  ;
-
-LineComment
-  : '//' .*? '\n' -> skip
-  ;
-
 
 WhiteSpace
   : [ \t\r\n] -> skip
