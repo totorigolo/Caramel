@@ -29,8 +29,9 @@ class GrammarTest(Test):
         start_time = time()
         grun_mode = '-gui' if open_gui else '-tree'
         command = shlex.split('{} Caramel r {} {}'.format(COMMANDS['grun'], grun_mode, self.full_path))
-        # command = shlex.split('pwd')
         logger.trace('Test command:', ' '.join(command))
+        if len(self.full_path) == 0:  # Interactive test
+            print('Enter grammar test input: (ended by ^D)')
         with subprocess.Popen(
                 command,
                 stdout=subprocess.PIPE,
@@ -49,7 +50,7 @@ class GrammarTest(Test):
             }
 
             # Determine if unexpected errors, or successes, occured
-            errors = len(test_process.stderr.read()) == 0
+            errors = self.state['stderr'] > 0
             self.succeeded = not errors or self.should_fail
 
             # Feed our user
@@ -113,6 +114,11 @@ class GrammarTests(Tests):
             exit(1)
 
     @trace
+    def add_test(self, name: str, full_path, should_fail: bool):
+        self.tests.append(GrammarTest(name, full_path, should_fail))
+        logger.debug('Added test {}.'.format(name))
+
+    @trace
     def discover(self, base_directory, only=None):
         # Check if there are tests
         if not os.path.isdir('tests/grammar'):
@@ -128,8 +134,7 @@ class GrammarTests(Tests):
                     if only is None or test_file in only:
                         test_path = os.path.join(base_directory, test_directory, test_file)
                         if os.path.isfile(test_path):
-                            self.tests.append(GrammarTest(test_file, test_path, test_directory == 'invalid'))
-                            logger.debug('Added', test_file)
+                            self.add_test(test_file, test_path, test_directory == 'invalid')
         logger.info('Discovered', colored(
             '{} tests.'.format(len(self.tests) - nb_tests_before), color='yellow'))
 
@@ -156,7 +161,9 @@ def test_grammar(args):
     # Run the tests
     grammar_tests = GrammarTests()
     grammar_tests.check_build()
-    if args.all:
+    if args.interactive:
+        grammar_tests.add_test('interactive test', '', False)
+    elif args.all:
         grammar_tests.discover('tests/grammar')
     else:
         grammar_tests.discover('tests/grammar', only=args.test_files)
