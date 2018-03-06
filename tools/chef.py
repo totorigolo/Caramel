@@ -31,6 +31,8 @@ def chef():
 
     # create the parser for the "build" command
     parser_build = subparsers.add_parser('build', help='Make the Chef cook some Caramel.')
+    parser_build.add_argument('--language', '-l',
+                              help='set the interpreter language', default='java', choices=['java', 'cpp'])
     parser_build.add_argument('--grammar', help='build the grammar', action='store_true')
     parser_build.add_argument('--all', help='build everything', action='store_true')
     parser_build.set_defaults(func=tools.build.build)
