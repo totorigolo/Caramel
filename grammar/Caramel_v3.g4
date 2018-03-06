@@ -1,241 +1,273 @@
 grammar Caramel;
 r
-  : statements EOF
+  : statements wsOrNl* EOF
   ;
-
-BlockComment
-  : '/*' .*? '*/' -> skip
-  ;
-
-LineComment
-  : '//' .*? '\n' -> skip
-  ;
-
 
 statements
-  : declarations? instructions?
+  : InstructionSeparator* wsOrNl* statement (InstructionSeparator? wsOrNl* statement wsOrNl*)* wsOrNl* InstructionSeparator* wsOrNl*
   ;
 
-instructions
-  : InstructionSeparator* instruction (InstructionSeparator+ instructions)* InstructionSeparator*
-  ;
-
-instruction
-  : expression
-  | ifCondition
-  | loop
-  ;
-
-declarations
-  : InstructionSeparator* declaration (InstructionSeparator+ declaration)* InstructionSeparator*
-  ;
-
-declaration
+definition
   : variableDefinition
-  | functionDeclaration
+  | functionDefinition
   ;
 
-functionDeclaration
-  : variableDeclaration namedArguments functionBody?
-  ;
-
-namedArguments
-  : '()'
-  | '(' variableDeclaration (',' variableDeclaration)? ')'
-  ;
-
-functionBody
-  : '{}'
-  ;
-
-variableDeclaration
-  : TypeParameter ValidIdentifier
-  ;
-
-TypeParameter
-  : 'int'
-  | 'int64_t'
+statement
+  : controlBlock
+  | definition
+  | instruction
   ;
 
 variableDefinition
-  : variableDeclaration ('=' expression)? InstructionSeparator?
+  : declaration wsOrNl* (AssignmentOp ws* expression)? wsOrNl* InstructionSeparator? ;
+
+functionDefinition
+  : declaration namedArguments wsOrNl* fonctionBody? ;
+
+namedArguments
+  : L_Parenthesis ws* R_Parenthesis
+  | L_Parenthesis ws* declaration ws* (Comma ws* declaration ws*)* ws* R_Parenthesis
   ;
 
-ValidIdentifier
-  : '_'? Letter AnyCharacter*
+fonctionBody
+  : L_CurlyBracket R_CurlyBracket
+  | L_CurlyBracket statements R_CurlyBracket
   ;
 
-AnyCharacter
-  : Letter
-  | Digit
-  | '_'
+declaration
+  : typeParameter ws+ identifier ;
+
+typeParameter
+  : identifier ;
+
+instruction
+  : assignment
+  | rvalue
+  | jump
   ;
 
-BinaryAssignmentOperator
-  : '+='
-  | '-='
-  | '*='
-  | '/='
-  | '%='
+controlBlock
+  : ifBlock
+  | whileBlock
   ;
 
-expression
-  : disjunction
-  | lvalue (BinaryAssignmentOperator disjunction)*
-  | lvalue '=' disjunction
+ifBlock
+  : ifOperator ws* L_Parenthesis ws* expression ws* R_Parenthesis wsOrNl* controleStructureBody? (wsOrNl* elseOperator wsOrNl* controleStructureBody)? wsOrNl*;
+
+ifOperator : 'if' ;
+elseOperator : 'else';
+
+whileBlock
+  : whileOperator ws* L_Parenthesis ws* expression ws* R_Parenthesis wsOrNl* controleStructureBody? wsOrNl*
+  ;
+
+whileOperator : 'while' ;
+
+controleStructureBody
+  : L_CurlyBracket R_CurlyBracket
+  | L_CurlyBracket statements R_CurlyBracket
+  ;
+
+assignment
+  : lvalue ws* assignmentOperators ws* rvalue InstructionSeparator?
   ;
 
 lvalue
-  : ValidIdentifier
-  ;
+  : identifier ;
+
+rvalue : expression ;
+
+expression
+  : disjunction ;
 
 disjunction
-  : conjunction ('||' conjunction)*
+  : conjunction (ws* OrOp ws* conjunction)* ws*
   ;
 
 conjunction
-  : equalityComparison ('&&' equalityComparison)*
+  : equalityComparison (ws* AndOp ws* equalityComparison)* ws*
   ;
 
 equalityComparison
-  : comparison (EqualityOperation comparison)*
+  : comparison (ws* equalityOperators ws* comparison)* ws*
+  ;
+
+equalityOperators
+  : EqualsOp
+  | NotEqualsOp
   ;
 
 comparison
-  : additiveExpression (ComparisonOperation additiveExpression)*
+  : additiveExpression (ws* comparisonOperators ws* additiveExpression)* ws*
+  ;
+
+comparisonOperators
+  : LowerOp
+  | GreaterOp
+  | LowerEqOp
+  | GreaterEqOp
   ;
 
 additiveExpression
-  : multiplicativeExpression (AdditiveOperation multiplicativeExpression)*
+  : multiplicativeExpression (ws* additiveOperators ws* multiplicativeExpression)* ws*
+  ;
+
+additiveOperators
+  : PlusOp
+  | MinusOp
   ;
 
 multiplicativeExpression
-  : prefixUnaryExpression (MultiplicativeOperation prefixUnaryExpression)*
+  : prefixUnaryExpression (ws* multiplicativeOperators ws* prefixUnaryExpression)* ws* ;
+
+multiplicativeOperators
+  : TimesOp
+  | DivOp
+  | ModOp
   ;
 
 prefixUnaryExpression
-  : PrefixUnaryOperation* postfixUnaryExpression
+  : prefixUnaryOperators* postfixUnaryExpression
+  ;
+
+prefixUnaryOperators
+  : PlusOp
+  | MinusOp
+  | IncrementOp
+  | DecrementOp
   ;
 
 postfixUnaryExpression
-  : atomicExpression postfixUnaryOperation*
-  | functionCall
-  ;
-
-atomicExpression
-  : '(' expression ')'
-  | literalConstant
-  | ValidIdentifier
-  ;
-
-functionCall
-  : ValidIdentifier '()'
-  | ValidIdentifier callSuffix
-  ;
-
-ifCondition
-  : 'if' '(' expression ')' controlStructureBody? InstructionSeparator? ('else' controlStructureBody)?
-  ;
-
-controlStructureBody
-  : instructions
-  ;
-
-loop
-  : whileLoop
-  ;
-
-whileLoop
-  : 'while' '(' expression ')' controlStructureBody
-  ;
-
-
-literalConstant
-  : NumberLiteral
-  | CharacterLiteral
-  ;
-
-MultiplicativeOperation
-  : '*'
-  | '/'
-  | '%'
-  ;
-
-AdditiveOperation
-  : '+'
-  | '-'
-  ;
-
-ComparisonOperation
-  : '<'
-  | '>'
-  | '>='
-  | '<='
-  ;
-
-EqualityOperation
-  : '!='
-  | '=='
-  ;
+  : atomicExpression postfixUnaryOperation* ;
 
 postfixUnaryOperation
-  : '--'
-  | '++'
+  : postfixOperators
+  | callSuffix
   | arrayAccess
   ;
 
-PrefixUnaryOperation
-  : '--'
-  | '++'
-  ;
-
 callSuffix
-  : valuedArguments
+  : valueArguments ;
+
+valueArguments
+  : ws* L_Parenthesis ws* R_Parenthesis ws*
+  | ws* L_Parenthesis expression (ws* Comma ws* expression)* R_Parenthesis ws*
   ;
 
 arrayAccess
-  : '[' expression ']'
+  : L_Bracket ws* expression ws* R_Bracket ws*
   ;
 
-valuedArguments
-  : '(' expression (',' expression)* ')'
+jump
+  : breakOp
+  | returnJump
   ;
 
-NumberLiteral
-  : '-'?Digit+
+breakOp : Break;
+
+returnJump
+  : returnOp ws* expression? ;
+
+returnOp : Return;
+
+postfixOperators
+  : IncrementOp
+  | DecrementOp
   ;
 
-Letter
-  : [a-zA-Z]
+atomicExpression
+  : L_Parenthesis wsOrNl * expression wsOrNl* R_Parenthesis wsOrNl*
+  | literalConstant
+  | identifier
   ;
 
-CharacterLiteral
-  : EscpaceChar
-  | '\''.'\''
+literalConstant
+  : Number
+  | Character
   ;
 
-EscpaceChar
-  : '\'\\\\\''
-  | '\'\\a\''
-  | '\'\\b\''
-  | '\'\\f\''
-  | '\'\\r\''
-  | '\'\\t\''
-  | '\'\\n\''
-  | '\'\\v\''
-  | '\'\\\'\''
-  | '\'\\"\''
+identifier
+  : Identifier ;
+
+assignmentOperators
+  : AssignmentOp
+  | PlusAssignOp
+  | MinusAssignOp
+  | TimesAssignOp
+  | DivAssignOp
+  | ModAssignOp
   ;
 
-Digit
-  : [0-9]
-  ;
+ws
+ : WhiteSpace
+ ;
 
-InstructionSeparator
-  : ';'
-//  | '\n'
-  ;
+wsOrNl
+ : ws
+ | NewLine
+ | CarryReturn
+ | Tab
+ ;
 
-WhiteSpace
-  : [ \t\r\n] -> skip
-  ;
+Number
+  : '-'? Digit + ;
+
+Character : '\'' . '\'' ;
+
+Identifier
+  : ('_')? Letter LetterOrDigit* ;
+
+fragment LetterOrDigit : [0-9a-zA-Z_] ;
+fragment Digit : [0-9] ;
+fragment Letter : [a-zA-Z] ;
+
+// Operators
+
+AndOp : '&&' ;
+OrOp : '||' ;
+
+PlusOp : '+' ;
+MinusOp : '-' ;
+TimesOp : '*' ;
+DivOp : '/' ;
+ModOp : '%' ;
+
+AssignmentOp : '=' ;
+PlusAssignOp : '+=' ;
+MinusAssignOp : '-=' ;
+TimesAssignOp : '*=' ;
+DivAssignOp : '/=' ;
+ModAssignOp : '%=' ;
+
+LowerOp : '<' ;
+GreaterOp : '>' ;
+LowerEqOp : '<=' ;
+GreaterEqOp : '>=';
+
+EqualsOp : '==';
+NotEqualsOp : '!=';
+
+L_Parenthesis : '(' ;
+R_Parenthesis : ')';
+
+L_Bracket : '[' ;
+R_Bracket : ']';
+
+L_CurlyBracket : '{' ;
+R_CurlyBracket : '}';
+
+IncrementOp : '++';
+DecrementOp : '--';
+
+Comma : ',' ;
+
+// Jumps
+Break : 'break' ;
+Return : 'return' ;
+
+
+InstructionSeparator : ';' ;
+NewLine : '\n';
+WhiteSpace : ' ';
+Tab : '\t';
+CarryReturn : '\r';
