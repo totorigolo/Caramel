@@ -1,6 +1,6 @@
 from tools.logger import logger
 from tools.logger import trace
-from tools import COMMANDS, seconds_to_string
+from tools import COMMANDS, PATHS, seconds_to_string
 from termcolor import colored
 from copy import copy
 from time import time
@@ -28,7 +28,8 @@ class GrammarTest(Test):
     def execute(self, open_gui=False, open_gui_on_failure=False, show_stdout=False, show_stderr=False):
         start_time = time()
         grun_mode = '-gui' if open_gui else '-tree'
-        command = shlex.split('{} Caramel r {} {}'.format(COMMANDS['grun'], grun_mode, self.full_path))
+        command = shlex.split('{} Caramel r {} {}'.format(COMMANDS['grun'].format(
+            build_grammar=PATHS['java-grammar']), grun_mode, self.full_path))  # TODO: Adapt tests for C++
         logger.trace('Test command:', ' '.join(command))
         if len(self.full_path) == 0:  # Interactive test
             print('Enter grammar test input: (ended by ^D)')
@@ -121,8 +122,8 @@ class GrammarTests(Tests):
     @trace
     def discover(self, base_directory, only=None):
         # Check if there are tests
-        if not os.path.isdir('tests/grammar'):
-            logger.critical('The tests/grammar directory is absent!')
+        if not os.path.isdir(PATHS['grammar-test-dir']):
+            logger.critical('The {} directory is absent!'.format(PATHS['grammar-test-dir']))
             exit(1)
 
         # Discover the tests
@@ -149,10 +150,15 @@ class GrammarTests(Tests):
 def test_grammar(args):
     logger.info('Running grammar tests...')
 
+    # TODO: Add grammar tests for C++
+    if args.language != 'java':
+        logger.fatal('Grammar tests are only available in Java language.')
+        exit(1)
+
     # Build the grammar, if asked to
     if args.build:
         from tools.build import build_grammar
-        build_grammar()
+        build_grammar(args.language)
 
     if args.interactive and len(args.test_files) > 0:
         logger.warn('Running in interactive mode, ignoring test files.')
@@ -164,9 +170,9 @@ def test_grammar(args):
     if args.interactive:
         grammar_tests.add_test('interactive test', '', False)
     elif args.all:
-        grammar_tests.discover('tests/grammar')
+        grammar_tests.discover(PATHS['grammar-test-dir'])
     else:
-        grammar_tests.discover('tests/grammar', only=args.test_files)
+        grammar_tests.discover(PATHS['grammar-test-dir'], only=args.test_files)
     grammar_tests.run_all(
         open_gui=args.gui,
         open_gui_on_failure=args.gui_on_failure,
