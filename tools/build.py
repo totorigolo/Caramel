@@ -1,7 +1,7 @@
 from tools.logger import logger
 from tools.logger import trace
 from tools import seconds_to_string
-from tools import COMMANDS
+from tools import COMMANDS, PATHS
 from termcolor import colored
 from time import time
 import subprocess
@@ -18,10 +18,10 @@ def _info_completed_in_seconds(seconds: float):
 def build_grammar_cpp():
     # TODO: Test if the .g4 file is more recent than the build files
 
-    path = "build/cpp-grammar"
+    path = PATHS['cpp-grammar']
 
     # Determine if the grammar has to be rebuilt
-    grammar_time = os.path.getmtime('grammar/Caramel.g4')
+    grammar_time = os.path.getmtime(PATHS['grammar-file'])
     antlr_pass_time = -1
     if os.path.exists(os.path.join(path, 'CaramelParser.cpp')):
         antlr_pass_time = os.path.getmtime(os.path.join(path, 'CaramelParser.cpp'))
@@ -30,8 +30,8 @@ def build_grammar_cpp():
     if grammar_time > antlr_pass_time:
         start_time = time()
         logger.info('Compiling grammar in C++...')
-        subprocess.call(shlex.split("{} grammar/Caramel.g4 -o {} -visitor -listener -Dlanguage=Cpp -Xexact-output-dir"
-                                    .format(COMMANDS['antlr4'], path)))
+        subprocess.call(shlex.split("{} {} -o {} -visitor -listener -Dlanguage=Cpp -Xexact-output-dir"
+                                    .format(COMMANDS['antlr4'], PATHS['grammar-file'], path)))
         _info_completed_in_seconds(time() - start_time)
     else:
         logger.info('The compiled C++ grammar is up-to-date.')
@@ -41,10 +41,10 @@ def build_grammar_cpp():
 def build_grammar_java():
     # TODO: Test if the .g4 file is more recent than the build files
 
-    path = "build/java-grammar"
+    path = PATHS['java-grammar']
 
     # Determine if the grammar has to be rebuilt
-    grammar_time = os.path.getmtime('grammar/Caramel.g4')
+    grammar_time = os.path.getmtime(PATHS['grammar-file'])
     antlr_pass_time = -1
     javac_pass_time = -1
     if os.path.exists(os.path.join(path, 'CaramelParser.java')):
@@ -56,7 +56,8 @@ def build_grammar_java():
     if grammar_time > antlr_pass_time:
         start_time = time()
         logger.info('Compiling grammar in Java...')
-        subprocess.call(shlex.split("{} grammar/Caramel.g4 -o {} -visitor -listener -Xexact-output-dir".format(COMMANDS['antlr4'], path)))
+        subprocess.call(shlex.split("{} {} -o {} -visitor -listener -Xexact-output-dir".format(
+            COMMANDS['antlr4'], PATHS['grammar-file'], path)))
         _info_completed_in_seconds(time() - start_time)
     else:
         logger.info('The compiled java grammar is up-to-date.')

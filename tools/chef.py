@@ -23,7 +23,7 @@ def chef():
     group_verbosity.add_argument(
         '--quiet', '-q', help='decrease the verbosity (repeat for less verbosity)',
         action='count', default=0)
-    subparsers = parser.add_subparsers(title='Available commands')
+    subparsers = parser.add_subparsers(title='Available commands', dest='subcommand_name')
 
     # create the parser for the "clean" command
     parser_clean = subparsers.add_parser('clean', help='Ask the Chef to clean up his workplace.')
@@ -43,6 +43,8 @@ def chef():
     # create the "test" command common arguments
     def test_common(sub_test_parser: argparse.ArgumentParser):
         sub_test_parser.add_argument('--build', help='build before running tests', action='store_true')
+        sub_test_parser.add_argument('--language', '-l',
+                                     help='set the interpreter language', default='java', choices=['java', 'cpp'])
         sub_test_parser.add_argument('--stdout', help='show the tests stdout output', action='store_true')
         sub_test_parser.add_argument('--stderr', help='show the tests stderr output', action='store_true')
 
@@ -68,7 +70,12 @@ def chef():
     # parse the command line and call the appropriate submodule
     args = parser.parse_args()
     logger.level = LoggerLevel(args.verbosity - args.quiet)
-    args.func(args)
+    if args.subcommand_name is None:
+        logger.warn('You forgot to specify the subcommand. Use -h for help.')
+        parser.print_usage()
+        exit(1)
+    else:
+        args.func(args)
 
     logger.info('Completed in {}.'.format(colored(seconds_to_string(time() - start_time), color='yellow')))
 

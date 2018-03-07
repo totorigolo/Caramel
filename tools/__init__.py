@@ -1,5 +1,13 @@
 import datetime
 
+
+PATHS = {
+    'java-grammar': 'build/java-grammar',
+    'cpp-grammar': 'build/cpp-grammar',
+    'grammar-file': 'grammar/Caramel.g4',
+    'grammar-test-dir': 'tests/grammar',
+}
+
 COMMANDS = {
     'antlr4': ' '.join([
         'java -Xmx500M',
@@ -12,9 +20,9 @@ COMMANDS = {
     ]),
     'grun': ' '.join([
         'java',
-        '-cp .:lib/antlr-lastest-complete.jar:lib/antlr-lastest-runtime.jar:build/grammar:$CLASSPATH',
+        '-cp .:lib/antlr-lastest-complete.jar:lib/antlr-lastest-runtime.jar:{build_grammar}:$CLASSPATH',
         'org.antlr.v4.gui.TestRig',
-    ])
+    ]),
 }
 
 
