@@ -83,6 +83,9 @@ def chef():
 def main():
     try:
         chef()
+    except KeyboardInterrupt:
+        logger.warn('Chef was ordered to stop early.')
+        exit(1)
     except Exception as e:
         logger.critical(colored('An exception occured:', 'red', None, ['bold']), e)
         raise e
