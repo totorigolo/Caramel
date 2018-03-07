@@ -1,10 +1,10 @@
 grammar Caramel;
 r
-  : statements wsOrNl* EOF
+  : statements wsOrNls EOF
   ;
 
 statements
-  : InstructionSeparator* wsOrNl* statement (InstructionSeparator? wsOrNl* statement wsOrNl*)* wsOrNl* InstructionSeparator* wsOrNl*
+  : InstructionSeparator* wsOrNls statement (InstructionSeparator? wsOrNls statement wsOrNls)* wsOrNls InstructionSeparator* wsOrNls
   ;
 
 definition
@@ -19,14 +19,14 @@ statement
   ;
 
 variableDefinition
-  : declaration wsOrNl* (AssignmentOp ws* expression)? wsOrNl* InstructionSeparator? ;
+  : declaration wsOrNls (AssignmentOp wss expression)? wsOrNls InstructionSeparator? ;
 
 functionDefinition
-  : declaration namedArguments wsOrNl* fonctionBody? ;
+  : declaration namedArguments wsOrNls fonctionBody? ;
 
 namedArguments
-  : L_Parenthesis ws* R_Parenthesis
-  | L_Parenthesis ws* declaration ws* (Comma ws* declaration ws*)* ws* R_Parenthesis
+  : L_Parenthesis wss R_Parenthesis
+  | L_Parenthesis wss declaration wss (Comma wss declaration wss)* wss R_Parenthesis
   ;
 
 fonctionBody
@@ -41,9 +41,9 @@ typeParameter
   : identifier ;
 
 instruction
-  : assignment
+  : jump
+  | assignment
   | rvalue
-  | jump
   ;
 
 controlBlock
@@ -52,13 +52,13 @@ controlBlock
   ;
 
 ifBlock
-  : ifOperator ws* L_Parenthesis ws* expression ws* R_Parenthesis wsOrNl* controleStructureBody? (wsOrNl* elseOperator wsOrNl* controleStructureBody)? wsOrNl*;
+  : ifOperator wss L_Parenthesis wss expression wss R_Parenthesis wsOrNls controleStructureBody? (wsOrNls elseOperator wsOrNls controleStructureBody)? wsOrNls;
 
 ifOperator : 'if' ;
 elseOperator : 'else';
 
 whileBlock
-  : whileOperator ws* L_Parenthesis ws* expression ws* R_Parenthesis wsOrNl* controleStructureBody? wsOrNl*
+  : whileOperator wss L_Parenthesis wss expression wss R_Parenthesis wsOrNls controleStructureBody? wsOrNls
   ;
 
 whileOperator : 'while' ;
@@ -69,7 +69,7 @@ controleStructureBody
   ;
 
 assignment
-  : lvalue ws* assignmentOperators ws* rvalue InstructionSeparator?
+  : lvalue wss assignmentOperators wss rvalue InstructionSeparator?
   ;
 
 lvalue
@@ -81,15 +81,15 @@ expression
   : disjunction ;
 
 disjunction
-  : conjunction (ws* OrOp ws* conjunction)* ws*
+  : conjunction (wss OrOp wss conjunction)* wss
   ;
 
 conjunction
-  : equalityComparison (ws* AndOp ws* equalityComparison)* ws*
+  : equalityComparison (wss AndOp wss equalityComparison)* wss
   ;
 
 equalityComparison
-  : comparison (ws* equalityOperators ws* comparison)* ws*
+  : comparison (wss equalityOperators wss comparison)* wss
   ;
 
 equalityOperators
@@ -98,7 +98,7 @@ equalityOperators
   ;
 
 comparison
-  : additiveExpression (ws* comparisonOperators ws* additiveExpression)* ws*
+  : additiveExpression (wss comparisonOperators wss additiveExpression)* wss
   ;
 
 comparisonOperators
@@ -109,7 +109,7 @@ comparisonOperators
   ;
 
 additiveExpression
-  : multiplicativeExpression (ws* additiveOperators ws* multiplicativeExpression)* ws*
+  : multiplicativeExpression (wss additiveOperators wss multiplicativeExpression)* wss
   ;
 
 additiveOperators
@@ -118,7 +118,7 @@ additiveOperators
   ;
 
 multiplicativeExpression
-  : prefixUnaryExpression (ws* multiplicativeOperators ws* prefixUnaryExpression)* ws* ;
+  : prefixUnaryExpression (wss multiplicativeOperators wss prefixUnaryExpression)* wss ;
 
 multiplicativeOperators
   : TimesOp
@@ -150,12 +150,12 @@ callSuffix
   : valueArguments ;
 
 valueArguments
-  : ws* L_Parenthesis ws* R_Parenthesis ws*
-  | ws* L_Parenthesis expression (ws* Comma ws* expression)* R_Parenthesis ws*
+  : wss L_Parenthesis wss R_Parenthesis wss
+  | wss L_Parenthesis expression (wss Comma wss expression)* R_Parenthesis wss
   ;
 
 arrayAccess
-  : L_Bracket ws* expression ws* R_Bracket ws*
+  : L_Bracket wss expression wss R_Bracket wss
   ;
 
 jump
@@ -166,7 +166,7 @@ jump
 breakOp : Break;
 
 returnJump
-  : returnOp ws* expression? ;
+  : returnOp wss expression? ;
 
 returnOp : Return;
 
@@ -176,7 +176,7 @@ postfixOperators
   ;
 
 atomicExpression
-  : L_Parenthesis wsOrNl * expression wsOrNl* R_Parenthesis wsOrNl*
+  : L_Parenthesis wsOrNl * expression wsOrNls R_Parenthesis wsOrNls
   | literalConstant
   | identifier
   ;
@@ -198,8 +198,15 @@ assignmentOperators
   | ModAssignOp
   ;
 
+wss : ws* ;
+
 ws
  : WhiteSpace
+ ;
+
+
+wsOrNls
+ : wsOrNl*
  ;
 
 wsOrNl
