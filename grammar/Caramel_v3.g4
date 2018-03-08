@@ -1,6 +1,14 @@
 grammar Caramel;
 r
-  : statements wsOrNls EOF
+  : wsOrNls statements wsOrNls EOF
+  ;
+
+BlockComment
+  : '/*' .*? '*/' NewLine* -> skip
+  ;
+
+LineComment
+  : '//' .*? NewLine* -> skip
   ;
 
 statements
@@ -26,7 +34,7 @@ functionDefinition
 
 namedArguments
   : L_Parenthesis wss R_Parenthesis
-  | L_Parenthesis wss declaration wss (Comma wss declaration wss)* wss R_Parenthesis
+  | L_Parenthesis wss (typeParameter|declaration) wss (Comma wss (typeParameter|declaration) wss)* wss R_Parenthesis
   ;
 
 fonctionBody
@@ -184,6 +192,7 @@ atomicExpression
 literalConstant
   : Number
   | Character
+  | EscapedCharacters
   ;
 
 identifier
@@ -204,10 +213,7 @@ ws
  : WhiteSpace
  ;
 
-
-wsOrNls
- : wsOrNl*
- ;
+wsOrNls : wsOrNl* ;
 
 wsOrNl
  : ws
@@ -216,10 +222,24 @@ wsOrNl
  | Tab
  ;
 
-Number
-  : '-'? Digit + ;
+
+
+Number : '-'? Digit + ;
 
 Character : '\'' . '\'' ;
+
+EscapedCharacters
+  : '\'\\\\\''
+  | '\'\\a\''
+  | '\'\\b\''
+  | '\'\\f\''
+  | '\'\\r\''
+  | '\'\\t\''
+  | '\'\\n\''
+  | '\'\\v\''
+  | '\'\\\'\''
+  | '\'\\"\''
+  ;
 
 Identifier
   : ('_')? Letter LetterOrDigit* ;
