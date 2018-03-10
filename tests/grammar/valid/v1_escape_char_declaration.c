@@ -1,1 +1,1 @@
-int32_t espaceChar = '\n'
+int32_t espaceChar = '\n';
