@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# This file is only a shortcut to tools/chef.py, for convenience.
+# This file is a shortcut to tools/chef.py, and is the Chef entry point.
 
 from tools import chef
 chef.main()
