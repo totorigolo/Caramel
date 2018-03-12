@@ -57,7 +57,7 @@ def trace(func):
     @wraps(func)
     def wrapper(*args, **kw):
         logger.trace('Executing:', func.__name__)
-        func(*args, **kw)
+        return func(*args, **kw)
     return wrapper
 
 

@@ -2,3 +2,4 @@
 build/
 venv/
 cmake-build-*/
+grammar/Caramel.g4

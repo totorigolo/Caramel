@@ -34,6 +34,7 @@ def chef():
     parser_build.add_argument('--language', '-l',
                               help='set the interpreter language', default='java', choices=['java', 'cpp'])
     parser_build.add_argument('--grammar', help='build the grammar', action='store_true')
+    parser_build.add_argument('--brew', help='brew the grammar file', action='store_true')
     parser_build.add_argument('--all', help='build everything', action='store_true')
     parser_build.set_defaults(func=tools.build.build)
 
@@ -43,6 +44,7 @@ def chef():
     # create the "test" command common arguments
     def test_common(sub_test_parser: argparse.ArgumentParser):
         sub_test_parser.add_argument('--build', help='build before running tests', action='store_true')
+        sub_test_parser.add_argument('--brew', help='brew the grammar file', action='store_true')
         sub_test_parser.add_argument('--language', '-l',
                                      help='set the interpreter language', default='java', choices=['java', 'cpp'])
         sub_test_parser.add_argument('--stdout', help='show the tests stdout output', action='store_true')

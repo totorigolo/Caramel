@@ -152,7 +152,7 @@ Identifier : FragmentIdentifier ;
 
 // Do not delete the following comment line
 // InjectedTokens
-Newline : '\\n' ;
+NewLine : '\\n' ;
 FragmentNumber : Digit+;
 Digit : ('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9') ;
 LowerCaseLetter : ('a'|'b'|'c'|'d'|'e'|'f'|'g'|'h'|'i'|'j'|'k'|'l'|'m'|'n'|'o'|'p'|'q'|'r'|'s'|'t'|'u'|'v'|'w'|'x'|'y'|'z') ;
@@ -162,7 +162,7 @@ DigitSeparator : '.' ;
 CarryReturn : '\\r' ;
 Tab : '\\t' ;
 InlineWhiteSpace : ( WS | Tab | CarryReturn );
-MultilineWhiteSpace : ( InlineWhiteSpace | Newline );
+MultilineWhiteSpace : ( InlineWhiteSpace | NewLine );
 WS : ' ' ;
 Plus : '+' ;
 Minus : '-' ;
@@ -202,8 +202,8 @@ OrOp : '||' ;
 IfKeyword : 'if' ;
 WhileKeyWord : 'while' ;
 ElseKeyword : 'else' ;
-SingleLineComment : '//' .*? Newline+ ;
+SingleLineComment : '//' .*? NewLine+ ;
 BlockComment : '/*' .*? '*/' MultilineWhiteSpace* ;
-Macro : '#' .*? Newline+ ;
+Macro : '#' .*? NewLine+ ;
 ReturnKeyword : 'return' ;
 BreakKeyword : 'break' ;

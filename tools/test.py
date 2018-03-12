@@ -158,7 +158,7 @@ def test_grammar(args):
     # Build the grammar, if asked to
     if args.build:
         from tools.build import build_grammar
-        build_grammar(args.language)
+        build_grammar(args)
 
     if args.interactive and len(args.test_files) > 0:
         logger.warn('Running in interactive mode, ignoring test files.')

@@ -25,6 +25,8 @@ COMMANDS = {
     ]),
 }
 
+INJECTED_TOKENS_SEPARATOR = '// InjectedTokens'
+
 
 def seconds_to_string(seconds: float):
     return str(datetime.timedelta(seconds=seconds))
