@@ -45,7 +45,9 @@ def brew_grammar_file(grammar_file_name):
         return result
 
     # Determine if the grammar has to be re-brewed
-    grammar_time = os.path.getmtime(PATHS['grammar-file'])
+    grammar_time = -2
+    if os.path.exists(os.path.join(PATHS['grammar-file'])):
+        grammar_time = os.path.getmtime(PATHS['grammar-file'])
     brew_pass_time = -1
     if os.path.exists(os.path.join('grammar/', grammar_file_name)):
         brew_pass_time = os.path.getmtime(os.path.join('grammar/', grammar_file_name))

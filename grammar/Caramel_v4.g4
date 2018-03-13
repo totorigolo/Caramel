@@ -204,6 +204,6 @@ WhileKeyWord : 'while' ;
 ElseKeyword : 'else' ;
 SingleLineComment : '//' .*? NewLine+ ;
 BlockComment : '/*' .*? '*/' MultilineWhiteSpace* ;
-Macro : '#' .*? NewLine+ ;
+Macro : '#' (.|'.')*? NewLine+ ;
 ReturnKeyword : 'return' ;
 BreakKeyword : 'break' ;
