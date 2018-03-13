@@ -47,8 +47,22 @@ int main(int, char) {
 
     int32_t mult = 1 * 2 / 3 % 5;
 
-    // char t[2];
-    // int32_t u[3] = {1, 2, 3};
+    int tab[] = {1,2};
+    int tab[] = {};
+    int tab   [  ] = { 1 ,2  }   ;
+    int tab[14];
+    int tab[14]={};
+    int tab[3] = {1,2,3};
+    int tab[ 0 ] = { a= 6,1 > 2,f(g(1,2))};
+    int tab[5]
+    =
+            {
+                    1
+                    ,
+                    2,
+                    3
+            }
+    ;
 
     while(i < 10) {
         if (i % 2 == 0) {
