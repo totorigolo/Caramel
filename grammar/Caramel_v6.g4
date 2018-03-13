@@ -8,17 +8,33 @@ statements
   : MultilineWhiteSpace* statement (MultilineWhiteSpace* statement)* MultilineWhiteSpace*
   ;
 statement
+  : instruction
+  | declaration
+  ;
+
+instructions
+  : MultilineWhiteSpace* instruction (MultilineWhiteSpace* instruction)* MultilineWhiteSpace*
+  ;
+instruction
   : escaped
   | jump MultilineWhiteSpace* InstructionSeparator
   | controlBlock
-  | functionDefinition
-  | functionDeclaration MultilineWhiteSpace* InstructionSeparator
-  | arrayDefinition MultilineWhiteSpace* InstructionSeparator
-  | variableDefinition MultilineWhiteSpace* InstructionSeparator
   | expression MultilineWhiteSpace* InstructionSeparator
   | InstructionSeparator
   ;
 
+declarations
+  : MultilineWhiteSpace* declaration (MultilineWhiteSpace* declaration)* MultilineWhiteSpace*
+  ;
+
+declaration
+  : functionDefinition
+  | escaped
+  | functionDeclaration MultilineWhiteSpace* InstructionSeparator
+  | arrayDefinition MultilineWhiteSpace* InstructionSeparator
+  | variableDefinition MultilineWhiteSpace* InstructionSeparator
+  | InstructionSeparator
+  ;
 // Escaped blocks
 escaped
   : comment
@@ -85,8 +101,7 @@ whileBlock
 
 // Blocks
 block
-  : L_CBracket MultilineWhiteSpace* statements? MultilineWhiteSpace* R_CBracket
-  | L_CBracket MultilineWhiteSpace*
+  : L_CBracket MultilineWhiteSpace* declarations? MultilineWhiteSpace* instructions? MultilineWhiteSpace* R_CBracket
   ;
 
 arrayBlock
