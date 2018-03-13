@@ -140,13 +140,18 @@ additiveOperator : ( Plus | Minus ) ;
 comparativeOperator : ( LowerThan | LowerEqThan | GreaterThan | GreaterEqThan ) ;
 equalityOperator : ( EqualityOp | DiffOp ) ;
 postfixUnaryOperator : ( IncOp | DecOp ) ;
-prefixUnaryOperator : ( IncOp | DecOp | InvOp ) ;
+prefixUnaryOperator : ( IncOp | DecOp | InvOp | cast InlineWhiteSpace*) ;
 
 postfixUnaryOperation
   : callSufix
   | arrayAccess
   | postfixUnaryOperator
   ;
+
+cast
+  : L_Par InlineWhiteSpace* typeParameter InlineWhiteSpace* R_Par
+  ;
+
 
 callSufix
   : L_Par InlineWhiteSpace* R_Par
