@@ -121,7 +121,16 @@ atomicExpression // As right value
   ;
 
 assignment
-  : lvalue InlineWhiteSpace* Assignment InlineWhiteSpace* expression
+  : lvalue InlineWhiteSpace* assignmentOperators InlineWhiteSpace* expression
+  ;
+
+assignmentOperators
+  : Assignment
+  | TimesAssign
+  | DivAssign
+  | ModAssign
+  | PlusAssign
+  | MinusAssign
   ;
 
 expression : disjunction | assignment ;
@@ -142,7 +151,7 @@ additiveOperator : ( Plus | Minus ) ;
 comparativeOperator : ( LowerThan | LowerEqThan | GreaterThan | GreaterEqThan ) ;
 equalityOperator : ( EqualityOp | DiffOp ) ;
 postfixUnaryOperator : ( IncOp | DecOp ) ;
-prefixUnaryOperator : ( IncOp | DecOp | InvOp | cast InlineWhiteSpace*) ;
+prefixUnaryOperator : ( IncOp | DecOp | InvOp | cast InlineWhiteSpace* | NotOp ) ;
 
 postfixUnaryOperation
   : callSufix
@@ -197,6 +206,11 @@ CarryReturn : '\\r' ;
 Tab : '\\t' ;
 InlineWhiteSpace : ( WS | Tab | CarryReturn );
 MultilineWhiteSpace : ( InlineWhiteSpace | NewLine );
+TimesAssign : '*=' ;
+DivAssign : '/=' ;
+ModAssign : '%=' ;
+PlusAssign : '+=' ;
+MinusAssign : '-=' ;
 WS : ' ' ;
 Plus : '+' ;
 Minus : '-' ;
@@ -241,3 +255,4 @@ FragmentBlockComment : '/*' (.|'.')+? '*/' MultilineWhiteSpace+ ;
 Macro : '#' (~('\\n')|'.')+? NewLine+ ;
 ReturnKeyword : 'return' ;
 BreakKeyword : 'break' ;
+NotOp : ('~'|'!') ;
