@@ -87,8 +87,8 @@ block
   ;
 
 arrayBlock
-  : L_CBracket InlineWhiteSpace* R_CBracket
-  | L_CBracket MultilineWhiteSpace* expression (InlineWhiteSpace* Comma InlineWhiteSpace* expression)* MultilineWhiteSpace* R_CBracket
+  : L_CBracket MultilineWhiteSpace* R_CBracket
+  | L_CBracket MultilineWhiteSpace* expression (MultilineWhiteSpace* Comma MultilineWhiteSpace* expression)* MultilineWhiteSpace* R_CBracket
   ;
 
 // Function definition helpers
