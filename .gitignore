@@ -3,3 +3,4 @@ build/
 venv/
 cmake-build-*/
 grammar/Caramel.g4
+__pycache__
