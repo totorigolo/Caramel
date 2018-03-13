@@ -13,6 +13,7 @@ statement
   | controlBlock
   | functionDefinition
   | functionDeclaration MultilineWhiteSpace* InstructionSeparator
+  | arrayDefinition MultilineWhiteSpace* InstructionSeparator
   | variableDefinition MultilineWhiteSpace* InstructionSeparator
   | expression MultilineWhiteSpace* InstructionSeparator
   | InstructionSeparator
@@ -26,20 +27,35 @@ escaped
 comment : (SingleLineComment | BlockComment) ;
 macro : Macro ;
 
-BlockComment : FragmentBlockComment;
-
 // Declarations
 functionDeclaration
   : typeParameter InlineWhiteSpace+ validIdentifier namedArguments
   ;
 functionDefinition
-  : functionDeclaration MultilineWhiteSpace* block MultilineWhiteSpace*;
+  : functionDeclaration MultilineWhiteSpace* block ;
 
 variableDeclaration
   : typeParameter InlineWhiteSpace+ validIdentifier (InlineWhiteSpace* Comma InlineWhiteSpace* validIdentifier)*
   ;
 variableDefinition
   : variableDeclaration (MultilineWhiteSpace* Assignment InlineWhiteSpace* expression)?
+  ;
+
+arrayDeclarationVoid
+  : typeParameter InlineWhiteSpace+ validIdentifier InlineWhiteSpace* arraySizeDeclarationVoid
+  ;
+arrayDeclaration
+  : typeParameter InlineWhiteSpace+ validIdentifier InlineWhiteSpace* arraySizeDeclaration
+  ;
+arrayDefinition
+  : arrayDeclarationVoid MultilineWhiteSpace* Assignment MultilineWhiteSpace* arrayBlock
+  | arrayDeclaration (MultilineWhiteSpace* Assignment MultilineWhiteSpace* arrayBlock)*
+  ;
+arraySizeDeclaration
+  : L_Bracket InlineWhiteSpace* positiveConstant InlineWhiteSpace* R_Bracket
+  ;
+arraySizeDeclarationVoid
+  : L_Bracket InlineWhiteSpace* R_Bracket
   ;
 
 // Jump instructions
@@ -59,7 +75,7 @@ controlBlock
   | whileBlock
   ;
 ifBlock
-  : IfKeyword MultilineWhiteSpace* L_Par InlineWhiteSpace* expression InlineWhiteSpace* R_Par MultilineWhiteSpace* block? (MultilineWhiteSpace* ElseKeyword MultilineWhiteSpace* (ifBlock|block))?
+  : IfKeyword MultilineWhiteSpace* L_Par InlineWhiteSpace* expression InlineWhiteSpace* R_Par MultilineWhiteSpace* block? (MultilineWhiteSpace* ElseKeyword MultilineWhiteSpace* block)?
   ;
 whileBlock
   : WhileKeyWord MultilineWhiteSpace* L_Par InlineWhiteSpace* expression InlineWhiteSpace* R_Par MultilineWhiteSpace* block?
@@ -68,6 +84,11 @@ whileBlock
 // Blocks
 block
   : L_CBracket MultilineWhiteSpace* statements? MultilineWhiteSpace* R_CBracket
+  ;
+
+arrayBlock
+  : L_CBracket MultilineWhiteSpace* R_CBracket
+  | L_CBracket MultilineWhiteSpace* expression (MultilineWhiteSpace* Comma MultilineWhiteSpace* expression)* MultilineWhiteSpace* R_CBracket
   ;
 
 // Function definition helpers
@@ -91,7 +112,7 @@ lvalue
   : validIdentifier arrayAccess?
   ;
 atomicExpression // As right value
-  : L_Par MultilineWhiteSpace* expression MultilineWhiteSpace* R_Par // '(' e ')'
+  : L_Par InlineWhiteSpace* expression InlineWhiteSpace* R_Par // '(' e ')'
   | validIdentifier
   | numberConstant
   | charConstant
@@ -103,30 +124,12 @@ assignment
 
 expression : disjunction | assignment ;
 
-disjunction
-  : conjunction
-  | disjunction MultilineWhiteSpace* OrOp MultilineWhiteSpace* conjunction
-  ;
-conjunction
-  : equalityComparison
-  | conjunction MultilineWhiteSpace* AndOp MultilineWhiteSpace* conjunction
-  ;
-equalityComparison
-  : comparison
-  | equalityComparison MultilineWhiteSpace* equalityOperator MultilineWhiteSpace* equalityComparison
-  ;
-comparison
-  : additiveExpression
-  | comparison MultilineWhiteSpace* comparativeOperator MultilineWhiteSpace* comparison
-  ;
-additiveExpression
-  : multiplicativeExpression
-  | additiveExpression MultilineWhiteSpace* additiveOperator MultilineWhiteSpace* additiveExpression
-  ;
-multiplicativeExpression
-  : prefixUnaryExpression
-  | multiplicativeExpression MultilineWhiteSpace* multiplicativeOperator MultilineWhiteSpace* multiplicativeExpression
-  ;
+disjunction :               conjunction                 (MultilineWhiteSpace* OrOp                      MultilineWhiteSpace* conjunction)*               ;
+conjunction :               equalityComparison          (MultilineWhiteSpace* AndOp                     MultilineWhiteSpace* equalityComparison)*        ;
+equalityComparison :        comparison                  (MultilineWhiteSpace* equalityOperator          MultilineWhiteSpace* comparison)*                ;
+comparison :                additiveExpression          (MultilineWhiteSpace* comparativeOperator       MultilineWhiteSpace* additiveExpression)*        ;
+additiveExpression :        multiplicativeExpression    (MultilineWhiteSpace* additiveOperator          MultilineWhiteSpace* multiplicativeExpression)*  ;
+multiplicativeExpression :  prefixUnaryExpression       (MultilineWhiteSpace* multiplicativeOperator    MultilineWhiteSpace* prefixUnaryExpression)*     ;
 
 prefixUnaryExpression :     prefixUnaryOperator* postfixUnaryExpression;
 postfixUnaryExpression :    atomicExpression postfixUnaryOperation* ;
@@ -140,12 +143,12 @@ postfixUnaryOperator : ( IncOp | DecOp ) ;
 prefixUnaryOperator : ( IncOp | DecOp | InvOp ) ;
 
 postfixUnaryOperation
-  : callSuffix
+  : callSufix
   | arrayAccess
   | postfixUnaryOperator
   ;
 
-callSuffix
+callSufix
   : L_Par InlineWhiteSpace* R_Par
   | L_Par InlineWhiteSpace* expression (InlineWhiteSpace* Comma InlineWhiteSpace* expression )* InlineWhiteSpace* R_Par
   ;
@@ -155,9 +158,13 @@ arrayAccess
   ;
 
 // Constants
-numberConstant : Number ;
+numberConstant
+  : PositiveNumber
+  | Minus PositiveNumber
+  ;
+positiveConstant : PositiveNumber;
 charConstant
-  : '\''~('\\')'\''
+  : '\''.'\''
   | EscapedNL
   | EscapedCR
   | EscapedTB
@@ -167,7 +174,7 @@ charConstant
   ;
 
 InstructionSeparator : Semilicon ;
-Number : Minus? FragmentNumber;
+PositiveNumber : FragmentNumber;
 Identifier : FragmentIdentifier ;
 
 // Do not delete the following comment line
@@ -222,8 +229,8 @@ OrOp : '||' ;
 IfKeyword : 'if' ;
 WhileKeyWord : 'while' ;
 ElseKeyword : 'else' ;
-SingleLineComment : '//' ~('\\n')+? NewLine+ ;
-FragmentBlockComment : '/*' (.|'.')+? '*/' MultilineWhiteSpace+ ;
-Macro : '#' (~('\\n')|'.')+? NewLine+ ;
+SingleLineComment : '//' .*? NewLine+ ;
+BlockComment : '/*' .*? '*/' MultilineWhiteSpace* ;
+Macro : '#' (.|'.')*? NewLine+ ;
 ReturnKeyword : 'return' ;
 BreakKeyword : 'break' ;

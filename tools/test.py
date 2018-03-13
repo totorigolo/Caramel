@@ -52,7 +52,7 @@ class GrammarTest(Test):
 
             # Determine if unexpected errors, or successes, occured
             errors = self.state['stderr'] > 0
-            self.succeeded = not errors or self.should_fail
+            self.succeeded = errors if self.should_fail else not errors
 
             # Feed our user
             if self.succeeded:
