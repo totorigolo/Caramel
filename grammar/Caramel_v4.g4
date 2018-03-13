@@ -33,7 +33,7 @@ functionDeclaration
   : typeParameter InlineWhiteSpace+ validIdentifier namedArguments
   ;
 functionDefinition
-  : functionDeclaration MultilineWhiteSpace* block MultilineWhiteSpace*;
+  : functionDeclaration MultilineWhiteSpace* block ;
 
 variableDeclaration
   : typeParameter InlineWhiteSpace+ validIdentifier (InlineWhiteSpace* Comma InlineWhiteSpace* validIdentifier)*
@@ -59,7 +59,7 @@ controlBlock
   | whileBlock
   ;
 ifBlock
-  : IfKeyword MultilineWhiteSpace* L_Par InlineWhiteSpace* expression InlineWhiteSpace* R_Par MultilineWhiteSpace* block? (MultilineWhiteSpace* ElseKeyword MultilineWhiteSpace* (ifBlock|block))?
+  : IfKeyword MultilineWhiteSpace* L_Par MultilineWhiteSpace* expression MultilineWhiteSpace* R_Par MultilineWhiteSpace* block? (MultilineWhiteSpace* ElseKeyword MultilineWhiteSpace* (ifBlock|block))?
   ;
 whileBlock
   : WhileKeyWord MultilineWhiteSpace* L_Par InlineWhiteSpace* expression InlineWhiteSpace* R_Par MultilineWhiteSpace* block?
@@ -222,8 +222,8 @@ OrOp : '||' ;
 IfKeyword : 'if' ;
 WhileKeyWord : 'while' ;
 ElseKeyword : 'else' ;
-SingleLineComment : '//' ~('\\n')+? NewLine+ ;
+SingleLineComment : '//' ~['\\n']+? NewLine+ ;
 FragmentBlockComment : '/*' (.|'.')+? '*/' MultilineWhiteSpace+ ;
-Macro : '#' (~('\\n')|'.')+? NewLine+ ;
+Macro : '#' (~['\\n']|'.')+? NewLine+ ;
 ReturnKeyword : 'return' ;
 BreakKeyword : 'break' ;
