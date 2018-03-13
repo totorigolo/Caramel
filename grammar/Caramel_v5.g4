@@ -27,6 +27,8 @@ escaped
 comment : (SingleLineComment | BlockComment) ;
 macro : Macro ;
 
+BlockComment : FragmentBlockComment ;
+
 // Declarations
 functionDeclaration
   : typeParameter InlineWhiteSpace+ validIdentifier namedArguments
@@ -75,7 +77,7 @@ controlBlock
   | whileBlock
   ;
 ifBlock
-  : IfKeyword MultilineWhiteSpace* L_Par InlineWhiteSpace* expression InlineWhiteSpace* R_Par MultilineWhiteSpace* block? (MultilineWhiteSpace* ElseKeyword MultilineWhiteSpace* block)?
+  : IfKeyword MultilineWhiteSpace* L_Par MultilineWhiteSpace* expression InlineWhiteSpace* R_Par MultilineWhiteSpace* block? (MultilineWhiteSpace* ElseKeyword MultilineWhiteSpace* (ifBlock|block))?
   ;
 whileBlock
   : WhileKeyWord MultilineWhiteSpace* L_Par InlineWhiteSpace* expression InlineWhiteSpace* R_Par MultilineWhiteSpace* block?
@@ -112,7 +114,7 @@ lvalue
   : validIdentifier arrayAccess?
   ;
 atomicExpression // As right value
-  : L_Par InlineWhiteSpace* expression InlineWhiteSpace* R_Par // '(' e ')'
+  : L_Par MultilineWhiteSpace* expression MultilineWhiteSpace* R_Par // '(' e ')'
   | validIdentifier
   | numberConstant
   | charConstant
@@ -234,8 +236,8 @@ OrOp : '||' ;
 IfKeyword : 'if' ;
 WhileKeyWord : 'while' ;
 ElseKeyword : 'else' ;
-SingleLineComment : '//' .*? NewLine+ ;
-BlockComment : '/*' .*? '*/' MultilineWhiteSpace* ;
-Macro : '#' (.|'.')*? NewLine+ ;
+SingleLineComment : '//' ~('\\n')+? NewLine+ ;
+FragmentBlockComment : '/*' (.|'.')+? '*/' MultilineWhiteSpace+ ;
+Macro : '#' (~('\\n')|'.')+? NewLine+ ;
 ReturnKeyword : 'return' ;
 BreakKeyword : 'break' ;

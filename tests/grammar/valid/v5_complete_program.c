@@ -17,6 +17,7 @@ int main(int, char) {
     int32_t d, e;// Other comment here
 
     char c = 'c';
+    char d = 'dsdqsd';
     int32_t k = 1;
     int32_t l = -25;
     int64_t m = 10;
@@ -46,11 +47,13 @@ int main(int, char) {
 
     int32_t mult = 1 * 2 / 3 % 5;
 
+    // char t[2];
+    // int32_t u[3] = {1, 2, 3};
+
     while(i < 10) {
         if (i % 2 == 0) {
             put('a' + i);
-        }
-        else if (0 != 1 || 0 < 1 &&  0 <= 1) {
+        } else if (0 != 1 || 0 < 1 &&  0 <= 1) {
           m--;
         }
         else {

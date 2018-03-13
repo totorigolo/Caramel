@@ -26,12 +26,14 @@ escaped
 comment : (SingleLineComment | BlockComment) ;
 macro : Macro ;
 
+BlockComment : FragmentBlockComment;
+
 // Declarations
 functionDeclaration
   : typeParameter InlineWhiteSpace+ validIdentifier namedArguments
   ;
 functionDefinition
-  : functionDeclaration block ;
+  : functionDeclaration MultilineWhiteSpace* block ;
 
 variableDeclaration
   : typeParameter InlineWhiteSpace+ validIdentifier (InlineWhiteSpace* Comma InlineWhiteSpace* validIdentifier)*
@@ -57,7 +59,7 @@ controlBlock
   | whileBlock
   ;
 ifBlock
-  : IfKeyword MultilineWhiteSpace* L_Par InlineWhiteSpace* expression InlineWhiteSpace* R_Par MultilineWhiteSpace* block? (MultilineWhiteSpace* ElseKeyword MultilineWhiteSpace* block)?
+  : IfKeyword MultilineWhiteSpace* L_Par MultilineWhiteSpace* expression MultilineWhiteSpace* R_Par MultilineWhiteSpace* block? (MultilineWhiteSpace* ElseKeyword MultilineWhiteSpace* (ifBlock|block))?
   ;
 whileBlock
   : WhileKeyWord MultilineWhiteSpace* L_Par InlineWhiteSpace* expression InlineWhiteSpace* R_Par MultilineWhiteSpace* block?
@@ -65,7 +67,7 @@ whileBlock
 
 // Blocks
 block
-  : MultilineWhiteSpace* L_CBracket MultilineWhiteSpace* statements? MultilineWhiteSpace* R_CBracket
+  : L_CBracket MultilineWhiteSpace* statements? MultilineWhiteSpace* R_CBracket
   ;
 
 // Function definition helpers
@@ -89,7 +91,7 @@ lvalue
   : validIdentifier arrayAccess?
   ;
 atomicExpression // As right value
-  : L_Par InlineWhiteSpace* expression InlineWhiteSpace* R_Par // '(' e ')'
+  : L_Par MultilineWhiteSpace* expression MultilineWhiteSpace* R_Par // '(' e ')'
   | validIdentifier
   | numberConstant
   | charConstant
@@ -101,12 +103,30 @@ assignment
 
 expression : disjunction | assignment ;
 
-disjunction :               conjunction                 (MultilineWhiteSpace* OrOp                      MultilineWhiteSpace* conjunction)*               ;
-conjunction :               equalityComparison          (MultilineWhiteSpace* AndOp                     MultilineWhiteSpace* equalityComparison)*        ;
-equalityComparison :        comparison                  (MultilineWhiteSpace* equalityOperator          MultilineWhiteSpace* comparison)*                ;
-comparison :                additiveExpression          (MultilineWhiteSpace* comparativeOperator       MultilineWhiteSpace* additiveExpression)*        ;
-additiveExpression :        multiplicativeExpression    (MultilineWhiteSpace* additiveOperator          MultilineWhiteSpace* multiplicativeExpression)*  ;
-multiplicativeExpression :  prefixUnaryExpression       (MultilineWhiteSpace* multiplicativeOperator    MultilineWhiteSpace* prefixUnaryExpression)*     ;
+disjunction
+  : conjunction
+  | disjunction MultilineWhiteSpace* OrOp MultilineWhiteSpace* conjunction
+  ;
+conjunction
+  : equalityComparison
+  | conjunction MultilineWhiteSpace* AndOp MultilineWhiteSpace* conjunction
+  ;
+equalityComparison
+  : comparison
+  | equalityComparison MultilineWhiteSpace* equalityOperator MultilineWhiteSpace* equalityComparison
+  ;
+comparison
+  : additiveExpression
+  | comparison MultilineWhiteSpace* comparativeOperator MultilineWhiteSpace* comparison
+  ;
+additiveExpression
+  : multiplicativeExpression
+  | additiveExpression MultilineWhiteSpace* additiveOperator MultilineWhiteSpace* additiveExpression
+  ;
+multiplicativeExpression
+  : prefixUnaryExpression
+  | multiplicativeExpression MultilineWhiteSpace* multiplicativeOperator MultilineWhiteSpace* multiplicativeExpression
+  ;
 
 prefixUnaryExpression :     prefixUnaryOperator* postfixUnaryExpression;
 postfixUnaryExpression :    atomicExpression postfixUnaryOperation* ;
@@ -120,12 +140,12 @@ postfixUnaryOperator : ( IncOp | DecOp ) ;
 prefixUnaryOperator : ( IncOp | DecOp | InvOp ) ;
 
 postfixUnaryOperation
-  : callSufix
+  : callSuffix
   | arrayAccess
   | postfixUnaryOperator
   ;
 
-callSufix
+callSuffix
   : L_Par InlineWhiteSpace* R_Par
   | L_Par InlineWhiteSpace* expression (InlineWhiteSpace* Comma InlineWhiteSpace* expression )* InlineWhiteSpace* R_Par
   ;
@@ -137,7 +157,7 @@ arrayAccess
 // Constants
 numberConstant : Number ;
 charConstant
-  : '\''.'\''
+  : '\''~('\\')'\''
   | EscapedNL
   | EscapedCR
   | EscapedTB
@@ -202,8 +222,8 @@ OrOp : '||' ;
 IfKeyword : 'if' ;
 WhileKeyWord : 'while' ;
 ElseKeyword : 'else' ;
-SingleLineComment : '//' .*? NewLine+ ;
-BlockComment : '/*' .*? '*/' MultilineWhiteSpace* ;
-Macro : '#' (.|'.')*? NewLine+ ;
+SingleLineComment : '//' ~['\\n']+? NewLine+ ;
+FragmentBlockComment : '/*' (.|'.')+? '*/' MultilineWhiteSpace+ ;
+Macro : '#' (~['\\n']|'.')+? NewLine+ ;
 ReturnKeyword : 'return' ;
 BreakKeyword : 'break' ;
