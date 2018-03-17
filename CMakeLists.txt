@@ -47,32 +47,32 @@ target_include_directories(Grammar SYSTEM PRIVATE ${PROJECT_LIBRARY_DIR}/antlr4-
 set(SOURCE_FILES
         src/main.cpp
         src/listeners/DotExportListener.h
-        src/data-structures/Context.cpp
-        src/data-structures/Statement.cpp
-        src/data-structures/SymbolTable.cpp
-        src/data-structures/Declaration.cpp
-        src/data-structures/Definition.cpp
         src/exceptions/NotImplementedException.h
-        src/data-structures/Expression.cpp
-        src/data-structures/ControlBlock.cpp
-        src/data-structures/Jump.cpp
-        src/data-structures/VariableDeclaration.cpp
-        src/data-structures/FunctionDefinition.cpp
-        src/data-structures/VariableDefinition.cpp
-        src/data-structures/AtomicExpression.cpp
-        src/data-structures/FunctionCall.cpp
-        src/data-structures/UnaryExpression.cpp
-        src/data-structures/BinaryExpression.cpp
-        src/data-structures/WhileBlock.cpp
-        src/data-structures/IfBlock.cpp
-        src/data-structures/ReturnStatement.cpp
-        src/data-structures/Constant.cpp
-        src/data-structures/LValue.cpp
-        src/data-structures/ArrayAccess.cpp
-        src/data-structures/Identifier.cpp
-        src/data-structures/Operator.cpp
-        src/data-structures/UnaryOperator.cpp
-        src/data-structures/BinaryOperator.cpp
+        src/datastructure/Context.cpp
+        src/datastructure/Statement.cpp
+        src/datastructure/SymbolTable.cpp
+        src/datastructure/Declaration.cpp
+        src/datastructure/Definition.cpp
+        src/datastructure/Expression.cpp
+        src/datastructure/ControlBlock.cpp
+        src/datastructure/Jump.cpp
+        src/datastructure/VariableDeclaration.cpp
+        src/datastructure/FunctionDefinition.cpp
+        src/datastructure/VariableDefinition.cpp
+        src/datastructure/AtomicExpression.cpp
+        src/datastructure/FunctionCall.cpp
+        src/datastructure/UnaryExpression.cpp
+        src/datastructure/BinaryExpression.cpp
+        src/datastructure/WhileBlock.cpp
+        src/datastructure/IfBlock.cpp
+        src/datastructure/ReturnStatement.cpp
+        src/datastructure/Constant.cpp
+        src/datastructure/LValue.cpp
+        src/datastructure/ArrayAccess.cpp
+        src/datastructure/Identifier.cpp
+        src/datastructure/Operator.cpp
+        src/datastructure/UnaryOperator.cpp
+        src/datastructure/BinaryOperator.cpp
         )
 
 add_executable(Caramel_frontend ${SOURCE_FILES})
