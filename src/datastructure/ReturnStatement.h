@@ -26,9 +26,10 @@
 
 #include "Jump.h"
 
+
 namespace Caramel::DataStructure {
 
-class ReturnStatement: public Jump {
+class ReturnStatement : public Jump {
 public:
     ReturnStatement() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");

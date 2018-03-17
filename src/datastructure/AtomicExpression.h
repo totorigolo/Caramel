@@ -26,9 +26,10 @@
 
 #include "Expression.h"
 
+
 namespace Caramel::DataStructure {
 
-class AtomicExpression: public Expression {
+class AtomicExpression : public Expression {
 public:
     AtomicExpression() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");

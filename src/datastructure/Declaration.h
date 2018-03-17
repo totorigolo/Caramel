@@ -25,7 +25,9 @@
 #pragma once
 
 #include "Statement.h"
+
 #include "../exceptions/NotImplementedException.h"
+
 
 namespace Caramel::DataStructure {
 

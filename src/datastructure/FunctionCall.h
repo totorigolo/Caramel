@@ -26,9 +26,10 @@
 
 #include "Expression.h"
 
+
 namespace Caramel::DataStructure {
 
-class FunctionCall: public Expression {
+class FunctionCall : public Expression {
 public:
     FunctionCall() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");

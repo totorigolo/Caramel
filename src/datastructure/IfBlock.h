@@ -26,9 +26,10 @@
 
 #include "ControlBlock.h"
 
+
 namespace Caramel::DataStructure {
 
-class IfBlock: public ControlBlock {
+class IfBlock : public ControlBlock {
 public:
     IfBlock() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");

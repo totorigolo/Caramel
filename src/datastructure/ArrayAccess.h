@@ -26,9 +26,10 @@
 
 #include "LValue.h"
 
+
 namespace Caramel::DataStructure {
 
-class ArrayAccess: public LValue {
+class ArrayAccess : public LValue {
 public:
     ArrayAccess() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");

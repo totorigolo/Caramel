@@ -26,9 +26,10 @@
 
 #include "LValue.h"
 
+
 namespace Caramel::DataStructure {
 
-class Identifier: public LValue {
+class Identifier : public LValue {
 public:
     Identifier() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");

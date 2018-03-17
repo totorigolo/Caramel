@@ -27,9 +27,10 @@
 #include "Statement.h"
 #include "../exceptions/NotImplementedException.h"
 
+
 namespace Caramel::DataStructure {
 
-class Jump: public Statement {
+class Jump : public Statement {
 public:
     Jump() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");

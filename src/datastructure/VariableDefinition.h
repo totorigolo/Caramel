@@ -26,9 +26,10 @@
 
 #include "Definition.h"
 
+
 namespace Caramel::DataStructure {
 
-class VariableDefinition: public Definition {
+class VariableDefinition : public Definition {
 public:
     VariableDefinition() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");

@@ -26,9 +26,10 @@
 
 #include "Expression.h"
 
+
 namespace Caramel::DataStructure {
 
-class UnaryExpression: public Expression {
+class UnaryExpression : public Expression {
 public:
     UnaryExpression() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");

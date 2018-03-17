@@ -1,11 +1,12 @@
 #pragma once
 
+#include <antlr4-runtime.h>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
 
-#include <antlr4-runtime.h>
 
 using namespace antlr4;
 using namespace std;

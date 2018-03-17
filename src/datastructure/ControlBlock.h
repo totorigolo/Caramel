@@ -25,11 +25,13 @@
 #pragma once
 
 #include "Statement.h"
+
 #include "../exceptions/NotImplementedException.h"
+
 
 namespace Caramel::DataStructure {
 
-class ControlBlock: public Statement {
+class ControlBlock : public Statement {
 public:
     ControlBlock() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");

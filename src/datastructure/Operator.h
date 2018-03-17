@@ -26,6 +26,7 @@
 
 #include "../exceptions/NotImplementedException.h"
 
+
 namespace Caramel::DataStructure {
 
 class Operator {

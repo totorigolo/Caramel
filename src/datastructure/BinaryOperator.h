@@ -26,9 +26,10 @@
 
 #include "Operator.h"
 
+
 namespace Caramel::DataStructure {
 
-class BinaryOperator: public Operator {
+class BinaryOperator : public Operator {
 public:
     BinaryOperator() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");
