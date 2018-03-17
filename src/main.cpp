@@ -29,7 +29,18 @@ int main() {
 //    CalcVisitor visitor;
 //    std::cout << "Résultat: " << (int) visitor.visit(tree) << std::endl;
 
-    ANTLRInputStream input("int a = 2;");
+
+    string path;
+    cout << "Indiquez le chemin vers le fichier :" << endl;
+
+    getline(cin, path);
+
+//    string data;
+    ifstream fileinput(path);
+
+//    fileinput >> data;
+
+    ANTLRInputStream input(fileinput);
     CaramelLexer lexer(&input);
     CommonTokenStream tokens(&lexer);
 

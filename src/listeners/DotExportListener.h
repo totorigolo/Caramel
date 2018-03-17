@@ -32,13 +32,17 @@ public:
 
     void enterEveryRule(ParserRuleContext *ctx) override {
         for (auto i = 0; i < ctx->children.size(); i++) {
-            edges << "\tnode" << ctx << " -> " << "node" << ctx->children[i] << ";\n";
+            if (ctx->children[i]->getText() != " ") {
+                edges << "\tnode" << ctx << " -> " << "node" << ctx->children[i] << ";\n";
+            }
         }
         nodes << "\tnode" << ctx << "[label=\"" << tree::Trees::getNodeText(ctx, parser) << "\"];\n";
     }
 
     void visitTerminal(antlr4::tree::TerminalNode *node) override {
-        nodes << "\tnode" << node << "[label=\"" << cleanStr(node->toString()) << "\"]\n";
+        if (cleanStr(node->toString()) != " ") {
+            nodes << "\tnode" << node << "[label=\"" << cleanStr(node->toString()) << "\"]\n";
+        }
     }
 
     string getDotFile() {
