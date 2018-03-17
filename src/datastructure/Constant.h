@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class Constant: public AtomicExpression {
 public:
     Constant() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

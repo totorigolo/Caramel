@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class Context {
 public:
     Context() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

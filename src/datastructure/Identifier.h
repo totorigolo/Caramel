@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class Identifier: public LValue {
 public:
     Identifier() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

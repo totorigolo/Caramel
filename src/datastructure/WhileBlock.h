@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class WhileBlock: public ControlBlock {
 public:
     WhileBlock() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

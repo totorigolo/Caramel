@@ -32,7 +32,7 @@ namespace Caramel::DataStructure {
 class Expression: public Statement {
 public:
     Expression() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

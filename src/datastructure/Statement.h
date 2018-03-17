@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class Statement {
 public:
     Statement() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

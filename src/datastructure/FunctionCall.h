@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class FunctionCall: public Expression {
 public:
     FunctionCall() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

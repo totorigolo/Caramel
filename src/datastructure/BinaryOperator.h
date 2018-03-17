@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class BinaryOperator: public Operator {
 public:
     BinaryOperator() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

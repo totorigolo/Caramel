@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class UnaryExpression: public Expression {
 public:
     UnaryExpression() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

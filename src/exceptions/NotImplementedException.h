@@ -26,7 +26,7 @@
 
 #include <stdexcept>
 
-namespace Caramel::Exception {
+namespace Caramel::Exceptions {
 
 class NotImplementedException: public std::runtime_error {
 

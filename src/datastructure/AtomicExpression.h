@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class AtomicExpression: public Expression {
 public:
     AtomicExpression() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

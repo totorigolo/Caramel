@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class IfBlock: public ControlBlock {
 public:
     IfBlock() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

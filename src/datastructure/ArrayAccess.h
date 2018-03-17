@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class ArrayAccess: public LValue {
 public:
     ArrayAccess() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

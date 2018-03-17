@@ -32,7 +32,7 @@ namespace Caramel::DataStructure {
 class ControlBlock: public Statement {
 public:
     ControlBlock() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class SymbolTable {
 public:
     SymbolTable() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 

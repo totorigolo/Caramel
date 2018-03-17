@@ -31,7 +31,7 @@ namespace Caramel::DataStructure {
 class ReturnStatement: public Jump {
 public:
     ReturnStatement() {
-        throw Caramel::Exception::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
 };
 
