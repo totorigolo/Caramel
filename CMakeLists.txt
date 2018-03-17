@@ -52,6 +52,32 @@ add_library(Grammar ${GRAMMAR_BASE})
 set(SOURCE_FILES
         src/main.cpp
         src/listeners/DotExportListener.h
+        src/data-structures/Context.cpp
+        src/data-structures/Statement.cpp
+        src/data-structures/SymbolTable.cpp
+        src/data-structures/Declaration.cpp
+        src/data-structures/Definition.cpp
+        src/exceptions/NotImplementedException.h
+        src/data-structures/Expression.cpp
+        src/data-structures/ControlBlock.cpp
+        src/data-structures/Jump.cpp
+        src/data-structures/VariableDeclaration.cpp
+        src/data-structures/FunctionDefinition.cpp
+        src/data-structures/VariableDefinition.cpp
+        src/data-structures/AtomicExpression.cpp
+        src/data-structures/FunctionCall.cpp
+        src/data-structures/UnaryExpression.cpp
+        src/data-structures/BinaryExpression.cpp
+        src/data-structures/WhileBlock.cpp
+        src/data-structures/IfBlock.cpp
+        src/data-structures/ReturnStatement.cpp
+        src/data-structures/Constant.cpp
+        src/data-structures/LValue.cpp
+        src/data-structures/ArrayAccess.cpp
+        src/data-structures/Identifier.cpp
+        src/data-structures/Operator.cpp
+        src/data-structures/UnaryOperator.cpp
+        src/data-structures/BinaryOperator.cpp
         )
 
 add_executable(Caramel_frontend ${SOURCE_FILES})
