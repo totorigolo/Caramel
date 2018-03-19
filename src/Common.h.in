@@ -24,25 +24,16 @@
 
 #pragma once
 
-#include "../exceptions/NotImplementedException.h"
+#include <iostream>
+#include <cassert>
+#include <stdexcept>
+#include <cstdint> // For types like int32_t
 
-#include <memory>
+#define caramel_unused __attribute__((unused))
 
+#define CARAMEL_UNUSED(var) (void)(var)
 
-namespace Caramel::DataStructure {
-
-class Context {
-public:
-    using Ptr = std::shared_ptr<Context>;
-
-    static Ptr Create() {
-        return Ptr(new Context);
-    }
-
-private:
-    Context() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
-    }
-};
-
-} // namespace Caramel::DataStructure
+#define Caramel_VERSION_MAJOR @VERSION_MAJOR@
+#define Caramel_VERSION_MINOR @VERSION_MINOR@
+#define Caramel_VERSION_PATCH @VERSION_PATCH@
+#define Caramel_VERSION "@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@"

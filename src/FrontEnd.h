@@ -24,25 +24,22 @@
 
 #pragma once
 
-#include "../exceptions/NotImplementedException.h"
+#include "Config.h"
+
+#include "listeners/DotExportListener.h"
+#include "visitors/AbstractSyntaxTreeVisitor.h"
+
+#include "datastructure/Context.h"
+
+#include <CaramelLexer.h>
+#include <CaramelParser.h>
+#include <antlr4-runtime.h>
 
 #include <memory>
 
 
-namespace Caramel::DataStructure {
+namespace Caramel {
 
-class Context {
-public:
-    using Ptr = std::shared_ptr<Context>;
+DataStructure::Context::Ptr frontEnd(Config const &config);
 
-    static Ptr Create() {
-        return Ptr(new Context);
-    }
-
-private:
-    Context() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
-    }
-};
-
-} // namespace Caramel::DataStructure
+} // namespace Caramel

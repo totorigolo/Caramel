@@ -24,25 +24,34 @@
 
 #pragma once
 
-#include "../exceptions/NotImplementedException.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#pragma GCC diagnostic ignored "-Wattributes"
 
-#include <memory>
+#include <CaramelBaseVisitor.h>
 
 
-namespace Caramel::DataStructure {
+#pragma GCC diagnostic pop
 
-class Context {
-public:
-    using Ptr = std::shared_ptr<Context>;
+#include "../Console.h"
 
-    static Ptr Create() {
-        return Ptr(new Context);
+#include <stdexcept>
+#include <iostream>
+
+
+namespace Caramel::Visitors {
+
+class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
+
+    antlrcpp::Any visitStatement(CaramelParser::StatementContext *ctx) override {
+
+        using namespace Caramel::Colors;
+
+        std::cout << "Visited statement: " << yellow << ctx->getText() << reset << std::endl;
+
+        return visitChildren(ctx);
     }
 
-private:
-    Context() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
-    }
 };
 
-} // namespace Caramel::DataStructure
+} // namespace Caramel::Visitors

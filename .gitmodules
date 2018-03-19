@@ -1,0 +1,3 @@
+[submodule "lib/tclap"]
+	path = lib/tclap
+	url = git@github.com:eile/tclap.git

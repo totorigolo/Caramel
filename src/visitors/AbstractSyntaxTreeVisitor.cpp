@@ -22,27 +22,4 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "../exceptions/NotImplementedException.h"
-
-#include <memory>
-
-
-namespace Caramel::DataStructure {
-
-class Context {
-public:
-    using Ptr = std::shared_ptr<Context>;
-
-    static Ptr Create() {
-        return Ptr(new Context);
-    }
-
-private:
-    Context() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
-    }
-};
-
-} // namespace Caramel::DataStructure
+#include "AbstractSyntaxTreeVisitor.h"

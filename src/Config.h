@@ -24,25 +24,13 @@
 
 #pragma once
 
-#include "../exceptions/NotImplementedException.h"
-
-#include <memory>
+#include <string>
 
 
-namespace Caramel::DataStructure {
-
-class Context {
-public:
-    using Ptr = std::shared_ptr<Context>;
-
-    static Ptr Create() {
-        return Ptr(new Context);
-    }
-
-private:
-    Context() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
-    }
+struct Config {
+    bool staticAnalysis = false;
+    bool optimize = false;
+    bool compile = false;
+    bool syntaxTreeDot = false;
+    std::string sourceFile;
 };
-
-} // namespace Caramel::DataStructure

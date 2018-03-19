@@ -5,10 +5,15 @@ cmake_minimum_required(VERSION 3.8)
 # Project name
 project(Caramel-frontend)
 
-# TODO : Setup version numbers
-#set(VERSION_MAJOR 0)
-#set(VERSION_MINOR 0)
-#set(VERSION_PATCH 1)
+# Version numbers
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 1)
+configure_file (
+        "src/Common.h.in"
+        "${PROJECT_BINARY_DIR}/Common.h"
+)
+include_directories("${PROJECT_BINARY_DIR}")
 
 # Change the required C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -44,35 +49,9 @@ target_include_directories(Grammar SYSTEM PRIVATE ${PROJECT_LIBRARY_DIR}/antlr4-
 
 
 #### Executable setup: define source files, executable, include directories and library links
-set(SOURCE_FILES
-        src/main.cpp
-        src/listeners/DotExportListener.h
-        src/exceptions/NotImplementedException.h
-        src/datastructure/Context.cpp
-        src/datastructure/Statement.cpp
-        src/datastructure/SymbolTable.cpp
-        src/datastructure/Declaration.cpp
-        src/datastructure/Definition.cpp
-        src/datastructure/Expression.cpp
-        src/datastructure/ControlBlock.cpp
-        src/datastructure/Jump.cpp
-        src/datastructure/VariableDeclaration.cpp
-        src/datastructure/FunctionDefinition.cpp
-        src/datastructure/VariableDefinition.cpp
-        src/datastructure/AtomicExpression.cpp
-        src/datastructure/FunctionCall.cpp
-        src/datastructure/UnaryExpression.cpp
-        src/datastructure/BinaryExpression.cpp
-        src/datastructure/WhileBlock.cpp
-        src/datastructure/IfBlock.cpp
-        src/datastructure/ReturnStatement.cpp
-        src/datastructure/Constant.cpp
-        src/datastructure/LValue.cpp
-        src/datastructure/ArrayAccess.cpp
-        src/datastructure/Identifier.cpp
-        src/datastructure/Operator.cpp
-        src/datastructure/UnaryOperator.cpp
-        src/datastructure/BinaryOperator.cpp
+file(GLOB_RECURSE SOURCE_FILES
+        "src/*.cpp"
+        "src/*.h"
         )
 
 add_executable(Caramel_frontend ${SOURCE_FILES})
@@ -83,8 +62,11 @@ if(NOT EXISTS "${CMAKE_SOURCE_DIR}/build/cpp-grammar")
 endif()
 
 # For Grammar library and Caramel, set include directories. Caramel should have Grammar headers included.
-target_include_directories(Caramel_frontend PRIVATE ${PROJECT_LIBRARY_DIR}/antlr4-runtime-headers)
+target_include_directories(Caramel_frontend SYSTEM PRIVATE ${PROJECT_LIBRARY_DIR}/antlr4-runtime-headers)
 target_include_directories(Caramel_frontend PRIVATE ${CMAKE_SOURCE_DIR}/build/cpp-grammar)
+
+# Add the tclap library.
+target_include_directories(Caramel_frontend SYSTEM PRIVATE ${PROJECT_LIBRARY_DIR}/tclap/include)
 
 # Link Caramel
 target_link_libraries(Caramel_frontend ${ANTLR_RUNTIME})

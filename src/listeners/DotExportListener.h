@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Common.h"
+
 #include <antlr4-runtime.h>
 
 #include <iostream>
@@ -19,20 +21,23 @@ protected:
     stringstream nodes;
     stringstream edges;
 
-    static string cleanStr(string name) {
-        auto pos = 0;
-        while ((pos = name.find("\"", pos)) != string::npos) {
-            name.replace(pos, 1, "\\\"");
-            pos += 2;
+    static string cleanStr(string const &before) {
+        string after;
+        after.reserve(before.length() + 4);
+        for (size_t i = 0UL; i < before.size(); i++) {
+            if (before[i] == '"' && (i == 0 || before[i - 1] != '\\')) {
+                after += '\\';
+            }
+            after += before[i];
         }
-        return name;
+        return after;
     }
 
 public:
     explicit DotExportListener(Parser *parser) : parser(parser) {}
 
     void enterEveryRule(ParserRuleContext *ctx) override {
-        for (auto i = 0; i < ctx->children.size(); i++) {
+        for (auto i = 0UL; i < ctx->children.size(); i++) {
             if (ctx->children[i]->getText() != " ") {
                 edges << "\tnode" << ctx << " -> " << "node" << ctx->children[i] << ";\n";
             }
@@ -55,8 +60,13 @@ public:
                        "\tedge [arrowsize=.5, color=\"black\"]\n\n" + nodes.str() + edges.str() + "}\n";
     }
 
-    void visitErrorNode(tree::ErrorNode *node) override {} // this method needs to be implemented
-    void exitEveryRule(ParserRuleContext *ctx) override {} // this method needs to be implemented
+    void visitErrorNode(tree::ErrorNode *node) override {
+        CARAMEL_UNUSED(node);
+    }
+
+    void exitEveryRule(ParserRuleContext *ctx) override {
+        CARAMEL_UNUSED(ctx);
+    }
 };
 
 } // namespace Listeners
