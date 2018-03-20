@@ -59,6 +59,13 @@ public:
 
     antlrcpp::Any visitCharConstant(CaramelParser::CharConstantContext *ctx) override;
 
+    antlrcpp::Any visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) override ;
+
+    antlrcpp::Any visitNamedArguments(CaramelParser::NamedArgumentsContext *ctx) override ;
+
+    antlrcpp::Any visitNamedArgument(CaramelParser::NamedArgumentContext *ctx) override ;
+
+
 private:
     void pushNewContext();
 

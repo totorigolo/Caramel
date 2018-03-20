@@ -25,6 +25,8 @@
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
 #include "../datastructure/Constant.h"
+#include "../datastructure/PrimaryType.h"
+#include "../datastructure/VariableSymbol.h"
 
 using namespace Caramel::Visitors;
 
@@ -59,20 +61,70 @@ antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitValidIdentifier
 antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitTypeParameter(CaramelParser::TypeParameterContext *ctx) {
     std::string type = ctx->getText();
     // TODO: Checker in the SymbolTable
-    return type;
+
+    if (type=="int8_t") {
+        return (Int8_t::Create());
+    } else if (type=="int16_t") {
+        return (Int16_t::Create());
+    } else if (type=="int32_t") {
+        return (Int32_t::Create());
+    } else if (type=="int64_t") {
+        return (Int64_t::Create());
+    } else {
+        return (Int8_t::Create());
+        //TODO: Trouver le return
+    }
+
 }
 
 antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) {
-    std::string typeName = visitTypeParameter(ctx->typeParameter());
+    PrimaryType typeName = visitTypeParameter(ctx->typeParameter());
     for (auto validIdentifierCtx : ctx->validIdentifier()) {
         std::string name = visitValidIdentifier(validIdentifierCtx);
         currentContext()->getSymbolTable()->addVariable(name, typeName);
         logger.trace() <<  "New variable declared " << name << " of type " << typeName;
     }
+    // TODO: Return SVariable
 
-    exit(2);
     return CaramelBaseVisitor::visitVariableDeclaration(ctx);
 }
+
+
+antlrcpp::Any
+AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) {
+    std::string returnType = visitTypeParameter(ctx->typeParameter());
+    std::string name =  visitValidIdentifier(ctx->validIdentifier());
+    currentContext()->getSymbolTable()->addFunction(name, returnType);
+    logger.trace() <<  "New function declared " << name << " with return type " << returnType;
+    visitNamedArguments(ctx->namedArguments());
+
+    // TODO: Return SFunction
+    return antlrcpp::Any();
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArguments(CaramelParser::NamedArgumentsContext *ctx) {
+    for (auto argument : ctx->namedArgument()){
+        visitNamedArgument(argument);
+    }
+
+    // TODO: Return List de Symbol
+    return CaramelBaseVisitor::visitNamedArguments(ctx);
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArgument(CaramelParser::NamedArgumentContext *ctx) {
+    if (ctx->variableDeclaration() != nullptr) {
+        visitVariableDeclaration(ctx->variableDeclaration());
+    } else if (ctx->arrayDeclarationVoid() != nullptr){
+        visitArrayDeclarationVoid(ctx->arrayDeclarationVoid());
+    } else if (ctx->typeParameter()!= nullptr) {
+        visitTypeParameter(ctx->typeParameter());
+    }
+
+    // TODO: Return Symbol
+    return CaramelBaseVisitor::visitNamedArgument(ctx);
+}
+
+
 
 void AbstractSyntaxTreeVisitor::pushNewContext() {
     mContextStack.push(Context::Create());
@@ -81,3 +133,6 @@ void AbstractSyntaxTreeVisitor::pushNewContext() {
 Context::Ptr AbstractSyntaxTreeVisitor::currentContext() {
     return mContextStack.top();
 }
+
+
+

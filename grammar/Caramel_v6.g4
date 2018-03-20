@@ -126,7 +126,6 @@ namedArgument
   : variableDeclaration
   | arrayDeclarationVoid
   | typeParameter
-  | arrayDeclarationVoid
   ;
 
 // Type & identifiers
