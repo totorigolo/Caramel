@@ -26,6 +26,7 @@
 
 #include "Common.h"
 #include "../exceptions/NotImplementedException.h"
+#include "../datastructure/Symbol.h"
 #include <CaramelBaseVisitor.h>
 #include <string>
 #include <map>
@@ -43,25 +44,17 @@ public:
         return Ptr(new SymbolTable);
     }
 
-    void addVariable(std::string const& name, caramel_unused antlrcpp::Any todo);
-    void addType(std::string const& name, caramel_unused antlrcpp::Any todo);
-    void addFunction(std::string const& name, caramel_unused antlrcpp::Any todo);
+    void addSymbol(std::string const& name, Symbol symbol);
 
-    bool hasVariable(std::string const& name);
-    bool hasType(std::string const& name);
-    bool hasFunction(std::string const& name);
+    bool hasSymbol(std::string const& name);
 
-    antlrcpp::Any getVariable(std::string const& name);
-    antlrcpp::Any getType(std::string const& name);
-    antlrcpp::Any getFunction(std::string const& name);
+    Symbol getSymbol(std::string const& name);
 
 private:
 
     SymbolTable();
 
-    std::map<std::string, antlrcpp::Any > variableMap;
-    std::map<std::string, antlrcpp::Any > typeMap;
-    std::map<std::string, antlrcpp::Any > functionMap;
+    std::map<std::string, Symbol > symboleMap;
 };
 
 } // namespace Caramel::DataStructure

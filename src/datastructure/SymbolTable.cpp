@@ -24,48 +24,24 @@
 
 #include "SymbolTable.h"
 
-void Caramel::DataStructure::SymbolTable::addVariable(std::string const &name, antlrcpp::Any todo) {
-    if(!hasVariable(name)){
-        variableMap[name] = todo;
+namespace Caramel::DataStructure {
+
+    SymbolTable::SymbolTable() {
+
     }
-}
 
-void Caramel::DataStructure::SymbolTable::addType(std::string const &name, antlrcpp::Any todo) {
-    if(!hasType(name)){
-        typeMap[name] = todo;
+    void SymbolTable::addSymbol(std::string const &name, Symbol symbol) {
+        if (!hasSymbol(name)){
+            symboleMap[name] = symbol;
+        }
     }
-}
 
-void Caramel::DataStructure::SymbolTable::addFunction(std::string const &name, antlrcpp::Any todo) {
-    if(!hasFunction(name)){
-        functionMap[name] = todo;
+    bool SymbolTable::hasSymbol(std::string const &name) {
+        return symboleMap.find(name) != symboleMap.end();
     }
-}
 
-bool Caramel::DataStructure::SymbolTable::hasVariable(std::string const &name) {
-    return variableMap.find(name) != variableMap.end();
-}
+    Symbol SymbolTable::getSymbol(std::string const &name) {
+        return symboleMap[name];
+    }
 
-bool Caramel::DataStructure::SymbolTable::hasType(std::string const &name) {
-    return typeMap.find(name) != typeMap.end();
-}
-
-bool Caramel::DataStructure::SymbolTable::hasFunction(std::string const &name) {
-    return functionMap.find(name) != functionMap.end();
-}
-
-antlrcpp::Any Caramel::DataStructure::SymbolTable::getVariable(std::string const &name) {
-    throw Caramel::Exceptions::NotImplementedException("SymbolTable::getVariable not currently supported !!");
-}
-
-antlrcpp::Any Caramel::DataStructure::SymbolTable::getType(std::string const &name) {
-    throw Caramel::Exceptions::NotImplementedException("SymbolTable::getType not currently supported !!");
-}
-
-antlrcpp::Any Caramel::DataStructure::SymbolTable::getFunction(std::string const &name) {
-    throw Caramel::Exceptions::NotImplementedException("SymbolTable::getFunction not currently supported !!");
-}
-
-Caramel::DataStructure::SymbolTable::SymbolTable() {
-
-}
+} //namespace Caramel::DataStructure
