@@ -24,29 +24,60 @@
 
 #pragma once
 
-#include "../exceptions/NotImplementedException.h"
-
+#include <cstddef>
 #include <memory>
-
 
 namespace Caramel::DataStructure {
 
-class Statement {
+class PrimaryType {
 public:
-    using Ptr = std::shared_ptr<Statement>;
+    using Ptr = std::shared_ptr<PrimaryType>;
 
+    virtual size_t getMemoryLength() const = 0;
+};
+
+class Int8_t : public PrimaryType {
+public:
     static Ptr Create() {
-        return Ptr(new Statement);
+        return Ptr(new Int8_t);
     }
 
-    Statement() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
+    size_t getMemoryLength() const override {
+        return 8;
+    }
+};
+
+class Int16_t : public PrimaryType {
+public:
+    static Ptr Create() {
+        return Ptr(new Int16_t);
     }
 
-private:
-    size_t mLine;
-    size_t mColumns;
+    size_t getMemoryLength() const override {
+        return 16;
+    }
+};
 
+class Int32_t : public PrimaryType {
+public:
+    static Ptr Create() {
+        return Ptr(new Int32_t);
+    }
+
+    size_t getMemoryLength() const override {
+        return 32;
+    }
+};
+
+class Int64_t : public PrimaryType {
+public:
+    static Ptr Create() {
+        return Ptr(new Int64_t);
+    }
+
+    size_t getMemoryLength() const override {
+        return 64;
+    }
 };
 
 } // namespace Caramel::DataStructure

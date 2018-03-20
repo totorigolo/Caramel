@@ -24,29 +24,23 @@
 
 #pragma once
 
-#include "../exceptions/NotImplementedException.h"
-
-#include <memory>
-
+#include "PrimaryType.h"
+#include "Statement.h"
+#include <iostream>
+#include <vector>
 
 namespace Caramel::DataStructure {
 
-class Statement {
-public:
-    using Ptr = std::shared_ptr<Statement>;
-
-    static Ptr Create() {
-        return Ptr(new Statement);
-    }
-
-    Statement() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+class Symbol {
 
 private:
-    size_t mLine;
-    size_t mColumns;
+    std::string mName;
+    PrimaryType::Ptr mType;
+    std::vector<Statement::Ptr> mOccurencies;
 
 };
 
 } // namespace Caramel::DataStructure
+
+
+

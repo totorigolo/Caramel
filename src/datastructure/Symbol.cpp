@@ -22,31 +22,4 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "../exceptions/NotImplementedException.h"
-
-#include <memory>
-
-
-namespace Caramel::DataStructure {
-
-class Statement {
-public:
-    using Ptr = std::shared_ptr<Statement>;
-
-    static Ptr Create() {
-        return Ptr(new Statement);
-    }
-
-    Statement() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
-
-private:
-    size_t mLine;
-    size_t mColumns;
-
-};
-
-} // namespace Caramel::DataStructure
+#include "Symbol.h"
