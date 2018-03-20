@@ -25,8 +25,11 @@
 #pragma once
 
 #include "../exceptions/NotImplementedException.h"
+#include "SymbolTable.h"
+#include "Statement.h"
 
 #include <memory>
+#include <vector>
 
 
 namespace Caramel::DataStructure {
@@ -43,6 +46,9 @@ private:
     Context() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");
     }
+
+    SymbolTable::Ptr mSymbolTable;
+    std::vector<Statement::Ptr> mStatements;
 };
 
 } // namespace Caramel::DataStructure

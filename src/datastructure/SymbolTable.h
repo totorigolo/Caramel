@@ -30,11 +30,19 @@
 #include <string>
 #include <map>
 
+#include <memory>
+
 
 namespace Caramel::DataStructure {
 
 class SymbolTable {
 public:
+    using Ptr = std::shared_ptr<SymbolTable>;
+
+    static Ptr Create() {
+        return Ptr(new SymbolTable);
+    }
+
     SymbolTable() {
 
     }
