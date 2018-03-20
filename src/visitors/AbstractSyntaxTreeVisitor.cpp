@@ -23,13 +23,16 @@
 */
 
 #include "AbstractSyntaxTreeVisitor.h"
+#include "../datastructure/Constant.h"
 
-antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
+using namespace Caramel::Visitors;
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
     pushNewContext();
     return visitChildren(ctx);
 }
 
-antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitStatement(CaramelParser::StatementContext *ctx) {
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatement(CaramelParser::StatementContext *ctx) {
 
     using namespace Caramel::Colors;
 
@@ -38,6 +41,20 @@ antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitStatement(Caram
     return visitChildren(ctx);
 }
 
-void Caramel::Visitors::AbstractSyntaxTreeVisitor::pushNewContext() {
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
+    int value = stoi(ctx->getText());
+
+    return Constant::Create(value);
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
+    return CaramelBaseVisitor::visitCharConstant(ctx);
+}
+
+void AbstractSyntaxTreeVisitor::pushNewContext() {
     mContextStack.push(Context::Create());
+}
+
+Context::Ptr AbstractSyntaxTreeVisitor::currentContext() {
+    return mContextStack.top();
 }

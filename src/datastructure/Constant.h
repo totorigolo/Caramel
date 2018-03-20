@@ -25,15 +25,27 @@
 #pragma once
 
 #include "AtomicExpression.h"
+#include "../Any.h"
 
 
 namespace Caramel::DataStructure {
 
 class Constant : public AtomicExpression {
 public:
-    Constant() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
+    using Ptr = std::shared_ptr<Constant>;
+
+    static Ptr Create(const Any &mValue) {
+        return Ptr(new Constant(mValue));
     }
+
+    explicit Constant(const Any &mValue) : mValue(mValue) {}
+
+    Any getValue() override {
+        return mValue;
+    }
+
+private:
+    Any mValue;
 };
 
 } // namespace Caramel::DataStructure

@@ -49,8 +49,14 @@ public:
 
     antlrcpp::Any visitStatement(CaramelParser::StatementContext *ctx) override;
 
+    antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
+
+    antlrcpp::Any visitCharConstant(CaramelParser::CharConstantContext *ctx) override;
+
 private:
     void pushNewContext();
+
+    Context::Ptr currentContext();
 
 private:
     std::stack<Context::Ptr> mContextStack;

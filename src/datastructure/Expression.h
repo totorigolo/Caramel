@@ -25,17 +25,19 @@
 #pragma once
 
 #include "Statement.h"
-
 #include "../exceptions/NotImplementedException.h"
+
+#include <support/Any.h>
 
 
 namespace Caramel::DataStructure {
 
 class Expression : public Statement {
 public:
-    Expression() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    Expression() {}
+
+    // TODO : Manage Type later pls
+    virtual antlrcpp::Any getValue() = 0;
 };
 
 } // namespace Caramel::DataStructure

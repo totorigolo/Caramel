@@ -23,3 +23,7 @@
 */
 
 #include "Context.h"
+
+Caramel::DataStructure::Context::Context() {
+
+}

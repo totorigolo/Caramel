@@ -42,10 +42,12 @@ public:
         return Ptr(new Context);
     }
 
-private:
-    Context() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
+    void foo() {
+
     }
+
+private:
+    Context();
 
     SymbolTable::Ptr mSymbolTable;
     std::vector<Statement::Ptr> mStatements;
