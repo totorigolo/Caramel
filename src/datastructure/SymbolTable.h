@@ -26,11 +26,19 @@
 
 #include "../exceptions/NotImplementedException.h"
 
+#include <memory>
+
 
 namespace Caramel::DataStructure {
 
 class SymbolTable {
 public:
+    using Ptr = std::shared_ptr<SymbolTable>;
+
+    static Ptr Create() {
+        return Ptr(new SymbolTable);
+    }
+
     SymbolTable() {
         throw Caramel::Exceptions::NotImplementedException("Todo...");
     }

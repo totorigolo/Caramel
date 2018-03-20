@@ -24,33 +24,36 @@
 
 #pragma once
 
+#include "../Console.h"
+#include "../datastructure/Context.h"
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 #pragma GCC diagnostic ignored "-Wattributes"
 
 #include <CaramelBaseVisitor.h>
 
-
 #pragma GCC diagnostic pop
-
-#include "../Console.h"
 
 #include <stdexcept>
 #include <iostream>
 
+using namespace Caramel::DataStructure;
 
 namespace Caramel::Visitors {
 
 class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
 
-    antlrcpp::Any visitStatement(CaramelParser::StatementContext *ctx) override {
+public:
+    antlrcpp::Any visitR(CaramelParser::RContext *ctx) override;
 
-        using namespace Caramel::Colors;
+    antlrcpp::Any visitStatement(CaramelParser::StatementContext *ctx) override;
 
-        std::cout << "Visited statement: " << yellow << ctx->getText() << reset << std::endl;
+private:
+    void pushNewContext();
 
-        return visitChildren(ctx);
-    }
+private:
+    std::stack<Context::Ptr> mContextStack;
 
 };
 

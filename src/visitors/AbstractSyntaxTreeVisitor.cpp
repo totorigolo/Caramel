@@ -23,3 +23,21 @@
 */
 
 #include "AbstractSyntaxTreeVisitor.h"
+
+antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
+    pushNewContext();
+    return visitChildren(ctx);
+}
+
+antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitStatement(CaramelParser::StatementContext *ctx) {
+
+    using namespace Caramel::Colors;
+
+    std::cout << "Visited statement: " << yellow << ctx->getText() << reset << std::endl;
+
+    return visitChildren(ctx);
+}
+
+void Caramel::Visitors::AbstractSyntaxTreeVisitor::pushNewContext() {
+    mContextStack.push(Context::Create());
+}
