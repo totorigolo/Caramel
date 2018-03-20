@@ -32,7 +32,7 @@ namespace Caramel::DataStructure {
 class UnaryOperator : public Operator {
 public:
     UnaryOperator() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException(__FILE__);
     }
 };
 

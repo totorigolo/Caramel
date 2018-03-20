@@ -34,7 +34,7 @@ namespace Caramel::DataStructure {
 class ControlBlock : public Statement {
 public:
     ControlBlock() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException(__FILE__);
     }
 };
 

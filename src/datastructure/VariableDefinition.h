@@ -32,7 +32,7 @@ namespace Caramel::DataStructure {
 class VariableDefinition : public Definition {
 public:
     VariableDefinition() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException(__FILE__);
     }
 };
 

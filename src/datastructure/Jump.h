@@ -33,7 +33,7 @@ namespace Caramel::DataStructure {
 class Jump : public Statement {
 public:
     Jump() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException(__FILE__);
     }
 };
 

@@ -32,7 +32,7 @@ namespace Caramel::DataStructure {
 class Constant : public AtomicExpression {
 public:
     Constant() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException(__FILE__);
     }
 };
 

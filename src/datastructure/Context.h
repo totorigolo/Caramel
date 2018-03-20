@@ -44,7 +44,7 @@ public:
 
 private:
     Context() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException(__FILE__);
     }
 
     SymbolTable::Ptr mSymbolTable;

@@ -32,7 +32,7 @@ namespace Caramel::DataStructure {
 class LValue : public AtomicExpression {
 public:
     LValue() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException(__FILE__);
     }
 };
 

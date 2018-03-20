@@ -32,7 +32,7 @@ namespace Caramel::DataStructure {
 class BinaryExpression : public Expression {
 public:
     BinaryExpression() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
+        throw Caramel::Exceptions::NotImplementedException(__FILE__);
     }
 };
 
