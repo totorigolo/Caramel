@@ -26,22 +26,44 @@
 
 namespace Caramel::DataStructure {
 
-    SymbolTable::SymbolTable() {
+SymbolTable::SymbolTable() {
 
-    }
+}
 
-    void SymbolTable::addSymbol(std::string const &name, Symbol symbol) {
-        if (!hasSymbol(name)){
-            symboleMap[name] = symbol;
+void SymbolTable::addSymbol(std::string const &name, Symbol::Ptr symbol) {
+    if (!hasSymbol(name)) {
+        symboleMap[name] = symbol;
+    } else {
+        if(hasDefinition(name)) {
+            //
+        } else if (hasDeclaration(name)) {
+            //
         }
     }
+}
 
-    bool SymbolTable::hasSymbol(std::string const &name) {
-        return symboleMap.find(name) != symboleMap.end();
-    }
+bool SymbolTable::hasSymbol(std::string const &name) {
+    return symboleMap.find(name) != symboleMap.end();
+}
 
-    Symbol SymbolTable::getSymbol(std::string const &name) {
-        return symboleMap[name];
+Symbol::Ptr SymbolTable::getSymbol(std::string const &name) {
+    return symboleMap[name];
+}
+
+bool SymbolTable::hasDeclaration(const std::string &name) {
+    if(symboleMap.find(name) == symboleMap.end()) {
+        return false;
     }
+    Symbol::Ptr symbol = symboleMap[name];
+    return symbol->isDeclared();
+}
+
+bool SymbolTable::hasDefinition(const std::string &name) {
+    if(symboleMap.find(name) == symboleMap.end()) {
+        return false;
+    }
+    Symbol::Ptr symbol = symboleMap[name];
+    return symbol->isDefined();
+}
 
 } //namespace Caramel::DataStructure

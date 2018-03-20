@@ -23,3 +23,25 @@
 */
 
 #include "Symbol.h"
+
+#include <utility>
+
+std::vector<Caramel::DataStructure::Statement::Ptr> Caramel::DataStructure::Symbol::getOccurences() {
+    return mOccurences;
+}
+
+Caramel::DataStructure::Symbol::Symbol(const std::string &mName,
+                                       const Caramel::DataStructure::PrimaryType::Ptr &mType)
+        : mIsDeclared(false), mIsDefined(false), mName(mName), mType(std::move(mType)), mOccurences() {}
+
+Caramel::DataStructure::Symbol::~Symbol() = default;
+
+bool Caramel::DataStructure::Symbol::isDeclared() {
+    return mIsDeclared;
+}
+
+bool Caramel::DataStructure::Symbol::isDefined() {
+    return mIsDefined;
+}
+
+

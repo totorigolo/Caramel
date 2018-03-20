@@ -30,6 +30,20 @@
 namespace Caramel::DataStructure {
 
 class FunctionSymbol : public Symbol {
+public:
+
+    static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
+        return Ptr(new FunctionSymbol(mName, mType));
+    }
+
+    FunctionSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
+    ~FunctionSymbol() override;
+
+    void addDeclaration(const Declaration &declaration) override;
+
+    void addDefinition(const Definition &definition) override;
+
+    void addUsage(const Expression &expression) override;
 
 private:
     std::vector<Symbol> mParameters;

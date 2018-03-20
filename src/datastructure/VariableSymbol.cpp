@@ -23,3 +23,22 @@
 */
 
 #include "VariableSymbol.h"
+
+Caramel::DataStructure::VariableSymbol::VariableSymbol(const std::string &mName,
+                                                       const Caramel::DataStructure::PrimaryType::Ptr &mType) : Symbol(
+        mName, mType) {}
+
+Caramel::DataStructure::VariableSymbol::~VariableSymbol() = default;
+
+void Caramel::DataStructure::VariableSymbol::addDeclaration(const Caramel::DataStructure::Declaration &declaration) {
+    mIsDeclared = true;
+}
+
+void Caramel::DataStructure::VariableSymbol::addDefinition(const Caramel::DataStructure::Definition &definition) {
+    mIsDeclared = true;
+    mIsDefined = true;
+}
+
+void Caramel::DataStructure::VariableSymbol::addUsage(const Caramel::DataStructure::Expression &expression) {
+
+}

@@ -29,6 +29,21 @@
 namespace Caramel::DataStructure {
 
 class VariableSymbol : public Symbol {
+public:
+
+    static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
+        return Ptr(new VariableSymbol(mName, mType));
+    }
+
+    VariableSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
+
+    ~VariableSymbol() override;
+
+    void addDeclaration(const Declaration &declaration) override;
+
+    void addDefinition(const Definition &definition) override;
+
+    void addUsage(const Expression &expression) override;
 
 };
 

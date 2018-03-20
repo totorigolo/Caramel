@@ -26,17 +26,43 @@
 
 #include "PrimaryType.h"
 #include "Statement.h"
+#include "Declaration.h"
+#include "Expression.h"
+#include "Definition.h"
 #include <iostream>
 #include <vector>
+#include <memory>
 
 namespace Caramel::DataStructure {
 
 class Symbol {
 
+public:
+
+    using Ptr = std::shared_ptr<Symbol>;
+
+    virtual ~Symbol();
+
+    std::vector<Statement::Ptr> getOccurences();
+
+    bool isDeclared();
+    bool isDefined();
+
+    virtual void addDeclaration(const Declaration &declaration) = 0;
+    virtual void addDefinition(const Definition &definition) = 0;
+    virtual void addUsage(const Expression &expression) = 0;
+
+protected:
+    Symbol(const std::string &mName, const PrimaryType::Ptr &mType);
+
+protected:
+    bool mIsDeclared;
+    bool mIsDefined;
+    std::vector<Statement::Ptr> mOccurences;
+
 private:
     std::string mName;
     PrimaryType::Ptr mType;
-    std::vector<Statement::Ptr> mOccurencies;
 
 };
 

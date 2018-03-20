@@ -23,3 +23,22 @@
 */
 
 #include "TypeSymbol.h"
+
+Caramel::DataStructure::TypeSymbol::TypeSymbol(const std::string &mName,
+                                               const Caramel::DataStructure::PrimaryType::Ptr &mType) : Symbol(mName,
+                                                                                                               mType) {}
+
+Caramel::DataStructure::TypeSymbol::~TypeSymbol() = default;
+
+void Caramel::DataStructure::TypeSymbol::addDeclaration(const Caramel::DataStructure::Declaration &declaration) {
+    mIsDeclared = true;
+}
+
+void Caramel::DataStructure::TypeSymbol::addDefinition(const Caramel::DataStructure::Definition &definition) {
+    mIsDeclared = true;
+    mIsDefined = true;
+}
+
+void Caramel::DataStructure::TypeSymbol::addUsage(const Caramel::DataStructure::Expression &expression) {
+
+}

@@ -23,3 +23,22 @@
 */
 
 #include "FunctionSymbol.h"
+
+Caramel::DataStructure::FunctionSymbol::FunctionSymbol(const std::string &mName,
+                                                       const Caramel::DataStructure::PrimaryType::Ptr &mType) : Symbol(
+        mName, mType) {}
+
+Caramel::DataStructure::FunctionSymbol::~FunctionSymbol() = default;
+
+void Caramel::DataStructure::FunctionSymbol::addDeclaration(const Caramel::DataStructure::Declaration &declaration) {
+    mIsDeclared = true;
+}
+
+void Caramel::DataStructure::FunctionSymbol::addDefinition(const Caramel::DataStructure::Definition &definition) {
+    mIsDeclared = true;
+    mIsDefined = true;
+}
+
+void Caramel::DataStructure::FunctionSymbol::addUsage(const Caramel::DataStructure::Expression &expression) {
+
+}

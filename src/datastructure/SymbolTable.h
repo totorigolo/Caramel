@@ -44,17 +44,23 @@ public:
         return Ptr(new SymbolTable);
     }
 
-    void addSymbol(std::string const& name, Symbol symbol);
+    void addSymbol(std::string const& name, Symbol::Ptr symbol);
 
     bool hasSymbol(std::string const& name);
 
-    Symbol getSymbol(std::string const& name);
+    Symbol::Ptr getSymbol(std::string const& name);
+
+private:
+
+    std::map<std::string, Symbol::Ptr> symboleMap;
 
 private:
 
     SymbolTable();
 
-    std::map<std::string, Symbol > symboleMap;
+    bool hasDeclaration(const std::string &name);
+    bool hasDefinition(const std::string &name);
+
 };
 
 } // namespace Caramel::DataStructure
