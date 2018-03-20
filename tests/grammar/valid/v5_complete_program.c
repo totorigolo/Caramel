@@ -41,7 +41,7 @@ int main(int, char) {
 
     int32_t func(int a, int) {}
 
-    puts('c');
+
 
     int32_t add = 3 + 2 - 1;
 
@@ -63,6 +63,8 @@ int main(int, char) {
                     3
             }
     ;
+
+    puts('c');
 
     while(i < 10) {
         if (i % 2 == 0) {
