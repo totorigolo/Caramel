@@ -23,3 +23,45 @@
 */
 
 #include "SymbolTable.h"
+
+void Caramel::DataStructure::SymbolTable::addVariable(std::string const &name, antlrcpp::Any todo) {
+    if(!hasVariable(name)){
+        variableMap[name] = todo;
+    }
+}
+
+void Caramel::DataStructure::SymbolTable::addType(std::string const &name, antlrcpp::Any todo) {
+    if(!hasType(name)){
+        typeMap[name] = todo;
+    }
+}
+
+void Caramel::DataStructure::SymbolTable::addFunction(std::string const &name, antlrcpp::Any todo) {
+    if(!hasFunction(name)){
+        functionMap[name] = todo;
+    }
+}
+
+bool Caramel::DataStructure::SymbolTable::hasVariable(std::string const &name) {
+    return variableMap.find(name) != variableMap.end();
+}
+
+bool Caramel::DataStructure::SymbolTable::hasType(std::string const &name) {
+    return typeMap.find(name) != typeMap.end();
+}
+
+bool Caramel::DataStructure::SymbolTable::hasFunction(std::string const &name) {
+    return functionMap.find(name) != functionMap.end();
+}
+
+antlrcpp::Any Caramel::DataStructure::SymbolTable::getVariable(std::string const &name) {
+    throw Caramel::Exceptions::NotImplementedException("SymbolTable::getVariable not currently supported !!");
+}
+
+antlrcpp::Any Caramel::DataStructure::SymbolTable::getType(std::string const &name) {
+    throw Caramel::Exceptions::NotImplementedException("SymbolTable::getType not currently supported !!");
+}
+
+antlrcpp::Any Caramel::DataStructure::SymbolTable::getFunction(std::string const &name) {
+    throw Caramel::Exceptions::NotImplementedException("SymbolTable::getFunction not currently supported !!");
+}

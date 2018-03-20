@@ -28,7 +28,7 @@
 
 namespace Caramel::Exceptions {
 
-class NotImplementedException: public std::runtime_error {
+class NotImplementedException : public std::runtime_error {
 
 public:
     explicit NotImplementedException(const std::string &__arg) : runtime_error(__arg) {}

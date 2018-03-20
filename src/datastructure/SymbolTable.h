@@ -24,7 +24,11 @@
 
 #pragma once
 
+#include "Common.h"
 #include "../exceptions/NotImplementedException.h"
+#include <CaramelBaseVisitor.h>
+#include <string>
+#include <map>
 
 
 namespace Caramel::DataStructure {
@@ -32,8 +36,26 @@ namespace Caramel::DataStructure {
 class SymbolTable {
 public:
     SymbolTable() {
-        throw Caramel::Exceptions::NotImplementedException("Todo...");
+
     }
+
+    void addVariable(std::string const& name, caramel_unused antlrcpp::Any todo);
+    void addType(std::string const& name, caramel_unused antlrcpp::Any todo);
+    void addFunction(std::string const& name, caramel_unused antlrcpp::Any todo);
+
+    bool hasVariable(std::string const& name);
+    bool hasType(std::string const& name);
+    bool hasFunction(std::string const& name);
+
+    antlrcpp::Any getVariable(std::string const& name);
+    antlrcpp::Any getType(std::string const& name);
+    antlrcpp::Any getFunction(std::string const& name);
+
+private:
+
+    std::map<std::string, antlrcpp::Any > variableMap;
+    std::map<std::string, antlrcpp::Any > typeMap;
+    std::map<std::string, antlrcpp::Any > functionMap;
 };
 
 } // namespace Caramel::DataStructure
