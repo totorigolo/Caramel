@@ -24,19 +24,34 @@
 
 #pragma once
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#pragma GCC diagnostic ignored "-Wattributes"
+
+#include <CaramelBaseVisitor.h>
+
+
+#pragma GCC diagnostic pop
+
+#include "../Console.h"
+
 #include <stdexcept>
+#include <iostream>
 
-namespace Caramel::Exceptions {
 
-class NotImplementedException: public std::runtime_error {
+namespace Caramel::Visitors {
 
-public:
-    explicit NotImplementedException(const std::string &__arg) : runtime_error(__arg) {}
+class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
 
-    explicit NotImplementedException(const char * c) : runtime_error(c){}
+    antlrcpp::Any visitStatement(CaramelParser::StatementContext *ctx) override {
 
-    explicit NotImplementedException(const std::runtime_error & ex) : runtime_error(ex){}
+        using namespace Caramel::Colors;
+
+        std::cout << "Visited statement: " << yellow << ctx->getText() << reset << std::endl;
+
+        return visitChildren(ctx);
+    }
 
 };
 
-} // namespace Caramel::Exception
+} // namespace Caramel::Visitors

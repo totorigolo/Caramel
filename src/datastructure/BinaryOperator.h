@@ -24,19 +24,16 @@
 
 #pragma once
 
-#include <stdexcept>
+#include "Operator.h"
 
-namespace Caramel::Exceptions {
 
-class NotImplementedException: public std::runtime_error {
+namespace Caramel::DataStructure {
 
+class BinaryOperator : public Operator {
 public:
-    explicit NotImplementedException(const std::string &__arg) : runtime_error(__arg) {}
-
-    explicit NotImplementedException(const char * c) : runtime_error(c){}
-
-    explicit NotImplementedException(const std::runtime_error & ex) : runtime_error(ex){}
-
+    BinaryOperator() {
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
+    }
 };
 
-} // namespace Caramel::Exception
+} // namespace Caramel::DataStructure

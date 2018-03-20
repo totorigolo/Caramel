@@ -24,19 +24,25 @@
 
 #pragma once
 
-#include <stdexcept>
+#include "../exceptions/NotImplementedException.h"
 
-namespace Caramel::Exceptions {
+#include <memory>
 
-class NotImplementedException: public std::runtime_error {
 
+namespace Caramel::DataStructure {
+
+class Context {
 public:
-    explicit NotImplementedException(const std::string &__arg) : runtime_error(__arg) {}
+    using Ptr = std::shared_ptr<Context>;
 
-    explicit NotImplementedException(const char * c) : runtime_error(c){}
+    static Ptr Create() {
+        return Ptr(new Context);
+    }
 
-    explicit NotImplementedException(const std::runtime_error & ex) : runtime_error(ex){}
-
+private:
+    Context() {
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
+    }
 };
 
-} // namespace Caramel::Exception
+} // namespace Caramel::DataStructure

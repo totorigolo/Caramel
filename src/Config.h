@@ -24,19 +24,13 @@
 
 #pragma once
 
-#include <stdexcept>
+#include <string>
 
-namespace Caramel::Exceptions {
 
-class NotImplementedException: public std::runtime_error {
-
-public:
-    explicit NotImplementedException(const std::string &__arg) : runtime_error(__arg) {}
-
-    explicit NotImplementedException(const char * c) : runtime_error(c){}
-
-    explicit NotImplementedException(const std::runtime_error & ex) : runtime_error(ex){}
-
+struct Config {
+    bool staticAnalysis = false;
+    bool optimize = false;
+    bool compile = false;
+    bool syntaxTreeDot = false;
+    std::string sourceFile;
 };
-
-} // namespace Caramel::Exception

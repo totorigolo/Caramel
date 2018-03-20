@@ -24,19 +24,16 @@
 
 #pragma once
 
+#include <iostream>
+#include <cassert>
 #include <stdexcept>
+#include <cstdint> // For types like int32_t
 
-namespace Caramel::Exceptions {
+#define caramel_unused __attribute__((unused))
 
-class NotImplementedException: public std::runtime_error {
+#define CARAMEL_UNUSED(var) (void)(var)
 
-public:
-    explicit NotImplementedException(const std::string &__arg) : runtime_error(__arg) {}
-
-    explicit NotImplementedException(const char * c) : runtime_error(c){}
-
-    explicit NotImplementedException(const std::runtime_error & ex) : runtime_error(ex){}
-
-};
-
-} // namespace Caramel::Exception
+#define Caramel_VERSION_MAJOR @VERSION_MAJOR@
+#define Caramel_VERSION_MINOR @VERSION_MINOR@
+#define Caramel_VERSION_PATCH @VERSION_PATCH@
+#define Caramel_VERSION "@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@"

@@ -24,19 +24,16 @@
 
 #pragma once
 
-#include <stdexcept>
+#include "Declaration.h"
 
-namespace Caramel::Exceptions {
 
-class NotImplementedException: public std::runtime_error {
+namespace Caramel::DataStructure {
 
+class VariableDeclaration : public Declaration {
 public:
-    explicit NotImplementedException(const std::string &__arg) : runtime_error(__arg) {}
-
-    explicit NotImplementedException(const char * c) : runtime_error(c){}
-
-    explicit NotImplementedException(const std::runtime_error & ex) : runtime_error(ex){}
-
+    VariableDeclaration() {
+        throw Caramel::Exceptions::NotImplementedException("Todo...");
+    }
 };
 
-} // namespace Caramel::Exception
+} // namespace Caramel::DataStructure

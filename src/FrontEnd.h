@@ -24,19 +24,22 @@
 
 #pragma once
 
-#include <stdexcept>
+#include "Config.h"
 
-namespace Caramel::Exceptions {
+#include "listeners/DotExportListener.h"
+#include "visitors/AbstractSyntaxTreeVisitor.h"
 
-class NotImplementedException: public std::runtime_error {
+#include "datastructure/Context.h"
 
-public:
-    explicit NotImplementedException(const std::string &__arg) : runtime_error(__arg) {}
+#include <CaramelLexer.h>
+#include <CaramelParser.h>
+#include <antlr4-runtime.h>
 
-    explicit NotImplementedException(const char * c) : runtime_error(c){}
+#include <memory>
 
-    explicit NotImplementedException(const std::runtime_error & ex) : runtime_error(ex){}
 
-};
+namespace Caramel {
 
-} // namespace Caramel::Exception
+DataStructure::Context::Ptr frontEnd(Config const &config);
+
+} // namespace Caramel
