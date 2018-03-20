@@ -117,6 +117,7 @@ namedArguments
 namedArgument
   : variableDeclaration
   | typeParameter
+  | arrayDeclarationVoid
   ;
 
 // Type & identifiers
