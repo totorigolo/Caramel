@@ -65,7 +65,7 @@ public:
     INNER_LOGGER(Trace, TRACE) // The Trace logger
 
 public:
-    explicit Logger(LoggerLevel level = LoggerLevel::INFO);
+    explicit Logger(LoggerLevel level = LoggerLevel::TRACE);
 
     // essayer de faire un operator<<, p'tet que ça peut faire le taf
     // pour afficher "[FATAL] blabla"

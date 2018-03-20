@@ -42,9 +42,7 @@ public:
         return Ptr(new Context);
     }
 
-    void foo() {
-
-    }
+    SymbolTable::Ptr getSymbolTable() const;
 
 private:
     Context();

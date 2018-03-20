@@ -23,6 +23,7 @@
 */
 
 #include "AbstractSyntaxTreeVisitor.h"
+#include "../Logger.h"
 #include "../datastructure/Constant.h"
 
 using namespace Caramel::Visitors;
@@ -36,7 +37,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatement(CaramelParser::Statement
 
     using namespace Caramel::Colors;
 
-    std::cout << "Visited statement: " << yellow << ctx->getText() << reset << std::endl;
+//    std::cout << "Visited statement: " << yellow << ctx->getText() << reset << std::endl;
 
     return visitChildren(ctx);
 }
@@ -49,6 +50,28 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::Numb
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
     return CaramelBaseVisitor::visitCharConstant(ctx);
+}
+
+antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) {
+    return ctx->getText();
+}
+
+antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitTypeParameter(CaramelParser::TypeParameterContext *ctx) {
+    std::string type = ctx->getText();
+    // TODO: Checker in the SymbolTable
+    return type;
+}
+
+antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) {
+    std::string typeName = visitTypeParameter(ctx->typeParameter());
+    for (auto validIdentifierCtx : ctx->validIdentifier()) {
+        std::string name = visitValidIdentifier(validIdentifierCtx);
+        currentContext()->getSymbolTable()->addVariable(name, typeName);
+        logger.trace() <<  "New variable declared " << name << " of type " << typeName;
+    }
+
+    exit(2);
+    return CaramelBaseVisitor::visitVariableDeclaration(ctx);
 }
 
 void AbstractSyntaxTreeVisitor::pushNewContext() {

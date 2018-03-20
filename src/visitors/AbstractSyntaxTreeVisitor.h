@@ -49,6 +49,12 @@ public:
 
     antlrcpp::Any visitStatement(CaramelParser::StatementContext *ctx) override;
 
+    antlrcpp::Any visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) override;
+
+    antlrcpp::Any visitTypeParameter(CaramelParser::TypeParameterContext *ctx) override;
+
+    antlrcpp::Any visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) override;
+
     antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
 
     antlrcpp::Any visitCharConstant(CaramelParser::CharConstantContext *ctx) override;

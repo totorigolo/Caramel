@@ -24,6 +24,14 @@
 
 #include "Context.h"
 
-Caramel::DataStructure::Context::Context() {
+namespace Caramel::DataStructure {
 
+Context::Context()
+        : mSymbolTable(SymbolTable::Create()) {
 }
+
+SymbolTable::Ptr Context::getSymbolTable() const {
+    return mSymbolTable;
+}
+
+} // namespace Caramel::DataStructure
