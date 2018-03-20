@@ -43,10 +43,6 @@ public:
         return Ptr(new SymbolTable);
     }
 
-    SymbolTable() {
-
-    }
-
     void addVariable(std::string const& name, caramel_unused antlrcpp::Any todo);
     void addType(std::string const& name, caramel_unused antlrcpp::Any todo);
     void addFunction(std::string const& name, caramel_unused antlrcpp::Any todo);
@@ -60,6 +56,8 @@ public:
     antlrcpp::Any getFunction(std::string const& name);
 
 private:
+
+    SymbolTable();
 
     std::map<std::string, antlrcpp::Any > variableMap;
     std::map<std::string, antlrcpp::Any > typeMap;

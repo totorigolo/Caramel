@@ -65,3 +65,7 @@ antlrcpp::Any Caramel::DataStructure::SymbolTable::getType(std::string const &na
 antlrcpp::Any Caramel::DataStructure::SymbolTable::getFunction(std::string const &name) {
     throw Caramel::Exceptions::NotImplementedException("SymbolTable::getFunction not currently supported !!");
 }
+
+Caramel::DataStructure::SymbolTable::SymbolTable() {
+
+}
