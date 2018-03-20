@@ -26,6 +26,7 @@
 
 #include "Common.h"
 #include "Config.h"
+#include "Logger.h"
 #include "Console.h"
 #include "FrontEnd.h"
 
@@ -38,8 +39,6 @@ Config parseArgs(int argc, const char *argv[]);
 
 int main(int argc, const char *argv[]) {
     Config config{parseArgs(argc, argv)};
-
-    std::cerr.tie(&std::cout);
 
     // Get the AST from the front-end
     auto astRoot{Caramel::frontEnd(config)};
@@ -103,9 +102,8 @@ Config parseArgs(int argc, const char *argv[]) {
 
     } catch (TCLAP::ArgException &e) {
         using namespace Caramel::Colors;
-        // TODO: use a Logger
-        std::cerr << bold << red << "Error during command line parsing: " << reset
-                  << e.error() << " for arg " << e.argId() << std::endl;
+        logger.fatal() << "Error during command line parsing: " << reset
+                       << e.error() << " for arg " << e.argId();
         exit(1);
     }
 }

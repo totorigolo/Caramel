@@ -24,6 +24,8 @@
 
 #include "FrontEnd.h"
 
+#include "Logger.h"
+
 
 namespace Caramel {
 
@@ -55,9 +57,8 @@ DataStructure::Context::Ptr frontEnd(Config const &config) {
     Visitors::AbstractSyntaxTreeVisitor abstractSyntaxTreeVisitor;
     auto visitorResult{abstractSyntaxTreeVisitor.visit(parser.r())};
     if (!visitorResult.is<DataStructure::Context::Ptr>()) {
-        // TODO: Use a Logger
         using namespace Caramel::Colors;
-        std::cerr << red << bold << "The visitor returned a bad root." << reset << std::endl;
+        logger.fatal() << "The visitor returned a bad root.";
         exit(1);
     }
 
