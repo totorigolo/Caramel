@@ -52,7 +52,7 @@ public:
 
     void addFunctionDeclaration(const PrimaryType::Ptr &primaryType, const std::string &name, std::vector<Symbol::Ptr> namedParameters, const Declaration::Ptr &declaration);
     void addFunctionDefinition(const PrimaryType::Ptr &primaryType, const std::string &name, std::vector<Symbol::Ptr> namedParameters, const Definition::Ptr &definition);
-    void addFunctionCall(const std::string &name, const std::vector<Symbol> &valueParameters, const Expression::Ptr &expression);
+    void addFunctionCall(const std::string &name, const std::vector<Symbol::Ptr> &valueParameters, const Expression::Ptr &expression);
 
     bool hasSymbol(std::string const& name);
     Symbol::Ptr getSymbol(std::string const& name);

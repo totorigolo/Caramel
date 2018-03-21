@@ -26,7 +26,7 @@
 
 Caramel::DataStructure::FunctionSymbol::FunctionSymbol(const std::string &mName,
                                                        const Caramel::DataStructure::PrimaryType::Ptr &mType) : Symbol(
-        mName, mType) {}
+        mName, mType), mParameters() {}
 
 Caramel::DataStructure::FunctionSymbol::~FunctionSymbol() = default;
 
@@ -40,6 +40,18 @@ void Caramel::DataStructure::FunctionSymbol::onDefinition(const Caramel::DataStr
 
 void Caramel::DataStructure::FunctionSymbol::onUsage(const Caramel::DataStructure::Statement::Ptr &expression) {
     Symbol::onUsage(expression);
+}
+
+std::vector<Caramel::DataStructure::Symbol::Ptr> Caramel::DataStructure::FunctionSymbol::getNamedParameters() const {
+    return mParameters;
+}
+
+void Caramel::DataStructure::FunctionSymbol::setParameters(
+        const std::vector<Caramel::DataStructure::Symbol::Ptr> &namedParameters) {
+    mParameters.clear();
+    for(const auto &parameter : namedParameters) {
+        mParameters.push_back(parameter);
+    }
 }
 
 

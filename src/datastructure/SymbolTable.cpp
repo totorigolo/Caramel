@@ -26,6 +26,8 @@
 #include "VariableSymbol.h"
 #include "FunctionSymbol.h"
 
+#include "../exceptions/SymbolAlreadyDeclaredException.h"
+
 namespace Caramel::DataStructure {
 
 SymbolTable::SymbolTable() {
@@ -65,7 +67,8 @@ void SymbolTable::addVariableDeclaration(const PrimaryType::Ptr &primaryType, co
         symboleMap[name] = VariableSymbol::Create(name, primaryType);
         symboleMap[name]->addDeclaration(declaration);
     } else {
-        // Todo : throw SymbolAlreadyDeclaredException
+        using namespace Caramel::Exceptions;
+        throw SymbolAlreadyDeclaredException("A symbol named '" + name + "' is already declared");
     }
 }
 
@@ -108,7 +111,8 @@ void SymbolTable::addFunctionDeclaration(const PrimaryType::Ptr &primaryType, co
         symboleMap[name] = FunctionSymbol::Create(name, primaryType);
         symboleMap[name]->addDeclaration(declaration);
     } else {
-        // Todo : throw SymbolAlreadyDeclaredException
+        using namespace Caramel::Exceptions;
+        throw SymbolAlreadyDeclaredException("A symbol named '" + name + "' is already declared");
     }
 
 }
@@ -116,6 +120,7 @@ void SymbolTable::addFunctionDeclaration(const PrimaryType::Ptr &primaryType, co
 void SymbolTable::addFunctionDefinition(const PrimaryType::Ptr &primaryType, const std::string &name,
                                         std::vector<Symbol::Ptr> namedParameters, const Definition::Ptr &definition) {
 
+    // NotDeclared and not defined
     if(isNotDeclared(name)) {
         symboleMap[name] = FunctionSymbol::Create(name, primaryType);
         symboleMap[name]->addDefinition(definition);
@@ -128,12 +133,12 @@ void SymbolTable::addFunctionDefinition(const PrimaryType::Ptr &primaryType, con
 
         // Declared and defined
     } else {
-        // Todo : throws SymbolAlreadyDefinedException
+
     }
 
 }
 
-void SymbolTable::addFunctionCall(const std::string &name, const std::vector<Symbol> &valueParameters,
+void SymbolTable::addFunctionCall(const std::string &name, const std::vector<Symbol::Ptr> &valueParameters,
                                   const Expression::Ptr &expression) {
 
     if(isDefined(name)) {
