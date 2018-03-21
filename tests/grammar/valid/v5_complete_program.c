@@ -6,7 +6,7 @@
  * comment
  */
 
-int main(int, char) {
+int32_t main(int32_t, char, char) {
     int32_t i;
     int64_t j;
     ;
@@ -39,7 +39,7 @@ int main(int, char) {
 
     void f() {}
 
-    int32_t func(int a, int) {}
+    int32_t func(int32_t a, int32_t) {}
 
 
 
@@ -47,14 +47,14 @@ int main(int, char) {
 
     int32_t mult = 1 * 2 / 3 % 5;
 
-    int tab[] = {1,2};
-    int tab[] = {};
-    int tab   [  ] = { 1 ,2  }   ;
-    int tab[14];
-    int tab[14]={};
-    int tab[3] = {1,2,3};
-    int tab[ 0 ] = { a= 6,1 > 2,f(g(1,2))};
-    int tab[5]
+    int32_t tab[] = {1,2};
+    int32_t tab[] = {};
+    int32_t tab   [  ] = { 1 ,2  }   ;
+    int32_t tab[14];
+    int32_t tab[14]={};
+    int32_t tab[3] = {1,2,3};
+    int32_t tab[ 0 ] = { a= 6,1 > 2,f(g(1,2))};
+    int32_t tab[5]
     =
             {
                     1

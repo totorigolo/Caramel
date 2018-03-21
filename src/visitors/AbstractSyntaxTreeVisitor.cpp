@@ -34,11 +34,19 @@
 using namespace Caramel::Visitors;
 
 AbstractSyntaxTreeVisitor::AbstractSyntaxTreeVisitor(std::string const &sourceFileName)
-        : mSourceFileUtil(sourceFileName) {
+        : mSourceFileUtil{sourceFileName} {
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
     pushNewContext();
+
+    SymbolTable::Ptr symbolTable{currentContext()->getSymbolTable()};
+    symbolTable->addType(Char::Create(), "char", nullptr);
+    symbolTable->addType(Int8_t::Create(), "int8_t", nullptr);
+    symbolTable->addType(Int16_t::Create(), "int16_t", nullptr);
+    symbolTable->addType(Int32_t::Create(), "int32_t", nullptr);
+    symbolTable->addType(Int64_t::Create(), "int64_t", nullptr);
+
     return visitChildren(ctx).as<Context::Ptr>();
 }
 
@@ -50,7 +58,9 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::Statemen
         antlrcpp::Any r = visitStatement(statement);
         if (r.is<Statement::Ptr>()) {
             statements.push_back(r.as<Statement::Ptr>());
+            logger.debug() << "Statement ptr";
         } else if (r.is<std::vector<Statement::Ptr>>()) {
+            logger.debug() << "Vector<Statement>";
             auto statementVector = r.as<std::vector<Statement::Ptr>>();
             std::copy(statementVector.begin(), statementVector.end(), std::back_inserter(statements));
         } else {
@@ -76,20 +86,8 @@ antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitValidIdentifier
 
 antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitTypeParameter(CaramelParser::TypeParameterContext *ctx) {
     std::string type = ctx->getText();
-    // TODO: Checker in the SymbolTable
-
-    if (type == "int8_t") {
-        return Int8_t::Create();
-    } else if (type == "int16_t") {
-        return Int16_t::Create();
-    } else if (type == "int32_t") {
-        return Int32_t::Create();
-    } else if (type == "int64_t") {
-        return Int64_t::Create();
-    } else {
-        // TODO: Throw an exception
-        return nullptr;
-    }
+    logger.trace() << "type parameter: " << type;
+    return currentContext()->getSymbolTable()->getSymbol(type);
 }
 
 antlrcpp::Any
@@ -112,26 +110,30 @@ Caramel::Visitors::AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelPa
 
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) {
-    PrimaryType::Ptr returnType = visitTypeParameter(ctx->typeParameter());
+    PrimaryType::Ptr returnType = visitTypeParameter(ctx->typeParameter()).as<Symbol::Ptr>()->getType();
     std::string name = visitValidIdentifier(ctx->validIdentifier());
     std::vector<Symbol::Ptr> params = visitNamedArguments(ctx->namedArguments());
-    currentContext()->getSymbolTable()->addFunctionDeclaration(returnType, name, params, nullptr); // FIXME: Occurrence
+    // currentContext()->getSymbolTable()->addFunctionDeclaration(returnType, name, params, nullptr); // FIXME: Occurrence
     logger.trace() <<  "New function declared " << name << " with return type " << returnType;
     for (Symbol::Ptr param: params) {
         logger.trace() << "\nparam : int" << param->getType()->getMemoryLength();
     }
-    return (FunctionSymbol::Create(name,returnType));
+    return Statement::Create();
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArguments(CaramelParser::NamedArgumentsContext *ctx) {
     std::vector<Symbol::Ptr> params;
+    logger.debug() << "visit named arguments: " << ctx->getText();
     for (auto argument : ctx->namedArgument()) {
-        params.push_back(visitNamedArgument(argument).as<Symbol::Ptr>());
+        if(nullptr != visitNamedArgument(argument).as<Symbol::Ptr>()) {
+            params.push_back(visitNamedArgument(argument).as<Symbol::Ptr>());
+        }
     }
     return params;
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArgument(CaramelParser::NamedArgumentContext *ctx) {
+    logger.trace() << "visit named argument: " << ctx->getText();
     if (nullptr != ctx->variableDeclaration()) {
         std::vector<antlrcpp::Any> variables = visitVariableDeclaration(ctx->variableDeclaration());
         return variables.at(0).as<Symbol::Ptr>();

@@ -34,6 +34,8 @@ public:
     using Ptr = std::shared_ptr<PrimaryType>;
 
     virtual size_t getMemoryLength() const = 0;
+
+
 };
 
 class Int8_t : public PrimaryType {
@@ -46,6 +48,8 @@ public:
         return 8;
     }
 };
+
+class Char : public Int8_t {};
 
 class Int16_t : public PrimaryType {
 public:

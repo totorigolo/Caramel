@@ -44,8 +44,6 @@ public:
         return Ptr(new SymbolTable);
     }
 
-    // void addSymbol(std::string const& name, Symbol::Ptr symbol);
-
     void addVariableDeclaration(const PrimaryType::Ptr &primaryType, const std::string &name, const Declaration::Ptr &declaration);
     void addVariableDefinition(const PrimaryType::Ptr &primaryType, const std::string &name, const Definition::Ptr &definition);
     void addVariableUsage(const std::string &name, const Expression::Ptr &expression);
@@ -54,23 +52,22 @@ public:
     void addFunctionDefinition(const PrimaryType::Ptr &returnType, const std::string &name, std::vector<Symbol::Ptr> namedParameters, const Definition::Ptr &definition);
     void addFunctionCall(const std::string &name, const std::vector<Symbol::Ptr> &valueParameters, const Expression::Ptr &expression);
 
+    void addType(const PrimaryType::Ptr &primaryType, const std::string &name, const Definition::Ptr &definition);
+
     bool hasSymbol(std::string const& name);
     Symbol::Ptr getSymbol(std::string const& name);
 
 private:
-
-    std::map<std::string, Symbol::Ptr> symboleMap;
+    std::map<std::string, Symbol::Ptr> mSymbolMap;
 
 private:
-
-    SymbolTable();
+    SymbolTable() = default;
 
     bool isDeclared(const std::string &name);
     bool isDefined(const std::string &name);
 
     inline bool isNotDeclared(const std::string &name) { return !isDeclared(name); }
     inline bool isNotDefined(const std::string &name) { return !isDefined(name); }
-
 };
 
 } // namespace Caramel::DataStructure
