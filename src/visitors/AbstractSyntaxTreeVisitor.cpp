@@ -67,7 +67,9 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::Numb
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
-    return CaramelBaseVisitor::visitCharConstant(ctx);
+    char value = ctx->getText().at(0);
+
+    return Constant::Create(value);
 }
 
 antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) {
@@ -143,6 +145,10 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArgument(CaramelParser::Named
 
     // TODO: Throw an error
     return nullptr;
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockContext *ctx) {
+    return CaramelBaseVisitor::visitIfBlock(ctx);
 }
 
 void AbstractSyntaxTreeVisitor::pushNewContext() {

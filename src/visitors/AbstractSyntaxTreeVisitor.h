@@ -69,6 +69,8 @@ public:
 
     antlrcpp::Any visitNamedArgument(CaramelParser::NamedArgumentContext *ctx) override ;
 
+    antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override ;
+
 
 private:
     void pushNewContext();
