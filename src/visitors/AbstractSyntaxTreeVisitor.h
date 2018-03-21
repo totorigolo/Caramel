@@ -47,7 +47,7 @@ class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
 public:
     antlrcpp::Any visitR(CaramelParser::RContext *ctx) override;
 
-    antlrcpp::Any visitStatement(CaramelParser::StatementContext *ctx) override;
+    antlrcpp::Any visitStatements(CaramelParser::StatementsContext *ctx) override;
 
     antlrcpp::Any visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) override;
 

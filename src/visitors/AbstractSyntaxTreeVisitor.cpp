@@ -33,16 +33,22 @@ using namespace Caramel::Visitors;
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
     pushNewContext();
-    return visitChildren(ctx);
+    return visitChildren(ctx).as<Context::Ptr>();
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatement(CaramelParser::StatementContext *ctx) {
-
-    using namespace Caramel::Colors;
-
-//    std::cout << "Visited statement: " << yellow << ctx->getText() << reset << std::endl;
-
-    return visitChildren(ctx);
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::StatementsContext *ctx) {
+    std::vector<Statement::Ptr> statements;
+    for (auto statement : ctx->statement()) {
+        antlrcpp::Any r = visitStatement(statement);
+        if (r.is<Statement::Ptr>()) {
+            statements.push_back(r.as<Statement::Ptr>());
+        } else {
+            // A vector ¯\_(ツ)_/¯
+            auto statementVector = r.as<std::vector<Statement::Ptr>>();
+            std::copy(statementVector.begin(), statementVector.end(), std::back_inserter(statements));
+        }
+    }
+    return statements;
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
@@ -64,16 +70,16 @@ antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitTypeParameter(C
     // TODO: Checker in the SymbolTable
 
     if (type == "int8_t") {
-        return (Int8_t::Create());
+        return Int8_t::Create();
     } else if (type == "int16_t") {
-        return (Int16_t::Create());
+        return Int16_t::Create();
     } else if (type == "int32_t") {
-        return (Int32_t::Create());
+        return Int32_t::Create();
     } else if (type == "int64_t") {
-        return (Int64_t::Create());
+        return Int64_t::Create();
     } else {
-        return (Int8_t::Create());
-        //TODO: Trouver le return
+        // TODO: Throw an exception
+        return nullptr;
     }
 }
 
@@ -105,7 +111,7 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArguments(CaramelParser::NamedArgumentsContext *ctx) {
     std::vector<Symbol::Ptr> params;
-    for (auto argument : ctx->namedArgument()){
+    for (auto argument : ctx->namedArgument()) {
         params.push_back(visitNamedArgument(argument).as<Symbol::Ptr>());
     }
     return params;
@@ -124,8 +130,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArgument(CaramelParser::Named
     // TODO: Throw an error
     return nullptr;
 }
-
-
 
 void AbstractSyntaxTreeVisitor::pushNewContext() {
     mContextStack.push(Context::Create());
