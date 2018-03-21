@@ -50,8 +50,8 @@ public:
     void addVariableDefinition(const PrimaryType::Ptr &primaryType, const std::string &name, const Definition::Ptr &definition);
     void addVariableUsage(const std::string &name, const Expression::Ptr &expression);
 
-    void addFunctionDeclaration(const PrimaryType::Ptr &primaryType, const std::string &name, std::vector<Symbol::Ptr> namedParameters, const Declaration::Ptr &declaration);
-    void addFunctionDefinition(const PrimaryType::Ptr &primaryType, const std::string &name, std::vector<Symbol::Ptr> namedParameters, const Definition::Ptr &definition);
+    void addFunctionDeclaration(const PrimaryType::Ptr &returnType, const std::string &name, std::vector<Symbol::Ptr> namedParameters, const Declaration::Ptr &declaration);
+    void addFunctionDefinition(const PrimaryType::Ptr &returnType, const std::string &name, std::vector<Symbol::Ptr> namedParameters, const Definition::Ptr &definition);
     void addFunctionCall(const std::string &name, const std::vector<Symbol::Ptr> &valueParameters, const Expression::Ptr &expression);
 
     bool hasSymbol(std::string const& name);

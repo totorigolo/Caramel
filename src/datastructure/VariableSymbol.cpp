@@ -24,11 +24,11 @@
 
 #include "VariableSymbol.h"
 
-Caramel::DataStructure::VariableSymbol::VariableSymbol(const std::string &mName,
-                                                       const Caramel::DataStructure::PrimaryType::Ptr &mType) : Symbol(
-        mName, mType) {}
 
-Caramel::DataStructure::VariableSymbol::~VariableSymbol() = default;
+Caramel::DataStructure::VariableSymbol::VariableSymbol(const std::string &mName,
+                                                       const Caramel::DataStructure::PrimaryType::Ptr &mType)
+        : Symbol(mName, mType, SymbolType::VariableSymbol) {
+}
 
 void Caramel::DataStructure::VariableSymbol::onDeclaration(const Caramel::DataStructure::Statement::Ptr &declaration) {
     Symbol::onDeclaration(declaration);

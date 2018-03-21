@@ -24,11 +24,12 @@
 
 #include "FunctionSymbol.h"
 
-Caramel::DataStructure::FunctionSymbol::FunctionSymbol(const std::string &mName,
-                                                       const Caramel::DataStructure::PrimaryType::Ptr &mType) : Symbol(
-        mName, mType), mParameters() {}
 
-Caramel::DataStructure::FunctionSymbol::~FunctionSymbol() = default;
+Caramel::DataStructure::FunctionSymbol::FunctionSymbol(const std::string &mName,
+                                                       const Caramel::DataStructure::PrimaryType::Ptr &mType)
+        : Symbol(mName, mType, SymbolType::FunctionSymbol),
+          mParameters() {
+}
 
 void Caramel::DataStructure::FunctionSymbol::onDeclaration(const Caramel::DataStructure::Statement::Ptr &declaration) {
     Symbol::onDeclaration(declaration);

@@ -62,26 +62,25 @@ antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitTypeParameter(C
     std::string type = ctx->getText();
     // TODO: Checker in the SymbolTable
 
-    if (type=="int8_t") {
+    if (type == "int8_t") {
         return (Int8_t::Create());
-    } else if (type=="int16_t") {
+    } else if (type == "int16_t") {
         return (Int16_t::Create());
-    } else if (type=="int32_t") {
+    } else if (type == "int32_t") {
         return (Int32_t::Create());
-    } else if (type=="int64_t") {
+    } else if (type == "int64_t") {
         return (Int64_t::Create());
     } else {
         return (Int8_t::Create());
         //TODO: Trouver le return
     }
-
 }
 
 antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) {
-    PrimaryType typeName = visitTypeParameter(ctx->typeParameter());
+    PrimaryType::Ptr typeName = visitTypeParameter(ctx->typeParameter());
     for (auto validIdentifierCtx : ctx->validIdentifier()) {
         std::string name = visitValidIdentifier(validIdentifierCtx);
-        currentContext()->getSymbolTable()->(name, typeName);
+        currentContext()->getSymbolTable()->addVariableDeclaration(typeName, name, nullptr); // FIXME: Occurrence
         logger.trace() <<  "New variable declared " << name << " of type " << typeName;
     }
     // TODO: Return SVariable
@@ -92,9 +91,10 @@ antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitVariableDeclara
 
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) {
-    std::string returnType = visitTypeParameter(ctx->typeParameter());
-    std::string name =  visitValidIdentifier(ctx->validIdentifier());
-    currentContext()->getSymbolTable()->addFunction(name, returnType);
+    PrimaryType::Ptr returnType = visitTypeParameter(ctx->typeParameter());
+    std::string name = visitValidIdentifier(ctx->validIdentifier());
+    std::vector<Symbol::Ptr> params = visitNamedArguments(ctx->namedArguments());
+    currentContext()->getSymbolTable()->addFunctionDeclaration(returnType, name, params, nullptr); // FIXME: Occurrence
     logger.trace() <<  "New function declared " << name << " with return type " << returnType;
     visitNamedArguments(ctx->namedArguments());
 
@@ -103,25 +103,24 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArguments(CaramelParser::NamedArgumentsContext *ctx) {
+    std::vector<Symbol::Ptr> params;
     for (auto argument : ctx->namedArgument()){
-        visitNamedArgument(argument);
+        params.push_back(visitNamedArgument(argument).as<Symbol::Ptr>());
     }
-
-    // TODO: Return List de Symbol
-    return CaramelBaseVisitor::visitNamedArguments(ctx);
+    return params;
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArgument(CaramelParser::NamedArgumentContext *ctx) {
-    if (ctx->variableDeclaration() != nullptr) {
-        visitVariableDeclaration(ctx->variableDeclaration());
-    } else if (ctx->arrayDeclarationVoid() != nullptr){
-        visitArrayDeclarationVoid(ctx->arrayDeclarationVoid());
-    } else if (ctx->typeParameter()!= nullptr) {
-        visitTypeParameter(ctx->typeParameter());
+    if (nullptr != ctx->variableDeclaration()) {
+        return visitVariableDeclaration(ctx->variableDeclaration()).as<Symbol::Ptr>();
+    } else if (nullptr != ctx->arrayDeclarationVoid()) {
+        return visitArrayDeclarationVoid(ctx->arrayDeclarationVoid()).as<Symbol::Ptr>();
+    } else if (nullptr != ctx->typeParameter()) {
+        return visitTypeParameter(ctx->typeParameter()).as<Symbol::Ptr>();
     }
 
-    // TODO: Return Symbol
-    return CaramelBaseVisitor::visitNamedArgument(ctx);
+    // TODO: Throw an error
+    return nullptr;
 }
 
 

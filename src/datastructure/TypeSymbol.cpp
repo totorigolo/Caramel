@@ -24,11 +24,11 @@
 
 #include "TypeSymbol.h"
 
-Caramel::DataStructure::TypeSymbol::TypeSymbol(const std::string &mName,
-                                               const Caramel::DataStructure::PrimaryType::Ptr &mType) : Symbol(mName,
-                                                                                                               mType) {}
 
-Caramel::DataStructure::TypeSymbol::~TypeSymbol() = default;
+Caramel::DataStructure::TypeSymbol::TypeSymbol(const std::string &mName,
+                                               const Caramel::DataStructure::PrimaryType::Ptr &mType)
+        : Symbol(mName, mType, SymbolType::TypeSymbol) {
+}
 
 void Caramel::DataStructure::TypeSymbol::onDeclaration(const Caramel::DataStructure::Statement::Ptr &declaration) {
     Symbol::onDeclaration(declaration);

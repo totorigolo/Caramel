@@ -33,17 +33,22 @@
 #include <vector>
 #include <memory>
 
+
 namespace Caramel::DataStructure {
 
+enum class SymbolType {
+    FunctionSymbol,
+    VariableSymbol,
+    TypeSymbol
+};
+
 class Symbol {
-
 public:
-
     using Ptr = std::shared_ptr<Symbol>;
 
-    virtual ~Symbol();
+    virtual ~Symbol() = default;
 
-    std::vector<Statement::Ptr> getOccurences();
+    std::vector<Statement::Ptr> getOccurrences();
 
     bool isDeclared();
     bool isDefined();
@@ -54,8 +59,10 @@ public:
     void addDefinition(const Definition::Ptr &definition);
     void addUsage(const Expression::Ptr &expression);
 
+    SymbolType getSymbolType() const;
+
 protected:
-    Symbol(const std::string &mName, const PrimaryType::Ptr &mType);
+    Symbol(std::string mName, PrimaryType::Ptr mType, SymbolType symbolType);
 
     virtual void onDeclaration(const Declaration::Ptr &declaration);
     virtual void onDefinition(const Definition::Ptr &definition);
@@ -64,13 +71,12 @@ protected:
 protected:
     bool mIsDeclared;
     bool mIsDefined;
-    std::vector<Statement::Ptr> mOccurences;
-
+    std::vector<Statement::Ptr> mOccurrences;
 
 private:
     std::string mName;
     PrimaryType::Ptr mType;
-
+    SymbolType mSymbolType;
 };
 
 } // namespace Caramel::DataStructure

@@ -26,15 +26,20 @@
 
 #include <utility>
 
-std::vector<Caramel::DataStructure::Statement::Ptr> Caramel::DataStructure::Symbol::getOccurences() {
-    return mOccurences;
+
+Caramel::DataStructure::Symbol::Symbol(std::string mName,
+                                       Caramel::DataStructure::PrimaryType::Ptr mType,
+                                       SymbolType symbolType)
+        : mIsDeclared{false},
+          mIsDefined{false},
+          mName{std::move(mName)},
+          mType{std::move(mType)},
+          mSymbolType{symbolType} {
 }
 
-Caramel::DataStructure::Symbol::Symbol(const std::string &mName,
-                                       const Caramel::DataStructure::PrimaryType::Ptr &mType)
-        : mIsDeclared(false), mIsDefined(false), mName(mName), mType(std::move(mType)), mOccurences() {}
-
-Caramel::DataStructure::Symbol::~Symbol() = default;
+std::vector<Caramel::DataStructure::Statement::Ptr> Caramel::DataStructure::Symbol::getOccurrences() {
+    return mOccurrences;
+}
 
 bool Caramel::DataStructure::Symbol::isDeclared() {
     return mIsDeclared;
@@ -47,19 +52,23 @@ bool Caramel::DataStructure::Symbol::isDefined() {
 void Caramel::DataStructure::Symbol::addDeclaration(const Caramel::DataStructure::Declaration::Ptr &declaration) {
     onDeclaration(declaration);
     mIsDeclared = true;
-    mOccurences.push_back(declaration);
+    mOccurrences.push_back(declaration);
 }
 
 void Caramel::DataStructure::Symbol::addDefinition(const Caramel::DataStructure::Statement::Ptr &definition) {
     onDefinition(definition);
     mIsDeclared = true;
     mIsDefined = true;
-    mOccurences.push_back(definition);
+    mOccurrences.push_back(definition);
 }
 
 void Caramel::DataStructure::Symbol::addUsage(const Caramel::DataStructure::Statement::Ptr &expression) {
     onUsage(expression);
-    mOccurences.push_back(expression);
+    mOccurrences.push_back(expression);
+}
+
+Caramel::DataStructure::SymbolType Caramel::DataStructure::Symbol::getSymbolType() const {
+    return mSymbolType;
 }
 
 void Caramel::DataStructure::Symbol::onDeclaration(const Caramel::DataStructure::Statement::Ptr &declaration) {}

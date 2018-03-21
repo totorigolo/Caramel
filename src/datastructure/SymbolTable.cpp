@@ -103,12 +103,12 @@ void SymbolTable::addVariableUsage(const std::string &name, const Expression::Pt
 
 }
 
-void SymbolTable::addFunctionDeclaration(const PrimaryType::Ptr &primaryType, const std::string &name,
+void SymbolTable::addFunctionDeclaration(const PrimaryType::Ptr &returnType, const std::string &name,
                                          std::vector<Symbol::Ptr> namedParameters,
                                          const Declaration::Ptr &declaration) {
 
     if(isNotDeclared(name)) {
-        symboleMap[name] = FunctionSymbol::Create(name, primaryType);
+        symboleMap[name] = FunctionSymbol::Create(name, returnType);
         symboleMap[name]->addDeclaration(declaration);
     } else {
         using namespace Caramel::Exceptions;
@@ -117,12 +117,12 @@ void SymbolTable::addFunctionDeclaration(const PrimaryType::Ptr &primaryType, co
 
 }
 
-void SymbolTable::addFunctionDefinition(const PrimaryType::Ptr &primaryType, const std::string &name,
+void SymbolTable::addFunctionDefinition(const PrimaryType::Ptr &returnType, const std::string &name,
                                         std::vector<Symbol::Ptr> namedParameters, const Definition::Ptr &definition) {
 
     // NotDeclared and not defined
     if(isNotDeclared(name)) {
-        symboleMap[name] = FunctionSymbol::Create(name, primaryType);
+        symboleMap[name] = FunctionSymbol::Create(name, returnType);
         symboleMap[name]->addDefinition(definition);
 
         // Declared but not defined

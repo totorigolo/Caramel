@@ -27,22 +27,22 @@
 #include "Symbol.h"
 #include <vector>
 
+
 namespace Caramel::DataStructure {
 
 class FunctionSymbol : public Symbol {
 public:
-
     static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
         return Ptr(new FunctionSymbol(mName, mType));
     }
 
+public:
     FunctionSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
-    ~FunctionSymbol() override;
+
+    virtual ~FunctionSymbol() override = default;
 
     void onDeclaration(const Declaration::Ptr &declaration) override;
-
     void onDefinition(const Definition::Ptr &definition) override;
-
     void onUsage(const Expression::Ptr &expression) override;
 
     std::vector<Symbol::Ptr> getNamedParameters() const;

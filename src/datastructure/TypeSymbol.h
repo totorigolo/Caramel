@@ -31,21 +31,18 @@ namespace Caramel::DataStructure {
 
 class TypeSymbol : public Symbol {
 public:
-
     static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
         return Ptr(new TypeSymbol(mName, mType));
     }
 
+public:
     TypeSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
 
-    ~TypeSymbol() override;
+    virtual ~TypeSymbol() override = default;
 
     void onDeclaration(const Declaration::Ptr &declaration) override;
-
     void onDefinition(const Definition::Ptr &definition) override;
-
     void onUsage(const Expression::Ptr &expression) override;
-
 };
 
 } // namespace Caramel::DataStructure
