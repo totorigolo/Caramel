@@ -45,7 +45,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatement(CaramelParser::Statement
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
-    int value = stoi(ctx->getText());
+    long long value = std::stoll(ctx->getText());
 
     return Constant::Create(value);
 }
