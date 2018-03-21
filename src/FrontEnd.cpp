@@ -59,7 +59,7 @@ DataStructure::Context::Ptr frontEnd(Config const &config) {
     }
 
     // Create the visitor which will generate the AST
-    Visitors::AbstractSyntaxTreeVisitor abstractSyntaxTreeVisitor;
+    Visitors::AbstractSyntaxTreeVisitor abstractSyntaxTreeVisitor(config.sourceFile);
     auto visitorResult{abstractSyntaxTreeVisitor.visit(parser.r())};
     if (!visitorResult.is<DataStructure::Context::Ptr>()) {
         using namespace Caramel::Colors;

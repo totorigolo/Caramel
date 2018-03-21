@@ -25,15 +25,26 @@
 #pragma once
 
 #include "Declaration.h"
+#include "TypeSymbol.h"
+#include "VariableSymbol.h"
 
+#include <memory>
 
 namespace Caramel::DataStructure {
 
 class VariableDeclaration : public Declaration {
 public:
-    VariableDeclaration() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
+    static Ptr Create(VariableSymbol::WeakPtr symbol) {
+        return Ptr(new VariableDeclaration(std::forward<VariableSymbol::WeakPtr>(symbol)));
     }
+
+private:
+    explicit VariableDeclaration(VariableSymbol::WeakPtr symbol)
+        : mSymbol(std::move(symbol)) {
+    }
+
+private:
+    VariableSymbol::WeakPtr mSymbol;
 };
 
 } // namespace Caramel::DataStructure

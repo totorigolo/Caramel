@@ -45,6 +45,7 @@ enum class SymbolType {
 class Symbol {
 public:
     using Ptr = std::shared_ptr<Symbol>;
+    using WeakPtr = std::weak_ptr<Symbol>;
 
     virtual ~Symbol() = default;
 

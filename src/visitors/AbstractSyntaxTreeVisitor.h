@@ -26,6 +26,8 @@
 
 #include "../Console.h"
 #include "../datastructure/Context.h"
+#include "../util/SourceFileUtil.h"
+
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
@@ -45,6 +47,8 @@ namespace Caramel::Visitors {
 class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
 
 public:
+    explicit AbstractSyntaxTreeVisitor(std::string const& sourceFileName);
+
     antlrcpp::Any visitR(CaramelParser::RContext *ctx) override;
 
     antlrcpp::Any visitStatements(CaramelParser::StatementsContext *ctx) override;
@@ -73,7 +77,7 @@ private:
 
 private:
     std::stack<Context::Ptr> mContextStack;
-
+    SourceFileUtil mSourceFileUtil;
 };
 
 } // namespace Caramel::Visitors

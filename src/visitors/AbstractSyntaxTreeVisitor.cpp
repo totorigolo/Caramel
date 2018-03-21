@@ -28,8 +28,14 @@
 #include "../datastructure/PrimaryType.h"
 #include "../datastructure/VariableSymbol.h"
 #include "../datastructure/FunctionSymbol.h"
+#include "../datastructure/VariableDeclaration.h"
+
 
 using namespace Caramel::Visitors;
+
+AbstractSyntaxTreeVisitor::AbstractSyntaxTreeVisitor(std::string const &sourceFileName)
+        : mSourceFileUtil(sourceFileName) {
+}
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
     pushNewContext();
@@ -39,13 +45,16 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::StatementsContext *ctx) {
     std::vector<Statement::Ptr> statements;
     for (auto statement : ctx->statement()) {
+        logger.debug() << "Visiting: " << mSourceFileUtil.getLine(statement->start->getLine());
+
         antlrcpp::Any r = visitStatement(statement);
         if (r.is<Statement::Ptr>()) {
             statements.push_back(r.as<Statement::Ptr>());
-        } else {
-            // A vector ¯\_(ツ)_/¯
+        } else if (r.is<std::vector<Statement::Ptr>>()) {
             auto statementVector = r.as<std::vector<Statement::Ptr>>();
             std::copy(statementVector.begin(), statementVector.end(), std::back_inserter(statements));
+        } else {
+            logger.fatal() << "Skipping unhandled statement.";
         }
     }
     return statements;
@@ -83,18 +92,23 @@ antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitTypeParameter(C
     }
 }
 
-antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) {
+antlrcpp::Any
+Caramel::Visitors::AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) {
     PrimaryType::Ptr typeName = visitTypeParameter(ctx->typeParameter());
-    std::vector<VariableSymbol::Ptr> variables;
+    std::vector<Statement::Ptr> variables;
     for (auto validIdentifierCtx : ctx->validIdentifier()) {
         std::string name = visitValidIdentifier(validIdentifierCtx);
-        currentContext()->getSymbolTable()->addVariableDeclaration(typeName, name, nullptr); // FIXME: Occurrence
-        variables.push_back(VariableSymbol::Create(name, typeName));
+        auto variableSymbol{VariableSymbol::Create(name, typeName)};
+
+        auto variableDeclaration{VariableDeclaration::Create(variableSymbol)};
+        variables.push_back(variableDeclaration);
+
+        currentContext()->getSymbolTable()->addVariableDeclaration(typeName, name, variableDeclaration);
+
         logger.trace() << "New variable declared " << name << " of type " << typeName;
     }
-    return variables ;
+    return variables;
 }
-
 
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) {
@@ -138,6 +152,3 @@ void AbstractSyntaxTreeVisitor::pushNewContext() {
 Context::Ptr AbstractSyntaxTreeVisitor::currentContext() {
     return mContextStack.top();
 }
-
-
-
