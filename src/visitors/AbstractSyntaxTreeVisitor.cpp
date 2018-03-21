@@ -80,7 +80,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::Numb
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
     char value = ctx->getText().at(0);
 
-    return Constant::Create(value);
+    return Constant::Create(value, ctx->start);
 }
 
 antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) {
@@ -95,18 +95,18 @@ antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitTypeParameter(C
 
 antlrcpp::Any
 Caramel::Visitors::AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) {
-    PrimaryType::Ptr typeName = visitTypeParameter(ctx->typeParameter());
+    auto typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
     std::vector<Statement::Ptr> variables;
     for (auto validIdentifierCtx : ctx->validIdentifier()) {
         std::string name = visitValidIdentifier(validIdentifierCtx);
-        auto variableSymbol{VariableSymbol::Create(name, typeName)};
+        auto variableSymbol{VariableSymbol::Create(name, typeSymbol)};
 
         auto variableDeclaration{VariableDeclaration::Create(variableSymbol, validIdentifierCtx->start)};
         variables.push_back(variableDeclaration);
 
-        currentContext()->getSymbolTable()->addVariableDeclaration(typeName, name, variableDeclaration);
+        currentContext()->getSymbolTable()->addVariableDeclaration(typeSymbol->getType(), name, variableDeclaration);
 
-        logger.trace() << "New variable declared " << name << " of type " << typeName;
+        logger.trace() << "New variable declared " << name << " of type " << typeSymbol;
     }
     return variables;
 }
@@ -118,8 +118,8 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
     std::vector<Symbol::Ptr> params = visitNamedArguments(ctx->namedArguments());
     // currentContext()->getSymbolTable()->addFunctionDeclaration(returnType, name, params, nullptr); // FIXME: Occurrence
     logger.trace() <<  "New function declared " << name << " with return type " << returnType;
-    for (Symbol::Ptr param : params) {
-        logger.trace() << "\nparam : int" << param->getType()->getMemoryLength();
+    for (Symbol::Ptr const& param : params) {
+        logger.trace() << "param : int" << param->getType()->getMemoryLength();
     }
     return FunctionDeclaration::Create(FunctionSymbol::Create(name, returnType), ctx->start);
 }
@@ -167,6 +167,5 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationVoid(CaramelParser
     std::string name = visitValidIdentifier(ctx->validIdentifier());
     //currentContext()->getSymbolTable() // FIXME: Occurrence
 
-
-    return antlrcpp::Any ;
+    return {};
 }
