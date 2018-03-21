@@ -67,9 +67,6 @@ public:
 public:
     explicit Logger(LoggerLevel level = LoggerLevel::TRACE);
 
-    // essayer de faire un operator<<, p'tet que ça peut faire le taf
-    // pour afficher "[FATAL] blabla"
-
     LoggerLevel getLevel() const;
 
     Fatal fatal();
