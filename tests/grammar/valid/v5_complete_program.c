@@ -6,7 +6,7 @@
  * comment
  */
 
-int32_t main(int32_t, char, char) {
+int32_t main(int32_t, int32_t[]) {
     int32_t i;
     int64_t j;
     ;
@@ -41,6 +41,7 @@ int32_t main(int32_t, char, char) {
 
     int32_t func(int32_t a, int32_t) {}
 
+    int32_t bar(int32_t a, int32_t[], char comment[]) {}
 
 
     int32_t add = 3 + 2 - 1;
