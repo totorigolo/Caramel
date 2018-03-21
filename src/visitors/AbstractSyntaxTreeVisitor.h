@@ -71,8 +71,8 @@ public:
 
     antlrcpp::Any visitArrayDeclarationVoid(CaramelParser::ArrayDeclarationVoidContext *ctx) override ;
 
-
-
+    antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override ;
+    
 private:
     void pushNewContext();
 
