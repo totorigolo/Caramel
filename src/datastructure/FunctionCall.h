@@ -31,9 +31,7 @@ namespace Caramel::DataStructure {
 
 class FunctionCall : public Expression {
 public:
-    FunctionCall() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    FunctionCall(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

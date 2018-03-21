@@ -23,3 +23,14 @@
 */
 
 #include "VariableDeclaration.h"
+
+
+namespace Caramel::DataStructure {
+
+VariableDeclaration::VariableDeclaration(Symbol::WeakPtr symbol,
+                                         antlr4::Token *startToken)
+        : Declaration(startToken),
+          mSymbol(std::move(symbol)) {
+}
+
+} // Caramel::DataStructure

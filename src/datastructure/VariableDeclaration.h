@@ -30,18 +30,17 @@
 
 #include <memory>
 
+
 namespace Caramel::DataStructure {
 
 class VariableDeclaration : public Declaration {
 public:
-    static Ptr Create(VariableSymbol::WeakPtr symbol) {
-        return Ptr(new VariableDeclaration(std::forward<VariableSymbol::WeakPtr>(symbol)));
+    static Ptr Create(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken) {
+        return Ptr(new VariableDeclaration(std::forward<VariableSymbol::WeakPtr>(symbol), startToken));
     }
 
 private:
-    explicit VariableDeclaration(VariableSymbol::WeakPtr symbol)
-        : mSymbol(std::move(symbol)) {
-    }
+    VariableDeclaration(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken);
 
 private:
     VariableSymbol::WeakPtr mSymbol;

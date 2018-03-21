@@ -23,3 +23,8 @@
 */
 
 #include "Jump.h"
+
+
+Caramel::DataStructure::Jump::Jump(antlr4::Token *startToken)
+        : Statement(startToken) {
+}

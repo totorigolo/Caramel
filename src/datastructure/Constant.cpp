@@ -23,3 +23,9 @@
 */
 
 #include "Constant.h"
+
+
+Caramel::DataStructure::Constant::Constant(Caramel::Any mValue, antlr4::Token *startToken)
+        : AtomicExpression(startToken),
+        mValue(std::move(mValue)) {
+}

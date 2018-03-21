@@ -26,6 +26,8 @@
 
 #include "../exceptions/NotImplementedException.h"
 
+#include <Token.h>
+
 #include <memory>
 
 
@@ -35,13 +37,12 @@ class Statement {
 public:
     using Ptr = std::shared_ptr<Statement>;
 
-    static Ptr Create() {
-        return Ptr(new Statement);
+    static Ptr Create(antlr4::Token *startToken) {
+        return Ptr(new Statement(startToken));
     }
 
-    Statement() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+protected:
+    explicit Statement(antlr4::Token *startToken);
 
 private:
     size_t mLine;

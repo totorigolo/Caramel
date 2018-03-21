@@ -23,3 +23,8 @@
 */
 
 #include "ReturnStatement.h"
+
+
+Caramel::DataStructure::ReturnStatement::ReturnStatement(antlr4::Token *startToken)
+        : Jump(startToken) {
+}

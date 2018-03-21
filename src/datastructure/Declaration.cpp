@@ -23,3 +23,8 @@
 */
 
 #include "Declaration.h"
+
+
+Caramel::DataStructure::Declaration::Declaration(antlr4::Token *startToken)
+        : Statement(startToken) {
+}

@@ -23,3 +23,8 @@
 */
 
 #include "ArrayAccess.h"
+
+
+Caramel::DataStructure::ArrayAccess::ArrayAccess(antlr4::Token *startToken)
+        : LValue(startToken) {
+}

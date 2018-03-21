@@ -31,9 +31,7 @@ namespace Caramel::DataStructure {
 
 class UnaryExpression : public Expression {
 public:
-    UnaryExpression() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    UnaryExpression(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

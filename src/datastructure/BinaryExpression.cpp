@@ -23,3 +23,8 @@
 */
 
 #include "BinaryExpression.h"
+
+
+Caramel::DataStructure::BinaryExpression::BinaryExpression(antlr4::Token *startToken)
+        : Expression(startToken) {
+}

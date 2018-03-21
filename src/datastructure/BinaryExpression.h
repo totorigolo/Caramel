@@ -30,10 +30,8 @@
 namespace Caramel::DataStructure {
 
 class BinaryExpression : public Expression {
-public:
-    BinaryExpression() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+protected:
+    BinaryExpression(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

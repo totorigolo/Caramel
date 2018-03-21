@@ -73,7 +73,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::Statemen
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
     long long value = std::stoll(ctx->getText());
 
-    return Constant::Create(value);
+    return Constant::Create(value, ctx->start);
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
@@ -98,7 +98,7 @@ Caramel::Visitors::AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelPa
         std::string name = visitValidIdentifier(validIdentifierCtx);
         auto variableSymbol{VariableSymbol::Create(name, typeName)};
 
-        auto variableDeclaration{VariableDeclaration::Create(variableSymbol)};
+        auto variableDeclaration{VariableDeclaration::Create(variableSymbol, validIdentifierCtx->start)};
         variables.push_back(variableDeclaration);
 
         currentContext()->getSymbolTable()->addVariableDeclaration(typeName, name, variableDeclaration);
@@ -118,7 +118,7 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
     for (Symbol::Ptr param: params) {
         logger.trace() << "\nparam : int" << param->getType()->getMemoryLength();
     }
-    return Statement::Create();
+    return Statement::Create(ctx->start);
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArguments(CaramelParser::NamedArgumentsContext *ctx) {

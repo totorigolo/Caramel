@@ -30,10 +30,8 @@
 namespace Caramel::DataStructure {
 
 class AtomicExpression : public Expression {
-public:
-    AtomicExpression() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+protected:
+    AtomicExpression(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

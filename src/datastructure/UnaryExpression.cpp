@@ -23,3 +23,8 @@
 */
 
 #include "UnaryExpression.h"
+
+
+Caramel::DataStructure::UnaryExpression::UnaryExpression(antlr4::Token *startToken)
+        : Expression(startToken) {
+}

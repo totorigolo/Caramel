@@ -23,3 +23,8 @@
 */
 
 #include "Expression.h"
+
+
+Caramel::DataStructure::Expression::Expression(antlr4::Token *startToken)
+        : Statement(startToken) {
+}

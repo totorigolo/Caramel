@@ -32,10 +32,8 @@
 namespace Caramel::DataStructure {
 
 class ControlBlock : public Statement {
-public:
-    ControlBlock() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+protected:
+    ControlBlock(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

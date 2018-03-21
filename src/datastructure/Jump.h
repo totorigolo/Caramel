@@ -32,9 +32,7 @@ namespace Caramel::DataStructure {
 
 class Jump : public Statement {
 public:
-    Jump() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    Jump(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

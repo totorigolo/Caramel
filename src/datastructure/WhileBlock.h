@@ -31,9 +31,7 @@ namespace Caramel::DataStructure {
 
 class WhileBlock : public ControlBlock {
 public:
-    WhileBlock() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    WhileBlock(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

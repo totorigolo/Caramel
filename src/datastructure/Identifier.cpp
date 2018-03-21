@@ -23,3 +23,8 @@
 */
 
 #include "Identifier.h"
+
+
+Caramel::DataStructure::Identifier::Identifier(antlr4::Token *startToken)
+        : LValue(startToken) {
+}

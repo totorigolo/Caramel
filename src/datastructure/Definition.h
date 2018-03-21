@@ -32,10 +32,8 @@
 namespace Caramel::DataStructure {
 
 class Definition : public Statement {
-public:
-    Definition() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+protected:
+    Definition(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

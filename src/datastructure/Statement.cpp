@@ -23,3 +23,9 @@
 */
 
 #include "Statement.h"
+
+
+Caramel::DataStructure::Statement::Statement(antlr4::Token *startToken)
+        : mLine{startToken->getLine()},
+          mColumns{startToken->getCharPositionInLine()} {
+}

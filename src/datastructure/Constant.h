@@ -34,16 +34,16 @@ namespace Caramel::DataStructure {
     public:
         using Ptr = std::shared_ptr<Constant>;
 
-        static Ptr Create(Any mValue) {
-            return Ptr(new Constant(std::forward<Any>(mValue)));
+        static Ptr Create(Any mValue, antlr4::Token *startToken) {
+            return Ptr(new Constant(std::forward<Any>(mValue), startToken));
         }
 
         Any getValue() override {
             return mValue;
         }
 
-    private:
-        explicit Constant(Any mValue) : mValue(std::move(mValue)) {}
+    protected:
+        explicit Constant(Any mValue, antlr4::Token *startToken);
 
     private:
         Any mValue;

@@ -23,3 +23,8 @@
 */
 
 #include "VariableDefinition.h"
+
+
+Caramel::DataStructure::VariableDefinition::VariableDefinition(antlr4::Token *startToken)
+        : Definition(startToken) {
+}

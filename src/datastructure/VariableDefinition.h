@@ -31,9 +31,7 @@ namespace Caramel::DataStructure {
 
 class VariableDefinition : public Definition {
 public:
-    VariableDefinition() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    VariableDefinition(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

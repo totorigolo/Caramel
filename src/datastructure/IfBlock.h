@@ -31,9 +31,7 @@ namespace Caramel::DataStructure {
 
 class IfBlock : public ControlBlock {
 public:
-    IfBlock() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    IfBlock(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

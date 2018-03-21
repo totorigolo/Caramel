@@ -23,3 +23,8 @@
 */
 
 #include "IfBlock.h"
+
+
+Caramel::DataStructure::IfBlock::IfBlock(antlr4::Token *startToken)
+        : ControlBlock(startToken) {
+}

@@ -23,3 +23,8 @@
 */
 
 #include "LValue.h"
+
+
+Caramel::DataStructure::LValue::LValue(antlr4::Token *startToken)
+        : AtomicExpression(startToken) {
+}

@@ -34,10 +34,12 @@ namespace Caramel::DataStructure {
 
 class Expression : public Statement {
 public:
-    Expression() {}
 
     // TODO : Manage Type later pls
     virtual antlrcpp::Any getValue() = 0;
+
+protected:
+    Expression(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

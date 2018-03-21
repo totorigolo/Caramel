@@ -31,9 +31,7 @@ namespace Caramel::DataStructure {
 
 class ArrayAccess : public LValue {
 public:
-    ArrayAccess() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    ArrayAccess(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

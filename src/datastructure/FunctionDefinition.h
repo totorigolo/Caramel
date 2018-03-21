@@ -31,9 +31,7 @@ namespace Caramel::DataStructure {
 
 class FunctionDefinition : public Definition {
 public:
-    FunctionDefinition() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    FunctionDefinition(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

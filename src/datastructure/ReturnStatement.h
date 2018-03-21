@@ -31,9 +31,7 @@ namespace Caramel::DataStructure {
 
 class ReturnStatement : public Jump {
 public:
-    ReturnStatement() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    ReturnStatement(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

@@ -23,3 +23,8 @@
 */
 
 #include "FunctionCall.h"
+
+
+Caramel::DataStructure::FunctionCall::FunctionCall(antlr4::Token *startToken)
+        : Expression(startToken) {
+}

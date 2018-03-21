@@ -23,3 +23,8 @@
 */
 
 #include "FunctionDefinition.h"
+
+
+Caramel::DataStructure::FunctionDefinition::FunctionDefinition(antlr4::Token *startToken)
+        : Definition(startToken) {
+}

@@ -24,9 +24,10 @@
 
 #pragma once
 
+#include "../../util/SourceFileUtil.h"
 
 #include <antlr4-runtime.h>
-#include "../../util/SourceFileUtil.h"
+
 
 class ParserErrorListener: public antlr4::BaseErrorListener {
 

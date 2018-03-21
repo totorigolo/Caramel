@@ -23,3 +23,8 @@
 */
 
 #include "AtomicExpression.h"
+
+
+Caramel::DataStructure::AtomicExpression::AtomicExpression(antlr4::Token *startToken)
+        : Expression(startToken) {
+}
