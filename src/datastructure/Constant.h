@@ -30,23 +30,23 @@
 
 namespace Caramel::DataStructure {
 
-    class Constant : public AtomicExpression {
-    public:
-        using Ptr = std::shared_ptr<Constant>;
+class Constant : public AtomicExpression {
+public:
+    using Ptr = std::shared_ptr<Constant>;
 
-        static Ptr Create(Any mValue, antlr4::Token *startToken) {
-            return Ptr(new Constant(std::forward<Any>(mValue), startToken));
-        }
+    static Ptr Create(Any mValue, antlr4::Token *startToken) {
+        return Ptr(new Constant(std::forward<Any>(mValue), startToken));
+    }
 
-        Any getValue() override {
-            return mValue;
-        }
+    Any getValue() override {
+        return mValue;
+    }
 
-    protected:
-        explicit Constant(Any mValue, antlr4::Token *startToken);
+private:
+    explicit Constant(Any mValue, antlr4::Token *startToken);
 
-    private:
-        Any mValue;
-    };
+private:
+    Any mValue;
+};
 
 } // namespace Caramel::DataStructure
