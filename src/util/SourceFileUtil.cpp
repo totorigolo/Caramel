@@ -22,34 +22,24 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "SourceFileUtil.h"
 
-#include "Symbol.h"
-#include <vector>
+SourceFileUtil::SourceFileUtil(const std::string &fileName) : fileName(fileName), inputStream(fileName) {}
 
-namespace Caramel::DataStructure {
+SourceFileUtil::~SourceFileUtil() {}
 
-class FunctionSymbol : public Symbol {
-public:
+std::string SourceFileUtil::getLine(size_t line, size_t currentCursorLine, bool resetToHead) {
 
-    static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
-        return Ptr(new FunctionSymbol(mName, mType));
+    std::string buffer;
+    size_t i = currentCursorLine;
+    while (i < line - 1) { // Moves the cursor to the current line
+        inputStream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        i++;
     }
+    std::getline(inputStream, buffer);
+    if(resetToHead) {
+        inputStream.seekg(0);
+    }
+    return buffer;
 
-    FunctionSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
-    ~FunctionSymbol() override;
-
-    void onDeclaration(const Declaration::Ptr &declaration) override;
-
-    void onDefinition(const Definition::Ptr &definition) override;
-
-    void onUsage(const Expression::Ptr &expression) override;
-
-private:
-    std::vector<Symbol> mParameters;
-
-};
-
-} // namespace Caramel::DataStructure
-
-
+}

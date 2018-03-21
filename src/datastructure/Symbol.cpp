@@ -44,4 +44,32 @@ bool Caramel::DataStructure::Symbol::isDefined() {
     return mIsDefined;
 }
 
+void Caramel::DataStructure::Symbol::addDeclaration(const Caramel::DataStructure::Declaration::Ptr &declaration) {
+    onDeclaration(declaration);
+    mIsDeclared = true;
+    mOccurences.push_back(declaration);
+}
+
+void Caramel::DataStructure::Symbol::addDefinition(const Caramel::DataStructure::Statement::Ptr &definition) {
+    onDefinition(definition);
+    mIsDeclared = true;
+    mIsDefined = true;
+    mOccurences.push_back(definition);
+}
+
+void Caramel::DataStructure::Symbol::addUsage(const Caramel::DataStructure::Statement::Ptr &expression) {
+    onUsage(expression);
+    mOccurences.push_back(expression);
+}
+
+void Caramel::DataStructure::Symbol::onDeclaration(const Caramel::DataStructure::Statement::Ptr &declaration) {}
+
+void Caramel::DataStructure::Symbol::onDefinition(const Caramel::DataStructure::Statement::Ptr &definition) {}
+
+void Caramel::DataStructure::Symbol::onUsage(const Caramel::DataStructure::Statement::Ptr &expression) {}
+
+Caramel::DataStructure::PrimaryType::Ptr Caramel::DataStructure::Symbol::getType() const {
+    return mType;
+}
+
 

@@ -24,32 +24,21 @@
 
 #pragma once
 
-#include "Symbol.h"
-#include <vector>
+#include <stdexcept>
 
-namespace Caramel::DataStructure {
+namespace Caramel::Exceptions {
 
-class FunctionSymbol : public Symbol {
+class VariableAlreadyDefined : public std::runtime_error {
+
 public:
+    explicit VariableAlreadyDefined(const std::string &__arg) : runtime_error(__arg) {}
 
-    static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
-        return Ptr(new FunctionSymbol(mName, mType));
-    }
+    explicit VariableAlreadyDefined(const char * c) : runtime_error(c){}
 
-    FunctionSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
-    ~FunctionSymbol() override;
-
-    void onDeclaration(const Declaration::Ptr &declaration) override;
-
-    void onDefinition(const Definition::Ptr &definition) override;
-
-    void onUsage(const Expression::Ptr &expression) override;
-
-private:
-    std::vector<Symbol> mParameters;
+    explicit VariableAlreadyDefined(const std::runtime_error & ex) : runtime_error(ex){}
 
 };
 
-} // namespace Caramel::DataStructure
+} // namespace Caramel::Exceptions
 
 

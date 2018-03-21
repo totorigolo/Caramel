@@ -48,17 +48,24 @@ public:
     bool isDeclared();
     bool isDefined();
 
-    virtual void addDeclaration(const Declaration &declaration) = 0;
-    virtual void addDefinition(const Definition &definition) = 0;
-    virtual void addUsage(const Expression &expression) = 0;
+    PrimaryType::Ptr getType() const;
+
+    void addDeclaration(const Declaration::Ptr &declaration);
+    void addDefinition(const Definition::Ptr &definition);
+    void addUsage(const Expression::Ptr &expression);
 
 protected:
     Symbol(const std::string &mName, const PrimaryType::Ptr &mType);
+
+    virtual void onDeclaration(const Declaration::Ptr &declaration);
+    virtual void onDefinition(const Definition::Ptr &definition);
+    virtual void onUsage(const Expression::Ptr &expression);
 
 protected:
     bool mIsDeclared;
     bool mIsDefined;
     std::vector<Statement::Ptr> mOccurences;
+
 
 private:
     std::string mName;

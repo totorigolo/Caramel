@@ -30,15 +30,15 @@ Caramel::DataStructure::VariableSymbol::VariableSymbol(const std::string &mName,
 
 Caramel::DataStructure::VariableSymbol::~VariableSymbol() = default;
 
-void Caramel::DataStructure::VariableSymbol::addDeclaration(const Caramel::DataStructure::Declaration &declaration) {
-    mIsDeclared = true;
+void Caramel::DataStructure::VariableSymbol::onDeclaration(const Caramel::DataStructure::Statement::Ptr &declaration) {
+    Symbol::onDeclaration(declaration);
 }
 
-void Caramel::DataStructure::VariableSymbol::addDefinition(const Caramel::DataStructure::Definition &definition) {
-    mIsDeclared = true;
-    mIsDefined = true;
+void Caramel::DataStructure::VariableSymbol::onDefinition(const Caramel::DataStructure::Statement::Ptr &definition) {
+    Symbol::onDefinition(definition);
 }
 
-void Caramel::DataStructure::VariableSymbol::addUsage(const Caramel::DataStructure::Expression &expression) {
-
+void Caramel::DataStructure::VariableSymbol::onUsage(const Caramel::DataStructure::Statement::Ptr &expression) {
+    Symbol::onUsage(expression);
 }
+

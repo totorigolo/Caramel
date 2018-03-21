@@ -30,15 +30,16 @@ Caramel::DataStructure::FunctionSymbol::FunctionSymbol(const std::string &mName,
 
 Caramel::DataStructure::FunctionSymbol::~FunctionSymbol() = default;
 
-void Caramel::DataStructure::FunctionSymbol::addDeclaration(const Caramel::DataStructure::Declaration &declaration) {
-    mIsDeclared = true;
+void Caramel::DataStructure::FunctionSymbol::onDeclaration(const Caramel::DataStructure::Statement::Ptr &declaration) {
+    Symbol::onDeclaration(declaration);
 }
 
-void Caramel::DataStructure::FunctionSymbol::addDefinition(const Caramel::DataStructure::Definition &definition) {
-    mIsDeclared = true;
-    mIsDefined = true;
+void Caramel::DataStructure::FunctionSymbol::onDefinition(const Caramel::DataStructure::Statement::Ptr &definition) {
+    Symbol::onDefinition(definition);
 }
 
-void Caramel::DataStructure::FunctionSymbol::addUsage(const Caramel::DataStructure::Expression &expression) {
-
+void Caramel::DataStructure::FunctionSymbol::onUsage(const Caramel::DataStructure::Statement::Ptr &expression) {
+    Symbol::onUsage(expression);
 }
+
+

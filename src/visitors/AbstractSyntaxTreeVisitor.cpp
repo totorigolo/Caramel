@@ -81,7 +81,7 @@ antlrcpp::Any Caramel::Visitors::AbstractSyntaxTreeVisitor::visitVariableDeclara
     PrimaryType typeName = visitTypeParameter(ctx->typeParameter());
     for (auto validIdentifierCtx : ctx->validIdentifier()) {
         std::string name = visitValidIdentifier(validIdentifierCtx);
-        currentContext()->getSymbolTable()->addVariable(name, typeName);
+        currentContext()->getSymbolTable()->(name, typeName);
         logger.trace() <<  "New variable declared " << name << " of type " << typeName;
     }
     // TODO: Return SVariable

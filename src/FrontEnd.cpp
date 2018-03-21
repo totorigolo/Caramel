@@ -25,6 +25,7 @@
 #include "FrontEnd.h"
 
 #include "Logger.h"
+#include "listeners/errorlistener/ParserErrorListener.h"
 
 
 namespace Caramel {
@@ -40,6 +41,10 @@ DataStructure::Context::Ptr frontEnd(Config const &config) {
     CaramelLexer lexer(&input);
     CommonTokenStream tokens(&lexer);
     CaramelParser parser(&tokens);
+
+    ParserErrorListener errorListener(config.sourceFile);
+    parser.removeErrorListeners();
+    parser.addErrorListener(&errorListener);
 
     // Generate the dot of the tree if asked
     if (config.syntaxTreeDot) {

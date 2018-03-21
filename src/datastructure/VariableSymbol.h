@@ -35,15 +35,19 @@ public:
         return Ptr(new VariableSymbol(mName, mType));
     }
 
+    static Ptr Create(const std::string &mName, const Ptr &type) {
+        return Ptr(new VariableSymbol(mName, type->getType()));
+    }
+
     VariableSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
 
     ~VariableSymbol() override;
 
-    void addDeclaration(const Declaration &declaration) override;
+    void onDeclaration(const Declaration::Ptr &declaration) override;
 
-    void addDefinition(const Definition &definition) override;
+    void onDefinition(const Definition::Ptr &definition) override;
 
-    void addUsage(const Expression &expression) override;
+    void onUsage(const Expression::Ptr &expression) override;
 
 };
 

@@ -23,25 +23,27 @@
 */
 
 #include "SymbolTable.h"
+#include "VariableSymbol.h"
+#include "FunctionSymbol.h"
 
 namespace Caramel::DataStructure {
 
 SymbolTable::SymbolTable() {
 
 }
-
+/*
 void SymbolTable::addSymbol(std::string const &name, Symbol::Ptr symbol) {
     if (!hasSymbol(name)) {
         symboleMap[name] = symbol;
     } else {
-        if(hasDefinition(name)) {
+        if(isDefined(name)) {
             //
-        } else if (hasDeclaration(name)) {
+        } else if (isDeclared(name)) {
             //
         }
     }
 }
-
+*/
 bool SymbolTable::hasSymbol(std::string const &name) {
     return symboleMap.find(name) != symboleMap.end();
 }
@@ -50,20 +52,98 @@ Symbol::Ptr SymbolTable::getSymbol(std::string const &name) {
     return symboleMap[name];
 }
 
-bool SymbolTable::hasDeclaration(const std::string &name) {
-    if(symboleMap.find(name) == symboleMap.end()) {
-        return false;
-    }
-    Symbol::Ptr symbol = symboleMap[name];
-    return symbol->isDeclared();
+bool SymbolTable::isDeclared(const std::string &name) {
+    return hasSymbol(name) && symboleMap[name]->isDeclared();
 }
 
-bool SymbolTable::hasDefinition(const std::string &name) {
-    if(symboleMap.find(name) == symboleMap.end()) {
-        return false;
-    }
-    Symbol::Ptr symbol = symboleMap[name];
-    return symbol->isDefined();
+bool SymbolTable::isDefined(const std::string &name) {
+    return hasSymbol(name) && symboleMap[name]->isDefined();
 }
+
+void SymbolTable::addVariableDeclaration(const PrimaryType::Ptr &primaryType, const std::string &name, const Declaration::Ptr &declaration) {
+    if(isNotDeclared(name)) {
+        symboleMap[name] = VariableSymbol::Create(name, primaryType);
+        symboleMap[name]->addDeclaration(declaration);
+    } else {
+        // Todo : throw SymbolAlreadyDeclaredException
+    }
+}
+
+void SymbolTable::addVariableDefinition(const PrimaryType::Ptr &primaryType, const std::string &name,
+                                        const Definition::Ptr &definition) {
+
+    // Not declared and not defined
+    if(isNotDeclared(name)) {
+        symboleMap[name] = VariableSymbol::Create(name, primaryType);
+        symboleMap[name]->addDefinition(definition);
+
+        // Declared but not defined
+    } else if (isNotDefined(name)) {
+        // Todo : check if the definition matches with the declaration
+        // Todo : if check is valid, add the definition, else throw an Exception
+
+
+        // Declared and defined
+    } else {
+        // Todo : throws SymbolAlreadyDefinedException
+    }
+
+}
+
+void SymbolTable::addVariableUsage(const std::string &name, const Expression::Ptr &expression) {
+
+    if(isDefined(name)) {
+        symboleMap[name]->addUsage(expression);
+    } else {
+        // Todo : Try to find the variable in the parent context or throw a VariableUndefinedException
+    }
+
+}
+
+void SymbolTable::addFunctionDeclaration(const PrimaryType::Ptr &primaryType, const std::string &name,
+                                         std::vector<Symbol::Ptr> namedParameters,
+                                         const Declaration::Ptr &declaration) {
+
+    if(isNotDeclared(name)) {
+        symboleMap[name] = FunctionSymbol::Create(name, primaryType);
+        symboleMap[name]->addDeclaration(declaration);
+    } else {
+        // Todo : throw SymbolAlreadyDeclaredException
+    }
+
+}
+
+void SymbolTable::addFunctionDefinition(const PrimaryType::Ptr &primaryType, const std::string &name,
+                                        std::vector<Symbol::Ptr> namedParameters, const Definition::Ptr &definition) {
+
+    if(isNotDeclared(name)) {
+        symboleMap[name] = FunctionSymbol::Create(name, primaryType);
+        symboleMap[name]->addDefinition(definition);
+
+        // Declared but not defined
+    } else if (isNotDefined(name)) {
+        // Todo : check if the definition matches with the declaration
+        // Todo : if check is valid, add the definition, else throw an Exception
+
+
+        // Declared and defined
+    } else {
+        // Todo : throws SymbolAlreadyDefinedException
+    }
+
+}
+
+void SymbolTable::addFunctionCall(const std::string &name, const std::vector<Symbol> &valueParameters,
+                                  const Expression::Ptr &expression) {
+
+    if(isDefined(name)) {
+        // Todo : maybe checks if the valueParameters may match with the namedParameters of the function
+        symboleMap[name]->addUsage(expression);
+    } else {
+        // Todo : Try to find the function in the parent context or throw a FunctionUndefinedException
+    }
+
+}
+
 
 } //namespace Caramel::DataStructure

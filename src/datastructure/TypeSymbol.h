@@ -40,11 +40,11 @@ public:
 
     ~TypeSymbol() override;
 
-    void addDeclaration(const Declaration &declaration) override;
+    void onDeclaration(const Declaration::Ptr &declaration) override;
 
-    void addDefinition(const Definition &definition) override;
+    void onDefinition(const Definition::Ptr &definition) override;
 
-    void addUsage(const Expression &expression) override;
+    void onUsage(const Expression::Ptr &expression) override;
 
 };
 
