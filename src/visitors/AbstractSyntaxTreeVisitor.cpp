@@ -29,6 +29,7 @@
 #include "../datastructure/VariableSymbol.h"
 #include "../datastructure/FunctionSymbol.h"
 #include "../datastructure/VariableDeclaration.h"
+#include "../datastructure/FunctionDeclaration.h"
 
 
 using namespace Caramel::Visitors;
@@ -120,7 +121,8 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
     for (Symbol::Ptr param: params) {
         logger.trace() << "\nparam : int" << param->getType()->getMemoryLength();
     }
-    return (FunctionSymbol::Create(name,returnType));
+
+    return FunctionDeclaration::Create(FunctionSymbol::Create(name,returnType));
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArguments(CaramelParser::NamedArgumentsContext *ctx) {
@@ -151,4 +153,13 @@ void AbstractSyntaxTreeVisitor::pushNewContext() {
 
 Context::Ptr AbstractSyntaxTreeVisitor::currentContext() {
     return mContextStack.top();
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationVoid(CaramelParser::ArrayDeclarationVoidContext *ctx) {
+    PrimaryType::Ptr typeName = visitTypeParameter(ctx->typeParameter());
+    std::string name = visitValidIdentifier(ctx->validIdentifier());
+    //currentContext()->getSymbolTable() // FIXME: Occurrence
+
+
+    return antlrcpp::Any ;
 }
