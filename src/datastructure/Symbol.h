@@ -61,6 +61,8 @@ public:
 
     SymbolType getSymbolType() const;
 
+    std::string getName() const;
+
 protected:
     Symbol(std::string mName, PrimaryType::Ptr mType, SymbolType symbolType);
 

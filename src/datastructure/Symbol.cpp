@@ -71,6 +71,10 @@ Caramel::DataStructure::SymbolType Caramel::DataStructure::Symbol::getSymbolType
     return mSymbolType;
 }
 
+std::string Caramel::DataStructure::Symbol::getName() const {
+    return nName;
+}
+
 void Caramel::DataStructure::Symbol::onDeclaration(const Caramel::DataStructure::Statement::Ptr &declaration) {}
 
 void Caramel::DataStructure::Symbol::onDefinition(const Caramel::DataStructure::Statement::Ptr &definition) {}
