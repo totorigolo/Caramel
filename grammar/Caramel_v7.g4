@@ -16,8 +16,7 @@ instructions
   : MultilineWhiteSpace_* instruction (MultilineWhiteSpace_* instruction)* MultilineWhiteSpace_*
   ;
 instruction
-  : escaped
-  | jump MultilineWhiteSpace_* InstructionSeparator
+  : jump MultilineWhiteSpace_* InstructionSeparator
   | controlBlock
   | expression MultilineWhiteSpace_* InstructionSeparator
   | InstructionSeparator
@@ -29,21 +28,11 @@ declarations
 
 declaration
   : functionDefinition
-  | escaped
   | functionDeclaration MultilineWhiteSpace_* InstructionSeparator
   | arrayDefinition MultilineWhiteSpace_* InstructionSeparator
   | variableDefinition MultilineWhiteSpace_* InstructionSeparator
   | InstructionSeparator
   ;
-// Escaped blocks
-escaped
-  : comment
-  | macro
-  ;
-comment : (SingleLineComment_ | BlockComment) ;
-macro : Macro_ ;
-
-BlockComment : FragmentBlockComment_ ;
 
 // Declarations
 functionDeclaration
@@ -249,11 +238,18 @@ charConstant
   | EscapedAntibackslash_
   ;
 
-
-
 InstructionSeparator : Semilicon_ ;
 PositiveNumber : FragmentNumber_;
 Identifier : FragmentIdentifier_ ;
+
+// Ignored blocks
+BlockComment
+    : '/*' .*? '*/' -> skip ;
+LineComment
+    : '//' ~[\r\n]* -> skip ;
+Macro
+    : '#' ~[\r\n]* -> skip ;
+
 
 // Do not delete the following comment line
 // InjectedTokens
@@ -317,9 +313,6 @@ IfKeyword_ : 'if' ;
 ForKeyword_ : 'for' ;
 WhileKeyWord_ : 'while' ;
 ElseKeyword_ : 'else' ;
-SingleLineComment_ : '//' ~('\\n')+? NewLine_+ ;
-FragmentBlockComment_ : '/*' (.|'.')+? '*/' MultilineWhiteSpace_+ ;
-Macro_ : '#' (~('\\n')|'.')+? NewLine_+ ;
 ReturnKeyword_ : 'return' ;
 BreakKeyword_ : 'break' ;
 RightShiftOp_ : '>>' ;
