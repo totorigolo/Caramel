@@ -45,7 +45,8 @@ public:
     class name final {                                                  \
     public:                                                             \
         explicit name(Logger& logger) : mLogger(logger) {}              \
-        virtual ~name();                                                \
+        ~name() { show(); }                                             \
+        void show();                                                    \
         template<typename T>                                            \
         name &operator<<(T const &toLog) {                              \
             if (mLogger.getLevel() >= level) {                          \
