@@ -109,9 +109,11 @@ antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) {
     logger.trace() << "Visiting function declaration: " << ctx->getText() << ' ' << ctx->getStart();
 
-    PrimaryType::Ptr returnType = visitTypeParameter(ctx->typeParameter()).as<Symbol::Ptr>()->getType();
-    std::string name = visitValidIdentifier(ctx->validIdentifier());
-    std::vector<Symbol::Ptr> params = visitFunctionArguments(ctx->functionArguments());
+    auto innerCtx = ctx->functionDeclarationInner();
+
+    PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<Symbol::Ptr>()->getType();
+    std::string name = visitValidIdentifier(innerCtx->validIdentifier());
+    std::vector<Symbol::Ptr> params = visitFunctionArguments(innerCtx->functionArguments());
 
     auto functionDeclaration = FunctionDeclaration::Create(FunctionSymbol::Create(name, returnType), ctx->start);
     currentContext()->getSymbolTable()->addFunctionDeclaration(ctx, returnType, name, params,
@@ -166,6 +168,14 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockCont
     return CaramelBaseVisitor::visitIfBlock(ctx);
 }
 
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationVoid(CaramelParser::ArrayDeclarationVoidContext *ctx) {
+    PrimaryType::Ptr typeName = visitTypeParameter(ctx->typeParameter());
+    std::string name = visitValidIdentifier(ctx->validIdentifier());
+    //currentContext()->getSymbolTable() // FIXME: Occurrence
+
+    return {};
+}
+
 void AbstractSyntaxTreeVisitor::pushNewContext() {
     logger.debug() << "Pushed a new context.";
 
@@ -197,12 +207,4 @@ void AbstractSyntaxTreeVisitor::pushNewContext() {
 
 Context::Ptr AbstractSyntaxTreeVisitor::currentContext() {
     return mContextStack.top();
-}
-
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationVoid(CaramelParser::ArrayDeclarationVoidContext *ctx) {
-    PrimaryType::Ptr typeName = visitTypeParameter(ctx->typeParameter());
-    std::string name = visitValidIdentifier(ctx->validIdentifier());
-    //currentContext()->getSymbolTable() // FIXME: Occurrence
-
-    return {};
 }

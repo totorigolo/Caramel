@@ -35,11 +35,14 @@ declaration
   ;
 
 // Declarations
-functionDeclaration
+functionDeclarationInner
   : typeParameter InlineWhiteSpace_+ validIdentifier functionArguments
   ;
+functionDeclaration
+  : functionDeclarationInner
+  ;
 functionDefinition
-  : functionDeclaration MultilineWhiteSpace_* block ;
+  : functionDeclarationInner MultilineWhiteSpace_* block ;
 
 variableDeclaration
   : typeParameter InlineWhiteSpace_+ validIdentifier (InlineWhiteSpace_* Comma_ InlineWhiteSpace_* validIdentifier)*

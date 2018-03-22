@@ -45,7 +45,6 @@ using namespace Caramel::DataStructure;
 namespace Caramel::Visitors {
 
 class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
-
 public:
     explicit AbstractSyntaxTreeVisitor(std::string const& sourceFileName);
 
@@ -72,10 +71,9 @@ public:
     antlrcpp::Any visitArrayDeclarationVoid(CaramelParser::ArrayDeclarationVoidContext *ctx) override ;
 
     antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override ;
-    
+
 private:
     void pushNewContext();
-
     Context::Ptr currentContext();
 
 private:
