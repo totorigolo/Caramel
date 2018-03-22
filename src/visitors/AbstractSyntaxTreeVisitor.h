@@ -65,9 +65,9 @@ public:
 
     antlrcpp::Any visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) override;
 
-    antlrcpp::Any visitNamedArguments(CaramelParser::NamedArgumentsContext *ctx) override;
+    antlrcpp::Any visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) override;
 
-    antlrcpp::Any visitNamedArgument(CaramelParser::NamedArgumentContext *ctx) override;
+    antlrcpp::Any visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) override;
 
     antlrcpp::Any visitArrayDeclarationVoid(CaramelParser::ArrayDeclarationVoidContext *ctx) override ;
 

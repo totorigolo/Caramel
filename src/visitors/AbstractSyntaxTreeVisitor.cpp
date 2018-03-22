@@ -66,7 +66,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::Statemen
             auto statementVector = r.as<std::vector<Statement::Ptr>>();
             std::copy(statementVector.begin(), statementVector.end(), std::back_inserter(statements));
         } else {
-            logger.fatal() << "Skipping unhandled statement.";
+            logger.fatal() << "Skipping unhandled statement: " << ctx->getText();
         }
     }
     return statements;
@@ -74,13 +74,11 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::Statemen
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
     long long value = std::stoll(ctx->getText());
-
     return Constant::Create(value, ctx->start);
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
     char value = ctx->getText().at(0);
-
     return Constant::Create(value, ctx->start);
 }
 
@@ -91,13 +89,14 @@ Caramel::Visitors::AbstractSyntaxTreeVisitor::visitValidIdentifier(CaramelParser
 
 antlrcpp::Any
 Caramel::Visitors::AbstractSyntaxTreeVisitor::visitTypeParameter(CaramelParser::TypeParameterContext *ctx) {
-    std::string type = ctx->getText();
-    logger.trace() << "type parameter: " << type;
-    return currentContext()->getSymbolTable()->getSymbol(type);
+    logger.trace() << "type parameter: " << ctx->getText();
+    return currentContext()->getSymbolTable()->getSymbol(ctx->getText());
 }
 
 antlrcpp::Any
 Caramel::Visitors::AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) {
+    logger.trace() << "Visiting variable declaration: " << ctx->getText();
+
     auto typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
     std::vector<Statement::Ptr> variables;
     for (auto validIdentifierCtx : ctx->validIdentifier()) {
@@ -116,9 +115,11 @@ Caramel::Visitors::AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelPa
 
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) {
+    logger.trace() << "Visiting function declaration: " << ctx->getText();
+
     PrimaryType::Ptr returnType = visitTypeParameter(ctx->typeParameter()).as<Symbol::Ptr>()->getType();
     std::string name = visitValidIdentifier(ctx->validIdentifier());
-    std::vector<Symbol::Ptr> params = visitNamedArguments(ctx->namedArguments());
+    std::vector<Symbol::Ptr> params = visitFunctionArguments(ctx->functionArguments());
 
     auto functionDeclaration{FunctionDeclaration::Create(FunctionSymbol::Create(name, returnType), ctx->start)};
     currentContext()->getSymbolTable()->addFunctionDeclaration(returnType, name, params, functionDeclaration);
@@ -132,26 +133,27 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
     return functionDeclaration;
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArguments(CaramelParser::NamedArgumentsContext *ctx) {
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) {
+    logger.debug() << "Visiting named arguments: " << ctx->getText();
+
     std::vector<Symbol::Ptr> params;
-    logger.debug() << "visit named arguments: " << ctx->getText();
-    for (auto argument : ctx->namedArgument()) {
-        if (nullptr != visitNamedArgument(argument).as<Symbol::Ptr>()) {
-            params.push_back(visitNamedArgument(argument).as<Symbol::Ptr>());
-        }
+    for (auto argument : ctx->functionArgument()) {
+        params.push_back(visitFunctionArgument(argument).as<Symbol::Ptr>());
     }
     return params;
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArgument(CaramelParser::NamedArgumentContext *ctx) {
-    logger.trace() << "visit named argument: " << ctx->getText();
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) {
+    logger.trace() << "Visiting named argument: " << ctx->getText();
 
-    // Get the optional name
+    // Get the optional name, or generate a unique one
     std::string name;
     if (nullptr != ctx->validIdentifier()) {
-        name = visitValidIdentifier(ctx->validIdentifier());
+        name = visitValidIdentifier(ctx->validIdentifier()).as<std::string>();
     } else {
-        // FIXME: Generate a name, for example using ctx->start->getLine()
+        std::stringstream nameSS;
+        nameSS << "__unnamed_argument_" << ctx->start->getLine() << "_" << ctx->start->getCharPositionInLine() << "__";
+        name = nameSS.str();
     }
 
     // Get the type
@@ -159,22 +161,11 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitNamedArgument(CaramelParser::Named
     type = visitTypeParameter(ctx->typeParameter());
 
     // The argument is an array
-    if (nullptr != ctx->namedArgumentArraySuffix()) {
-        return {}; // TODO: Return a new ArrayVariableSymbol
+    if (nullptr != ctx->functionArgumentArraySuffix()) {
+        return VariableSymbol::Create(name, type); // FIXME: Return a new ArrayVariableSymbol
     } else {
         return VariableSymbol::Create(name, type);
     }
-
-    /*if (nullptr != ctx->variableDeclaration()) {
-        std::vector<antlrcpp::Any> variables = visitVariableDeclaration(ctx->variableDeclaration());
-        return variables.at(0).as<Symbol::Ptr>();
-    } else if (nullptr != ctx->arrayDeclarationVoid()) {
-        return visitArrayDeclarationVoid(ctx->arrayDeclarationVoid()).as<Symbol::Ptr>();
-    } else if (nullptr != ctx->typeParameter()) {
-        return visitTypeParameter(ctx->typeParameter()).as<Symbol::Ptr>();
-    }
-    // TODO: Throw an error
-    return nullptr;*/
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockContext *ctx) {
@@ -182,6 +173,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockCont
 }
 
 void AbstractSyntaxTreeVisitor::pushNewContext() {
+    logger.debug() << "Pushed a new context.";
     mContextStack.push(Context::Create());
 }
 

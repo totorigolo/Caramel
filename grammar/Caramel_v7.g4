@@ -36,7 +36,7 @@ declaration
 
 // Declarations
 functionDeclaration
-  : typeParameter InlineWhiteSpace_+ validIdentifier namedArguments
+  : typeParameter InlineWhiteSpace_+ validIdentifier functionArguments
   ;
 functionDefinition
   : functionDeclaration MultilineWhiteSpace_* block ;
@@ -107,14 +107,14 @@ arrayBlock
   ;
 
 // Function definition helpers
-namedArguments
+functionArguments
   : L_Par_ InlineWhiteSpace_* R_Par_
-  | L_Par_ MultilineWhiteSpace_* namedArgument (MultilineWhiteSpace_* Comma_ MultilineWhiteSpace_*  namedArgument)* MultilineWhiteSpace_* R_Par_
+  | L_Par_ MultilineWhiteSpace_* functionArgument (MultilineWhiteSpace_* Comma_ MultilineWhiteSpace_*  functionArgument)* MultilineWhiteSpace_* R_Par_
   ;
-namedArgument
-  : typeParameter MultilineWhiteSpace_* validIdentifier? MultilineWhiteSpace_* (namedArgumentArraySuffix)?
+functionArgument
+  : typeParameter MultilineWhiteSpace_* validIdentifier? MultilineWhiteSpace_* (functionArgumentArraySuffix)?
   ;
-namedArgumentArraySuffix
+functionArgumentArraySuffix
   : '[' MultilineWhiteSpace_* (expression)? MultilineWhiteSpace_* ']'
   ;
 
