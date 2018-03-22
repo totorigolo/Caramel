@@ -24,22 +24,16 @@
 
 #pragma once
 
-#include "Config.h"
-
-#include "listeners/DotExportListener.h"
-#include "visitors/AbstractSyntaxTreeVisitor.h"
-
-#include "datastructure/context/Context.h"
-
-#include <CaramelLexer.h>
-#include <CaramelParser.h>
-#include <antlr4-runtime.h>
-
-#include <memory>
+#include "../../../../exceptions/NotImplementedException.h"
 
 
-namespace Caramel {
+namespace Caramel::DataStructure {
 
-DataStructure::Context::Ptr frontEnd(Config const &config);
+class Operator {
+public:
+    Operator() {
+        throw Caramel::Exceptions::NotImplementedException(__FILE__);
+    }
+};
 
-} // namespace Caramel
+} // namespace Caramel::DataStructure

@@ -22,7 +22,7 @@
  * SOFTWARE.
 */
 
-#include "datastructure/Context.h"
+#include "datastructure/context/Context.h"
 
 #include "Common.h"
 #include "Config.h"

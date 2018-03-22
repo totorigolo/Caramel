@@ -22,24 +22,27 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "Config.h"
-
-#include "listeners/DotExportListener.h"
-#include "visitors/AbstractSyntaxTreeVisitor.h"
-
-#include "datastructure/context/Context.h"
-
-#include <CaramelLexer.h>
-#include <CaramelParser.h>
-#include <antlr4-runtime.h>
-
-#include <memory>
+#include "Statement.h"
 
 
-namespace Caramel {
+Caramel::DataStructure::Statement::Statement(antlr4::Token *startToken)
+        : mLine{startToken->getLine()},
+          mColumn{startToken->getCharPositionInLine()},
+          mLength{startToken->getText().length()} {
+}
 
-DataStructure::Context::Ptr frontEnd(Config const &config);
+size_t Caramel::DataStructure::Statement::getLine() const {
+    return mLine;
+}
 
-} // namespace Caramel
+size_t Caramel::DataStructure::Statement::getColumn() const {
+    return mColumn;
+}
+
+size_t Caramel::DataStructure::Statement::getLength() const {
+    return mLength;
+}
+
+size_t Caramel::DataStructure::Statement::getLine() const {
+    return mLine;
+}

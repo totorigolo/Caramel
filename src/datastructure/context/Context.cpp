@@ -22,24 +22,18 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "Context.h"
 
-#include "Config.h"
+namespace Caramel::DataStructure {
 
-#include "listeners/DotExportListener.h"
-#include "visitors/AbstractSyntaxTreeVisitor.h"
+Context::Context()
+        : mSymbolTable(SymbolTable::Create()) {
+}
 
-#include "datastructure/context/Context.h"
+SymbolTable::Ptr Context::getSymbolTable() const {
+    return mSymbolTable;
+}
 
-#include <CaramelLexer.h>
-#include <CaramelParser.h>
-#include <antlr4-runtime.h>
+Context::Context(const SymbolTable::Ptr &parentTable) : mSymbolTable(SymbolTable::Create(parentTable)) {}
 
-#include <memory>
-
-
-namespace Caramel {
-
-DataStructure::Context::Ptr frontEnd(Config const &config);
-
-} // namespace Caramel
+} // namespace Caramel::DataStructure

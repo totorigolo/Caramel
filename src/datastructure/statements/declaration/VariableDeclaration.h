@@ -24,22 +24,28 @@
 
 #pragma once
 
-#include "Config.h"
-
-#include "listeners/DotExportListener.h"
-#include "visitors/AbstractSyntaxTreeVisitor.h"
-
-#include "datastructure/context/Context.h"
-
-#include <CaramelLexer.h>
-#include <CaramelParser.h>
-#include <antlr4-runtime.h>
+#include "Declaration.h"
+#include "../../symboltable/TypeSymbol.h"
+#include "../../symboltable/VariableSymbol.h"
 
 #include <memory>
 
 
-namespace Caramel {
+namespace Caramel::DataStructure {
 
-DataStructure::Context::Ptr frontEnd(Config const &config);
+class VariableDeclaration : public Declaration {
+public:
+    static Ptr Create(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken) {
+        return Ptr(new VariableDeclaration(std::forward<VariableSymbol::WeakPtr>(symbol), startToken));
+    }
 
-} // namespace Caramel
+    VariableSymbol::WeakPtr getSymbol();
+
+private:
+    VariableDeclaration(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken);
+
+private:
+    VariableSymbol::WeakPtr mSymbol;
+};
+
+} // namespace Caramel::DataStructure

@@ -24,22 +24,34 @@
 
 #pragma once
 
-#include "Config.h"
-
-#include "listeners/DotExportListener.h"
-#include "visitors/AbstractSyntaxTreeVisitor.h"
-
-#include "datastructure/context/Context.h"
-
-#include <CaramelLexer.h>
-#include <CaramelParser.h>
-#include <antlr4-runtime.h>
-
-#include <memory>
+#include "Symbol.h"
+#include <vector>
 
 
-namespace Caramel {
+namespace Caramel::DataStructure {
 
-DataStructure::Context::Ptr frontEnd(Config const &config);
+class FunctionSymbol : public Symbol {
+public:
+    static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
+        return Ptr(new FunctionSymbol(mName, mType));
+    }
 
-} // namespace Caramel
+public:
+    FunctionSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
+    ~FunctionSymbol() override = default;
+
+    void onDeclaration(const Declaration::Ptr &declaration) override;
+    void onDefinition(const Definition::Ptr &definition) override;
+    void onUsage(const Expression::Ptr &expression) override;
+
+    std::vector<Symbol::Ptr> getNamedParameters() const;
+    void setParameters(const std::vector<Symbol::Ptr> &namedParameters);
+
+private:
+    std::vector<Symbol::Ptr> mParameters;
+
+};
+
+} // namespace Caramel::DataStructure
+
+

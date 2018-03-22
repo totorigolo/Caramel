@@ -24,22 +24,35 @@
 
 #pragma once
 
-#include "Config.h"
-
-#include "listeners/DotExportListener.h"
-#include "visitors/AbstractSyntaxTreeVisitor.h"
-
-#include "datastructure/context/Context.h"
-
-#include <CaramelLexer.h>
-#include <CaramelParser.h>
-#include <antlr4-runtime.h>
+#include "../symboltable/SymbolTable.h"
+#include "../statements/Statement.h"
 
 #include <memory>
+#include <vector>
 
 
-namespace Caramel {
+namespace Caramel::DataStructure {
 
-DataStructure::Context::Ptr frontEnd(Config const &config);
+class Context {
+public:
+    using Ptr = std::shared_ptr<Context>;
 
-} // namespace Caramel
+    static Ptr Create() {
+        return Ptr(new Context);
+    }
+
+    static Ptr Create(Context::Ptr const &parent) {
+        return Ptr(new Context(parent->getSymbolTable()));
+    }
+
+    SymbolTable::Ptr getSymbolTable() const;
+
+private:
+    Context();
+    explicit Context(SymbolTable::Ptr const &symbolTable);
+
+    SymbolTable::Ptr mSymbolTable;
+    std::vector<Statement::Ptr> mStatements;
+};
+
+} // namespace Caramel::DataStructure

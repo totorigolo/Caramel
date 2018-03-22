@@ -24,22 +24,19 @@
 
 #pragma once
 
-#include "Config.h"
+#include <stdexcept>
 
-#include "listeners/DotExportListener.h"
-#include "visitors/AbstractSyntaxTreeVisitor.h"
+namespace Caramel::Exceptions {
 
-#include "datastructure/context/Context.h"
+class UndefinedSymbolException : public std::runtime_error {
 
-#include <CaramelLexer.h>
-#include <CaramelParser.h>
-#include <antlr4-runtime.h>
+public:
+    explicit UndefinedSymbolException(const std::string &__arg) : runtime_error(__arg) {}
 
-#include <memory>
+    explicit UndefinedSymbolException(const char * c) : runtime_error(c){}
 
+    explicit UndefinedSymbolException(const std::runtime_error & ex) : runtime_error(ex){}
 
-namespace Caramel {
+};
 
-DataStructure::Context::Ptr frontEnd(Config const &config);
-
-} // namespace Caramel
+} // namespace Caramel::Exception

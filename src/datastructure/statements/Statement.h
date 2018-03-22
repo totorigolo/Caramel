@@ -24,22 +24,36 @@
 
 #pragma once
 
-#include "Config.h"
+#include "../../exceptions/NotImplementedException.h"
 
-#include "listeners/DotExportListener.h"
-#include "visitors/AbstractSyntaxTreeVisitor.h"
-
-#include "datastructure/context/Context.h"
-
-#include <CaramelLexer.h>
-#include <CaramelParser.h>
-#include <antlr4-runtime.h>
+#include <Token.h>
 
 #include <memory>
 
 
-namespace Caramel {
+namespace Caramel::DataStructure {
 
-DataStructure::Context::Ptr frontEnd(Config const &config);
+class Statement {
+public:
+    using Ptr = std::shared_ptr<Statement>;
+    using WeakPtr = std::weak_ptr<Statement>;
 
-} // namespace Caramel
+    static Ptr Create(antlr4::Token *startToken) {
+        return Ptr(new Statement(startToken));
+    }
+
+public:
+    size_t getLine() const;
+    size_t getColumn() const;
+    size_t getLength() const;
+
+protected:
+    explicit Statement(antlr4::Token *startToken);
+
+private:
+    size_t mLine;
+    size_t mColumn;
+    size_t mLength;
+};
+
+} // namespace Caramel::DataStructure

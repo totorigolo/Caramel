@@ -24,22 +24,22 @@
 
 #pragma once
 
-#include "Config.h"
+#include "../Statement.h"
+#include "../../../exceptions/NotImplementedException.h"
 
-#include "listeners/DotExportListener.h"
-#include "visitors/AbstractSyntaxTreeVisitor.h"
-
-#include "datastructure/context/Context.h"
-
-#include <CaramelLexer.h>
-#include <CaramelParser.h>
-#include <antlr4-runtime.h>
-
-#include <memory>
+#include <support/Any.h>
 
 
-namespace Caramel {
+namespace Caramel::DataStructure {
 
-DataStructure::Context::Ptr frontEnd(Config const &config);
+class Expression : public Statement {
+public:
 
-} // namespace Caramel
+    // TODO : Manage Type later pls
+    virtual antlrcpp::Any getValue() = 0;
+
+protected:
+    Expression(antlr4::Token *startToken);
+};
+
+} // namespace Caramel::DataStructure

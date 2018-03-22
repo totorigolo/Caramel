@@ -24,22 +24,29 @@
 
 #pragma once
 
-#include "Config.h"
-
-#include "listeners/DotExportListener.h"
-#include "visitors/AbstractSyntaxTreeVisitor.h"
-
-#include "datastructure/context/Context.h"
-
-#include <CaramelLexer.h>
-#include <CaramelParser.h>
-#include <antlr4-runtime.h>
-
-#include <memory>
+#include "AtomicExpression.h"
+#include "../../../../Any.h"
 
 
-namespace Caramel {
+namespace Caramel::DataStructure {
 
-DataStructure::Context::Ptr frontEnd(Config const &config);
+class Constant : public AtomicExpression {
+public:
+    using Ptr = std::shared_ptr<Constant>;
 
-} // namespace Caramel
+    static Ptr Create(Any mValue, antlr4::Token *startToken) {
+        return Ptr(new Constant(std::forward<Any>(mValue), startToken));
+    }
+
+    Any getValue() override {
+        return mValue;
+    }
+
+private:
+    explicit Constant(Any mValue, antlr4::Token *startToken);
+
+private:
+    Any mValue;
+};
+
+} // namespace Caramel::DataStructure

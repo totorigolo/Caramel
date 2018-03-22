@@ -24,22 +24,14 @@
 
 #pragma once
 
-#include "Config.h"
-
-#include "listeners/DotExportListener.h"
-#include "visitors/AbstractSyntaxTreeVisitor.h"
-
-#include "datastructure/context/Context.h"
-
-#include <CaramelLexer.h>
-#include <CaramelParser.h>
-#include <antlr4-runtime.h>
-
-#include <memory>
+#include "../Expression.h"
 
 
-namespace Caramel {
+namespace Caramel::DataStructure {
 
-DataStructure::Context::Ptr frontEnd(Config const &config);
+class BinaryExpression : public Expression {
+protected:
+    BinaryExpression(antlr4::Token *startToken);
+};
 
-} // namespace Caramel
+} // namespace Caramel::DataStructure
