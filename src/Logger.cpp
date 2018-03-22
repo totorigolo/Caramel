@@ -72,7 +72,7 @@ void Logger::Warning::show() {
     using namespace Caramel::Colors;
     if (mLogger.getLevel() >= WARN) {
         std::cerr << yellow << bold << "[WARNING]" << reset << ' '
-                  << mLoggedStream.str() << std::endl;
+                  << yellow << mLoggedStream.str() << reset << std::endl;
     }
     mLoggedStream.clear();
 }

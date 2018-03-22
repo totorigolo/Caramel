@@ -57,7 +57,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::Statemen
             auto statementVector = r.as<std::vector<Statement::Ptr>>();
             std::copy(statementVector.begin(), statementVector.end(), std::back_inserter(statements));
         } else {
-            logger.fatal() << "Skipping unhandled statement: " << ctx->getText();
+            logger.warning() << "Skipping unhandled statement:\n" << statement->getText();
         }
     }
     return statements;
