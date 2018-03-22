@@ -42,7 +42,3 @@ size_t Caramel::DataStructure::Statement::getColumn() const {
 size_t Caramel::DataStructure::Statement::getLength() const {
     return mLength;
 }
-
-size_t Caramel::DataStructure::Statement::getLine() const {
-    return mLine;
-}

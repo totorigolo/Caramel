@@ -53,10 +53,12 @@ public:
                                 PrimaryType::Ptr const &primaryType,
                                 std::string const &name,
                                 Declaration::Ptr const &declaration);
-    void addVariableDefinition(PrimaryType::Ptr const &primaryType,
+    void addVariableDefinition(antlr4::ParserRuleContext *antlrContext,
+                               PrimaryType::Ptr const &primaryType,
                                std::string const &name,
                                Definition::Ptr const &definition);
-    void addVariableUsage(std::string const &name,
+    void addVariableUsage(antlr4::ParserRuleContext *antlrContext,
+                          std::string const &name,
                           Expression::Ptr const &expression);
 
     void addFunctionDeclaration(antlr4::ParserRuleContext *antlrContext,
@@ -64,15 +66,20 @@ public:
                                 std::string const &name,
                                 std::vector<Symbol::Ptr> namedParameters,
                                 Declaration::Ptr const &declaration);
-    void addFunctionDefinition(PrimaryType::Ptr const &returnType,
+    void addFunctionDefinition(antlr4::ParserRuleContext *antlrContext,
+                               PrimaryType::Ptr const &returnType,
                                std::string const &name,
                                std::vector<Symbol::Ptr> namedParameters,
                                Definition::Ptr const &definition);
-    void addFunctionCall(std::string const &name,
+    void addFunctionCall(antlr4::ParserRuleContext *antlrContext,
+                         std::string const &name,
                          std::vector<Symbol::Ptr> const &valueParameters,
                          Expression::Ptr const &expression);
 
-    void addType(PrimaryType::Ptr const &primaryType,
+    void addPrimaryType(PrimaryType::Ptr const &primaryType,
+                        std::string const &name);
+    void addType(antlr4::ParserRuleContext *antlrContext,
+                 PrimaryType::Ptr const &primaryType,
                  std::string const &name,
                  Definition::Ptr const &definition);
 

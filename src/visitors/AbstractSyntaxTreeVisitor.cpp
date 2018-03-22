@@ -178,7 +178,7 @@ void AbstractSyntaxTreeVisitor::pushNewContext() {
     }
 
 
-    SymbolTable::Ptr symbolTable{currentContext()->getSymbolTable()};
+    SymbolTable::Ptr symbolTable = currentContext()->getSymbolTable();
 
     PrimaryType::Ptr void_t = Void_t::Create();
     PrimaryType::Ptr char_t = Char::Create();
@@ -187,13 +187,12 @@ void AbstractSyntaxTreeVisitor::pushNewContext() {
     PrimaryType::Ptr int32_t = Int32_t::Create();
     PrimaryType::Ptr int64_t = Int64_t::Create();
 
-    symbolTable->addType(void_t, void_t->getIdentifier(), nullptr);
-    symbolTable->addType(char_t, char_t->getIdentifier(), nullptr);
-    symbolTable->addType(int8_t, int8_t->getIdentifier(), nullptr);
-    symbolTable->addType(int16_t, int16_t->getIdentifier(), nullptr);
-    symbolTable->addType(int32_t, int32_t->getIdentifier(), nullptr);
-    symbolTable->addType(int64_t, int64_t->getIdentifier(), nullptr);
-
+    symbolTable->addPrimaryType(void_t, void_t->getIdentifier());
+    symbolTable->addPrimaryType(char_t, char_t->getIdentifier());
+    symbolTable->addPrimaryType(int8_t, int8_t->getIdentifier());
+    symbolTable->addPrimaryType(int16_t, int16_t->getIdentifier());
+    symbolTable->addPrimaryType(int32_t, int32_t->getIdentifier());
+    symbolTable->addPrimaryType(int64_t, int64_t->getIdentifier());
 }
 
 Context::Ptr AbstractSyntaxTreeVisitor::currentContext() {

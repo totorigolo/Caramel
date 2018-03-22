@@ -25,8 +25,8 @@
 #pragma once
 
 #include "SemanticError.h"
-#include "../datastructure/Context.h"
-#include "../datastructure/Statement.h"
+#include "../datastructure/context/Context.h"
+#include "../datastructure/statements/Statement.h"
 #include "../Console.h"
 #include "../util/SourceFileUtil.h"
 #include "../Logger.h"
