@@ -42,6 +42,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
     pushNewContext();
 
     SymbolTable::Ptr symbolTable{currentContext()->getSymbolTable()};
+    symbolTable->addType(Char::Create(), "void", nullptr);
     symbolTable->addType(Char::Create(), "char", nullptr);
     symbolTable->addType(Int8_t::Create(), "int8_t", nullptr);
     symbolTable->addType(Int16_t::Create(), "int16_t", nullptr);

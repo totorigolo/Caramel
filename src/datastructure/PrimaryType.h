@@ -38,6 +38,17 @@ public:
 
 };
 
+class Void_t : public PrimaryType {
+public:
+    static Ptr Create() {
+        return Ptr(new Void_t);
+    }
+
+    size_t getMemoryLength() const override {
+        return 0;
+    }
+};
+
 class Int8_t : public PrimaryType {
 public:
     static Ptr Create() {
