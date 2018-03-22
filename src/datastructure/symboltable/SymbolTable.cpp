@@ -27,14 +27,16 @@
 #include "VariableSymbol.h"
 #include "FunctionSymbol.h"
 
-#include "../exceptions/SymbolAlreadyDeclaredException.h"
-#include "../Logger.h"
-#include "../exceptions/DeclarationMismatchException.h"
-#include "../exceptions/SymbolAlreadyDefinedException.h"
-#include "../exceptions/UndefinedSymbolException.h"
+#include "../../exceptions/SymbolAlreadyDeclaredException.h"
+#include "../../Logger.h"
+#include "../../exceptions/DeclarationMismatchException.h"
+#include "../../exceptions/SymbolAlreadyDefinedException.h"
+#include "../../exceptions/UndefinedSymbolException.h"
 
 
 namespace Caramel::DataStructure {
+
+SymbolTable::SymbolTable(SymbolTable::Ptr const &parentTable): mParentTable(parentTable) {}
 
 void SymbolTable::addVariableDeclaration(const PrimaryType::Ptr &primaryType, const std::string &name,
                                          const Declaration::Ptr &declaration) {
@@ -57,13 +59,14 @@ void SymbolTable::addVariableDefinition(const PrimaryType::Ptr &primaryType, con
     if (isDefined(name)) {
         throw SymbolAlreadyDefinedException(buildAlreadyDefinedErrorMessage(name));
     } else if (isDeclared(name)) {
-        if (mSymbolMap[name]->getSymbolType() != SymbolType::VariableSymbol) {
+        Symbol::Ptr recordedSymbol = mSymbolMap[name];
+        if (recordedSymbol->getSymbolType() != SymbolType::VariableSymbol) {
             throw DeclarationMismatchException(buildMismatchSymbolTypeErrorMessage(name, SymbolType::VariableSymbol));
         }
-        if (!mSymbolMap[name]->getType()->equals(primaryType)) {
+        if (!recordedSymbol->getType()->equals(primaryType)) {
             throw DeclarationMismatchException(buildMismatchTypeErrorMessage(name, primaryType));
         }
-        mSymbolMap[name]->addDefinition(definition);
+        recordedSymbol->addDefinition(definition);
     } else {
         mSymbolMap[name] = VariableSymbol::Create(name, primaryType);
         mSymbolMap[name]->addDefinition(definition);
@@ -78,7 +81,13 @@ void SymbolTable::addVariableUsage(const std::string &name, const Expression::Pt
         mSymbolMap[name]->addUsage(expression);
     } else {
         // Fixme : Try to find the variable in the parent context or throw a VariableUndefinedException
-        throw UndefinedSymbolException(buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol));
+        SymbolTable::Ptr parent = getParentTable();
+        while(nullptr != mParentTable && !parent->isDefined(name)) {
+            mParentTable = mParentTable->getParentTable();
+        }
+        if(!parent->isDefined(name)) {
+            throw UndefinedSymbolException(buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol));
+        }
     }
 
 }
@@ -239,6 +248,7 @@ SymbolTable::buildMismatchTypeErrorMessage(std::string const &variableName, Prim
     return res.str();
 }
 
+
 std::string SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType) {
     std::stringstream res;
     res << "The ";
@@ -255,6 +265,10 @@ std::string SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &nam
     }
     res << " is never defined before";
     return res.str();
+}
+
+SymbolTable::Ptr SymbolTable::getParentTable() {
+    return mParentTable;
 }
 
 } //namespace Caramel::DataStructure

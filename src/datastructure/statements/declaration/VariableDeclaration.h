@@ -24,36 +24,28 @@
 
 #pragma once
 
-#include "Symbol.h"
-#include <vector>
+#include "Declaration.h"
+#include "../../symboltable/TypeSymbol.h"
+#include "../../symboltable/VariableSymbol.h"
+
+#include <memory>
 
 
 namespace Caramel::DataStructure {
 
-class FunctionSymbol : public Symbol {
+class VariableDeclaration : public Declaration {
 public:
-    static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
-        return Ptr(new FunctionSymbol(mName, mType));
+    static Ptr Create(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken) {
+        return Ptr(new VariableDeclaration(std::forward<VariableSymbol::WeakPtr>(symbol), startToken));
     }
 
-public:
-    FunctionSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
-
-    virtual ~FunctionSymbol() override = default;
-
-    void onDeclaration(const Declaration::Ptr &declaration) override;
-    void onDefinition(const Definition::Ptr &definition) override;
-    void onUsage(const Expression::Ptr &expression) override;
-
-    std::vector<Symbol::Ptr> getNamedParameters() const;
-
-    void setParameters(const std::vector<Symbol::Ptr> &namedParameters);
+    VariableSymbol::WeakPtr getSymbol();
 
 private:
-    std::vector<Symbol::Ptr> mParameters;
+    VariableDeclaration(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken);
 
+private:
+    VariableSymbol::WeakPtr mSymbol;
 };
 
 } // namespace Caramel::DataStructure
-
-

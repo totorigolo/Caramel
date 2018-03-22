@@ -24,32 +24,22 @@
 
 #pragma once
 
-#include "../exceptions/NotImplementedException.h"
+#include "../Statement.h"
+#include "../../../exceptions/NotImplementedException.h"
 
-#include <Token.h>
-
-#include <memory>
+#include <support/Any.h>
 
 
 namespace Caramel::DataStructure {
 
-class Statement {
+class Expression : public Statement {
 public:
-    using Ptr = std::shared_ptr<Statement>;
 
-    static Ptr Create(antlr4::Token *startToken) {
-        return Ptr(new Statement(startToken));
-    }
-
-    size_t getLine() const;
+    // TODO : Manage Type later pls
+    virtual antlrcpp::Any getValue() = 0;
 
 protected:
-    explicit Statement(antlr4::Token *startToken);
-
-private:
-    size_t mLine;
-    size_t mColumns;
-
+    Expression(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

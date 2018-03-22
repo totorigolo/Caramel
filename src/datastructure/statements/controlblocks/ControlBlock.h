@@ -24,16 +24,16 @@
 
 #pragma once
 
-#include "../exceptions/NotImplementedException.h"
+#include "../Statement.h"
+
+#include "../../../exceptions/NotImplementedException.h"
 
 
 namespace Caramel::DataStructure {
 
-class Operator {
-public:
-    Operator() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+class ControlBlock : public Statement {
+protected:
+    ControlBlock(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

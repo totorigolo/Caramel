@@ -24,16 +24,25 @@
 
 #pragma once
 
-#include "Statement.h"
+#include "../definition/Definition.h"
+#include "../../symboltable/FunctionSymbol.h"
 
-#include "../exceptions/NotImplementedException.h"
+#include <memory>
 
 
 namespace Caramel::DataStructure {
 
-class Definition : public Statement {
-protected:
-    Definition(antlr4::Token *startToken);
+class FunctionDeclaration : public Definition {
+public:
+    static Ptr Create(FunctionSymbol::WeakPtr symbol, antlr4::Token *startToken) {
+        return Ptr(new FunctionDeclaration(std::forward<FunctionSymbol::WeakPtr>(symbol), startToken));
+    }
+
+private:
+    FunctionDeclaration(FunctionSymbol::WeakPtr symbol, antlr4::Token *startToken);
+
+private:
+    FunctionSymbol::WeakPtr mSymbol;
 };
 
-} // namespace Caramel::DataStructure
+}

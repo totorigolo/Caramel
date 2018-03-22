@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "Expression.h"
+#include "../Expression.h"
 
 
 namespace Caramel::DataStructure {

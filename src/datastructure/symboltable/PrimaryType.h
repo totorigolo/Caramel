@@ -76,6 +76,10 @@ public:
 };
 
 class Char : public Int8_t {
+public:
+    static Ptr Create() {
+        return Ptr(new Char);
+    }
 
     std::string getIdentifier() const override {
         return "char";

@@ -24,12 +24,12 @@
 
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
-#include "../datastructure/Constant.h"
-#include "../datastructure/PrimaryType.h"
-#include "../datastructure/VariableSymbol.h"
-#include "../datastructure/FunctionSymbol.h"
-#include "../datastructure/VariableDeclaration.h"
-#include "../datastructure/FunctionDeclaration.h"
+#include "../datastructure/statements/expressions/atomicexpression/Constant.h"
+#include "../datastructure/symboltable/PrimaryType.h"
+#include "../datastructure/symboltable/VariableSymbol.h"
+#include "../datastructure/symboltable/FunctionSymbol.h"
+#include "../datastructure/statements/declaration/VariableDeclaration.h"
+#include "../datastructure/statements/declaration/FunctionDeclaration.h"
 
 
 using namespace Caramel::Visitors;
@@ -166,7 +166,14 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockCont
 void AbstractSyntaxTreeVisitor::pushNewContext() {
     logger.debug() << "Pushed a new context.";
 
-    mContextStack.push(Context::Create());
+    SymbolTable::Ptr parentTable;
+    if(!mContextStack.empty()) {
+        Context::Ptr parent = mContextStack.top();
+        mContextStack.push(Context::Create(parent));
+    } else {
+        mContextStack.push(Context::Create());
+    }
+
 
     SymbolTable::Ptr symbolTable{currentContext()->getSymbolTable()};
 

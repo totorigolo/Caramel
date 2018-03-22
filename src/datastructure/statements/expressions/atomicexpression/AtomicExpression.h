@@ -24,15 +24,14 @@
 
 #pragma once
 
-#include "Statement.h"
-#include "../exceptions/NotImplementedException.h"
+#include "../Expression.h"
 
 
 namespace Caramel::DataStructure {
 
-class Jump : public Statement {
-public:
-    Jump(antlr4::Token *startToken);
+class AtomicExpression : public Expression {
+protected:
+    AtomicExpression(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

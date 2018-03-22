@@ -24,29 +24,32 @@
 
 #pragma once
 
-#include "AtomicExpression.h"
-#include "../Any.h"
+#include "../../exceptions/NotImplementedException.h"
+
+#include <Token.h>
+
+#include <memory>
 
 
 namespace Caramel::DataStructure {
 
-class Constant : public AtomicExpression {
+class Statement {
 public:
-    using Ptr = std::shared_ptr<Constant>;
+    using Ptr = std::shared_ptr<Statement>;
 
-    static Ptr Create(Any mValue, antlr4::Token *startToken) {
-        return Ptr(new Constant(std::forward<Any>(mValue), startToken));
+    static Ptr Create(antlr4::Token *startToken) {
+        return Ptr(new Statement(startToken));
     }
 
-    Any getValue() override {
-        return mValue;
-    }
+    size_t getLine() const;
+
+protected:
+    explicit Statement(antlr4::Token *startToken);
 
 private:
-    explicit Constant(Any mValue, antlr4::Token *startToken);
+    size_t mLine;
+    size_t mColumns;
 
-private:
-    Any mValue;
 };
 
 } // namespace Caramel::DataStructure

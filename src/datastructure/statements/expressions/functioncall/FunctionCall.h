@@ -24,14 +24,14 @@
 
 #pragma once
 
-#include "Expression.h"
+#include "../Expression.h"
 
 
 namespace Caramel::DataStructure {
 
-class AtomicExpression : public Expression {
-protected:
-    AtomicExpression(antlr4::Token *startToken);
+class FunctionCall : public Expression {
+public:
+    FunctionCall(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

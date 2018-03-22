@@ -24,31 +24,34 @@
 
 #pragma once
 
-#include "../exceptions/NotImplementedException.h"
-#include "SymbolTable.h"
-#include "Statement.h"
-
-#include <memory>
+#include "Symbol.h"
 #include <vector>
 
 
 namespace Caramel::DataStructure {
 
-class Context {
+class FunctionSymbol : public Symbol {
 public:
-    using Ptr = std::shared_ptr<Context>;
-
-    static Ptr Create() {
-        return Ptr(new Context);
+    static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
+        return Ptr(new FunctionSymbol(mName, mType));
     }
 
-    SymbolTable::Ptr getSymbolTable() const;
+public:
+    FunctionSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
+    ~FunctionSymbol() override = default;
+
+    void onDeclaration(const Declaration::Ptr &declaration) override;
+    void onDefinition(const Definition::Ptr &definition) override;
+    void onUsage(const Expression::Ptr &expression) override;
+
+    std::vector<Symbol::Ptr> getNamedParameters() const;
+    void setParameters(const std::vector<Symbol::Ptr> &namedParameters);
 
 private:
-    Context();
+    std::vector<Symbol::Ptr> mParameters;
 
-    SymbolTable::Ptr mSymbolTable;
-    std::vector<Statement::Ptr> mStatements;
 };
 
 } // namespace Caramel::DataStructure
+
+

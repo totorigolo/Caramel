@@ -29,7 +29,7 @@
 #include "listeners/DotExportListener.h"
 #include "visitors/AbstractSyntaxTreeVisitor.h"
 
-#include "datastructure/Context.h"
+#include "datastructure/context/Context.h"
 
 #include <CaramelLexer.h>
 #include <CaramelParser.h>

@@ -24,22 +24,16 @@
 
 #pragma once
 
-#include "Statement.h"
-#include "../exceptions/NotImplementedException.h"
+#include "../Statement.h"
 
-#include <support/Any.h>
+#include "../../../exceptions/NotImplementedException.h"
 
 
 namespace Caramel::DataStructure {
 
-class Expression : public Statement {
-public:
-
-    // TODO : Manage Type later pls
-    virtual antlrcpp::Any getValue() = 0;
-
+class Declaration : public Statement {
 protected:
-    Expression(antlr4::Token *startToken);
+    explicit Declaration(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

@@ -24,66 +24,36 @@
 
 #pragma once
 
-#include "PrimaryType.h"
-#include "Statement.h"
-#include "Declaration.h"
-#include "Expression.h"
-#include "Definition.h"
-#include <iostream>
-#include <vector>
+#include "../../exceptions/NotImplementedException.h"
+#include "../symboltable/SymbolTable.h"
+#include "../statements/Statement.h"
+
 #include <memory>
+#include <vector>
 
 
 namespace Caramel::DataStructure {
 
-enum class SymbolType {
-    FunctionSymbol,
-    VariableSymbol,
-    TypeSymbol
-};
-
-class Symbol {
+class Context {
 public:
-    using Ptr = std::shared_ptr<Symbol>;
-    using WeakPtr = std::weak_ptr<Symbol>;
+    using Ptr = std::shared_ptr<Context>;
 
-    virtual ~Symbol() = default;
+    static Ptr Create() {
+        return Ptr(new Context);
+    }
 
-    std::vector<Statement::Ptr> getOccurrences();
+    static Ptr Create(Context::Ptr const &parent) {
+        return Ptr(new Context(parent->getSymbolTable()));
+    }
 
-    bool isDeclared();
-    bool isDefined();
-
-    PrimaryType::Ptr getType() const;
-
-    void addDeclaration(const Declaration::Ptr &declaration);
-    void addDefinition(const Definition::Ptr &definition);
-    void addUsage(const Expression::Ptr &expression);
-
-    SymbolType getSymbolType() const;
-    std::string getSymbolTypeAsString() const;
-
-    std::string getName() const;
-
-protected:
-    Symbol(std::string mName, PrimaryType::Ptr mType, SymbolType symbolType);
-
-    virtual void onDeclaration(const Declaration::Ptr &declaration);
-    virtual void onDefinition(const Definition::Ptr &definition);
-    virtual void onUsage(const Expression::Ptr &expression);
-
-protected:
-    bool mIsDeclared;
-    bool mIsDefined;
-    std::vector<Statement::Ptr> mOccurrences;
+    SymbolTable::Ptr getSymbolTable() const;
 
 private:
-    std::string mName;
-    PrimaryType::Ptr mType;
-    SymbolType mSymbolType;
+    Context();
+    explicit Context(SymbolTable::Ptr const &symbolTable);
+
+    SymbolTable::Ptr mSymbolTable;
+    std::vector<Statement::Ptr> mStatements;
 };
 
 } // namespace Caramel::DataStructure
-
-
-

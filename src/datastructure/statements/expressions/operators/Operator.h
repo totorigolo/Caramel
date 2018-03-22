@@ -24,28 +24,16 @@
 
 #pragma once
 
-#include "Declaration.h"
-#include "TypeSymbol.h"
-#include "VariableSymbol.h"
-
-#include <memory>
+#include "../../../../exceptions/NotImplementedException.h"
 
 
 namespace Caramel::DataStructure {
 
-class VariableDeclaration : public Declaration {
+class Operator {
 public:
-    static Ptr Create(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken) {
-        return Ptr(new VariableDeclaration(std::forward<VariableSymbol::WeakPtr>(symbol), startToken));
+    Operator() {
+        throw Caramel::Exceptions::NotImplementedException(__FILE__);
     }
-
-    VariableSymbol::WeakPtr getSymbol();
-
-private:
-    VariableDeclaration(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken);
-
-private:
-    VariableSymbol::WeakPtr mSymbol;
 };
 
 } // namespace Caramel::DataStructure

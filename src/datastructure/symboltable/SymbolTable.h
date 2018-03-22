@@ -25,8 +25,8 @@
 #pragma once
 
 #include "Common.h"
-#include "../exceptions/NotImplementedException.h"
-#include "../datastructure/Symbol.h"
+#include "../../exceptions/NotImplementedException.h"
+#include "Symbol.h"
 #include <CaramelBaseVisitor.h>
 #include <string>
 #include <map>
@@ -44,6 +44,10 @@ public:
         return Ptr(new SymbolTable);
     }
 
+    static Ptr Create(SymbolTable::Ptr const & parentTable) {
+        return Ptr(new SymbolTable(parentTable));
+    }
+
     void addVariableDeclaration(const PrimaryType::Ptr &primaryType, const std::string &name, const Declaration::Ptr &declaration);
     void addVariableDefinition(const PrimaryType::Ptr &primaryType, const std::string &name, const Definition::Ptr &definition);
     void addVariableUsage(const std::string &name, const Expression::Ptr &expression);
@@ -57,11 +61,16 @@ public:
     bool hasSymbol(std::string const& name);
     Symbol::Ptr getSymbol(std::string const& name);
 
+    SymbolTable::Ptr getParentTable();
+
 private:
     std::map<std::string, Symbol::Ptr> mSymbolMap;
 
 private:
     SymbolTable() = default;
+    explicit SymbolTable (SymbolTable::Ptr const &parentTable);
+
+    SymbolTable::Ptr mParentTable;
 
     bool isDeclared(const std::string &name);
     bool isDefined(const std::string &name);

@@ -22,16 +22,18 @@
  * SOFTWARE.
 */
 
-#include "Context.h"
+#pragma once
+
+#include "../Statement.h"
+
+#include "../../../exceptions/NotImplementedException.h"
+
 
 namespace Caramel::DataStructure {
 
-Context::Context()
-        : mSymbolTable(SymbolTable::Create()) {
-}
-
-SymbolTable::Ptr Context::getSymbolTable() const {
-    return mSymbolTable;
-}
+class Definition : public Statement {
+protected:
+    Definition(antlr4::Token *startToken);
+};
 
 } // namespace Caramel::DataStructure

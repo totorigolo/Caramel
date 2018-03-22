@@ -24,25 +24,29 @@
 
 #pragma once
 
-#include "Definition.h"
-#include "FunctionSymbol.h"
-
-#include <memory>
+#include "AtomicExpression.h"
+#include "../../../../Any.h"
 
 
 namespace Caramel::DataStructure {
 
-class FunctionDeclaration : public Definition {
+class Constant : public AtomicExpression {
 public:
-    static Ptr Create(FunctionSymbol::WeakPtr symbol, antlr4::Token *startToken) {
-        return Ptr(new FunctionDeclaration(std::forward<FunctionSymbol::WeakPtr>(symbol), startToken));
+    using Ptr = std::shared_ptr<Constant>;
+
+    static Ptr Create(Any mValue, antlr4::Token *startToken) {
+        return Ptr(new Constant(std::forward<Any>(mValue), startToken));
+    }
+
+    Any getValue() override {
+        return mValue;
     }
 
 private:
-    FunctionDeclaration(FunctionSymbol::WeakPtr symbol, antlr4::Token *startToken);
+    explicit Constant(Any mValue, antlr4::Token *startToken);
 
 private:
-    FunctionSymbol::WeakPtr mSymbol;
+    Any mValue;
 };
 
-}
+} // namespace Caramel::DataStructure
