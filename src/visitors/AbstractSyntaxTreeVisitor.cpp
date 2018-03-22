@@ -40,7 +40,8 @@ AbstractSyntaxTreeVisitor::AbstractSyntaxTreeVisitor(std::string const &sourceFi
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
     pushNewContext();
-    return visitChildren(ctx).as<Context::Ptr>();
+    visitStatements(ctx->statements());
+    return currentContext();
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::StatementsContext *ctx) {
@@ -60,7 +61,13 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::Statemen
             logger.warning() << "Skipping unhandled statement:\n" << statement->getText();
         }
     }
-    return statements;
+    currentContext()->addStatements(std::move(statements));
+    return {};
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatement(CaramelParser::StatementContext *ctx) {
+    // TODO: the "Skipping unhandled statement" problem seems to come from here
+    return visitChildren(ctx);
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {

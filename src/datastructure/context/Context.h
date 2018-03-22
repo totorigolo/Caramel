@@ -47,6 +47,8 @@ public:
 
     SymbolTable::Ptr getSymbolTable() const;
 
+    void addStatements(std::vector<Statement::Ptr> &&statements);
+
 private:
     Context();
     explicit Context(SymbolTable::Ptr const &symbolTable);

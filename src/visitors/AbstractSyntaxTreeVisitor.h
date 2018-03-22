@@ -52,6 +52,8 @@ public:
 
     antlrcpp::Any visitStatements(CaramelParser::StatementsContext *ctx) override;
 
+    antlrcpp::Any visitStatement(CaramelParser::StatementContext *ctx) override;
+
     antlrcpp::Any visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) override;
 
     antlrcpp::Any visitTypeParameter(CaramelParser::TypeParameterContext *ctx) override;

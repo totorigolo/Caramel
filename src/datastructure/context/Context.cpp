@@ -24,16 +24,22 @@
 
 #include "Context.h"
 
+
 namespace Caramel::DataStructure {
 
 Context::Context()
         : mSymbolTable(SymbolTable::Create()) {
 }
 
+Context::Context(const SymbolTable::Ptr &parentTable)
+        : mSymbolTable(SymbolTable::Create(parentTable)) {}
+
 SymbolTable::Ptr Context::getSymbolTable() const {
     return mSymbolTable;
 }
 
-Context::Context(const SymbolTable::Ptr &parentTable) : mSymbolTable(SymbolTable::Create(parentTable)) {}
+void Context::addStatements(std::vector<Statement::Ptr> &&statements) {
+    std::move(statements.begin(), statements.end(), std::back_inserter(mStatements));
+}
 
 } // namespace Caramel::DataStructure
