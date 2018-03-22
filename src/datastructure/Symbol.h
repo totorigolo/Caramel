@@ -54,6 +54,9 @@ public:
     bool isDeclared();
     bool isDefined();
 
+    Statement::Ptr getDeclaration();
+    Statement::Ptr getDefinition();
+
     PrimaryType::Ptr getType() const;
 
     void addDeclaration(const Declaration::Ptr &declaration);
@@ -72,8 +75,8 @@ protected:
     virtual void onUsage(const Expression::Ptr &expression);
 
 protected:
-    bool mIsDeclared;
-    bool mIsDefined;
+    Statement::WeakPtr mDeclaration;
+    Statement::WeakPtr mDefinition;
     std::vector<Statement::Ptr> mOccurrences;
 
 private:

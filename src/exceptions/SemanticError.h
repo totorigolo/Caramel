@@ -24,19 +24,18 @@
 
 #pragma once
 
+#include "../util/SourceFileUtil.h"
+
 #include <stdexcept>
+
 
 namespace Caramel::Exceptions {
 
-class SymbolAlreadyDeclaredException : public std::runtime_error {
-
+class SemanticError : public std::runtime_error {
 public:
-    explicit SymbolAlreadyDeclaredException(const std::string &__arg) : runtime_error(__arg) {}
+    explicit SemanticError(std::string const &message) : std::runtime_error(message) {}
 
-    explicit SymbolAlreadyDeclaredException(const char * c) : runtime_error(c){}
-
-    explicit SymbolAlreadyDeclaredException(const std::runtime_error & ex) : runtime_error(ex){}
-
+    virtual void explain(SourceFileUtil sourceFileUtil) const = 0;
 };
 
 } // namespace Caramel::Exceptions

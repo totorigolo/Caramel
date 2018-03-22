@@ -27,24 +27,32 @@
 #include "VariableSymbol.h"
 #include "FunctionSymbol.h"
 
-#include "../exceptions/SymbolAlreadyDeclaredException.h"
+#include "../exceptions/SymbolAlreadyDeclaredError.h"
 #include "../Logger.h"
 
 
 namespace Caramel::DataStructure {
 
-void SymbolTable::addVariableDeclaration(const PrimaryType::Ptr &primaryType, const std::string &name,
+void SymbolTable::addVariableDeclaration(antlr4::ParserRuleContext *antlrContext,
+                                         const PrimaryType::Ptr &primaryType,
+                                         const std::string &name,
                                          const Declaration::Ptr &declaration) {
     if (isNotDeclared(name)) {
         mSymbolMap[name] = VariableSymbol::Create(name, primaryType);
         mSymbolMap[name]->addDeclaration(declaration);
     } else {
         using namespace Caramel::Exceptions;
-        throw SymbolAlreadyDeclaredException("A symbol named '" + name + "' is already declared");
+        throw SymbolAlreadyDeclaredError(
+                "A symbol named '" + name + "' is already declared",
+                antlrContext,
+                getSymbol(name)->getDeclaration(),
+                declaration
+        );
     }
 }
 
-void SymbolTable::addVariableDefinition(const PrimaryType::Ptr &primaryType, const std::string &name,
+void SymbolTable::addVariableDefinition(const PrimaryType::Ptr &primaryType,
+                                        const std::string &name,
                                         const Definition::Ptr &definition) {
     // Not declared and not defined
     if (isNotDeclared(name)) {
@@ -63,7 +71,8 @@ void SymbolTable::addVariableDefinition(const PrimaryType::Ptr &primaryType, con
     }
 }
 
-void SymbolTable::addVariableUsage(const std::string &name, const Expression::Ptr &expression) {
+void
+SymbolTable::addVariableUsage(const std::string &name, const Expression::Ptr &expression) {
 
     if (isDefined(name)) {
         mSymbolMap[name]->addUsage(expression);
@@ -73,7 +82,9 @@ void SymbolTable::addVariableUsage(const std::string &name, const Expression::Pt
 
 }
 
-void SymbolTable::addFunctionDeclaration(const PrimaryType::Ptr &returnType, const std::string &name,
+void SymbolTable::addFunctionDeclaration(antlr4::ParserRuleContext *antlrContext,
+                                         const PrimaryType::Ptr &returnType,
+                                         const std::string &name,
                                          std::vector<Symbol::Ptr> namedParameters,
                                          const Declaration::Ptr &declaration) {
 
@@ -82,13 +93,20 @@ void SymbolTable::addFunctionDeclaration(const PrimaryType::Ptr &returnType, con
         mSymbolMap[name]->addDeclaration(declaration);
     } else {
         using namespace Caramel::Exceptions;
-        throw SymbolAlreadyDeclaredException("A symbol named '" + name + "' is already declared");
+        throw SymbolAlreadyDeclaredError(
+                "A symbol named '" + name + "' is already declared.",
+                antlrContext,
+                getSymbol(name)->getDeclaration(),
+                declaration
+        );
     }
 
 }
 
-void SymbolTable::addFunctionDefinition(const PrimaryType::Ptr &returnType, const std::string &name,
-                                        std::vector<Symbol::Ptr> namedParameters, const Definition::Ptr &definition) {
+void SymbolTable::addFunctionDefinition(const PrimaryType::Ptr &returnType,
+                                        const std::string &name,
+                                        std::vector<Symbol::Ptr> namedParameters,
+                                        const Definition::Ptr &definition) {
     // NotDeclared and not defined
     if (isNotDeclared(name)) {
         mSymbolMap[name] = FunctionSymbol::Create(name, returnType);
@@ -107,7 +125,8 @@ void SymbolTable::addFunctionDefinition(const PrimaryType::Ptr &returnType, cons
 
 }
 
-void SymbolTable::addFunctionCall(const std::string &name, const std::vector<Symbol::Ptr> &valueParameters,
+void SymbolTable::addFunctionCall(const std::string &name,
+                                  const std::vector<Symbol::Ptr> &valueParameters,
                                   const Expression::Ptr &expression) {
 
     if (isDefined(name)) {

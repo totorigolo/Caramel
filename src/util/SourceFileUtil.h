@@ -34,7 +34,7 @@ class SourceFileUtil {
 
 public:
     explicit SourceFileUtil(const std::string &fileName);
-    virtual ~SourceFileUtil();
+    virtual ~SourceFileUtil() = default;
 
     /**
      * Return the line at `line` line of the source code
@@ -48,9 +48,5 @@ public:
 
 private:
     std::string fileName;
-    std::ifstream inputStream;
-
+    mutable std::ifstream inputStream;
 };
-
-
-
