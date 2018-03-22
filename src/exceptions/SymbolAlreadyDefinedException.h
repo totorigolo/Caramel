@@ -28,17 +28,15 @@
 
 namespace Caramel::Exceptions {
 
-class FunctionAlreadyDefined : public std::runtime_error {
+class SymbolAlreadyDefinedException : public std::runtime_error {
 
 public:
-    explicit FunctionAlreadyDefined(const std::string &__arg) : runtime_error(__arg) {}
+    explicit SymbolAlreadyDefinedException(const std::string &__arg) : runtime_error(__arg) {}
 
-    explicit FunctionAlreadyDefined(const char * c) : runtime_error(c){}
+    explicit SymbolAlreadyDefinedException(const char * c) : runtime_error(c){}
 
-    explicit FunctionAlreadyDefined(const std::runtime_error & ex) : runtime_error(ex){}
+    explicit SymbolAlreadyDefinedException(const std::runtime_error & ex) : runtime_error(ex){}
 
 };
 
-} // namespace Caramel::Exceptions
-
-
+} // namespace Caramel::Exception

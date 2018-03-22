@@ -30,11 +30,16 @@
 namespace Caramel::DataStructure {
 
 class PrimaryType {
+
 public:
     using Ptr = std::shared_ptr<PrimaryType>;
 
     virtual size_t getMemoryLength() const = 0;
+    virtual std::string getIdentifier() const = 0;
 
+    bool equals(PrimaryType::Ptr const & other) {
+        return typeid(*this) == typeid(*other);
+    }
 
 };
 
@@ -47,6 +52,11 @@ public:
     size_t getMemoryLength() const override {
         return 0;
     }
+
+    std::string getIdentifier() const override {
+        return "void";
+    }
+
 };
 
 class Int8_t : public PrimaryType {
@@ -58,9 +68,20 @@ public:
     size_t getMemoryLength() const override {
         return 8;
     }
+
+    std::string getIdentifier() const override {
+        return "int8_t";
+    }
+
 };
 
-class Char : public Int8_t {};
+class Char : public Int8_t {
+
+    std::string getIdentifier() const override {
+        return "char";
+    }
+
+};
 
 class Int16_t : public PrimaryType {
 public:
@@ -71,6 +92,11 @@ public:
     size_t getMemoryLength() const override {
         return 16;
     }
+
+    std::string getIdentifier() const override {
+        return "int16_t";
+    }
+
 };
 
 class Int32_t : public PrimaryType {
@@ -82,6 +108,11 @@ public:
     size_t getMemoryLength() const override {
         return 32;
     }
+
+    std::string getIdentifier() const override {
+        return "int32_t";
+    }
+
 };
 
 class Int64_t : public PrimaryType {
@@ -92,6 +123,10 @@ public:
 
     size_t getMemoryLength() const override {
         return 64;
+    }
+
+    std::string getIdentifier() const override {
+        return "int64_t";
     }
 };
 

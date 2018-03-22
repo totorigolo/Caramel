@@ -68,6 +68,13 @@ private:
 
     inline bool isNotDeclared(const std::string &name) { return !isDeclared(name); }
     inline bool isNotDefined(const std::string &name) { return !isDefined(name); }
+
+    std::string buildAlreadyDefinedErrorMessage(std::string const &variableName);
+    std::string buildAlreadyDeclaredErrorMessage(std::string const &variableName);
+    std::string buildMismatchSymbolTypeErrorMessage(std::string const &variableName, SymbolType requiredSymbolType);
+    std::string buildMismatchTypeErrorMessage(std::string const &variableName, PrimaryType::Ptr const &requiredType);
+    std::string buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType);
+
 };
 
 } // namespace Caramel::DataStructure

@@ -28,17 +28,15 @@
 
 namespace Caramel::Exceptions {
 
-class VariableAlreadyDefined : public std::runtime_error {
+class DeclarationMismatchException : public std::runtime_error {
 
 public:
-    explicit VariableAlreadyDefined(const std::string &__arg) : runtime_error(__arg) {}
+    explicit DeclarationMismatchException(const std::string &__arg) : runtime_error(__arg) {}
 
-    explicit VariableAlreadyDefined(const char * c) : runtime_error(c){}
+    explicit DeclarationMismatchException(const char * c) : runtime_error(c){}
 
-    explicit VariableAlreadyDefined(const std::runtime_error & ex) : runtime_error(ex){}
+    explicit DeclarationMismatchException(const std::runtime_error & ex) : runtime_error(ex){}
 
 };
 
-} // namespace Caramel::Exceptions
-
-
+} // namespace Caramel::Exception

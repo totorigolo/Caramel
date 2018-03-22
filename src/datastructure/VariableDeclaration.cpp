@@ -33,4 +33,8 @@ VariableDeclaration::VariableDeclaration(Symbol::WeakPtr symbol,
           mSymbol(std::move(symbol)) {
 }
 
+VariableSymbol::WeakPtr VariableDeclaration::getSymbol() {
+    return mSymbol;
+}
+
 } // Caramel::DataStructure

@@ -85,4 +85,12 @@ Caramel::DataStructure::PrimaryType::Ptr Caramel::DataStructure::Symbol::getType
     return mType;
 }
 
+std::string Caramel::DataStructure::Symbol::getSymbolTypeAsString() const {
+    switch (mSymbolType) {
+        case SymbolType::VariableSymbol: return "VariableSymbol";
+        case SymbolType::TypeSymbol: return "TypeSymbol";
+        case SymbolType::FunctionSymbol: return "FunctionSymbol";
+    }
+}
+
 

@@ -41,6 +41,8 @@ public:
         return Ptr(new Statement(startToken));
     }
 
+    size_t getLine() const;
+
 protected:
     explicit Statement(antlr4::Token *startToken);
 

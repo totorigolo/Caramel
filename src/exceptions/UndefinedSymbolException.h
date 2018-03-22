@@ -24,28 +24,19 @@
 
 #pragma once
 
-#include "Declaration.h"
-#include "TypeSymbol.h"
-#include "VariableSymbol.h"
+#include <stdexcept>
 
-#include <memory>
+namespace Caramel::Exceptions {
 
+class UndefinedSymbolException : public std::runtime_error {
 
-namespace Caramel::DataStructure {
-
-class VariableDeclaration : public Declaration {
 public:
-    static Ptr Create(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken) {
-        return Ptr(new VariableDeclaration(std::forward<VariableSymbol::WeakPtr>(symbol), startToken));
-    }
+    explicit UndefinedSymbolException(const std::string &__arg) : runtime_error(__arg) {}
 
-    VariableSymbol::WeakPtr getSymbol();
+    explicit UndefinedSymbolException(const char * c) : runtime_error(c){}
 
-private:
-    VariableDeclaration(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken);
+    explicit UndefinedSymbolException(const std::runtime_error & ex) : runtime_error(ex){}
 
-private:
-    VariableSymbol::WeakPtr mSymbol;
 };
 
-} // namespace Caramel::DataStructure
+} // namespace Caramel::Exception

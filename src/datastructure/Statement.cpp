@@ -29,3 +29,7 @@ Caramel::DataStructure::Statement::Statement(antlr4::Token *startToken)
         : mLine{startToken->getLine()},
           mColumns{startToken->getCharPositionInLine()} {
 }
+
+size_t Caramel::DataStructure::Statement::getLine() const {
+    return mLine;
+}

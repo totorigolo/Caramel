@@ -61,6 +61,7 @@ public:
     void addUsage(const Expression::Ptr &expression);
 
     SymbolType getSymbolType() const;
+    std::string getSymbolTypeAsString() const;
 
     std::string getName() const;
 

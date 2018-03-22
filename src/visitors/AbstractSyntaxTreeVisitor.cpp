@@ -40,15 +40,6 @@ AbstractSyntaxTreeVisitor::AbstractSyntaxTreeVisitor(std::string const &sourceFi
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
     pushNewContext();
-
-    SymbolTable::Ptr symbolTable{currentContext()->getSymbolTable()};
-    symbolTable->addType(Char::Create(), "void", nullptr);
-    symbolTable->addType(Char::Create(), "char", nullptr);
-    symbolTable->addType(Int8_t::Create(), "int8_t", nullptr);
-    symbolTable->addType(Int16_t::Create(), "int16_t", nullptr);
-    symbolTable->addType(Int32_t::Create(), "int32_t", nullptr);
-    symbolTable->addType(Int64_t::Create(), "int64_t", nullptr);
-
     return visitChildren(ctx).as<Context::Ptr>();
 }
 
@@ -174,7 +165,25 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockCont
 
 void AbstractSyntaxTreeVisitor::pushNewContext() {
     logger.debug() << "Pushed a new context.";
+
     mContextStack.push(Context::Create());
+
+    SymbolTable::Ptr symbolTable{currentContext()->getSymbolTable()};
+
+    PrimaryType::Ptr void_t = Void_t::Create();
+    PrimaryType::Ptr char_t = Char::Create();
+    PrimaryType::Ptr int8_t = Int8_t::Create();
+    PrimaryType::Ptr int16_t = Int16_t::Create();
+    PrimaryType::Ptr int32_t = Int32_t::Create();
+    PrimaryType::Ptr int64_t = Int64_t::Create();
+
+    symbolTable->addType(void_t, void_t->getIdentifier(), nullptr);
+    symbolTable->addType(char_t, char_t->getIdentifier(), nullptr);
+    symbolTable->addType(int8_t, int8_t->getIdentifier(), nullptr);
+    symbolTable->addType(int16_t, int16_t->getIdentifier(), nullptr);
+    symbolTable->addType(int32_t, int32_t->getIdentifier(), nullptr);
+    symbolTable->addType(int64_t, int64_t->getIdentifier(), nullptr);
+
 }
 
 Context::Ptr AbstractSyntaxTreeVisitor::currentContext() {
