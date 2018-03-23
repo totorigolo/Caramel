@@ -63,6 +63,8 @@ public:
 
     antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
 
+    antlrcpp::Any visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) override ;
+
     antlrcpp::Any visitCharConstant(CaramelParser::CharConstantContext *ctx) override;
 
     antlrcpp::Any visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) override;
@@ -74,6 +76,18 @@ public:
     antlrcpp::Any visitArrayDeclarationVoid(CaramelParser::ArrayDeclarationVoidContext *ctx) override ;
 
     antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override ;
+
+    antlrcpp::Any visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) override;
+
+    antlrcpp::Any visitArrayDeclarationVoidInner(CaramelParser::ArrayDeclarationVoidInnerContext *ctx) override ;
+
+    antlrcpp::Any visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) override ;
+
+    antlrcpp::Any visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) override ;
+
+    antlrcpp::Any visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) override ;
+
+
 
 private:
     void pushNewContext();

@@ -1,3 +1,4 @@
+extern int a [];
 int tab[] = {1,2};
 int tab[] = {};
 int tab   [  ] = { 1 ,2  }   ;

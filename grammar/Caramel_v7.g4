@@ -69,7 +69,7 @@ arrayDeclaration
 
 arrayDefinition
   : arrayDeclarationVoidInner MultilineWhiteSpace_* assignmentOperator MultilineWhiteSpace_* arrayBlock
-  | arrayDeclarationInner (MultilineWhiteSpace_* assignmentOperator MultilineWhiteSpace_* arrayBlock)*
+  | arrayDeclarationInner (MultilineWhiteSpace_* assignmentOperator MultilineWhiteSpace_* arrayBlock)?
   ;
 arraySizeDeclaration
   : L_Bracket_ InlineWhiteSpace_* positiveConstant InlineWhiteSpace_* R_Bracket_
