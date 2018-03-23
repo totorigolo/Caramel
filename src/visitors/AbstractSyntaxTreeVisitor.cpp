@@ -198,9 +198,26 @@ Context::Ptr AbstractSyntaxTreeVisitor::currentContext() {
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationVoid(CaramelParser::ArrayDeclarationVoidContext *ctx) {
+    logger.trace() << "visitaArrayDeclarationVoid";
     PrimaryType::Ptr typeName = visitTypeParameter(ctx->typeParameter());
     std::string name = visitValidIdentifier(ctx->validIdentifier());
     //currentContext()->getSymbolTable() // FIXME: Occurrence
 
     return {};
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) {
+    logger.trace() << "visitAtomicExpression";
+    if(nullptr != ctx->validIdentifier()) {
+        std::string varName = visitValidIdentifier(ctx->validIdentifier());
+        currentContext()->getSymbolTable()->addVariableUsage(varName, nullptr);
+        logger.trace() << varName;
+    }
+
+    return CaramelBaseVisitor::visitAtomicExpression(ctx);
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) {
+    pushNewContext();
+    return CaramelBaseVisitor::visitFunctionDefinition(ctx);
 }

@@ -43,13 +43,14 @@ public:
 
     size_t getLine() const;
 
+    virtual std::string getIR() { return ""; };
+
 protected:
     explicit Statement(antlr4::Token *startToken);
 
 private:
     size_t mLine;
     size_t mColumns;
-
 };
 
 } // namespace Caramel::DataStructure

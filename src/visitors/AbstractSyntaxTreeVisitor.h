@@ -47,7 +47,7 @@ namespace Caramel::Visitors {
 class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
 
 public:
-    explicit AbstractSyntaxTreeVisitor(std::string const& sourceFileName);
+    explicit AbstractSyntaxTreeVisitor(std::string const &sourceFileName);
 
     antlrcpp::Any visitR(CaramelParser::RContext *ctx) override;
 
@@ -69,15 +69,19 @@ public:
 
     antlrcpp::Any visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) override;
 
-    antlrcpp::Any visitArrayDeclarationVoid(CaramelParser::ArrayDeclarationVoidContext *ctx) override ;
+    antlrcpp::Any visitArrayDeclarationVoid(CaramelParser::ArrayDeclarationVoidContext *ctx) override;
 
-    antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override ;
-    
+    antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override;
+
+    antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
+
+    antlrcpp::Any visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) override;
+
 private:
     void pushNewContext();
 
     Context::Ptr currentContext();
-
+    
 private:
     std::stack<Context::Ptr> mContextStack;
     SourceFileUtil mSourceFileUtil;

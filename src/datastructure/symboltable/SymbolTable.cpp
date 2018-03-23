@@ -82,10 +82,14 @@ void SymbolTable::addVariableUsage(const std::string &name, const Expression::Pt
     } else {
         // Fixme : Try to find the variable in the parent context or throw a VariableUndefinedException
         SymbolTable::Ptr parent = getParentTable();
-        while(nullptr != mParentTable && !parent->isDefined(name)) {
-            mParentTable = mParentTable->getParentTable();
+        while(nullptr != parent && parent->isNotDefined(name)) {
+            SymbolTable cpy = *parent;
+            if(cpy.isDefined(name)) {
+                cpy.getSymbol(name);
+            }
+            parent = parent->getParentTable();
         }
-        if(!parent->isDefined(name)) {
+        if(nullptr == parent) {
             throw UndefinedSymbolException(buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol));
         }
     }
@@ -154,7 +158,7 @@ SymbolTable::addType(const PrimaryType::Ptr &primaryType, const std::string &nam
 }
 
 bool SymbolTable::hasSymbol(std::string const &name) {
-    return mSymbolMap.find(name) != mSymbolMap.end();
+    return mSymbolMap.find( name ) != mSymbolMap.end();
 }
 
 Symbol::Ptr SymbolTable::getSymbol(std::string const &name) {
@@ -248,7 +252,6 @@ SymbolTable::buildMismatchTypeErrorMessage(std::string const &variableName, Prim
     return res.str();
 }
 
-
 std::string SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType) {
     std::stringstream res;
     res << "The ";
@@ -263,7 +266,7 @@ std::string SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &nam
             res << "type";
             break;
     }
-    res << " is never defined before";
+    res << " '" << name << "' is never defined before";
     return res.str();
 }
 
