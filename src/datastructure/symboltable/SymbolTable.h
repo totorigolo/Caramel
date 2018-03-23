@@ -25,12 +25,13 @@
 #pragma once
 
 #include "Common.h"
-#include "../../exceptions/NotImplementedException.h"
 #include "Symbol.h"
-#include <CaramelBaseVisitor.h>
-#include <string>
-#include <map>
+#include "../../exceptions/NotImplementedException.h"
 
+#include <CaramelBaseVisitor.h>
+
+#include <map>
+#include <string>
 #include <memory>
 
 
@@ -48,18 +49,42 @@ public:
         return Ptr(new SymbolTable(parentTable));
     }
 
-    void addVariableDeclaration(const PrimaryType::Ptr &primaryType, const std::string &name, const Declaration::Ptr &declaration);
-    void addVariableDefinition(const PrimaryType::Ptr &primaryType, const std::string &name, const Definition::Ptr &definition);
-    void addVariableUsage(const std::string &name, const Expression::Ptr &expression);
+    void addVariableDeclaration(antlr4::ParserRuleContext *antlrContext,
+                                PrimaryType::Ptr const &primaryType,
+                                std::string const &name,
+                                Declaration::Ptr const &declaration);
+    void addVariableDefinition(antlr4::ParserRuleContext *antlrContext,
+                               PrimaryType::Ptr const &primaryType,
+                               std::string const &name,
+                               Definition::Ptr const &definition);
+    void addVariableUsage(antlr4::ParserRuleContext *antlrContext,
+                          std::string const &name,
+                          Expression::Ptr const &expression);
 
-    void addFunctionDeclaration(const PrimaryType::Ptr &returnType, const std::string &name, std::vector<Symbol::Ptr> namedParameters, const Declaration::Ptr &declaration);
-    void addFunctionDefinition(const PrimaryType::Ptr &returnType, const std::string &name, std::vector<Symbol::Ptr> namedParameters, const Definition::Ptr &definition);
-    void addFunctionCall(const std::string &name, const std::vector<Symbol::Ptr> &valueParameters, const Expression::Ptr &expression);
+    void addFunctionDeclaration(antlr4::ParserRuleContext *antlrContext,
+                                PrimaryType::Ptr const &returnType,
+                                std::string const &name,
+                                std::vector<Symbol::Ptr> namedParameters,
+                                Declaration::Ptr const &declaration);
+    void addFunctionDefinition(antlr4::ParserRuleContext *antlrContext,
+                               PrimaryType::Ptr const &returnType,
+                               std::string const &name,
+                               std::vector<Symbol::Ptr> namedParameters,
+                               Definition::Ptr const &definition);
+    void addFunctionCall(antlr4::ParserRuleContext *antlrContext,
+                         std::string const &name,
+                         std::vector<Symbol::Ptr> const &valueParameters,
+                         Expression::Ptr const &expression);
 
-    void addType(const PrimaryType::Ptr &primaryType, const std::string &name, const Definition::Ptr &definition);
+    void addPrimaryType(PrimaryType::Ptr const &primaryType,
+                        std::string const &name);
+    void addType(antlr4::ParserRuleContext *antlrContext,
+                 PrimaryType::Ptr const &primaryType,
+                 std::string const &name,
+                 Definition::Ptr const &definition);
 
-    bool hasSymbol(std::string const& name);
-    Symbol::Ptr getSymbol(std::string const& name);
+    bool hasSymbol(std::string const &name);
+    Symbol::Ptr getSymbol(std::string const &name);
 
     SymbolTable::Ptr getParentTable();
 
@@ -72,11 +97,11 @@ private:
 
     SymbolTable::Ptr mParentTable;
 
-    bool isDeclared(const std::string &name);
-    bool isDefined(const std::string &name);
+    bool isDeclared(std::string const &name);
+    bool isDefined(std::string const &name);
 
-    inline bool isNotDeclared(const std::string &name) { return !isDeclared(name); }
-    inline bool isNotDefined(const std::string &name) { return !isDefined(name); }
+    inline bool isNotDeclared(std::string const &name) { return !isDeclared(name); }
+    inline bool isNotDefined(std::string const &name) { return !isDefined(name); }
 
     std::string buildAlreadyDefinedErrorMessage(std::string const &variableName);
     std::string buildAlreadyDeclaredErrorMessage(std::string const &variableName);

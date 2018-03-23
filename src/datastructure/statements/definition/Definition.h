@@ -33,7 +33,7 @@ namespace Caramel::DataStructure {
 
 class Definition : public Statement {
 protected:
-    Definition(antlr4::Token *startToken);
+    explicit Definition(antlr4::Token *startToken);
 };
 
 } // namespace Caramel::DataStructure

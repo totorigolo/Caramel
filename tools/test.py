@@ -94,36 +94,22 @@ class GrammarTest(Test):
 
 
 class Tests:
-    def check_build(self):
-        raise NotImplementedError
-
-    def discover(self, base_directory):
-        raise NotImplementedError
-
-
-class GrammarTests(Tests):
     def __init__(self):
         self.tests = []
+        pass
 
-    @trace
     def check_build(self):
-        if not os.path.isdir('build'):
-            logger.critical(colored(' '.join([
-                'The build directory is absent! Try to build before',
-                'running tests, or to add --build to the command.'
-            ]), color='red'))
-            exit(1)
+        raise NotImplementedError
 
     @trace
     def add_test(self, name: str, full_path, should_fail: bool):
-        self.tests.append(GrammarTest(name, full_path, should_fail))
-        logger.debug('Added test {}.'.format(name))
+        raise NotImplementedError
 
     @trace
     def discover(self, base_directory, only=None):
         # Check if there are tests
-        if not os.path.isdir(PATHS['grammar-test-dir']):
-            logger.critical('The {} directory is absent!'.format(PATHS['grammar-test-dir']))
+        if not os.path.isdir(base_directory):
+            logger.critical('The {} directory is absent!'.format(base_directory))
             exit(1)
 
         # Discover the tests
@@ -138,6 +124,25 @@ class GrammarTests(Tests):
                             self.add_test(test_file, test_path, test_directory == 'invalid')
         logger.info('Discovered', colored(
             '{} tests.'.format(len(self.tests) - nb_tests_before), color='yellow'))
+
+
+class GrammarTests(Tests):
+    def __init__(self):
+        super().__init__()
+
+    @trace
+    def check_build(self):
+        if not os.path.isdir('build'):
+            logger.critical(colored(' '.join([
+                'The build directory is absent! Try to build before',
+                'running tests, or to add --build to the command.'
+            ]), color='red'))
+            exit(1)
+
+    @trace
+    def add_test(self, name: str, full_path, should_fail: bool):
+        self.tests.append(GrammarTest(name, full_path, should_fail))
+        logger.debug('Added test {}.'.format(name))
 
     @trace
     def run_all(self, *args, **kwargs):
@@ -182,6 +187,42 @@ def test_grammar(args):
 
 
 @trace
+def test_semantic(args):
+    logger.info('[EXPERIMENTAL] Running semantic tests...')
+
+    # TODO: Semantic tests (for now its the same as grammar)
+
+    if args.language != 'java':
+        logger.fatal('Grammar tests are only available in Java language.')
+        exit(1)
+
+    # Build the grammar, if asked to
+    if args.build:
+        from tools.build import build_grammar
+        build_grammar(args)
+
+    if args.interactive and len(args.test_files) > 0:
+        logger.warn('Running in interactive mode, ignoring test files.')
+        args.test_files = []
+
+    # Run the tests
+    semantic_tests = GrammarTests()
+    semantic_tests.check_build()
+    if args.interactive:
+        semantic_tests.add_test('interactive test', '', False)
+    elif args.all:
+        semantic_tests.discover(PATHS['semantic-test-dir'])
+    else:
+        semantic_tests.discover(PATHS['semantic-test-dir'], only=args.test_files)
+    semantic_tests.run_all(
+        open_gui=args.gui,
+        open_gui_on_failure=args.gui_on_failure,
+        show_stdout=args.stdout,
+        show_stderr=args.stderr,
+    )
+
+
+@trace
 def test_all(args):
     logger.info('Running all tests...')
 
@@ -191,3 +232,10 @@ def test_all(args):
     grammar_args.gui = False
     grammar_args.gui_on_failure = False
     test_grammar(grammar_args)
+
+    # Execute semantic tests
+    semantic_args = copy(args)
+    semantic_args.all = True
+    semantic_args.gui = False
+    semantic_args.gui_on_failure = False
+    test_semantic(semantic_args)

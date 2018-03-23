@@ -29,34 +29,47 @@ declarations
 declaration
   : functionDefinition
   | functionDeclaration MultilineWhiteSpace_* InstructionSeparator
+  | arrayDeclaration MultilineWhiteSpace_* InstructionSeparator
   | arrayDefinition MultilineWhiteSpace_* InstructionSeparator
+  | variableDeclaration MultilineWhiteSpace_* InstructionSeparator
   | variableDefinition MultilineWhiteSpace_* InstructionSeparator
   | InstructionSeparator
   ;
 
 // Declarations
-functionDeclaration
+functionDeclarationInner
   : typeParameter InlineWhiteSpace_+ validIdentifier functionArguments
   ;
+functionDeclaration
+  : functionDeclarationInner
+  ;
 functionDefinition
-  : functionDeclaration MultilineWhiteSpace_* block ;
+  : functionDeclarationInner MultilineWhiteSpace_* block ;
 
 variableDeclaration
-  : typeParameter InlineWhiteSpace_+ validIdentifier (InlineWhiteSpace_* Comma_ InlineWhiteSpace_* validIdentifier)*
+  : 'extern' InlineWhiteSpace_+ typeParameter InlineWhiteSpace_+ validIdentifier (InlineWhiteSpace_* Comma_ InlineWhiteSpace_* validIdentifier)*
   ;
 variableDefinition
-  : variableDeclaration (MultilineWhiteSpace_* assignmentOperator InlineWhiteSpace_* expression)? (MultilineWhiteSpace_* Comma_ InlineWhiteSpace_* (assignment|validIdentifier))*
+  : typeParameter InlineWhiteSpace_* (variableDefinitionAssignment|validIdentifier) MultilineWhiteSpace_* (MultilineWhiteSpace_* Comma_ InlineWhiteSpace_* (variableDefinitionAssignment|validIdentifier))*
   ;
+variableDefinitionAssignment
+  : validIdentifier InlineWhiteSpace_* Assignment_ InlineWhiteSpace_ expression ;
 
-arrayDeclarationVoid
+arrayDeclarationVoidInner
   : typeParameter InlineWhiteSpace_+ validIdentifier InlineWhiteSpace_* arraySizeDeclarationVoid
   ;
-arrayDeclaration
+arrayDeclarationInner
   : typeParameter InlineWhiteSpace_+ validIdentifier InlineWhiteSpace_* arraySizeDeclaration
   ;
+
+arrayDeclaration
+  : 'extern' InlineWhiteSpace_* arrayDeclarationInner
+  | 'extern' InlineWhiteSpace_* arrayDeclarationVoidInner
+  ;
+
 arrayDefinition
-  : arrayDeclarationVoid MultilineWhiteSpace_* assignmentOperator MultilineWhiteSpace_* arrayBlock
-  | arrayDeclaration (MultilineWhiteSpace_* assignmentOperator MultilineWhiteSpace_* arrayBlock)*
+  : arrayDeclarationVoidInner MultilineWhiteSpace_* assignmentOperator MultilineWhiteSpace_* arrayBlock
+  | arrayDeclarationInner (MultilineWhiteSpace_* assignmentOperator MultilineWhiteSpace_* arrayBlock)*
   ;
 arraySizeDeclaration
   : L_Bracket_ InlineWhiteSpace_* positiveConstant InlineWhiteSpace_* R_Bracket_

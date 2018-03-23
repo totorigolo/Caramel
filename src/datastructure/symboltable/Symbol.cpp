@@ -30,8 +30,8 @@
 Caramel::DataStructure::Symbol::Symbol(std::string mName,
                                        Caramel::DataStructure::PrimaryType::Ptr mType,
                                        SymbolType symbolType)
-        : mIsDeclared{false},
-          mIsDefined{false},
+        : mDeclaration{},
+          mDefinition{},
           mName{std::move(mName)},
           mType{std::move(mType)},
           mSymbolType{symbolType} {
@@ -42,23 +42,34 @@ std::vector<Caramel::DataStructure::Statement::Ptr> Caramel::DataStructure::Symb
 }
 
 bool Caramel::DataStructure::Symbol::isDeclared() {
-    return mIsDeclared;
+    return (bool) mDeclaration.lock();
 }
 
 bool Caramel::DataStructure::Symbol::isDefined() {
-    return mIsDefined;
+    return (bool) mDefinition.lock();
+}
+
+Caramel::DataStructure::Statement::Ptr Caramel::DataStructure::Symbol::getDeclaration() {
+    return mDeclaration.lock();
+}
+
+Caramel::DataStructure::Statement::Ptr Caramel::DataStructure::Symbol::getDefinition() {
+    return mDefinition.lock();
 }
 
 void Caramel::DataStructure::Symbol::addDeclaration(const Caramel::DataStructure::Declaration::Ptr &declaration) {
     onDeclaration(declaration);
-    mIsDeclared = true;
+    mDeclaration = declaration;
     mOccurrences.push_back(declaration);
 }
 
 void Caramel::DataStructure::Symbol::addDefinition(const Caramel::DataStructure::Statement::Ptr &definition) {
+    if (!isDeclared()) {
+        onDeclaration(definition);
+        mDeclaration = definition;
+    }
     onDefinition(definition);
-    mIsDeclared = true;
-    mIsDefined = true;
+    mDefinition = definition;
     mOccurrences.push_back(definition);
 }
 
@@ -92,5 +103,3 @@ std::string Caramel::DataStructure::Symbol::getSymbolTypeAsString() const {
         case SymbolType::FunctionSymbol: return "FunctionSymbol";
     }
 }
-
-

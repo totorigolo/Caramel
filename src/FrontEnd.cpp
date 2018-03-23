@@ -26,6 +26,7 @@
 
 #include "Logger.h"
 #include "listeners/errorlistener/ParserErrorListener.h"
+#include "exceptions/SemanticError.h"
 
 
 namespace Caramel {
@@ -60,15 +61,21 @@ DataStructure::Context::Ptr frontEnd(Config const &config) {
 
     // Create the visitor which will generate the AST
     Visitors::AbstractSyntaxTreeVisitor abstractSyntaxTreeVisitor(config.sourceFile);
-    auto visitorResult{abstractSyntaxTreeVisitor.visit(parser.r())};
-    if (!visitorResult.is<DataStructure::Context::Ptr>()) {
-        using namespace Caramel::Colors;
-        logger.fatal() << "The visitor returned a bad root.";
+    try {
+        auto visitorResult = abstractSyntaxTreeVisitor.visit(parser.r());
+        if (!visitorResult.is<DataStructure::Context::Ptr>()) {
+            using namespace Caramel::Colors;
+            logger.fatal() << "The visitor returned a bad root.";
+            exit(1);
+        }
+
+        // Return the AST root
+        return visitorResult.as<DataStructure::Context::Ptr>();
+
+    } catch (Exceptions::SemanticError &semanticError) {
+        semanticError.explain(SourceFileUtil(config.sourceFile));
         exit(1);
     }
-
-    // Return the AST root
-    return visitorResult.as<DataStructure::Context::Ptr>();
 }
 
 } // namespace Caramel

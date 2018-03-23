@@ -21,22 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
 */
+namespace Caramel::DataStructure {
 
-#pragma once
-
-#include <stdexcept>
-
-namespace Caramel::Exceptions {
-
-class SymbolAlreadyDeclaredException : public std::runtime_error {
-
+class VariableDefinition : public Declaration {
 public:
-    explicit SymbolAlreadyDeclaredException(const std::string &__arg) : runtime_error(__arg) {}
+    static Ptr Create(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken) {
+        return Ptr(new VariableDefinition(std::forward<VariableSymbol::WeakPtr>(symbol), startToken));
+    }
 
-    explicit SymbolAlreadyDeclaredException(const char * c) : runtime_error(c){}
+    VariableDefinition::WeakPtr getSymbol();
 
-    explicit SymbolAlreadyDeclaredException(const std::runtime_error & ex) : runtime_error(ex){}
+private:
+    VariableDefinition(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken);
 
+private:
+    VariableDefinition::WeakPtr mSymbol;
 };
 
-} // namespace Caramel::Exceptions
+} // namespace Caramel::DataStructure

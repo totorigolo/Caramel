@@ -27,8 +27,8 @@
 #include "VariableSymbol.h"
 #include "FunctionSymbol.h"
 
-#include "../../exceptions/SymbolAlreadyDeclaredException.h"
 #include "../../Logger.h"
+#include "../../exceptions/SymbolAlreadyDeclaredError.h"
 #include "../../exceptions/DeclarationMismatchException.h"
 #include "../../exceptions/SymbolAlreadyDefinedException.h"
 #include "../../exceptions/UndefinedSymbolException.h"
@@ -36,45 +36,57 @@
 
 namespace Caramel::DataStructure {
 
-SymbolTable::SymbolTable(SymbolTable::Ptr const &parentTable): mParentTable(parentTable) {}
+SymbolTable::SymbolTable(SymbolTable::Ptr const &parentTable) : mParentTable(parentTable) {}
 
-void SymbolTable::addVariableDeclaration(const PrimaryType::Ptr &primaryType, const std::string &name,
+void SymbolTable::addVariableDeclaration(antlr4::ParserRuleContext *antlrContext,
+                                         const PrimaryType::Ptr &primaryType,
+                                         const std::string &name,
                                          const Declaration::Ptr &declaration) {
     using namespace Caramel::Exceptions;
     if (isDefined(name)) {
         throw SymbolAlreadyDefinedException(buildAlreadyDefinedErrorMessage(name));
     } else if (isDeclared(name)) {
-        throw SymbolAlreadyDeclaredException(buildAlreadyDeclaredErrorMessage(name));
+        throw SymbolAlreadyDeclaredError(
+                buildAlreadyDeclaredErrorMessage(name),
+                antlrContext,
+                getSymbol(name)->getDeclaration(),
+                declaration
+        );
     } else {
         mSymbolMap[name] = VariableSymbol::Create(name, primaryType);
         mSymbolMap[name]->addDeclaration(declaration);
     }
-
 }
 
-void SymbolTable::addVariableDefinition(const PrimaryType::Ptr &primaryType, const std::string &name,
+void SymbolTable::addVariableDefinition(antlr4::ParserRuleContext *antlrContext,
+                                        const PrimaryType::Ptr &primaryType,
+                                        const std::string &name,
                                         const Definition::Ptr &definition) {
-
     using namespace Caramel::Exceptions;
     if (isDefined(name)) {
         throw SymbolAlreadyDefinedException(buildAlreadyDefinedErrorMessage(name));
     } else if (isDeclared(name)) {
         Symbol::Ptr recordedSymbol = mSymbolMap[name];
         if (recordedSymbol->getSymbolType() != SymbolType::VariableSymbol) {
-            throw DeclarationMismatchException(buildMismatchSymbolTypeErrorMessage(name, SymbolType::VariableSymbol));
+            throw DeclarationMismatchException(
+                    buildMismatchSymbolTypeErrorMessage(name, SymbolType::VariableSymbol)
+            );
         }
         if (!recordedSymbol->getType()->equals(primaryType)) {
-            throw DeclarationMismatchException(buildMismatchTypeErrorMessage(name, primaryType));
+            throw DeclarationMismatchException(
+                    buildMismatchTypeErrorMessage(name, primaryType)
+            );
         }
         recordedSymbol->addDefinition(definition);
     } else {
         mSymbolMap[name] = VariableSymbol::Create(name, primaryType);
         mSymbolMap[name]->addDefinition(definition);
     }
-
 }
 
-void SymbolTable::addVariableUsage(const std::string &name, const Expression::Ptr &expression) {
+void SymbolTable::addVariableUsage(antlr4::ParserRuleContext *antlrContext,
+                                   const std::string &name,
+                                   const Expression::Ptr &expression) {
 
     using namespace Caramel::Exceptions;
     if (isDefined(name)) {
@@ -82,21 +94,20 @@ void SymbolTable::addVariableUsage(const std::string &name, const Expression::Pt
     } else {
         // Fixme : Try to find the variable in the parent context or throw a VariableUndefinedException
         SymbolTable::Ptr parent = getParentTable();
-        while(nullptr != parent && parent->isNotDefined(name)) {
-            SymbolTable cpy = *parent;
-            if(cpy.isDefined(name)) {
-                cpy.getSymbol(name);
-            }
-            parent = parent->getParentTable();
+        while (nullptr != mParentTable && !parent->isDefined(name)) {
+            mParentTable = mParentTable->getParentTable();
         }
-        if(nullptr == parent) {
-            throw UndefinedSymbolException(buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol));
+        if (!parent->isDefined(name)) {
+            throw UndefinedSymbolException(
+                    buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol)
+            );
         }
     }
-
 }
 
-void SymbolTable::addFunctionDeclaration(const PrimaryType::Ptr &returnType, const std::string &name,
+void SymbolTable::addFunctionDeclaration(antlr4::ParserRuleContext *antlrContext,
+                                         const PrimaryType::Ptr &returnType,
+                                         const std::string &name,
                                          std::vector<Symbol::Ptr> namedParameters,
                                          const Declaration::Ptr &declaration) {
 
@@ -105,12 +116,18 @@ void SymbolTable::addFunctionDeclaration(const PrimaryType::Ptr &returnType, con
         mSymbolMap[name]->addDeclaration(declaration);
     } else {
         using namespace Caramel::Exceptions;
-        throw SymbolAlreadyDeclaredException("A symbol named '" + name + "' is already declared");
+        throw SymbolAlreadyDeclaredError(
+                buildAlreadyDeclaredErrorMessage(name),
+                antlrContext,
+                getSymbol(name)->getDeclaration(),
+                declaration
+        );
     }
-
 }
 
-void SymbolTable::addFunctionDefinition(const PrimaryType::Ptr &returnType, const std::string &name,
+void SymbolTable::addFunctionDefinition(antlr4::ParserRuleContext *antlrContext,
+                                        const PrimaryType::Ptr &returnType,
+                                        const std::string &name,
                                         std::vector<Symbol::Ptr> namedParameters,
                                         const Definition::Ptr &definition) {
     // NotDeclared and not defined
@@ -128,10 +145,11 @@ void SymbolTable::addFunctionDefinition(const PrimaryType::Ptr &returnType, cons
     } else {
 
     }
-
 }
 
-void SymbolTable::addFunctionCall(const std::string &name, const std::vector<Symbol::Ptr> &valueParameters,
+void SymbolTable::addFunctionCall(antlr4::ParserRuleContext *antlrContext,
+                                  const std::string &name,
+                                  const std::vector<Symbol::Ptr> &valueParameters,
                                   const Expression::Ptr &expression) {
 
     if (isDefined(name)) {
@@ -144,7 +162,21 @@ void SymbolTable::addFunctionCall(const std::string &name, const std::vector<Sym
 }
 
 void
-SymbolTable::addType(const PrimaryType::Ptr &primaryType, const std::string &name,
+SymbolTable::addPrimaryType(const PrimaryType::Ptr &primaryType,
+                            const std::string &name) {
+    // Not declared and not defined
+    if (isNotDeclared(name)) {
+        mSymbolMap[name] = TypeSymbol::Create(name, primaryType);
+        mSymbolMap[name]->addDefinition(nullptr); // TODO: Is it safe?
+    } else {
+        // Todo : throws SymbolAlreadyDefinedException
+    }
+}
+
+void
+SymbolTable::addType(antlr4::ParserRuleContext *antlrContext,
+                     const PrimaryType::Ptr &primaryType,
+                     const std::string &name,
                      const Definition::Ptr &definition) {
     // FIXME: Use the right AST type instead of definition, when typedef will be handled.
 
@@ -158,7 +190,7 @@ SymbolTable::addType(const PrimaryType::Ptr &primaryType, const std::string &nam
 }
 
 bool SymbolTable::hasSymbol(std::string const &name) {
-    return mSymbolMap.find( name ) != mSymbolMap.end();
+    return mSymbolMap.find(name) != mSymbolMap.end();
 }
 
 Symbol::Ptr SymbolTable::getSymbol(std::string const &name) {
@@ -252,6 +284,7 @@ SymbolTable::buildMismatchTypeErrorMessage(std::string const &variableName, Prim
     return res.str();
 }
 
+
 std::string SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType) {
     std::stringstream res;
     res << "The ";
@@ -266,7 +299,7 @@ std::string SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &nam
             res << "type";
             break;
     }
-    res << " '" << name << "' is never defined before";
+    res << " is never defined before";
     return res.str();
 }
 

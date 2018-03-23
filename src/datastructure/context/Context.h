@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "../../exceptions/NotImplementedException.h"
 #include "../symboltable/SymbolTable.h"
 #include "../statements/Statement.h"
 
@@ -47,6 +46,8 @@ public:
     }
 
     SymbolTable::Ptr getSymbolTable() const;
+
+    void addStatements(std::vector<Statement::Ptr> &&statements);
 
 private:
     Context();

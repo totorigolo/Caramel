@@ -24,38 +24,18 @@
 
 #pragma once
 
-#include "../../exceptions/NotImplementedException.h"
+#include "../util/SourceFileUtil.h"
 
-#include <Token.h>
-
-#include <memory>
+#include <stdexcept>
 
 
-namespace Caramel::DataStructure {
+namespace Caramel::Exceptions {
 
-class Statement {
+class SemanticError : public std::runtime_error {
 public:
-    using Ptr = std::shared_ptr<Statement>;
-    using WeakPtr = std::weak_ptr<Statement>;
+    explicit SemanticError(std::string const &message) : std::runtime_error(message) {}
 
-    static Ptr Create(antlr4::Token *startToken) {
-        return Ptr(new Statement(startToken));
-    }
-
-public:
-    size_t getLine() const;
-    size_t getColumn() const;
-    size_t getLength() const;
-
-    virtual std::string getIR() { return ""; };
-
-protected:
-    explicit Statement(antlr4::Token *startToken);
-
-private:
-    size_t mLine;
-    size_t mColumn;
-    size_t mLength;
+    virtual void explain(SourceFileUtil sourceFileUtil) const = 0;
 };
 
-} // namespace Caramel::DataStructure
+} // namespace Caramel::Exceptions

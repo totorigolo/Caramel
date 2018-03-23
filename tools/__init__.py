@@ -6,6 +6,7 @@ PATHS = {
     'cpp-grammar': 'build/cpp-grammar',
     'grammar-file': 'grammar/Caramel.g4',
     'grammar-test-dir': 'tests/grammar',
+    'semantic-test-dir': 'tests/semantic',
 }
 
 COMMANDS = {

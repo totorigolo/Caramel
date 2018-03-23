@@ -59,7 +59,7 @@ Logger::Trace Logger::trace() {
     return Logger::Trace(*this);
 }
 
-Logger::Fatal::~Fatal() {
+void Logger::Fatal::show() {
     using namespace Caramel::Colors;
     if (mLogger.getLevel() >= FATAL) {
         std::cerr << red << bold << "[FATAL]" << reset << ' '
@@ -68,16 +68,16 @@ Logger::Fatal::~Fatal() {
     mLoggedStream.clear();
 }
 
-Logger::Warning::~Warning() {
+void Logger::Warning::show() {
     using namespace Caramel::Colors;
     if (mLogger.getLevel() >= WARN) {
         std::cerr << yellow << bold << "[WARNING]" << reset << ' '
-                  << mLoggedStream.str() << std::endl;
+                  << yellow << mLoggedStream.str() << reset << std::endl;
     }
     mLoggedStream.clear();
 }
 
-Logger::Info::~Info() {
+void Logger::Info::show() {
     using namespace Caramel::Colors;
     if (mLogger.getLevel() >= INFO) {
         std::cerr << blue << bold << "[INFO]" << reset << ' '
@@ -86,7 +86,7 @@ Logger::Info::~Info() {
     mLoggedStream.clear();
 }
 
-Logger::Debug::~Debug() {
+void Logger::Debug::show() {
     using namespace Caramel::Colors;
     if (mLogger.getLevel() >= DEBUG) {
         std::cerr << cyan << bold << "[DEBUG]" << reset << ' '
@@ -95,7 +95,7 @@ Logger::Debug::~Debug() {
     mLoggedStream.clear();
 }
 
-Logger::Trace::~Trace() {
+void Logger::Trace::show() {
     using namespace Caramel::Colors;
     if (mLogger.getLevel() >= TRACE) {
         std::cerr << magenta << bold << "[TRACE]" << reset << ' '

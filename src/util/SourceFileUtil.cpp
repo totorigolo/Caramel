@@ -24,22 +24,19 @@
 
 #include "SourceFileUtil.h"
 
+
 SourceFileUtil::SourceFileUtil(const std::string &fileName) : fileName(fileName), inputStream(fileName) {}
 
-SourceFileUtil::~SourceFileUtil() {}
-
 std::string SourceFileUtil::getLine(size_t line, size_t currentCursorLine, bool resetToHead) {
-
     std::string buffer;
     size_t i = currentCursorLine;
-    while (i < line - 1) { // Moves the cursor to the current line
+    while (i < line - 1) { // Moves the cursor to the right line
         inputStream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         i++;
     }
     std::getline(inputStream, buffer);
-    if(resetToHead) {
+    if (resetToHead) {
         inputStream.seekg(0);
     }
     return buffer;
-
 }

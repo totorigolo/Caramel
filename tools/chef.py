@@ -64,6 +64,17 @@ def chef():
     parser_test_grammar.add_argument('--all', help='run all tests', action='store_true')
     parser_test_grammar.add_argument('test_files', nargs='*', help='test files to test')
 
+    # Create the parser for the "test semantic" command
+    parser_test_semantic = test_subparsers.add_parser('semantic', help='Test the Caramel semantic analysis.')
+    parser_test_semantic.set_defaults(func=tools.test.test_semantic)
+    test_common(parser_test_semantic)
+    parser_test_semantic.add_argument('--interactive', '-i', help='run a test in interactive mode', action='store_true')
+    group_test_semantic_gui = parser_test_semantic.add_mutually_exclusive_group()
+    group_test_semantic_gui.add_argument('--gui', help='open a GUI when executing test', action='store_true')
+    group_test_semantic_gui.add_argument('--gui-on-failure', help='open a GUI on failed tests', action='store_true')
+    parser_test_semantic.add_argument('--all', help='run all tests', action='store_true')
+    parser_test_semantic.add_argument('test_files', nargs='*', help='test files to test')
+
     # Create the parser for the "test all" command
     parser_test_all = test_subparsers.add_parser('all', help='Run all tests.')
     parser_test_all.set_defaults(func=tools.test.test_all)
