@@ -28,11 +28,13 @@
 #include "../../../exceptions/NotImplementedException.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::expressions::jumps {
 
-class Jump : public Statement {
+class Jump : public caramel::dataStructure::statements::Statement {
 public:
+    using Ptr = std::shared_ptr<Jump>;
+
     Jump(antlr4::Token *startToken);
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::expressions::jumps

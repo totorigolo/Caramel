@@ -26,80 +26,89 @@
 
 #include <utility>
 
+caramel::dataStructure::symbolTable::Symbol::Symbol(
+        std::string mName,
+        std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> mType,
+        caramel::dataStructure::symbolTable::SymbolType symbolType
+) : mDeclaration{}, mDefinition{}, mName{mName}, mType{mType}, mSymbolType{symbolType} {}
 
-Caramel::DataStructure::Symbol::Symbol(std::string mName,
-                                       Caramel::DataStructure::PrimaryType::Ptr mType,
-                                       SymbolType symbolType)
-        : mDeclaration{},
-          mDefinition{},
-          mName{std::move(mName)},
-          mType{std::move(mType)},
-          mSymbolType{symbolType} {
-}
-
-std::vector<Caramel::DataStructure::Statement::Ptr> Caramel::DataStructure::Symbol::getOccurrences() {
+std::vector<std::weak_ptr<caramel::dataStructure::statements::Statement>>
+caramel::dataStructure::symbolTable::Symbol::getOccurrences() {
     return mOccurrences;
 }
 
-bool Caramel::DataStructure::Symbol::isDeclared() {
+bool
+caramel::dataStructure::symbolTable::Symbol::isDeclared() {
     return (bool) mDeclaration.lock();
 }
 
-bool Caramel::DataStructure::Symbol::isDefined() {
+bool
+caramel::dataStructure::symbolTable::Symbol::isDefined() {
     return (bool) mDefinition.lock();
 }
 
-Caramel::DataStructure::Statement::Ptr Caramel::DataStructure::Symbol::getDeclaration() {
+std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration>
+caramel::dataStructure::symbolTable::Symbol::getDeclaration() {
     return mDeclaration.lock();
 }
 
-Caramel::DataStructure::Statement::Ptr Caramel::DataStructure::Symbol::getDefinition() {
+std::shared_ptr<caramel::dataStructure::statements::definition::Definition>
+caramel::dataStructure::symbolTable::Symbol::getDefinition() {
     return mDefinition.lock();
 }
 
-void Caramel::DataStructure::Symbol::addDeclaration(const Caramel::DataStructure::Declaration::Ptr &declaration) {
+void
+caramel::dataStructure::symbolTable::Symbol::addDeclaration(
+        const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
+) {
     onDeclaration(declaration);
     mDeclaration = declaration;
-    mOccurrences.push_back(declaration);
 }
 
-void Caramel::DataStructure::Symbol::addDefinition(const Caramel::DataStructure::Statement::Ptr &definition) {
+void
+caramel::dataStructure::symbolTable::Symbol::addDefinition(
+        const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
+) {
     if (!isDeclared()) {
         onDeclaration(definition);
         mDeclaration = definition;
     }
     onDefinition(definition);
     mDefinition = definition;
-    mOccurrences.push_back(definition);
 }
 
-void Caramel::DataStructure::Symbol::addUsage(const Caramel::DataStructure::Statement::Ptr &expression) {
+void
+caramel::dataStructure::symbolTable::Symbol::addUsage(const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression) {
     onUsage(expression);
     mOccurrences.push_back(expression);
 }
-
-Caramel::DataStructure::SymbolType Caramel::DataStructure::Symbol::getSymbolType() const {
+    
+caramel::dataStructure::symbolTable::SymbolType
+caramel::dataStructure::symbolTable::Symbol::getSymbolType() const {
     return mSymbolType;
 }
 
-std::string Caramel::DataStructure::Symbol::getName() const {
+std::string caramel::dataStructure::symbolTable::Symbol::getName() const {
     return mName;
 }
 
-void Caramel::DataStructure::Symbol::onDeclaration(const Caramel::DataStructure::Statement::Ptr &declaration) {}
+void caramel::dataStructure::symbolTable::Symbol::onDeclaration(const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration) {}
 
-void Caramel::DataStructure::Symbol::onDefinition(const Caramel::DataStructure::Statement::Ptr &definition) {}
+void caramel::dataStructure::symbolTable::Symbol::onDefinition(const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition) {}
 
-void Caramel::DataStructure::Symbol::onUsage(const Caramel::DataStructure::Statement::Ptr &expression) {}
+void caramel::dataStructure::symbolTable::Symbol::onUsage(const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression) {}
 
-Caramel::DataStructure::PrimaryType::Ptr Caramel::DataStructure::Symbol::getType() const {
+std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> caramel::dataStructure::symbolTable::Symbol::getType() const {
     return mType;
 }
 
-std::string Caramel::DataStructure::Symbol::getSymbolTypeAsString() const {
+std::string caramel::dataStructure::symbolTable::Symbol::getSymbolTypeAsString() const {
     switch (mSymbolType) {
-        case SymbolType::VariableSymbol: return "VariableSymbol";
-        case SymbolType::TypeSymbol: return "TypeSymbol";
-        case SymbolType::FunctionSymbol: return "FunctionSymbol";
+        case SymbolType::VariableSymbol:
+            return "VariableSymbol";
+        case SymbolType::TypeSymbol:
+            return "TypeSymbol";
+        case SymbolType::FunctionSymbol:
+            return "FunctionSymbol";
     }
 }

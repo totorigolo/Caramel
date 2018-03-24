@@ -24,16 +24,26 @@
 
 #pragma once
 
-#include "../../../../exceptions/NotImplementedException.h"
+#include "Operator.h"
+#include "../statements/expressions/Expression.h"
 
+namespace caramel::dataStructure::operators {
 
-namespace Caramel::DataStructure {
-
-class Operator {
+class BinaryOperator : public Operator {
 public:
-    Operator() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    using Ptr = std::shared_ptr<BinaryOperator>;
+
+    BinaryOperator() = default;
+    ~BinaryOperator() override = default;
+
+    virtual std::shared_ptr<caramel::dataStructure::IR> buildIR(
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression
+    ) = 0;
+    
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::operators
+
+
+

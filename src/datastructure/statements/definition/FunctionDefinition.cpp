@@ -25,6 +25,6 @@
 #include "FunctionDefinition.h"
 
 
-Caramel::DataStructure::FunctionDefinition::FunctionDefinition(antlr4::Token *startToken)
+caramel::dataStructure::statements::definition::FunctionDefinition::FunctionDefinition(antlr4::Token *startToken)
         : Definition(startToken) {
 }

@@ -25,6 +25,10 @@
 #include "ReturnStatement.h"
 
 
-Caramel::DataStructure::ReturnStatement::ReturnStatement(antlr4::Token *startToken)
+namespace caramel::dataStructure::statements::expressions::jumps {
+
+ReturnStatement::ReturnStatement(antlr4::Token *startToken)
         : Jump(startToken) {
 }
+
+} // namespace caramel::dataStructure::statements::expressions::jumps

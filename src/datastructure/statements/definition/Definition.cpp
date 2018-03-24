@@ -25,6 +25,6 @@
 #include "Definition.h"
 
 
-Caramel::DataStructure::Definition::Definition(antlr4::Token *startToken)
-        : Statement(startToken) {
+caramel::dataStructure::statements::definition::Definition::Definition(antlr4::Token *startToken)
+        : Declaration(startToken) {
 }

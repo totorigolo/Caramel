@@ -25,20 +25,20 @@
 #include "Statement.h"
 
 
-Caramel::DataStructure::Statement::Statement(antlr4::Token *startToken)
+caramel::dataStructure::statements::Statement::Statement(antlr4::Token *startToken)
         : mLine{startToken->getLine()},
           mColumn{startToken->getCharPositionInLine()},
           mLength{startToken->getText().length()} {
 }
 
-size_t Caramel::DataStructure::Statement::getLine() const {
+size_t caramel::dataStructure::statements::Statement::getLine() const {
     return mLine;
 }
 
-size_t Caramel::DataStructure::Statement::getColumn() const {
+size_t caramel::dataStructure::statements::Statement::getColumn() const {
     return mColumn;
 }
 
-size_t Caramel::DataStructure::Statement::getLength() const {
+size_t caramel::dataStructure::statements::Statement::getLength() const {
     return mLength;
 }

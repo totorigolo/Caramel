@@ -24,21 +24,32 @@
 
 #include "TypeSymbol.h"
 
+namespace caramel::dataStructure::symbolTable {
 
-Caramel::DataStructure::TypeSymbol::TypeSymbol(const std::string &mName,
-                                               const Caramel::DataStructure::PrimaryType::Ptr &mType)
+TypeSymbol::TypeSymbol(const std::string &mName,
+                                               std::shared_ptr<PrimaryType> mType)
         : Symbol(mName, mType, SymbolType::TypeSymbol) {
 }
 
-void Caramel::DataStructure::TypeSymbol::onDeclaration(const Caramel::DataStructure::Statement::Ptr &declaration) {
+void
+TypeSymbol::onDeclaration(
+        const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
+) {
     Symbol::onDeclaration(declaration);
 }
 
-void Caramel::DataStructure::TypeSymbol::onDefinition(const Caramel::DataStructure::Statement::Ptr &definition) {
+void
+TypeSymbol::onDefinition(
+        const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
+) {
     Symbol::onDefinition(definition);
 }
 
-void Caramel::DataStructure::TypeSymbol::onUsage(const Caramel::DataStructure::Statement::Ptr &expression) {
+void
+TypeSymbol::onUsage(
+        const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression
+) {
     Symbol::onUsage(expression);
 }
 
+}

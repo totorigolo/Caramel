@@ -28,30 +28,46 @@
 #include <vector>
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::symbolTable {
 
 class FunctionSymbol : public Symbol {
 public:
-    static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
-        return Ptr(new FunctionSymbol(mName, mType));
+    static std::shared_ptr<FunctionSymbol> Create(const std::string &mName, const PrimaryType::Ptr &mType) {
+        return std::make_shared<FunctionSymbol>(mName, mType);
     }
 
 public:
-    FunctionSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
+    FunctionSymbol(
+            const std::string &mName,
+            const std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> &mType
+    );
+
     ~FunctionSymbol() override = default;
 
-    void onDeclaration(const Declaration::Ptr &declaration) override;
-    void onDefinition(const Definition::Ptr &definition) override;
-    void onUsage(const Expression::Ptr &expression) override;
+    void onDeclaration(
+            const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
+    ) override;
 
-    std::vector<Symbol::Ptr> getNamedParameters() const;
-    void setParameters(const std::vector<Symbol::Ptr> &namedParameters);
+    void onDefinition(
+            const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
+    ) override;
+
+    void
+    onUsage(
+            const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression
+    ) override;
+
+    std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> getNamedParameters() const;
+
+    void setParameters(
+            const std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> &namedParameters
+    );
 
 private:
-    std::vector<Symbol::Ptr> mParameters;
+    std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> mParameters;
 
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::symbolTable
 
 

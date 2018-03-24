@@ -34,14 +34,17 @@
 #include "../../exceptions/UndefinedSymbolException.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::symbolTable {
 
 SymbolTable::SymbolTable(SymbolTable::Ptr const &parentTable) : mParentTable(parentTable) {}
 
-void SymbolTable::addVariableDeclaration(antlr4::ParserRuleContext *antlrContext,
-                                         const PrimaryType::Ptr &primaryType,
-                                         const std::string &name,
-                                         const Declaration::Ptr &declaration) {
+void
+SymbolTable::addVariableDeclaration(
+        antlr4::ParserRuleContext *antlrContext,
+        std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &primaryType,
+        std::string const &name,
+        const std::shared_ptr<statements::declaration::Declaration> &declaration
+) {
     using namespace Caramel::Exceptions;
     if (isDefined(name)) {
         throw SymbolAlreadyDefinedException(buildAlreadyDefinedErrorMessage(name));
@@ -53,15 +56,18 @@ void SymbolTable::addVariableDeclaration(antlr4::ParserRuleContext *antlrContext
                 declaration
         );
     } else {
-        mSymbolMap[name] = VariableSymbol::Create(name, primaryType);
+        mSymbolMap[name] = std::make_shared<VariableSymbol>(name, primaryType);
         mSymbolMap[name]->addDeclaration(declaration);
     }
 }
 
-void SymbolTable::addVariableDefinition(antlr4::ParserRuleContext *antlrContext,
-                                        const PrimaryType::Ptr &primaryType,
-                                        const std::string &name,
-                                        const Definition::Ptr &definition) {
+void
+SymbolTable::addVariableDefinition(
+        antlr4::ParserRuleContext *antlrContext,
+        std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &primaryType,
+        std::string const &name,
+        const std::shared_ptr<statements::definition::Definition> &definition
+) {
     using namespace Caramel::Exceptions;
     if (isDefined(name)) {
         throw SymbolAlreadyDefinedException(buildAlreadyDefinedErrorMessage(name));
@@ -79,14 +85,17 @@ void SymbolTable::addVariableDefinition(antlr4::ParserRuleContext *antlrContext,
         }
         recordedSymbol->addDefinition(definition);
     } else {
-        mSymbolMap[name] = VariableSymbol::Create(name, primaryType);
+        mSymbolMap[name] = std::make_shared<VariableSymbol>(name, primaryType);
         mSymbolMap[name]->addDefinition(definition);
     }
 }
 
-void SymbolTable::addVariableUsage(antlr4::ParserRuleContext *antlrContext,
-                                   const std::string &name,
-                                   const Expression::Ptr &expression) {
+void
+SymbolTable::addVariableUsage(
+        antlr4::ParserRuleContext *antlrContext,
+        std::string const &name,
+        const std::shared_ptr<statements::expressions::Expression> &expression
+) {
 
     using namespace Caramel::Exceptions;
     if (isDefined(name)) {
@@ -94,10 +103,10 @@ void SymbolTable::addVariableUsage(antlr4::ParserRuleContext *antlrContext,
     } else {
         // Fixme : Try to find the variable in the parent context or throw a VariableUndefinedException
         SymbolTable::Ptr parent = getParentTable();
-        while (nullptr != mParentTable && !parent->isDefined(name)) {
-            mParentTable = mParentTable->getParentTable();
+        while (nullptr != parent && parent->isNotDeclared(name)) {
+            parent = parent->getParentTable();
         }
-        if (!parent->isDefined(name)) {
+        if (nullptr == parent) {
             throw UndefinedSymbolException(
                     buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol)
             );
@@ -105,14 +114,17 @@ void SymbolTable::addVariableUsage(antlr4::ParserRuleContext *antlrContext,
     }
 }
 
-void SymbolTable::addFunctionDeclaration(antlr4::ParserRuleContext *antlrContext,
-                                         const PrimaryType::Ptr &returnType,
-                                         const std::string &name,
-                                         std::vector<Symbol::Ptr> namedParameters,
-                                         const Declaration::Ptr &declaration) {
+void
+SymbolTable::addFunctionDeclaration(
+        antlr4::ParserRuleContext *antlrContext,
+        std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &returnType,
+        std::string const &name,
+        std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> namedParameters,
+        const std::shared_ptr<statements::declaration::Declaration> &declaration
+) {
 
     if (isNotDeclared(name)) {
-        mSymbolMap[name] = FunctionSymbol::Create(name, returnType);
+        mSymbolMap[name] = std::make_shared<FunctionSymbol>(name, returnType);
         mSymbolMap[name]->addDeclaration(declaration);
     } else {
         using namespace Caramel::Exceptions;
@@ -125,14 +137,17 @@ void SymbolTable::addFunctionDeclaration(antlr4::ParserRuleContext *antlrContext
     }
 }
 
-void SymbolTable::addFunctionDefinition(antlr4::ParserRuleContext *antlrContext,
-                                        const PrimaryType::Ptr &returnType,
-                                        const std::string &name,
-                                        std::vector<Symbol::Ptr> namedParameters,
-                                        const Definition::Ptr &definition) {
+void
+SymbolTable::addFunctionDefinition(
+        antlr4::ParserRuleContext *antlrContext,
+        std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &returnType,
+        std::string const &name,
+        std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> namedParameters,
+        const std::shared_ptr<statements::definition::Definition> &definition
+) {
     // NotDeclared and not defined
     if (isNotDeclared(name)) {
-        mSymbolMap[name] = FunctionSymbol::Create(name, returnType);
+        mSymbolMap[name] = std::make_shared<FunctionSymbol>(name, returnType);
         mSymbolMap[name]->addDefinition(definition);
 
         // Declared but not defined
@@ -147,10 +162,13 @@ void SymbolTable::addFunctionDefinition(antlr4::ParserRuleContext *antlrContext,
     }
 }
 
-void SymbolTable::addFunctionCall(antlr4::ParserRuleContext *antlrContext,
-                                  const std::string &name,
-                                  const std::vector<Symbol::Ptr> &valueParameters,
-                                  const Expression::Ptr &expression) {
+void
+SymbolTable::addFunctionCall(
+        antlr4::ParserRuleContext *antlrContext,
+        std::string const &name,
+        std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> const &valueParameters,
+        const std::shared_ptr<statements::expressions::Expression> &expression
+) {
 
     if (isDefined(name)) {
         // Todo : maybe checks if the valueParameters may match with the namedParameters of the function
@@ -162,11 +180,13 @@ void SymbolTable::addFunctionCall(antlr4::ParserRuleContext *antlrContext,
 }
 
 void
-SymbolTable::addPrimaryType(const PrimaryType::Ptr &primaryType,
-                            const std::string &name) {
+SymbolTable::addPrimaryType(
+        std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &primaryType,
+        std::string const &name
+) {
     // Not declared and not defined
     if (isNotDeclared(name)) {
-        mSymbolMap[name] = TypeSymbol::Create(name, primaryType);
+        mSymbolMap[name] = std::make_shared<TypeSymbol>(name, primaryType);
         mSymbolMap[name]->addDefinition(nullptr); // TODO: Is it safe?
     } else {
         // Todo : throws SymbolAlreadyDefinedException
@@ -174,29 +194,31 @@ SymbolTable::addPrimaryType(const PrimaryType::Ptr &primaryType,
 }
 
 void
-SymbolTable::addType(antlr4::ParserRuleContext *antlrContext,
-                     const PrimaryType::Ptr &primaryType,
-                     const std::string &name,
-                     const Definition::Ptr &definition) {
+SymbolTable::addType(
+        antlr4::ParserRuleContext *antlrContext,
+        std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &primaryType,
+        std::string const &name,
+        std::weak_ptr<caramel::dataStructure::statements::definition::Definition> const &definition
+) {
     // FIXME: Use the right AST type instead of definition, when typedef will be handled.
 
     // Not declared and not defined
     if (isNotDeclared(name)) {
-        mSymbolMap[name] = TypeSymbol::Create(name, primaryType);
-        mSymbolMap[name]->addDefinition(definition);
+        mSymbolMap[name] = std::make_shared<TypeSymbol>(name, primaryType);
+        mSymbolMap[name]->addDefinition(definition.lock());
     } else {
         // Todo : throws SymbolAlreadyDefinedException
     }
 }
 
-bool SymbolTable::hasSymbol(std::string const &name) {
+bool
+SymbolTable::hasSymbol(std::string const &name) {
     return mSymbolMap.find(name) != mSymbolMap.end();
 }
 
-Symbol::Ptr SymbolTable::getSymbol(std::string const &name) {
-
+std::shared_ptr<Symbol>
+SymbolTable::getSymbol(std::string const &name) {
     // FIXME: Lookup in parent tables
-
     auto it{mSymbolMap.find(name)};
     if (it == mSymbolMap.end()) {
         logger.fatal() << "Symbol " << name << " not found in the symbol table.";
@@ -205,15 +227,18 @@ Symbol::Ptr SymbolTable::getSymbol(std::string const &name) {
     return it->second;
 }
 
-bool SymbolTable::isDeclared(const std::string &name) {
+bool
+SymbolTable::isDeclared(const std::string &name) {
     return hasSymbol(name) && mSymbolMap[name]->isDeclared();
 }
 
-bool SymbolTable::isDefined(const std::string &name) {
+bool
+SymbolTable::isDefined(const std::string &name) {
     return hasSymbol(name) && mSymbolMap[name]->isDefined();
 }
 
-std::string SymbolTable::buildAlreadyDefinedErrorMessage(std::string const &variableName) {
+std::string
+SymbolTable::buildAlreadyDefinedErrorMessage(std::string const &variableName) {
 
     std::stringstream res;
     res << "Cannot use identifier: " << variableName << " because ";
@@ -221,11 +246,11 @@ std::string SymbolTable::buildAlreadyDefinedErrorMessage(std::string const &vari
     switch (previousDeclaration->getSymbolType()) {
         case SymbolType::FunctionSymbol:
             res << "a function with the same name is already defined at line "
-                << previousDeclaration->getOccurrences().at(0)->getLine();
+                << previousDeclaration->getOccurrences().at(0).lock()->getLine();
             break;
         case SymbolType::VariableSymbol:
             res << "a variable with the same name is already defined at line "
-                << previousDeclaration->getOccurrences().at(0)->getLine();
+                << previousDeclaration->getOccurrences().at(0).lock()->getLine();
             break;
         case SymbolType::TypeSymbol:
             res << variableName << " is a reserved type identifier";
@@ -235,7 +260,8 @@ std::string SymbolTable::buildAlreadyDefinedErrorMessage(std::string const &vari
 
 }
 
-std::string SymbolTable::buildAlreadyDeclaredErrorMessage(std::string const &variableName) {
+std::string
+SymbolTable::buildAlreadyDeclaredErrorMessage(std::string const &variableName) {
 
     std::stringstream res;
     res << "Cannot use identifier: " << variableName << " because ";
@@ -243,11 +269,11 @@ std::string SymbolTable::buildAlreadyDeclaredErrorMessage(std::string const &var
     switch (previousDeclaration->getSymbolType()) {
         case SymbolType::FunctionSymbol:
             res << "a function with the same name is already declared at line "
-                << previousDeclaration->getOccurrences().at(0)->getLine();
+                << previousDeclaration->getOccurrences().at(0).lock()->getLine();
             break;
         case SymbolType::VariableSymbol:
             res << "a variable with the same name is already declared at line "
-                << previousDeclaration->getOccurrences().at(0)->getLine();
+                << previousDeclaration->getOccurrences().at(0).lock()->getLine();
             break;
         case SymbolType::TypeSymbol:
             res << variableName << " is a reserved type identifier";
@@ -257,7 +283,8 @@ std::string SymbolTable::buildAlreadyDeclaredErrorMessage(std::string const &var
 
 }
 
-std::string SymbolTable::buildMismatchSymbolTypeErrorMessage(std::string const &variableName,
+std::string
+SymbolTable::buildMismatchSymbolTypeErrorMessage(std::string const &variableName,
                                                              SymbolType requiredSymbolType) {
     std::stringstream res;
     res << "Cannot defined a ";
@@ -285,7 +312,8 @@ SymbolTable::buildMismatchTypeErrorMessage(std::string const &variableName, Prim
 }
 
 
-std::string SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType) {
+std::string
+SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType) {
     std::stringstream res;
     res << "The ";
     switch (symbolType) {
@@ -299,11 +327,12 @@ std::string SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &nam
             res << "type";
             break;
     }
-    res << " is never defined before";
+    res << " '" << name << "' is not defined before";
     return res.str();
 }
 
-SymbolTable::Ptr SymbolTable::getParentTable() {
+std::shared_ptr<caramel::dataStructure::symbolTable::SymbolTable>
+caramel::dataStructure::symbolTable::SymbolTable::getParentTable() {
     return mParentTable;
 }
 

@@ -25,31 +25,49 @@
 #pragma once
 
 #include "Symbol.h"
+#include "TypeSymbol.h"
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::symbolTable {
 
-class VariableSymbol : public Symbol {
+class VariableSymbol : public caramel::dataStructure::symbolTable::Symbol {
 public:
-    static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
-        return Ptr(new VariableSymbol(mName, mType));
+    using Ptr = std::shared_ptr<VariableSymbol>;
+    static Ptr Create(
+            const std::string &mName,
+            const std::shared_ptr<PrimaryType> &mType
+    ) {
+        return std::make_shared<VariableSymbol>(mName, mType);
     }
 
-    static Ptr Create(const std::string &mName, const Ptr &type) {
-        assert(type->getSymbolType() == SymbolType::TypeSymbol);
-        return Ptr(new VariableSymbol(mName, type->getType()));
+    static Ptr Create(const std::string &mName, const std::shared_ptr<TypeSymbol> &aliasType) {
+        return std::make_shared<VariableSymbol>(mName, aliasType->getType());
     }
 
 public:
-    VariableSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
+    VariableSymbol(
+            const std::string &mName,
+            const std::shared_ptr<PrimaryType> &mType
+    );
 
-    virtual ~VariableSymbol() override = default;
+    VariableSymbol(
+            const std::string &name,
+            const std::shared_ptr<TypeSymbol> &aliasType
+    );
 
-    void onDeclaration(const Declaration::Ptr &declaration) override;
-    void onDefinition(const Definition::Ptr &definition) override;
-    void onUsage(const Expression::Ptr &expression) override;
+    ~VariableSymbol() override = default;
+
+    void onDeclaration(
+            const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
+    ) override;
+    void onDefinition(
+            const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
+    ) override;
+    void onUsage(
+            const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression
+    ) override;
 
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::symbolTable
 
 

@@ -31,30 +31,31 @@
 #include <vector>
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::context {
 
 class Context {
 public:
     using Ptr = std::shared_ptr<Context>;
 
     static Ptr Create() {
-        return Ptr(new Context);
+        return std::make_shared<Context>();
     }
 
-    static Ptr Create(Context::Ptr const &parent) {
-        return Ptr(new Context(parent->getSymbolTable()));
+    static Ptr Create(std::shared_ptr<Context> const &parent) {
+        return std::make_shared<Context>(parent);
     }
 
-    SymbolTable::Ptr getSymbolTable() const;
+    Context();
+    explicit Context(std::shared_ptr<Context> const &parent);
 
-    void addStatements(std::vector<Statement::Ptr> &&statements);
+    std::shared_ptr<caramel::dataStructure::symbolTable::SymbolTable> getSymbolTable() const;
+
+    void addStatements(std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> &&statements);
 
 private:
-    Context();
-    explicit Context(SymbolTable::Ptr const &symbolTable);
 
-    SymbolTable::Ptr mSymbolTable;
-    std::vector<Statement::Ptr> mStatements;
+    std::shared_ptr<caramel::dataStructure::symbolTable::SymbolTable> mSymbolTable;
+    std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> mStatements;
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::context

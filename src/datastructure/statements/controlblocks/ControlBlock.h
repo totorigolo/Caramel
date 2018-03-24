@@ -29,11 +29,14 @@
 #include "../../../exceptions/NotImplementedException.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::controlblocks {
 
-class ControlBlock : public Statement {
+class ControlBlock : public caramel::dataStructure::statements::Statement {
+public:
+    using Ptr = std::shared_ptr<ControlBlock>;
+
 protected:
     ControlBlock(antlr4::Token *startToken);
 };
 
-} // namespace Caramel::DataStructure
+} // caramel::dataStructure::statements::controlblocks

@@ -25,13 +25,35 @@
 #pragma once
 
 #include "ControlBlock.h"
+#include "../expressions/Expression.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::controlblocks {
 
 class WhileBlock : public ControlBlock {
 public:
+    using Ptr = std::shared_ptr<WhileBlock>;
+
     WhileBlock(antlr4::Token *startToken);
+
+    WhileBlock(
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> condition,
+            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> block
+    );
+
+    static Ptr Create(
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> condition,
+            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> block
+    ) {
+        return std::make_shared<WhileBlock>(condition, block);
+    }
+
+private:
+    std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> mCondition;
+    std::vector<
+            std::shared_ptr<caramel::dataStructure::statements::Statement>
+    > mBlock;
+
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::controlblocks

@@ -41,8 +41,8 @@ class SymbolAlreadyDeclaredError : public SemanticError {
 public:
     SymbolAlreadyDeclaredError(std::string const &message,
                                antlr4::ParserRuleContext *antlrContext,
-                               DataStructure::Statement::Ptr const &existingDeclaration,
-                               DataStructure::Statement::Ptr const &faultyDeclaration)
+                               caramel::dataStructure::statements::declaration::Declaration::Ptr const &existingDeclaration,
+                               caramel::dataStructure::statements::declaration::Declaration::Ptr const &faultyDeclaration)
             : SemanticError(message),
               mAntlrContext{antlrContext},
               mExistingDeclaration{existingDeclaration},
@@ -92,8 +92,8 @@ public:
 
 private:
     antlr4::ParserRuleContext *mAntlrContext;
-    DataStructure::Declaration::Ptr const &mExistingDeclaration;
-    DataStructure::Declaration::Ptr const &mFaultyDeclaration;
+    caramel::dataStructure::statements::declaration::Declaration::Ptr const &mExistingDeclaration;
+    caramel::dataStructure::statements::declaration::Declaration::Ptr const &mFaultyDeclaration;
 };
 
 } // namespace Caramel::Exceptions

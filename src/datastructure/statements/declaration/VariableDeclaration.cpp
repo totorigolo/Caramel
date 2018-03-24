@@ -25,15 +25,18 @@
 #include "VariableDeclaration.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::declaration {
 
-VariableDeclaration::VariableDeclaration(Symbol::WeakPtr symbol,
-                                         antlr4::Token *startToken)
+VariableDeclaration::VariableDeclaration(
+        std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
+        antlr4::Token *startToken
+)
         : Declaration(startToken),
           mSymbol(std::move(symbol)) {
 }
 
-VariableSymbol::WeakPtr VariableDeclaration::getSymbol() {
+std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol>
+VariableDeclaration::getSymbol() {
     return mSymbol;
 }
 

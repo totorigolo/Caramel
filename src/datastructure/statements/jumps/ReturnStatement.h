@@ -27,11 +27,13 @@
 #include "Jump.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::expressions::jumps{
 
 class ReturnStatement : public Jump {
 public:
+    using Ptr = std::shared_ptr<ReturnStatement>;
+
     ReturnStatement(antlr4::Token *startToken);
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::expressions::jumps

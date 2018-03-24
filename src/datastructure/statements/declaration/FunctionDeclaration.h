@@ -30,19 +30,26 @@
 #include <memory>
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::declaration {
 
-class FunctionDeclaration : public Definition {
+class FunctionDeclaration : public caramel::dataStructure::statements::definition::Definition {
 public:
-    static Ptr Create(FunctionSymbol::WeakPtr symbol, antlr4::Token *startToken) {
-        return Ptr(new FunctionDeclaration(std::forward<FunctionSymbol::WeakPtr>(symbol), startToken));
+    using Ptr = std::shared_ptr<FunctionDeclaration>;
+
+    FunctionDeclaration(
+            std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> symbol,
+            antlr4::Token *startToken
+    );
+
+    static Ptr Create(
+            std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> symbol,
+            antlr4::Token *startToken
+    ) {
+        return std::make_shared<FunctionDeclaration>(symbol, startToken);
     }
 
 private:
-    FunctionDeclaration(FunctionSymbol::WeakPtr symbol, antlr4::Token *startToken);
-
-private:
-    FunctionSymbol::WeakPtr mSymbol;
+    std::weak_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> mSymbol;
 };
 
-}
+} // namespace caramel::dataStructure::statements::declaration

@@ -24,16 +24,17 @@
 
 #pragma once
 
-#include "Operator.h"
+#include <memory>
 
+namespace caramel::dataStructure {
 
-namespace Caramel::DataStructure {
-
-class UnaryOperator : public Operator {
+class IR {
 public:
-    UnaryOperator() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    using Ptr = std::shared_ptr<IR>;
+
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure
+
+
+

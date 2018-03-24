@@ -27,11 +27,13 @@
 #include "AtomicExpression.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::expressions::atomicExpression {
 
 class LValue : public AtomicExpression {
+public:
+    using Ptr = std::shared_ptr<LValue>;
 protected:
     LValue(antlr4::Token *startToken);
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::expression::atomicExpression

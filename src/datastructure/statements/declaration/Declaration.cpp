@@ -24,7 +24,10 @@
 
 #include "Declaration.h"
 
+namespace caramel::dataStructure::statements::declaration {
 
-Caramel::DataStructure::Declaration::Declaration(antlr4::Token *startToken)
+Declaration::Declaration(antlr4::Token *startToken)
         : Statement(startToken) {
 }
+
+} // caramel::dataStructure::statements::declaration

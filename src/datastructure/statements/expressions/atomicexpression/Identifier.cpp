@@ -24,7 +24,10 @@
 
 #include "Identifier.h"
 
+namespace caramel::dataStructure::statements::expressions::atomicExpression {
 
-Caramel::DataStructure::Identifier::Identifier(antlr4::Token *startToken)
+Identifier::Identifier(antlr4::Token *startToken)
         : LValue(startToken) {
 }
+
+} // namespace caramel::dataStructure::statements::expressions::atomicExpression

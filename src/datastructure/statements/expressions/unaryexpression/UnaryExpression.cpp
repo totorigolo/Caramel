@@ -25,6 +25,21 @@
 #include "UnaryExpression.h"
 
 
-Caramel::DataStructure::UnaryExpression::UnaryExpression(antlr4::Token *startToken)
-        : Expression(startToken) {
+caramel::dataStructure::statements::expressions::unaryExpression::UnaryExpression::UnaryExpression(
+        antlr4::Token *startToken) : Expression(startToken) {}
+
+caramel::dataStructure::statements::expressions::unaryExpression::UnaryExpression::UnaryExpression(
+        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &innerExpression,
+        std::shared_ptr<caramel::dataStructure::operators::UnaryOperator> const &unaryOperator,
+        antlr4::Token *startToken
+)
+    : Expression(startToken), mInnerExpression{innerExpression}, mUnaryOperator{unaryOperator} {}
+
+std::shared_ptr<caramel::dataStructure::IR>
+caramel::dataStructure::statements::expressions::unaryExpression::UnaryExpression::getIR() {
+    return mUnaryOperator->buildIR(mInnerExpression);
 }
+
+
+
+

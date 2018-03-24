@@ -22,16 +22,51 @@
  * SOFTWARE.
 */
 
+
 #pragma once
 
 #include "ControlBlock.h"
+#include "../expressions/Expression.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::controlblocks {
 
 class IfBlock : public ControlBlock {
 public:
-    IfBlock(antlr4::Token *startToken);
+
+    using Ptr = std::shared_ptr<IfBlock>;
+
+    explicit IfBlock(antlr4::Token *startToken);
+
+    static Ptr Create(antlr4::Token *startToken) {
+        return std::make_shared<IfBlock>(startToken);
+    }
+
+    IfBlock(
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &condition,
+            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &thenBlock,
+            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &elseBlock,
+            antlr4::Token *startToken
+    );
+
+    static Ptr Create(
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &condition,
+            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &thenBlock,
+            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &elseBlock,
+            antlr4::Token *startToken
+    ) {
+        return std::make_shared<IfBlock>(condition, thenBlock, elseBlock, startToken);
+    }
+
+private:
+    std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> mCondition;
+    std::vector<
+            std::shared_ptr<caramel::dataStructure::statements::Statement>
+    > mThenBlock;
+    std::vector<
+            std::shared_ptr<caramel::dataStructure::statements::Statement>
+    > mElseBlock;
+
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::controlblocks

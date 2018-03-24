@@ -31,21 +31,30 @@
 #include <memory>
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::declaration {
 
-class VariableDeclaration : public Declaration {
+class VariableDeclaration : public caramel::dataStructure::statements::declaration::Declaration {
 public:
-    static Ptr Create(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken) {
-        return Ptr(new VariableDeclaration(std::forward<VariableSymbol::WeakPtr>(symbol), startToken));
+    using Ptr = std::shared_ptr<VariableDeclaration>;
+
+    VariableDeclaration(
+            std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
+            antlr4::Token *startToken
+    );
+
+    static Ptr Create(
+            std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
+            antlr4::Token *startToken
+    ) {
+        return std::make_shared<VariableDeclaration>(symbol, startToken);
     }
 
-    VariableSymbol::WeakPtr getSymbol();
+public:
+
+    std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> getSymbol();
 
 private:
-    VariableDeclaration(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken);
-
-private:
-    VariableSymbol::WeakPtr mSymbol;
+    std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> mSymbol;
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::declaration

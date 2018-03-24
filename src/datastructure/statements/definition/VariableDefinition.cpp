@@ -24,7 +24,34 @@
 
 #include "VariableDefinition.h"
 
+#include <utility>
 
-Caramel::DataStructure::VariableDefinition::VariableDefinition(antlr4::Token *startToken)
-        : Definition(startToken) {
+namespace caramel::dataStructure::statements::definition {
+
+VariableDefinition::VariableDefinition(
+        std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
+        antlr4::Token *startToken
+)
+        : Definition(startToken),
+          mSymbol(symbol) {
+
+    using caramel::dataStructure::statements::expressions::Expression;
+    this->mInitializer = std::make_shared<Expression>(startToken);
+
 }
+
+VariableDefinition::VariableDefinition(
+        std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
+        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> initializer,
+        antlr4::Token *startToken
+)
+        : Definition(startToken),
+          mInitializer(initializer),
+          mSymbol(symbol) {}
+
+std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> VariableDefinition::getSymbol() {
+    return mSymbol;
+}
+
+} // caramel::dataStructure::statements::definition
+

@@ -41,7 +41,7 @@ int main(int argc, const char *argv[]) {
     Config config{parseArgs(argc, argv)};
 
     // Get the AST from the front-end
-    auto astRoot{Caramel::frontEnd(config)};
+    auto astRoot{caramel::frontEnd(config)};
 
     return EXIT_SUCCESS;
 }

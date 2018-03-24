@@ -25,20 +25,39 @@
 #include "VariableSymbol.h"
 
 
-Caramel::DataStructure::VariableSymbol::VariableSymbol(const std::string &mName,
-                                                       const Caramel::DataStructure::PrimaryType::Ptr &mType)
+caramel::dataStructure::symbolTable::VariableSymbol::VariableSymbol(
+        const std::string &mName,
+        const std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> &mType
+)
         : Symbol(mName, mType, SymbolType::VariableSymbol) {
 }
 
-void Caramel::DataStructure::VariableSymbol::onDeclaration(const Caramel::DataStructure::Statement::Ptr &declaration) {
+
+caramel::dataStructure::symbolTable::VariableSymbol::VariableSymbol(
+        const std::string &name,
+        const std::shared_ptr<caramel::dataStructure::symbolTable::TypeSymbol> &aliasType
+)
+        : Symbol(name, aliasType->getType(), SymbolType::VariableSymbol) {}
+
+
+void
+caramel::dataStructure::symbolTable::VariableSymbol::onDeclaration(
+        const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
+) {
     Symbol::onDeclaration(declaration);
 }
 
-void Caramel::DataStructure::VariableSymbol::onDefinition(const Caramel::DataStructure::Statement::Ptr &definition) {
+void
+caramel::dataStructure::symbolTable::VariableSymbol::onDefinition(
+        const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
+) {
     Symbol::onDefinition(definition);
 }
 
-void Caramel::DataStructure::VariableSymbol::onUsage(const Caramel::DataStructure::Statement::Ptr &expression) {
+void
+caramel::dataStructure::symbolTable::VariableSymbol::onUsage(
+        const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression
+) {
     Symbol::onUsage(expression);
 }
 

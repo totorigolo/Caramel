@@ -25,15 +25,23 @@
 #pragma once
 
 #include "Operator.h"
+#include "../statements/expressions/Expression.h"
 
+namespace caramel::dataStructure::operators {
 
-namespace Caramel::DataStructure {
-
-class BinaryOperator : public Operator {
+class UnaryOperator : public Operator {
 public:
-    BinaryOperator() {
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    using Ptr = std::shared_ptr<UnaryOperator>;
+
+    explicit UnaryOperator() = default;
+    ~UnaryOperator() override = default;
+
+    virtual std::shared_ptr<caramel::dataStructure::IR> buildIR(
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &innerEpxression
+    ) = 0;
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::operators
+
+
+

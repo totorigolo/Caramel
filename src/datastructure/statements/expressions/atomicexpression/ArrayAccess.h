@@ -27,11 +27,13 @@
 #include "LValue.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::expressions::atomicExpression {
 
 class ArrayAccess : public LValue {
 public:
+    using Ptr = std::shared_ptr<ArrayAccess>;
+
     ArrayAccess(antlr4::Token *startToken);
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::expression::atomicExpression

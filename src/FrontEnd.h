@@ -38,8 +38,8 @@
 #include <memory>
 
 
-namespace Caramel {
+namespace caramel {
 
-DataStructure::Context::Ptr frontEnd(Config const &config);
+dataStructure::context::Context::Ptr frontEnd(Config const &config);
 
 } // namespace Caramel

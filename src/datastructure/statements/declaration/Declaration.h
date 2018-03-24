@@ -29,11 +29,13 @@
 #include "../../../exceptions/NotImplementedException.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::declaration {
 
 class Declaration : public Statement {
-protected:
+public:
+    using Ptr = std::shared_ptr<Declaration>;
+
     explicit Declaration(antlr4::Token *startToken);
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::declaration

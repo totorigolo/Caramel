@@ -25,15 +25,17 @@
 #pragma once
 
 #include "../Statement.h"
-
+#include "../declaration/Declaration.h"
 #include "../../../exceptions/NotImplementedException.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::definition {
 
-class Definition : public Statement {
+class Definition : public caramel::dataStructure::statements::declaration::Declaration {
+public:
+    using Ptr = std::shared_ptr<Definition>;
 protected:
     explicit Definition(antlr4::Token *startToken);
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::definition

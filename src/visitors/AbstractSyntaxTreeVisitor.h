@@ -40,9 +40,9 @@
 #include <stdexcept>
 #include <iostream>
 
-using namespace Caramel::DataStructure;
+using namespace caramel::dataStructure;
 
-namespace Caramel::Visitors {
+namespace caramel::visitors {
 
 class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
 
@@ -51,37 +51,54 @@ public:
 
     antlrcpp::Any visitR(CaramelParser::RContext *ctx) override;
 
+    // Return vector<Statement::Ptr>
     antlrcpp::Any visitStatements(CaramelParser::StatementsContext *ctx) override;
 
+    // Return Statement::Ptr
     antlrcpp::Any visitStatement(CaramelParser::StatementContext *ctx) override;
 
+    // Return std::string
     antlrcpp::Any visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) override;
 
+    // Return SymbolType::Ptr (in a Symbol::Ptr)
     antlrcpp::Any visitTypeParameter(CaramelParser::TypeParameterContext *ctx) override;
 
+    // Return vector<Statement::Ptr>
     antlrcpp::Any visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) override;
 
-    antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
-
-    antlrcpp::Any visitCharConstant(CaramelParser::CharConstantContext *ctx) override;
+    // Return vector<Statement::Ptr>
+    antlrcpp::Any visitVariableDefinition(CaramelParser::VariableDefinitionContext *ctx) override;
 
     antlrcpp::Any visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) override;
+
+    // Return FunctionDefinition::Ptr
+    antlrcpp::Any visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) override;
 
     antlrcpp::Any visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) override;
 
     antlrcpp::Any visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) override;
 
-    antlrcpp::Any visitArrayDeclarationVoid(CaramelParser::ArrayDeclarationVoidContext *ctx) override ;
-
     antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override ;
+
+    // Return Expression::Ptr
+    antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
+
+    // Return Expression::Ptr
+    antlrcpp::Any visitExpression(CaramelParser::ExpressionContext *ctx) override;
+
+    // Return Constant::Ptr
+    antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
+
+    // Return Constant::Ptr
+    antlrcpp::Any visitCharConstant(CaramelParser::CharConstantContext *ctx) override;
 
 private:
     void pushNewContext();
-
-    Context::Ptr currentContext();
+    void popContext();
+    std::shared_ptr<caramel::dataStructure::context::Context> currentContext();
 
 private:
-    std::stack<Context::Ptr> mContextStack;
+    std::stack<std::shared_ptr<caramel::dataStructure::context::Context>> mContextStack;
     SourceFileUtil mSourceFileUtil;
 };
 

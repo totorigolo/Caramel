@@ -25,13 +25,43 @@
 #pragma once
 
 #include "../Expression.h"
+#include "../../../operators/UnaryOperator.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::expressions::unaryExpression {
 
-class UnaryExpression : public Expression {
+class UnaryExpression : public caramel::dataStructure::statements::expressions::Expression {
 public:
-    UnaryExpression(antlr4::Token *startToken);
+    using Ptr = std::shared_ptr<UnaryExpression>;
+
+    explicit UnaryExpression(antlr4::Token *startToken);
+
+    static Ptr Create(antlr4::Token *startToken) {
+        return std::make_shared<UnaryExpression>(startToken);
+    }
+
+    UnaryExpression(
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &innerExpression,
+            std::shared_ptr<caramel::dataStructure::operators::UnaryOperator> const &unaryOperator,
+            antlr4::Token *startToken
+    );
+
+    static Ptr Create(
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &innerExpression,
+            std::shared_ptr<caramel::dataStructure::operators::UnaryOperator> const &unaryOperator,
+            antlr4::Token *startToken
+    ) {
+        return std::make_shared<UnaryExpression>(innerExpression, unaryOperator, startToken);
+    }
+
+public:
+    std::shared_ptr<IR> getIR() override;
+
+private:
+    std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> mInnerExpression;
+    std::shared_ptr<caramel::dataStructure::operators::UnaryOperator> mUnaryOperator;
+
+
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::expressions::unaryExpression

@@ -25,6 +25,5 @@
 #include "WhileBlock.h"
 
 
-Caramel::DataStructure::WhileBlock::WhileBlock(antlr4::Token *startToken)
-        : ControlBlock(startToken) {
-}
+caramel::dataStructure::statements::controlblocks::WhileBlock::WhileBlock(antlr4::Token *startToken)
+        : ControlBlock(startToken) {}

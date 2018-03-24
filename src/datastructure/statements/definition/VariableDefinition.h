@@ -22,16 +22,49 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "../declaration/Declaration.h"
+#include "../../symboltable/TypeSymbol.h"
+#include "../../symboltable/VariableSymbol.h"
 
-#include "Definition.h"
+namespace caramel::dataStructure::statements::definition {
 
-
-namespace Caramel::DataStructure {
-
-class VariableDefinition : public Definition {
+class VariableDefinition : public caramel::dataStructure::statements::definition::Definition {
 public:
-    VariableDefinition(antlr4::Token *startToken);
+    using Ptr = std::shared_ptr<VariableDefinition>;
+
+    VariableDefinition(
+            std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
+            antlr4::Token *startToken
+    );
+
+    static Ptr Create(
+            std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
+            antlr4::Token *startToken
+    ) {
+        // Fixme : replace nullptr par numeric constant = 0
+        return std::make_shared<VariableDefinition>(symbol, startToken);
+    }
+
+    VariableDefinition(
+            std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> initializer,
+            antlr4::Token *startToken
+    );
+
+    static Ptr Create(
+            std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> initializer,
+            antlr4::Token *startToken
+    ) {
+        return std::make_shared<VariableDefinition>(symbol, initializer, startToken);
+    }
+
+public:
+    std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> getSymbol();
+
+private:
+    std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> mSymbol;
+    std::weak_ptr<caramel::dataStructure::statements::expressions::Expression> mInitializer;
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::definition

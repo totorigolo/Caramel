@@ -29,9 +29,9 @@
 #include "exceptions/SemanticError.h"
 
 
-namespace Caramel {
+namespace caramel {
 
-DataStructure::Context::Ptr frontEnd(Config const &config) {
+dataStructure::context::Context::Ptr frontEnd(Config const &config) {
     CARAMEL_UNUSED(config);
 
     // Read the source file
@@ -60,19 +60,19 @@ DataStructure::Context::Ptr frontEnd(Config const &config) {
     }
 
     // Create the visitor which will generate the AST
-    Visitors::AbstractSyntaxTreeVisitor abstractSyntaxTreeVisitor(config.sourceFile);
+    caramel::visitors::AbstractSyntaxTreeVisitor abstractSyntaxTreeVisitor(config.sourceFile);
     try {
         auto visitorResult = abstractSyntaxTreeVisitor.visit(parser.r());
-        if (!visitorResult.is<DataStructure::Context::Ptr>()) {
+        if (!visitorResult.is<dataStructure::context::Context::Ptr>()) {
             using namespace Caramel::Colors;
             logger.fatal() << "The visitor returned a bad root.";
             exit(1);
         }
 
         // Return the AST root
-        return visitorResult.as<DataStructure::Context::Ptr>();
+        return visitorResult.as<dataStructure::context::Context::Ptr>();
 
-    } catch (Exceptions::SemanticError &semanticError) {
+    } catch (Caramel::Exceptions::SemanticError &semanticError) {
         semanticError.explain(SourceFileUtil(config.sourceFile));
         exit(1);
     }

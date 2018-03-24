@@ -81,7 +81,7 @@ void Logger::Info::show() {
     using namespace Caramel::Colors;
     if (mLogger.getLevel() >= INFO) {
         std::cerr << blue << bold << "[INFO]" << reset << ' '
-                  << mLoggedStream.str() << std::endl;
+                  << blue << mLoggedStream.str() << std::endl;
     }
     mLoggedStream.clear();
 }
@@ -90,7 +90,7 @@ void Logger::Debug::show() {
     using namespace Caramel::Colors;
     if (mLogger.getLevel() >= DEBUG) {
         std::cerr << cyan << bold << "[DEBUG]" << reset << ' '
-                  << mLoggedStream.str() << std::endl;
+                  << cyan << mLoggedStream.str() << std::endl;
     }
     mLoggedStream.clear();
 }

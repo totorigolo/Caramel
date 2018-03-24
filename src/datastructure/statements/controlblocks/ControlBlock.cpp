@@ -25,6 +25,5 @@
 #include "ControlBlock.h"
 
 
-Caramel::DataStructure::ControlBlock::ControlBlock(antlr4::Token *startToken)
-        : Statement(startToken) {
-}
+caramel::dataStructure::statements::controlblocks::ControlBlock::ControlBlock(antlr4::Token *startToken)
+        : Statement(startToken) {}

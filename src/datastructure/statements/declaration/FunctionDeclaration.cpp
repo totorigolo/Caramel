@@ -25,9 +25,9 @@
 #include "FunctionDeclaration.h"
 
 
-Caramel::DataStructure::FunctionDeclaration::FunctionDeclaration(Caramel::DataStructure::Symbol::WeakPtr symbol,
-                                                                 antlr4::Token *startToken)
-
-        : Definition(startToken),
-        mSymbol(std::move(symbol)) {
+caramel::dataStructure::statements::declaration::FunctionDeclaration::FunctionDeclaration(
+        std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> symbol,
+        antlr4::Token *startToken
+) : Definition(startToken),
+    mSymbol(std::move(symbol)) {
 }

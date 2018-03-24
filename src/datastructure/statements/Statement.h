@@ -25,13 +25,12 @@
 #pragma once
 
 #include "../../exceptions/NotImplementedException.h"
-
+#include "IR.h"
 #include <Token.h>
-
 #include <memory>
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements {
 
 class Statement {
 public:
@@ -47,7 +46,7 @@ public:
     size_t getColumn() const;
     size_t getLength() const;
 
-    virtual std::string getIR() { return ""; };
+    virtual std::shared_ptr<IR> getIR() { return std::make_shared<IR>(); };
 
 protected:
     explicit Statement(antlr4::Token *startToken);
@@ -58,4 +57,4 @@ private:
     size_t mLength;
 };
 
-} // namespace Caramel::DataStructure
+} // namespace Caramel::DataStructure::statements

@@ -25,30 +25,43 @@
 #include "FunctionSymbol.h"
 
 
-Caramel::DataStructure::FunctionSymbol::FunctionSymbol(const std::string &mName,
-                                                       const Caramel::DataStructure::PrimaryType::Ptr &mType)
+caramel::dataStructure::symbolTable::FunctionSymbol::FunctionSymbol(
+        const std::string &mName,
+        const std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> &mType
+)
         : Symbol(mName, mType, SymbolType::FunctionSymbol),
           mParameters() {
 }
 
-void Caramel::DataStructure::FunctionSymbol::onDeclaration(const Caramel::DataStructure::Statement::Ptr &declaration) {
+void
+caramel::dataStructure::symbolTable::FunctionSymbol::onDeclaration(
+        const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
+) {
     Symbol::onDeclaration(declaration);
 }
 
-void Caramel::DataStructure::FunctionSymbol::onDefinition(const Caramel::DataStructure::Statement::Ptr &definition) {
+void
+caramel::dataStructure::symbolTable::FunctionSymbol::onDefinition(
+        const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
+) {
     Symbol::onDefinition(definition);
 }
 
-void Caramel::DataStructure::FunctionSymbol::onUsage(const Caramel::DataStructure::Statement::Ptr &expression) {
+void
+caramel::dataStructure::symbolTable::FunctionSymbol::onUsage(
+        const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression
+) {
     Symbol::onUsage(expression);
 }
 
-std::vector<Caramel::DataStructure::Symbol::Ptr> Caramel::DataStructure::FunctionSymbol::getNamedParameters() const {
+std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>>
+caramel::dataStructure::symbolTable::FunctionSymbol::getNamedParameters() const {
     return mParameters;
 }
 
-void Caramel::DataStructure::FunctionSymbol::setParameters(
-        const std::vector<Caramel::DataStructure::Symbol::Ptr> &namedParameters) {
+void caramel::dataStructure::symbolTable::FunctionSymbol::setParameters(
+        const std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> &namedParameters
+) {
     mParameters.clear();
     for(const auto &parameter : namedParameters) {
         mParameters.push_back(parameter);

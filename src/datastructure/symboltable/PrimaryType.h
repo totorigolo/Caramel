@@ -27,7 +27,7 @@
 #include <cstddef>
 #include <memory>
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::symbolTable {
 
 class PrimaryType {
 
@@ -134,4 +134,4 @@ public:
     }
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::symbolTable

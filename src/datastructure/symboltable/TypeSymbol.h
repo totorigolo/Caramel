@@ -27,25 +27,33 @@
 
 #include "Symbol.h"
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::symbolTable {
 
 class TypeSymbol : public Symbol {
 public:
+    using Ptr = std::shared_ptr<TypeSymbol>;
+
     static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
         return Ptr(new TypeSymbol(mName, mType));
     }
 
 public:
-    TypeSymbol(const std::string &mName, const PrimaryType::Ptr &mType);
+    TypeSymbol(const std::string &mName, std::shared_ptr<PrimaryType> mType);
 
-    virtual ~TypeSymbol() override = default;
+    ~TypeSymbol() override = default;
 
-    void onDeclaration(const Declaration::Ptr &declaration) override;
-    void onDefinition(const Definition::Ptr &definition) override;
-    void onUsage(const Expression::Ptr &expression) override;
+    void onDeclaration(
+            const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
+    ) override;
+    void onDefinition(
+            const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
+    ) override;
+    void onUsage(
+            const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression
+    ) override;
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::symbolTable
 
 
 

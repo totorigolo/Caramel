@@ -25,13 +25,44 @@
 #pragma once
 
 #include "../Expression.h"
+#include "../../../operators/BinaryOperator.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::expression::binaryExpression {
 
-class BinaryExpression : public Expression {
-protected:
-    BinaryExpression(antlr4::Token *startToken);
+class BinaryExpression : public caramel::dataStructure::statements::expressions::Expression {
+public:
+    using Ptr = std::shared_ptr<BinaryExpression>;
+
+    explicit BinaryExpression(antlr4::Token *startToken);
+    static Ptr Create(antlr4::Token *startToken) {
+        return std::make_shared<BinaryExpression>(startToken);
+    }
+
+    BinaryExpression(
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
+            std::shared_ptr<caramel::dataStructure::operators::BinaryOperator> const &binaryOperator,
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression,
+            antlr4::Token *startToken
+    );
+    static Ptr Create(
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
+            std::shared_ptr<caramel::dataStructure::operators::BinaryOperator> const &binaryOperator,
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression,
+            antlr4::Token *startToken
+    ) {
+        return std::make_shared<BinaryExpression>(leftExpression, binaryOperator, rightExpression, startToken);
+    }
+
+
+public:
+    std::shared_ptr<IR> getIR() override;
+
+private:
+    std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> mLeftExpression;
+    std::shared_ptr<caramel::dataStructure::operators::BinaryOperator> mBinaryOperator;
+    std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> mRightExpression;
+
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::expression::binaryExpression

@@ -27,11 +27,13 @@
 #include "../Expression.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::expressions::functionCall {
 
 class FunctionCall : public Expression {
 public:
+    using Ptr = std::shared_ptr<FunctionCall>;
+
     FunctionCall(antlr4::Token *startToken);
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::expressions::functionCall

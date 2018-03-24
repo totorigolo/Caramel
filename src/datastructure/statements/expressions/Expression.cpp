@@ -24,7 +24,10 @@
 
 #include "Expression.h"
 
+namespace caramel::dataStructure::statements::expressions {
 
-Caramel::DataStructure::Expression::Expression(antlr4::Token *startToken)
+Expression::Expression(antlr4::Token *startToken)
         : Statement(startToken) {
 }
+
+} // namespace caramel::dataStructure::statements::expressions

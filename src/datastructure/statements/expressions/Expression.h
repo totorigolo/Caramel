@@ -30,16 +30,17 @@
 #include <support/Any.h>
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::expressions {
 
-class Expression : public Statement {
+class Expression : public caramel::dataStructure::statements::Statement {
 public:
+    using Ptr = std::shared_ptr<Expression>;
 
     // TODO : Manage Type later pls
-    virtual antlrcpp::Any getValue() = 0;
+    virtual antlrcpp::Any getValue() { return {}; };
 
-protected:
+public:
     Expression(antlr4::Token *startToken);
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::expressions

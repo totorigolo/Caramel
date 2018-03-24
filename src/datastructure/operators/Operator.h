@@ -21,21 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
 */
-namespace Caramel::DataStructure {
 
-class VariableDefinition : public Declaration {
+#pragma once
+
+#include <memory>
+#include "../statements/IR.h"
+
+namespace caramel::dataStructure::operators {
+
+class Operator {
 public:
-    static Ptr Create(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken) {
-        return Ptr(new VariableDefinition(std::forward<VariableSymbol::WeakPtr>(symbol), startToken));
-    }
+    using Ptr = std::shared_ptr<Operator>;
 
-    VariableDefinition::WeakPtr getSymbol();
-
-private:
-    VariableDefinition(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken);
-
-private:
-    VariableDefinition::WeakPtr mSymbol;
+    Operator() = default;
+    virtual ~Operator() = default;
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::operators
+
+
+
