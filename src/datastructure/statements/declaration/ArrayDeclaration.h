@@ -32,21 +32,23 @@
 #include <memory>
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::declaration {
 
 class ArrayDeclaration : public Declaration {
 public:
-    static Ptr Create(ArraySymbol::WeakPtr symbol, antlr4::Token *startToken) {
-        return Ptr(new ArrayDeclaration(std::forward<VariableSymbol::WeakPtr>(symbol), startToken));
+    using Ptr = std::shared_ptr<ArrayDeclaration>;
+
+
+    static Ptr Create(caramel::dataStructure::symbolTable::ArraySymbol::Ptr symbol, antlr4::Token *startToken) {
+        return std::make_shared<ArrayDeclaration>(symbol, startToken);
     }
 
-    ArrayDeclaration::WeakPtr getSymbol();
+    caramel::dataStructure::symbolTable::ArraySymbol::WeakPtr getSymbol();
+
+    ArrayDeclaration(caramel::dataStructure::symbolTable::ArraySymbol::Ptr symbol, antlr4::Token *startToken);
 
 private:
-    ArrayDeclaration(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken);
-
-private:
-    ArrayDeclaration::WeakPtr mSymbol;
+    caramel::dataStructure::symbolTable::ArraySymbol::WeakPtr mSymbol;
 };
 
 } // namespace Caramel::DataStructure

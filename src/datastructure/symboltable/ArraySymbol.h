@@ -27,15 +27,18 @@
 #include "Symbol.h"
 #include "VariableSymbol.h"
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::symbolTable {
 
 class ArraySymbol : public VariableSymbol {
 public:
+    using Ptr = std::shared_ptr<ArraySymbol>;
+    using WeakPtr = std::weak_ptr<ArraySymbol>;
+
     static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType, const long &mSize) {
         return Ptr(new ArraySymbol(mName, mType, mSize));
     }
 
-    static Ptr Create(const std::string &mName, const Ptr &type, const long &mSize) {
+    static Ptr Create(const std::string &mName, const TypeSymbol::Ptr &type, const long &mSize) {
         assert(type->getSymbolType() == SymbolType::TypeSymbol);
         return Ptr(new ArraySymbol(mName, type->getType(),mSize));
     }
@@ -45,12 +48,12 @@ public:
 
     virtual ~ArraySymbol() override = default;
 
-    void onDeclaration(const Declaration::Ptr &declaration) override;
-    void onDefinition(const Definition::Ptr &definition) override;
-    void onUsage(const Expression::Ptr &expression) override;
+    void onDeclaration(const caramel::dataStructure::statements::declaration::Declaration::Ptr &declaration) override {};
+    void onDefinition(const caramel::dataStructure::statements::definition::Definition::Ptr &definition) override {};
+    void onUsage(const caramel::dataStructure::statements::expressions::Expression::Ptr &expression) override {};
 
     void setSize(const long &size);
-    void getSize();
+    long getSize();
 
 private:
     long mSize;

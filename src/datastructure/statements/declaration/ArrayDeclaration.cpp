@@ -25,16 +25,17 @@
 #include "ArrayDeclaration.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::declaration {
 
-ArrayDeclaration::ArrayDeclaration(Symbol::WeakPtr symbol,
-                                         antlr4::Token *startToken)
-        : Declaration(startToken),
-          mSymbol(std::move(symbol)) {
-}
+ArrayDeclaration::ArrayDeclaration(
+        caramel::dataStructure::symbolTable::ArraySymbol::Ptr symbol,
+        antlr4::Token *startToken
+) : Declaration(startToken), mSymbol(symbol) {}
 
-ArrayDeclaration::WeakPtr ArrayDeclaration::getSymbol() {
+caramel::dataStructure::symbolTable::ArraySymbol::WeakPtr
+ArrayDeclaration::getSymbol() {
     return mSymbol;
 }
 
-} // Caramel::DataStructure
+
+} // caramel::dataStructure::statements::declaration

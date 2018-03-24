@@ -47,7 +47,7 @@ namespace caramel::visitors {
 class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
 
 public:
-    explicit AbstractSyntaxTreeVisitor(std::string const& sourceFileName);
+    explicit AbstractSyntaxTreeVisitor(std::string const &sourceFileName);
 
     antlrcpp::Any visitR(CaramelParser::RContext *ctx) override;
 
@@ -68,11 +68,8 @@ public:
 
     // Return vector<Statement::Ptr>
     antlrcpp::Any visitVariableDefinition(CaramelParser::VariableDefinitionContext *ctx) override;
-    antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
 
-    antlrcpp::Any visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) override ;
-
-    antlrcpp::Any visitCharConstant(CaramelParser::CharConstantContext *ctx) override;
+    antlrcpp::Any visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) override;
 
     antlrcpp::Any visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) override;
 
@@ -83,7 +80,7 @@ public:
 
     antlrcpp::Any visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) override;
 
-    antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override ;
+    antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override;
 
     // Return Expression::Ptr
     antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
@@ -99,19 +96,20 @@ public:
 
     antlrcpp::Any visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) override;
 
-    antlrcpp::Any visitArrayDeclarationVoidInner(CaramelParser::ArrayDeclarationVoidInnerContext *ctx) override ;
+    antlrcpp::Any visitArrayDeclarationVoidInner(CaramelParser::ArrayDeclarationVoidInnerContext *ctx) override;
 
-    antlrcpp::Any visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) override ;
+    antlrcpp::Any visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) override;
 
-    antlrcpp::Any visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) override ;
+    antlrcpp::Any visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) override;
 
-    antlrcpp::Any visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) override ;
-
+    antlrcpp::Any visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) override;
 
 
 private:
     void pushNewContext();
+
     void popContext();
+
     std::shared_ptr<caramel::dataStructure::context::Context> currentContext();
 
 private:

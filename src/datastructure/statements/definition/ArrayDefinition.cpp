@@ -24,7 +24,10 @@
 
 #include "ArrayDefinition.h"
 
+namespace caramel::dataStructure::statements::definition {
 
-Caramel::DataStructure::ArrayDefinition::ArrayDefinition(antlr4::Token *startToken)
+ArrayDefinition::ArrayDefinition(antlr4::Token *startToken)
         : Definition(startToken) {
 }
+
+} // namespace caramel::dataStructure::statements::definition

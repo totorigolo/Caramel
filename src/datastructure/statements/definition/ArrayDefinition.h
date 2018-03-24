@@ -27,11 +27,13 @@
 #include "Definition.h"
 
 
-namespace Caramel::DataStructure {
+namespace caramel::dataStructure::statements::definition {
 
 class ArrayDefinition : public Definition {
 public:
+    using Ptr = std::shared_ptr<ArrayDefinition>;
+
     ArrayDefinition(antlr4::Token *startToken);
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::dataStructure::statements::definition

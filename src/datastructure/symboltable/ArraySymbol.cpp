@@ -4,19 +4,26 @@
 
 #include "ArraySymbol.h"
 
-Caramel::DataStructure::ArraySymbol::ArraySymbol(const std::string &mName,
-                                                 const Caramel::DataStructure::PrimaryType::Ptr &mType, const long &mSize)
+namespace caramel::dataStructure::symbolTable {
+
+ArraySymbol::ArraySymbol(
+        const std::string &mName,
+        const PrimaryType::Ptr &mType,
+        const long &mSize
+)
         : VariableSymbol(mName, mType), mSize(mSize) {
 
 }
 
-void Caramel::DataStructure::ArraySymbol::setSize(const long &size) {
-    this->mSize=size;
+void ArraySymbol::setSize(const long &size) {
+    this->mSize = size;
 
 }
 
-void Caramel::DataStructure::ArraySymbol::getSize() {
+long ArraySymbol::getSize() {
     return mSize;
 
 }
+
+} // namespace caramel::dataStructure::symbolTable
 
