@@ -39,7 +39,8 @@ namespace caramel::dataStructure::symbolTable {
 enum class SymbolType {
     FunctionSymbol,
     VariableSymbol,
-    TypeSymbol
+    TypeSymbol,
+    ArraySymbol
 };
 
 class Symbol {

@@ -32,6 +32,8 @@
 #include "../datastructure/statements/declaration/FunctionDeclaration.h"
 #include "../datastructure/statements/Statement.h"
 #include "../datastructure/statements/definition/VariableDefinition.h"
+#include "../datastructure/symboltable/ArraySymbol.h"
+#include "../datastructure/statements/declaration/ArrayDeclaration.h"
 
 
 using namespace caramel::visitors;
@@ -324,6 +326,80 @@ caramel::dataStructure::context::Context::Ptr AbstractSyntaxTreeVisitor::current
     return mContextStack.top();
 }
 
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) {
+    Symbol::Ptr arraySymbol;
+    auto arrayDeclaration;
+
+    if (nullptr != ctx->arrayDeclarationVoidInner()) {
+        arraySymbol = visitArrayDeclarationVoidInner(ctx->arrayDeclarationVoidInner());
+
+        long arraySize = visitArrayBlock(ctx->arrayBlock());
+        dynamic_cast<ArraySymbol*>(arraySymbol)->setSize(arraySize);
+
+        arrayDeclaration = ArrayDeclaration::Create(arraySymbol, ctx->arrayDeclarationVoidInner()->validIdentifier()->getStart());
+
+    } else if (nullptr != ctx->arrayDeclarationInner()) {
+        arraySymbol = visitArrayDeclarationInner(ctx->arrayDeclarationInner());
+
+
+        arrayDeclaration = ArrayDeclaration::Create(arraySymbol, ctx->arrayDeclarationInner()->validIdentifier()->getStart());
+
+    }
+
+    currentContext()->getSymbolTable()->addVariableDeclaration(ctx, arraySymbol->getType(), arraySymbol->getName(),
+                                                               arrayDeclaration);
+
+
+    logger.trace() << "New array declared " << arraySymbol->getName() << " of return type " << arraySymbol->getType()  << "and size " << dynamic_cast<ArraySymbol*>(arraySymbol)->getSize();
+
+    //TODO : Cas d'erreur
+    return arrayDeclaration;
+}
+
+// Return Symbol::Ptr
+antlrcpp::Any
+AbstractSyntaxTreeVisitor::visitArrayDeclarationVoidInner(CaramelParser::ArrayDeclarationVoidInnerContext *ctx) {
+    logger.trace() << "Visiting array declaration void: " << ctx->getText();
+
+    auto typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
+    std::string name = visitValidIdentifier(ctx->validIdentifier());
+    auto arraySymbol{ArraySymbol::Create(name, typeSymbol, 0)};
+
+    return arraySymbol;
+}
+
+// Return long
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) {
+    return ctx->expression().size();
+}
+
+// Return Symbol::Ptr
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) {
+    logger.trace() << "Visiting array declaration : " << ctx->getText();
+
+    auto typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
+    std::string name = visitValidIdentifier(ctx->validIdentifier());
+    Constant::Ptr arraySize = visitArraySizeDeclaration(ctx->arraySizeDeclaration());
+
+    auto arraySymbol{ArraySymbol::Create(name, typeSymbol, dynamic_cast<long>(arraySize->getValue()))};
+
+    return arraySymbol;
+}
+
+// Return Constant::Ptr
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) {
+    return visitPositiveConstant(ctx->positiveConstant());
+}
+
+// Return Constant::Ptr
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) {
+    long long value = std::stoll(ctx->getText());
+    return Constant::Create(value, ctx->start);
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) {
+    pushNewContext();
+    return CaramelBaseVisitor::visitFunctionDefinition(ctx);
 void AbstractSyntaxTreeVisitor::popContext() {
     logger.debug() << "Pop context.";
     mContextStack.pop();
