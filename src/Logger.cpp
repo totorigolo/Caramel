@@ -61,45 +61,50 @@ Logger::Trace Logger::trace() {
 
 void Logger::Fatal::show() {
     using namespace Caramel::Colors;
-    if (mLogger.getLevel() >= FATAL) {
+    auto message = mLoggedStream.str();
+    if (mLogger.getLevel() >= FATAL && !message.empty()) {
         std::cerr << red << bold << "[FATAL]" << reset << ' '
-                  << red << mLoggedStream.str() << reset << std::endl;
+                  << red << message << reset << std::endl;
     }
-    mLoggedStream.clear();
+    mLoggedStream.str(std::string());
 }
 
 void Logger::Warning::show() {
     using namespace Caramel::Colors;
-    if (mLogger.getLevel() >= WARN) {
+    auto message = mLoggedStream.str();
+    if (mLogger.getLevel() >= WARN && !message.empty()) {
         std::cerr << yellow << bold << "[WARNING]" << reset << ' '
-                  << yellow << mLoggedStream.str() << reset << std::endl;
+                  << yellow << message << reset << std::endl;
     }
-    mLoggedStream.clear();
+    mLoggedStream.str(std::string());
 }
 
 void Logger::Info::show() {
     using namespace Caramel::Colors;
-    if (mLogger.getLevel() >= INFO) {
+    auto message = mLoggedStream.str();
+    if (mLogger.getLevel() >= INFO && !message.empty()) {
         std::cerr << blue << bold << "[INFO]" << reset << ' '
-                  << blue << mLoggedStream.str() << std::endl;
+                  << blue << message << std::endl;
     }
-    mLoggedStream.clear();
+    mLoggedStream.str(std::string());
 }
 
 void Logger::Debug::show() {
     using namespace Caramel::Colors;
-    if (mLogger.getLevel() >= DEBUG) {
+    auto message = mLoggedStream.str();
+    if (mLogger.getLevel() >= DEBUG && !message.empty()) {
         std::cerr << cyan << bold << "[DEBUG]" << reset << ' '
-                  << cyan << mLoggedStream.str() << std::endl;
+                  << cyan << message << std::endl;
     }
-    mLoggedStream.clear();
+    mLoggedStream.str(std::string());
 }
 
 void Logger::Trace::show() {
     using namespace Caramel::Colors;
-    if (mLogger.getLevel() >= TRACE) {
+    auto message = mLoggedStream.str();
+    if (mLogger.getLevel() >= TRACE && !message.empty()) {
         std::cerr << magenta << bold << "[TRACE]" << reset << ' '
-                  << magenta << mLoggedStream.str() << reset << std::endl;
+                  << magenta << message << reset << std::endl;
     }
-    mLoggedStream.clear();
+    mLoggedStream.str(std::string());
 }
