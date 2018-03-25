@@ -28,7 +28,7 @@
 #include "../../../operators/BinaryOperator.h"
 
 
-namespace caramel::dataStructure::expression::binaryExpression {
+namespace caramel::dataStructure::statements::expressions::binaryExpression {
 
 class BinaryExpression : public caramel::dataStructure::statements::expressions::Expression {
 public:

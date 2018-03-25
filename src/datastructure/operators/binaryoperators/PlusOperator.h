@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,36 +24,33 @@
 
 #pragma once
 
-#include "../../exceptions/NotImplementedException.h"
-#include "IR.h"
-#include <Token.h>
+
 #include <memory>
+#include <Common.h>
+#include "../BinaryOperator.h"
 
+namespace caramel::dataStructure::operators::binaryOperators {
 
-namespace caramel::dataStructure::statements {
-
-class Statement {
+class PlusOperator : public BinaryOperator {
 public:
-    using Ptr = std::shared_ptr<Statement>;
-    using WeakPtr = std::weak_ptr<Statement>;
 
-    static Ptr Create(antlr4::Token *startToken) {
-        return Ptr(new Statement(startToken));
+    using Ptr = std::shared_ptr<PlusOperator>;
+
+    static Ptr Create() {
+        return Ptr(new PlusOperator());
     }
 
-    explicit Statement(antlr4::Token *startToken);
+    std::shared_ptr<IR>
+    buildIR(std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
+            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression) override {
+        CARAMEL_UNUSED(leftExpression);
+        CARAMEL_UNUSED(rightExpression);
+        // TODO : Implement the IR generation which happens right here.
+        throw Caramel::Exceptions::NotImplementedException(__FILE__);
+    }
 
-public:
-    size_t getLine() const;
-    size_t getColumn() const;
-    size_t getLength() const;
-
-    virtual std::shared_ptr<IR> getIR() { return std::make_shared<IR>(); };
-
-private:
-    size_t mLine;
-    size_t mColumn;
-    size_t mLength;
 };
 
-} // namespace Caramel::DataStructure::statements
+}
+
+

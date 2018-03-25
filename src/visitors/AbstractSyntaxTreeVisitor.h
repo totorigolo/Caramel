@@ -27,6 +27,7 @@
 #include "../Console.h"
 #include "../datastructure/context/Context.h"
 #include "../util/SourceFileUtil.h"
+#include "../datastructure/operators/binaryoperators/PlusOperator.h"
 
 
 #pragma GCC diagnostic push
@@ -104,6 +105,10 @@ public:
 
     antlrcpp::Any visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) override;
 
+    antlrcpp::Any visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) override;
+
+    antlrcpp::Any visitAdditiveOperator(CaramelParser::AdditiveOperatorContext *ctx) override;
+
 
 private:
     void pushNewContext();
@@ -115,6 +120,8 @@ private:
 private:
     std::stack<std::shared_ptr<caramel::dataStructure::context::Context>> mContextStack;
     SourceFileUtil mSourceFileUtil;
+
+    const std::shared_ptr<operators::binaryOperators::PlusOperator> mPlusOperator = std::make_shared<operators::binaryOperators::PlusOperator>();
 };
 
 } // namespace Caramel::Visitors
