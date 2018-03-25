@@ -25,9 +25,14 @@
 #pragma once
 
 #include "../Statement.h"
-
 #include "../../../exceptions/NotImplementedException.h"
 
+namespace caramel::dataStructure::symbolTable {
+    class Symbol;
+    class FunctionSymbol;
+    class VariableSymbol;
+    class ArraySymbol;
+}
 
 namespace caramel::dataStructure::statements::declaration {
 
@@ -35,7 +40,14 @@ class Declaration : public Statement {
 public:
     using Ptr = std::shared_ptr<Declaration>;
 
+    // Constructors
+protected:
     explicit Declaration(antlr4::Token *startToken);
+
+public:
+    // Public methods
+    virtual std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() = 0;
 };
+
 
 } // namespace caramel::dataStructure::statements::declaration

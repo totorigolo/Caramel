@@ -25,11 +25,8 @@
 #pragma once
 
 #include "Declaration.h"
-#include "../../symboltable/TypeSymbol.h"
-#include "../../symboltable/VariableSymbol.h"
 
 #include <memory>
-
 
 namespace caramel::dataStructure::statements::declaration {
 
@@ -51,10 +48,15 @@ public:
 
 public:
 
-    std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> getSymbol();
+    std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() override {
+        throw std::runtime_error("Cannot get the variableSymbol as Symbol");
+    };
+
+    std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol>
+    getVariableSymbol();
 
 private:
-    std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> mSymbol;
+    std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> mSymbol;
 };
 
 } // namespace caramel::dataStructure::statements::declaration

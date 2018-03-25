@@ -78,9 +78,9 @@ caramel::dataStructure::symbolTable::Symbol::addDefinition(
 }
 
 void
-caramel::dataStructure::symbolTable::Symbol::addUsage(const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression) {
-    onUsage(expression);
-    mOccurrences.push_back(expression);
+caramel::dataStructure::symbolTable::Symbol::addUsage(const std::shared_ptr<caramel::dataStructure::statements::Statement> &statement) {
+    onUsage(statement);
+    mOccurrences.push_back(statement);
 }
     
 caramel::dataStructure::symbolTable::SymbolType
@@ -96,7 +96,8 @@ void caramel::dataStructure::symbolTable::Symbol::onDeclaration(const std::share
 
 void caramel::dataStructure::symbolTable::Symbol::onDefinition(const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition) {}
 
-void caramel::dataStructure::symbolTable::Symbol::onUsage(const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression) {}
+void caramel::dataStructure::symbolTable::Symbol::onUsage(
+        const std::shared_ptr<caramel::dataStructure::statements::Statement> &expression) {}
 
 std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> caramel::dataStructure::symbolTable::Symbol::getType() const {
     return mType;

@@ -25,12 +25,7 @@
 #pragma once
 
 #include "Declaration.h"
-#include "../../symboltable/TypeSymbol.h"
-#include "../../symboltable/VariableSymbol.h"
-#include "../../symboltable/ArraySymbol.h"
-
 #include <memory>
-
 
 namespace caramel::dataStructure::statements::declaration {
 
@@ -38,17 +33,20 @@ class ArrayDeclaration : public Declaration {
 public:
     using Ptr = std::shared_ptr<ArrayDeclaration>;
 
+    ArrayDeclaration(std::shared_ptr<caramel::dataStructure::symbolTable::ArraySymbol> symbol, antlr4::Token *startToken);
 
-    static Ptr Create(caramel::dataStructure::symbolTable::ArraySymbol::Ptr symbol, antlr4::Token *startToken) {
+    static Ptr Create(std::shared_ptr<caramel::dataStructure::symbolTable::ArraySymbol> symbol, antlr4::Token *startToken) {
         return std::make_shared<ArrayDeclaration>(symbol, startToken);
     }
 
-    caramel::dataStructure::symbolTable::ArraySymbol::WeakPtr getSymbol();
+    std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() override {
+        throw std::runtime_error("Cannot return a valid symbol");
+    };
 
-    ArrayDeclaration(caramel::dataStructure::symbolTable::ArraySymbol::Ptr symbol, antlr4::Token *startToken);
+    std::weak_ptr<caramel::dataStructure::symbolTable::ArraySymbol> getArraySymbol();
 
 private:
-    caramel::dataStructure::symbolTable::ArraySymbol::WeakPtr mSymbol;
+    std::weak_ptr<caramel::dataStructure::symbolTable::ArraySymbol> mSymbol;
 };
 
 } // namespace Caramel::DataStructure

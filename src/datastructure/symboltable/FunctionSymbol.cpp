@@ -33,27 +33,6 @@ caramel::dataStructure::symbolTable::FunctionSymbol::FunctionSymbol(
           mParameters() {
 }
 
-void
-caramel::dataStructure::symbolTable::FunctionSymbol::onDeclaration(
-        const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
-) {
-    Symbol::onDeclaration(declaration);
-}
-
-void
-caramel::dataStructure::symbolTable::FunctionSymbol::onDefinition(
-        const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
-) {
-    Symbol::onDefinition(definition);
-}
-
-void
-caramel::dataStructure::symbolTable::FunctionSymbol::onUsage(
-        const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression
-) {
-    Symbol::onUsage(expression);
-}
-
 std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>>
 caramel::dataStructure::symbolTable::FunctionSymbol::getNamedParameters() const {
     return mParameters;

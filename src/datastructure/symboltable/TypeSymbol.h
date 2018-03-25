@@ -44,13 +44,15 @@ public:
 
     void onDeclaration(
             const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
-    ) override;
+    ) override { Symbol::onDeclaration(declaration); }
+
     void onDefinition(
             const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
-    ) override;
+    ) override { Symbol::onDefinition(definition); };
+
     void onUsage(
-            const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression
-    ) override;
+            const std::shared_ptr<caramel::dataStructure::statements::Statement> &statement
+    ) override { Symbol::onUsage(statement); };
 };
 
 } // namespace caramel::dataStructure::symbolTable

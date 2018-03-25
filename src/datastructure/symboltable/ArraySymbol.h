@@ -44,13 +44,16 @@ public:
     }
 
 public:
+    ArraySymbol(const std::string &name, const PrimaryType::Ptr &primaryType);
+    ArraySymbol(const std::string &name, const TypeSymbol::Ptr &aliasType);
     ArraySymbol(const std::string &mName, const PrimaryType::Ptr &mType, const long &mSize);
+    ArraySymbol(const std::string &mName, const TypeSymbol::Ptr &mType, const long &mSize);
 
     virtual ~ArraySymbol() override = default;
 
     void onDeclaration(const caramel::dataStructure::statements::declaration::Declaration::Ptr &declaration) override {};
     void onDefinition(const caramel::dataStructure::statements::definition::Definition::Ptr &definition) override {};
-    void onUsage(const caramel::dataStructure::statements::expressions::Expression::Ptr &expression) override {};
+    void onUsage(const caramel::dataStructure::statements::Statement::Ptr &statement) override {};
 
     void setSize(const long &size);
     long getSize();

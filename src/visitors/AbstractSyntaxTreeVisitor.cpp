@@ -25,12 +25,10 @@
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
 #include "../datastructure/statements/expressions/atomicexpression/Constant.h"
-#include "../datastructure/symboltable/PrimaryType.h"
 #include "../datastructure/symboltable/VariableSymbol.h"
 #include "../datastructure/symboltable/FunctionSymbol.h"
 #include "../datastructure/statements/declaration/VariableDeclaration.h"
 #include "../datastructure/statements/declaration/FunctionDeclaration.h"
-#include "../datastructure/statements/Statement.h"
 #include "../datastructure/statements/definition/VariableDefinition.h"
 #include "../datastructure/symboltable/ArraySymbol.h"
 #include "../datastructure/statements/declaration/ArrayDeclaration.h"
@@ -230,7 +228,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArgument(CaramelParser::Fu
         std::stringstream nameSS;
         nameSS << "__unnamed_argument_" << ctx->start->getLine() << "_" << ctx->start->getCharPositionInLine() << "__";
         name = nameSS.str();
-    }
+     }
 
     // Get the type
     TypeSymbol::Ptr type;
@@ -238,7 +236,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArgument(CaramelParser::Fu
 
     // The argument is an array
     if (nullptr != ctx->functionArgumentArraySuffix()) {
-        return std::make_shared<VariableSymbol>(name, type); // FIXME: Return a new ArrayVariableSymbol
+        return std::make_shared<ArraySymbol>(name, type); // FIXME: Return a new ArrayVariableSymbol
     } else {
         return std::make_shared<VariableSymbol>(name, type);
     }
@@ -265,7 +263,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitExpression(CaramelParser::ExpressionContext *ctx) {
 
     using caramel::dataStructure::statements::expressions::Expression;
-
     return std::make_shared<Expression>(ctx->getStart());
 }
 

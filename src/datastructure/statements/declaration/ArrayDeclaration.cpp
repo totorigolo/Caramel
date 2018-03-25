@@ -28,14 +28,12 @@
 namespace caramel::dataStructure::statements::declaration {
 
 ArrayDeclaration::ArrayDeclaration(
-        caramel::dataStructure::symbolTable::ArraySymbol::Ptr symbol,
+        std::shared_ptr<caramel::dataStructure::symbolTable::ArraySymbol> symbol,
         antlr4::Token *startToken
 ) : Declaration(startToken), mSymbol(symbol) {}
 
-caramel::dataStructure::symbolTable::ArraySymbol::WeakPtr
-ArrayDeclaration::getSymbol() {
+std::weak_ptr<caramel::dataStructure::symbolTable::ArraySymbol> ArrayDeclaration::getArraySymbol() {
     return mSymbol;
 }
-
 
 } // caramel::dataStructure::statements::declaration

@@ -24,15 +24,12 @@
 
 #pragma once
 
-#include "../definition/Definition.h"
-#include "../../symboltable/FunctionSymbol.h"
-
+#include "Declaration.h"
 #include <memory>
-
 
 namespace caramel::dataStructure::statements::declaration {
 
-class FunctionDeclaration : public caramel::dataStructure::statements::definition::Definition {
+class FunctionDeclaration : public Declaration {
 public:
     using Ptr = std::shared_ptr<FunctionDeclaration>;
 
@@ -47,6 +44,12 @@ public:
     ) {
         return std::make_shared<FunctionDeclaration>(symbol, startToken);
     }
+
+    std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() override {
+        throw std::runtime_error("Cannot get the variableSymbol as Symbol");
+    };
+
+    std::weak_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> getFunctionSymbol();
 
 private:
     std::weak_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> mSymbol;

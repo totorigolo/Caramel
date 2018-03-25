@@ -62,7 +62,7 @@ public:
 
     void addDeclaration(const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration);
     void addDefinition(const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition);
-    void addUsage(const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression);
+    void addUsage(const std::shared_ptr<caramel::dataStructure::statements::Statement> &statement);
 
     SymbolType getSymbolType() const;
     std::string getSymbolTypeAsString() const;
@@ -83,7 +83,7 @@ protected:
             const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
     );
     virtual void onUsage(
-            const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression
+            const std::shared_ptr<caramel::dataStructure::statements::Statement> &statement
     );
 
 protected:

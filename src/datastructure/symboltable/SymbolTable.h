@@ -70,7 +70,7 @@ public:
     void addVariableUsage(
             antlr4::ParserRuleContext *antlrContext,
             std::string const &name,
-            const std::shared_ptr<statements::expressions::Expression> &expression
+            const std::shared_ptr<statements::Statement> &expression
     );
 
     void addFunctionDeclaration(
@@ -93,7 +93,7 @@ public:
             antlr4::ParserRuleContext *antlrContext,
             std::string const &name,
             std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> const &valueParameters,
-            const std::shared_ptr<statements::expressions::Expression> &expression
+            const std::shared_ptr<statements::Statement> &statement
     );
 
     void addPrimaryType(

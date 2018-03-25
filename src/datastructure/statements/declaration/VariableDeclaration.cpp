@@ -35,8 +35,8 @@ VariableDeclaration::VariableDeclaration(
           mSymbol(std::move(symbol)) {
 }
 
-std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol>
-VariableDeclaration::getSymbol() {
+std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol>
+VariableDeclaration::getVariableSymbol() {
     return mSymbol;
 }
 

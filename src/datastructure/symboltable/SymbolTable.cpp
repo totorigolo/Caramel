@@ -94,12 +94,12 @@ void
 SymbolTable::addVariableUsage(
         antlr4::ParserRuleContext *antlrContext,
         std::string const &name,
-        const std::shared_ptr<statements::expressions::Expression> &expression
+        const std::shared_ptr<statements::Statement> &statement
 ) {
 
     using namespace Caramel::Exceptions;
     if (isDefined(name)) {
-        mSymbolMap[name]->addUsage(expression);
+        mSymbolMap[name]->addUsage(statement);
     } else {
         // Fixme : Try to find the variable in the parent context or throw a VariableUndefinedException
         SymbolTable::Ptr parent = getParentTable();
@@ -167,12 +167,12 @@ SymbolTable::addFunctionCall(
         antlr4::ParserRuleContext *antlrContext,
         std::string const &name,
         std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> const &valueParameters,
-        const std::shared_ptr<statements::expressions::Expression> &expression
+        const std::shared_ptr<statements::Statement> &statement
 ) {
 
     if (isDefined(name)) {
         // Todo : maybe checks if the valueParameters may match with the namedParameters of the function
-        mSymbolMap[name]->addUsage(expression);
+        mSymbolMap[name]->addUsage(statement);
     } else {
         // Todo : Try to find the function in the parent context or throw a FunctionUndefinedException
     }

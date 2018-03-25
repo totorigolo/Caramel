@@ -23,8 +23,8 @@
 */
 
 #include "../declaration/Declaration.h"
-#include "../../symboltable/TypeSymbol.h"
-#include "../../symboltable/VariableSymbol.h"
+#include "Definition.h"
+#include "../expressions/Expression.h"
 
 namespace caramel::dataStructure::statements::definition {
 
@@ -60,7 +60,10 @@ public:
     }
 
 public:
-    std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> getSymbol();
+    std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() override {
+        throw std::runtime_error("Cannot return a valid symbol");
+    };
+    std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> getVariableSymbol();
 
 private:
     std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> mSymbol;

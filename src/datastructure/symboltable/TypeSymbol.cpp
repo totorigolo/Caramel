@@ -31,25 +31,4 @@ TypeSymbol::TypeSymbol(const std::string &mName,
         : Symbol(mName, mType, SymbolType::TypeSymbol) {
 }
 
-void
-TypeSymbol::onDeclaration(
-        const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
-) {
-    Symbol::onDeclaration(declaration);
-}
-
-void
-TypeSymbol::onDefinition(
-        const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
-) {
-    Symbol::onDefinition(definition);
-}
-
-void
-TypeSymbol::onUsage(
-        const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression
-) {
-    Symbol::onUsage(expression);
-}
-
-}
+} // namespace caramel::dataStructure::symbolTable

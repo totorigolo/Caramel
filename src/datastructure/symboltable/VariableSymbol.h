@@ -32,6 +32,12 @@ namespace caramel::dataStructure::symbolTable {
 class VariableSymbol : public caramel::dataStructure::symbolTable::Symbol {
 public:
     using Ptr = std::shared_ptr<VariableSymbol>;
+
+    VariableSymbol(
+            const std::string &mName,
+            const std::shared_ptr<PrimaryType> &mType
+    );
+
     static Ptr Create(
             const std::string &mName,
             const std::shared_ptr<PrimaryType> &mType
@@ -39,32 +45,32 @@ public:
         return std::make_shared<VariableSymbol>(mName, mType);
     }
 
-    static Ptr Create(const std::string &mName, const std::shared_ptr<TypeSymbol> &aliasType) {
-        return std::make_shared<VariableSymbol>(mName, aliasType->getType());
-    }
-
-public:
-    VariableSymbol(
-            const std::string &mName,
-            const std::shared_ptr<PrimaryType> &mType
-    );
-
     VariableSymbol(
             const std::string &name,
             const std::shared_ptr<TypeSymbol> &aliasType
     );
 
+    static Ptr Create(const std::string &mName, const std::shared_ptr<TypeSymbol> &aliasType) {
+        return std::make_shared<VariableSymbol>(mName, aliasType);
+    }
+
+public:
+
     ~VariableSymbol() override = default;
 
     void onDeclaration(
             const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
-    ) override;
+    ) override { Symbol::onDeclaration(declaration); };
+
     void onDefinition(
             const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
-    ) override;
+    ) override { Symbol::onDefinition(definition); };
+
     void onUsage(
-            const std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> &expression
-    ) override;
+            const std::shared_ptr<caramel::dataStructure::statements::Statement> &statement
+    ) override { Symbol::onUsage(statement); };
+
+
 
 };
 

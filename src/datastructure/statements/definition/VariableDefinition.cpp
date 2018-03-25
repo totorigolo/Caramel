@@ -23,8 +23,9 @@
 */
 
 #include "VariableDefinition.h"
-
 #include <utility>
+
+
 
 namespace caramel::dataStructure::statements::definition {
 
@@ -49,7 +50,7 @@ VariableDefinition::VariableDefinition(
           mInitializer(initializer),
           mSymbol(symbol) {}
 
-std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> VariableDefinition::getSymbol() {
+std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> VariableDefinition::getVariableSymbol() {
     return mSymbol;
 }
 
