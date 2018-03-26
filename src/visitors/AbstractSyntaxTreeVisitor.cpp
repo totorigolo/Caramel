@@ -34,6 +34,7 @@
 #include "../datastructure/symboltable/ArraySymbol.h"
 #include "../datastructure/statements/declaration/ArrayDeclaration.h"
 #include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
+#include "../exceptions/ArraySizeNonConstantException.h"
 
 
 using namespace caramel::visitors;
@@ -331,14 +332,14 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
     return std::dynamic_pointer_cast<Expression>(visitChildren(ctx).as<AtomicExpression::Ptr>());
 }
 
-// Return Statement::Ptr
+
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitExpression(CaramelParser::ExpressionContext *ctx) {
     using caramel::dataStructure::statements::Statement;
     using caramel::dataStructure::statements::expressions::Expression;
+    // TODO : Change to Expression
     return std::dynamic_pointer_cast<Statement>(visitChildren(ctx).as<Expression::Ptr>());
 }
 
-// Return Constant::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
 
     using caramel::dataStructure::statements::expressions::atomicExpression::AtomicExpression;
@@ -348,7 +349,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::Numb
     return std::dynamic_pointer_cast<AtomicExpression>(std::make_shared<Constant>(value, ctx->start));
 }
 
-// Return Constant::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
 
     using caramel::dataStructure::statements::expressions::atomicExpression::AtomicExpression;
@@ -434,6 +434,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
     if (nullptr != ctx->arrayDeclarationVoidInner()) {
         arraySymbol = visitArrayDeclarationVoidInner(ctx->arrayDeclarationVoidInner()).as<ArraySymbol::Ptr>();
 
+        //vector<Expression::Ptr> arrayBlock;
         long arraySize = visitArrayBlock(ctx->arrayBlock());
         arraySymbol->setSize(arraySize);
 
@@ -460,7 +461,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
     return arrayDeclaration;
 }
 
-// Return Symbol::Ptr
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitArrayDeclarationVoidInner(CaramelParser::ArrayDeclarationVoidInnerContext *ctx) {
 
@@ -475,35 +475,37 @@ AbstractSyntaxTreeVisitor::visitArrayDeclarationVoidInner(CaramelParser::ArrayDe
     return arraySymbol;
 }
 
-// Return long
+
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) {
-    return ctx->expression().size();
+    using caramel::dataStructure::statements::Statement;
+    std::vector<Statement> statements;
+    return ctx->expression();
 }
 
-// Return Symbol::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) {
     logger.trace() << "Visiting array declaration : " << ctx->getText();
 
     using namespace caramel::dataStructure::symbolTable;
+    using caramel::dataStructure::statements::expressions::atomicExpression::AtomicExpression;
 
     using caramel::dataStructure::statements::expressions::atomicExpression::Constant;
 
     auto typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
     std::string name = visitValidIdentifier(ctx->validIdentifier());
-    Constant::Ptr arraySize = visitArraySizeDeclaration(ctx->arraySizeDeclaration());
-
-    ArraySymbol::Ptr arraySymbol{ArraySymbol::Create(name, typeSymbol, (long) (arraySize->getValue()))};
+    antlrcpp::Any arraySizeAny = visitArraySizeDeclaration(ctx->arraySizeDeclaration());
+    Constant::Ptr arraySize = std::dynamic_pointer_cast<Constant>(arraySizeAny.as<AtomicExpression::Ptr>());
+//    if (!arraySizeAny.is<Constant::Ptr>()) {
+//        throw Caramel::Exceptions::ArraySizeNonConstantException("Non constant expression not handled for array sizes.");
+//    }
+    ArraySymbol::Ptr arraySymbol = ArraySymbol::Create(name, typeSymbol, arraySize->getValue().as<long long>());
 
     return arraySymbol;
 }
 
-// Return Constant::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) {
     return visitPositiveConstant(ctx->positiveConstant());
 }
 
-
-// Return Constant::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) {
     using caramel::dataStructure::statements::expressions::atomicExpression::Constant;
     using caramel::dataStructure::statements::expressions::atomicExpression::AtomicExpression;

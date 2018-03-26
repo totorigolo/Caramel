@@ -40,7 +40,7 @@ public:
     virtual antlrcpp::Any getValue() { return {}; };
 
 public:
-    Expression(antlr4::Token *startToken);
+    Expression(antlr4::Token *startToken, StatementType type = StatementType::Expression);
 };
 
 } // namespace caramel::dataStructure::statements::expressions

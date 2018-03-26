@@ -22,12 +22,21 @@
  * SOFTWARE.
 */
 
-#include "Expression.h"
+#pragma once
 
-namespace caramel::dataStructure::statements::expressions {
+#include <stdexcept>
 
-Expression::Expression(antlr4::Token *startToken, StatementType type)
-        : Statement(startToken, type) {
-}
+namespace Caramel::Exceptions {
 
-} // namespace caramel::dataStructure::statements::expressions
+class ArraySizeNonConstantException : public std::runtime_error {
+
+public:
+    explicit ArraySizeNonConstantException(const std::string &__arg) : runtime_error(__arg) {}
+
+    explicit ArraySizeNonConstantException(const char * c) : runtime_error(c){}
+
+    explicit ArraySizeNonConstantException(const std::runtime_error & ex) : runtime_error(ex){}
+
+};
+
+} // namespace Caramel::Exception

@@ -33,7 +33,7 @@ class AtomicExpression : public caramel::dataStructure::statements::expressions:
 public:
     using Ptr = std::shared_ptr<AtomicExpression>;
 
-    explicit AtomicExpression(antlr4::Token *startToken);
+    explicit AtomicExpression(antlr4::Token *startToken, StatementType type = StatementType::AtomicExpression);
 };
 
 } // namespace caramel::dataStructure::statements::expression::atomicExpression

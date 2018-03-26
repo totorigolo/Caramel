@@ -34,7 +34,7 @@ class Constant : public AtomicExpression {
 public:
     using Ptr = std::shared_ptr<Constant>;
 
-    explicit Constant(antlrcpp::Any mValue, antlr4::Token *startToken);
+    explicit Constant(antlrcpp::Any mValue, antlr4::Token *startToken, StatementType type = StatementType::Constant);
 
     static Ptr Create(antlrcpp::Any mValue, antlr4::Token *startToken) {
         return Ptr(new Constant(std::forward<antlrcpp::Any>(mValue), startToken));
