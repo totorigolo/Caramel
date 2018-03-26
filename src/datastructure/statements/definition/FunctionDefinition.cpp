@@ -30,12 +30,16 @@ namespace caramel::dataStructure::statements::definition {
 
 FunctionDefinition::FunctionDefinition(
         std::shared_ptr<caramel::dataStructure::context::Context> context,
-        std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> const &functionSymbol,
         antlr4::Token *startToken
-) : Definition(startToken), mContext{context}, mSymbol{functionSymbol} {}
+) : Definition(startToken, StatementType::FunctionDefinition), mContext{context}, mSymbol{} {}
 
 std::weak_ptr<symbolTable::FunctionSymbol> FunctionDefinition::getFunctionSymbol() {
     return mSymbol;
 }
+
+void FunctionDefinition::setSymbol(symbolTable::FunctionSymbol::Ptr functionSymbol) {
+    mSymbol = functionSymbol;
+}
+
 
 } // namespace caramel::dataStructure::statements::definition

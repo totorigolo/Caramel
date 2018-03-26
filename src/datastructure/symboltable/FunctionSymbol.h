@@ -35,10 +35,6 @@ public:
     using Ptr = std::shared_ptr<FunctionSymbol>;
     using WeakPtr = std::weak_ptr<FunctionSymbol>;
 
-    static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
-        return std::make_shared<FunctionSymbol>(mName, mType);
-    }
-
 public:
     FunctionSymbol(
             const std::string &mName,
@@ -68,7 +64,6 @@ public:
 
 private:
     std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> mParameters;
-
 };
 
 } // namespace caramel::dataStructure::symbolTable

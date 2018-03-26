@@ -28,7 +28,7 @@
 caramel::dataStructure::statements::declaration::FunctionDeclaration::FunctionDeclaration(
         std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> symbol,
         antlr4::Token *startToken
-) : Declaration(startToken),
+) : Declaration(startToken, StatementType::FunctionDeclaration),
     mSymbol(std::move(symbol)) {
 }
 

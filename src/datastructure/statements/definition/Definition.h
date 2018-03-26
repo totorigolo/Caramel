@@ -40,7 +40,7 @@ public:
 
 
 protected:
-    explicit Definition(antlr4::Token *startToken);
+    explicit Definition(antlr4::Token *startToken, StatementType type = StatementType::Definition);
 };
 
 } // namespace caramel::dataStructure::statements::definition

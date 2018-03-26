@@ -31,7 +31,7 @@ VariableDeclaration::VariableDeclaration(
         std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
         antlr4::Token *startToken
 )
-        : Declaration(startToken),
+        : Declaration(startToken, StatementType::VariableDeclaration),
           mSymbol(std::move(symbol)) {
 }
 

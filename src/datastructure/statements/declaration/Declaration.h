@@ -45,11 +45,11 @@ public:
 
     // Constructors
 protected:
-    explicit Declaration(antlr4::Token *startToken);
+    explicit Declaration(antlr4::Token *startToken, StatementType type);
 
 public:
     // Public methods
-    virtual std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() = 0;
+    virtual std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() { throw Caramel::Exceptions::NotImplementedException(__FILE__); };
 };
 
 

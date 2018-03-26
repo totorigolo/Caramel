@@ -23,9 +23,6 @@
 */
 
 #include "SymbolTable.h"
-#include "TypeSymbol.h"
-#include "VariableSymbol.h"
-#include "FunctionSymbol.h"
 
 #include "../../Logger.h"
 #include "../../exceptions/SymbolAlreadyDeclaredError.h"
@@ -137,7 +134,7 @@ SymbolTable::addFunctionDeclaration(
     }
 }
 
-void
+FunctionSymbol::Ptr
 SymbolTable::addFunctionDefinition(
         antlr4::ParserRuleContext *antlrContext,
         std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &returnType,
@@ -145,16 +142,14 @@ SymbolTable::addFunctionDefinition(
         std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> namedParameters,
         const std::shared_ptr<statements::definition::Definition> &definition
 ) {
-
-    if(isDefined(name)) {
+    if (isDefined(name)) {
         throw Caramel::Exceptions::SymbolAlreadyDefinedException(buildAlreadyDefinedErrorMessage(name));
-    } else if (isDeclared(name)) {
-        logger.debug() << "Function already declared" << name;
-    } else {
+    } else if (!isDeclared(name)) {
         mSymbolMap[name] = std::make_shared<FunctionSymbol>(name, returnType);
-        mSymbolMap[name]->addDefinition(definition);
     }
-
+    FunctionSymbol::Ptr symbol = std::dynamic_pointer_cast<FunctionSymbol>(mSymbolMap[name]);
+    symbol->addDefinition(definition);
+    return symbol;
 }
 
 void

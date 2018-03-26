@@ -61,6 +61,15 @@ public:
     // Return vector<Statement::Ptr>
     antlrcpp::Any visitStatements(CaramelParser::StatementsContext *ctx) override;
 
+    // Return vector<Statement::Ptr>
+    antlrcpp::Any visitBlock(CaramelParser::BlockContext *ctx) override;
+
+    // Return vector<Statement::Ptr>
+    antlrcpp::Any visitDeclarations(CaramelParser::DeclarationsContext *ctx) override;
+
+    // Return vector<Statement::Ptr>
+    antlrcpp::Any visitInstructions(CaramelParser::InstructionsContext *ctx) override;
+
     // Return std::string
     antlrcpp::Any visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) override;
 

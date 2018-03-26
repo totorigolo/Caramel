@@ -28,9 +28,22 @@
 #include "IR.h"
 #include <Token.h>
 #include <memory>
+#include <ostream>
 
 
 namespace caramel::dataStructure::statements {
+
+// TODO: Remove this unneeded enum
+enum class StatementType {
+    Unknown,
+    Declaration,
+    VariableDeclaration,
+    FunctionDeclaration,
+    ArrayDeclaration,
+    Definition,
+    VariableDefinition,
+    FunctionDefinition,
+};
 
 class Statement {
 public:
@@ -38,13 +51,15 @@ public:
     using WeakPtr = std::weak_ptr<Statement>;
 
 public:
-    explicit Statement(antlr4::Token *startToken);
     virtual ~Statement() = default;
+
+    explicit Statement(antlr4::Token *startToken, StatementType type = StatementType::Unknown);
 
 public:
     size_t getLine() const;
     size_t getColumn() const;
     size_t getLength() const;
+    StatementType getType() const;
 
     virtual std::shared_ptr<IR> getIR() { throw Caramel::Exceptions::NotImplementedException(__FILE__); }; // Fixme: must be abstract function at the end
 
@@ -52,6 +67,9 @@ private:
     size_t mLine;
     size_t mColumn;
     size_t mLength;
+    StatementType mType;
 };
+
+std::ostream &operator<<(std::ostream &os, const StatementType &type);
 
 } // namespace Caramel::DataStructure::statements
