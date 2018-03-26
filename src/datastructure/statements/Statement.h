@@ -31,7 +31,7 @@
 #include <ostream>
 
 
-namespace caramel::dataStructure::statements {
+namespace caramel::ast {
 
 // TODO: Remove this unneeded enum
 enum class StatementType {

@@ -27,14 +27,14 @@
 #include "../Statement.h"
 #include "../../../exceptions/NotImplementedException.h"
 
-namespace caramel::dataStructure::symbolTable {
+namespace caramel::ast {
     class Symbol;
     class FunctionSymbol;
     class VariableSymbol;
     class ArraySymbol;
 }
 
-namespace caramel::dataStructure::statements::declaration {
+namespace caramel::ast {
 
 class Declaration : public Statement {
 public:
@@ -49,8 +49,8 @@ protected:
 
 public:
     // Public methods
-    virtual std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() { throw Caramel::Exceptions::NotImplementedException(__FILE__); };
+    virtual std::weak_ptr<caramel::ast::Symbol> getSymbol() { throw Caramel::Exceptions::NotImplementedException(__FILE__); };
 };
 
 
-} // namespace caramel::dataStructure::statements::declaration
+} // namespace caramel::ast::declaration

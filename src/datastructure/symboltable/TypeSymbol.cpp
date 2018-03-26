@@ -24,7 +24,7 @@
 
 #include "TypeSymbol.h"
 
-namespace caramel::dataStructure::symbolTable {
+namespace caramel::ast {
 
 TypeSymbol::TypeSymbol(const std::string &mName,
                                                std::shared_ptr<PrimaryType> mType)

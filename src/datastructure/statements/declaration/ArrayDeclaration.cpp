@@ -25,15 +25,15 @@
 #include "ArrayDeclaration.h"
 
 
-namespace caramel::dataStructure::statements::declaration {
+namespace caramel::ast {
 
 ArrayDeclaration::ArrayDeclaration(
-        std::shared_ptr<caramel::dataStructure::symbolTable::ArraySymbol> symbol,
+        std::shared_ptr<ArraySymbol> symbol,
         antlr4::Token *startToken
 ) : Declaration(startToken, StatementType::ArrayDeclaration), mSymbol(symbol) {}
 
-std::weak_ptr<caramel::dataStructure::symbolTable::ArraySymbol> ArrayDeclaration::getArraySymbol() {
+std::weak_ptr<ArraySymbol> ArrayDeclaration::getArraySymbol() {
     return mSymbol;
 }
 
-} // caramel::dataStructure::statements::declaration
+} // caramel::ast::declaration

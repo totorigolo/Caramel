@@ -29,7 +29,7 @@
 #include <Common.h>
 #include "../BinaryOperator.h"
 
-namespace caramel::dataStructure::operators::binaryOperators {
+namespace caramel::ast {
 
 class PlusOperator : public BinaryOperator {
 public:
@@ -45,8 +45,8 @@ public:
 
 public:
     std::shared_ptr<IR>
-    buildIR(std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression) override;
+    buildIR(std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+            std::shared_ptr<caramel::ast::Expression> const &rightExpression) override;
 
 };
 

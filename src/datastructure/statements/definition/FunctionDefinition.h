@@ -29,7 +29,7 @@
 #include "../../symboltable/FunctionSymbol.h"
 
 
-namespace caramel::dataStructure::statements::definition {
+namespace caramel::ast {
 
 class
 FunctionDefinition : public Definition {
@@ -38,7 +38,7 @@ public:
     using WeakPtr = std::weak_ptr<FunctionDefinition>;
 
     FunctionDefinition(
-            std::shared_ptr<caramel::dataStructure::context::Context> context,
+            std::shared_ptr<caramel::ast::Context> context,
             antlr4::Token *startToken
     );
 
@@ -46,12 +46,12 @@ public:
 
 public:
 
-    std::weak_ptr<symbolTable::FunctionSymbol> getFunctionSymbol();
-    void setSymbol(symbolTable::FunctionSymbol::Ptr functionSymbol);
+    std::weak_ptr<FunctionSymbol> getFunctionSymbol();
+    void setSymbol(FunctionSymbol::Ptr functionSymbol);
 
 protected:
-    std::shared_ptr<caramel::dataStructure::context::Context> mContext;
-    std::weak_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> mSymbol;
+    std::shared_ptr<caramel::ast::Context> mContext;
+    std::weak_ptr<caramel::ast::FunctionSymbol> mSymbol;
 };
 
-} // namespace caramel::dataStructure::statements::definition
+} // namespace caramel::ast::definition

@@ -27,7 +27,7 @@
 #include <memory>
 #include "../statements/IR.h"
 
-namespace caramel::dataStructure::operators {
+namespace caramel::ast {
 
 class Operator {
 public:

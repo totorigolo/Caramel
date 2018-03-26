@@ -25,16 +25,22 @@
 #include "BinaryExpression.h"
 
 
-caramel::dataStructure::statements::expressions::binaryExpression::BinaryExpression::BinaryExpression(
-        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
-        std::shared_ptr<caramel::dataStructure::operators::BinaryOperator> const &binaryOperator,
-        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression,
-        antlr4::Token *startToken)
-        : Expression(startToken), mLeftExpression{leftExpression}, mRightExpression{rightExpression}, mBinaryOperator{binaryOperator} {}
+namespace caramel::ast {
 
-std::shared_ptr<caramel::dataStructure::IR>
-caramel::dataStructure::statements::expressions::binaryExpression::BinaryExpression::getIR() {
+BinaryExpression::BinaryExpression(
+        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+        std::shared_ptr<caramel::ast::BinaryOperator> const &binaryOperator,
+        std::shared_ptr<caramel::ast::Expression> const &rightExpression,
+        antlr4::Token *startToken
+) : Expression(startToken),
+    mLeftExpression{leftExpression},
+    mRightExpression{rightExpression},
+    mBinaryOperator{binaryOperator} {}
+
+std::shared_ptr<caramel::ast::IR>
+BinaryExpression::getIR() {
     return mBinaryOperator->buildIR(mLeftExpression, mRightExpression);
 }
 
+}
 

@@ -24,10 +24,11 @@
 
 #include "Declaration.h"
 
-namespace caramel::dataStructure::statements::declaration {
+namespace caramel::ast {
 
-Declaration::Declaration(antlr4::Token *startToken, StatementType type)
-        : Statement(startToken, type) {
-}
+Declaration::Declaration(
+        antlr4::Token *startToken,
+        StatementType type
+) : Statement(startToken, type) {}
 
-} // caramel::dataStructure::statements::declaration
+} // caramel::ast::declaration

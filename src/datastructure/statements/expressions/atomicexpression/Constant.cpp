@@ -24,11 +24,11 @@
 
 #include "Constant.h"
 
-namespace caramel::dataStructure::statements::expressions::atomicExpression {
+namespace caramel::ast {
 
 Constant::Constant(
         Caramel::Any mValue,
         antlr4::Token *startToken
 ) : AtomicExpression(startToken), mValue(std::move(mValue)) {}
 
-} // namespace caramel::dataStructure::statements::expressions::atomicExpression
+} // namespace caramel::ast::atomicExpression

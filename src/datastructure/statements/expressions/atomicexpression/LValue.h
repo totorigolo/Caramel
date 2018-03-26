@@ -27,7 +27,7 @@
 #include "AtomicExpression.h"
 
 
-namespace caramel::dataStructure::statements::expressions::atomicExpression {
+namespace caramel::ast::atomicExpression {
 
 class LValue : public AtomicExpression {
 public:
@@ -39,4 +39,4 @@ protected:
     ~LValue() override = default;
 };
 
-} // namespace caramel::dataStructure::statements::expression::atomicExpression
+} // namespace caramel::ast::atomicExpression

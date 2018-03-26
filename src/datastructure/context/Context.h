@@ -31,7 +31,7 @@
 #include <vector>
 
 
-namespace caramel::dataStructure::context {
+namespace caramel::ast {
 
 class Context {
 public:
@@ -41,14 +41,14 @@ public:
     Context();
     explicit Context(std::shared_ptr<Context> const &parent);
 
-    std::shared_ptr<caramel::dataStructure::symbolTable::SymbolTable> getSymbolTable() const;
+    std::shared_ptr<caramel::ast::SymbolTable> getSymbolTable() const;
 
-    void addStatements(std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> &&statements);
+    void addStatements(std::vector<std::shared_ptr<caramel::ast::Statement>> &&statements);
 
 private:
 
-    std::shared_ptr<caramel::dataStructure::symbolTable::SymbolTable> mSymbolTable;
-    std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> mStatements;
+    std::shared_ptr<caramel::ast::SymbolTable> mSymbolTable;
+    std::vector<std::shared_ptr<caramel::ast::Statement>> mStatements;
 };
 
 } // namespace caramel::dataStructure::context

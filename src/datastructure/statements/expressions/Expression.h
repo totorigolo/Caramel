@@ -30,9 +30,9 @@
 #include <support/Any.h>
 
 
-namespace caramel::dataStructure::statements::expressions {
+namespace caramel::ast {
 
-class Expression : public caramel::dataStructure::statements::Statement {
+class Expression : public caramel::ast::Statement {
 public:
     using Ptr = std::shared_ptr<Expression>;
     using WeakPtr = std::weak_ptr<Expression>;
@@ -47,4 +47,4 @@ public:
     ~Expression() override  = default;
 };
 
-} // namespace caramel::dataStructure::statements::expressions
+} // namespace caramel::ast::expressions

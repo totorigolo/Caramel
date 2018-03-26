@@ -26,7 +26,7 @@
 
 #include <stdexcept>
 
-namespace Caramel::Exceptions {
+namespace caramel::exceptions {
 
 class DeclarationMismatchException : public std::runtime_error {
 

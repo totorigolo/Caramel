@@ -27,7 +27,7 @@
 #include "Declaration.h"
 #include <memory>
 
-namespace caramel::dataStructure::statements::declaration {
+namespace caramel::ast {
 
 class FunctionDeclaration : public Declaration {
 public:
@@ -35,18 +35,18 @@ public:
     using WeakPtr = std::weak_ptr<FunctionDeclaration>;
 
     FunctionDeclaration(
-            std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> symbol,
+            std::shared_ptr<caramel::ast::FunctionSymbol> symbol,
             antlr4::Token *startToken
     );
 
-    std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() override {
+    std::weak_ptr<caramel::ast::Symbol> getSymbol() override {
         throw std::runtime_error("Cannot get the FunctionSymbol as Symbol");
     };
 
-    std::weak_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> getFunctionSymbol();
+    std::weak_ptr<caramel::ast::FunctionSymbol> getFunctionSymbol();
 
 private:
-    std::weak_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> mSymbol;
+    std::weak_ptr<caramel::ast::FunctionSymbol> mSymbol;
 };
 
-} // namespace caramel::dataStructure::statements::declaration
+} // namespace caramel::ast::declaration

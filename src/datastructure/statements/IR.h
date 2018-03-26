@@ -26,7 +26,7 @@
 
 #include <memory>
 
-namespace caramel::dataStructure {
+namespace caramel::ast {
 
 class IR {
 public:

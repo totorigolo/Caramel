@@ -25,9 +25,9 @@
 #include "PlusOperator.h"
 
 
-std::shared_ptr<caramel::dataStructure::IR> caramel::dataStructure::operators::binaryOperators::PlusOperator::buildIR(
-        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
-        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression) {
+std::shared_ptr<caramel::ast::IR> caramel::ast::PlusOperator::buildIR(
+        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+        std::shared_ptr<caramel::ast::Expression> const &rightExpression) {
 
     CARAMEL_UNUSED(leftExpression);
     CARAMEL_UNUSED(rightExpression);

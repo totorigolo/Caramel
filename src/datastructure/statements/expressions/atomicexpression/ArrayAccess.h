@@ -29,7 +29,7 @@
 #include "../../../symboltable/Symbol.h"
 
 
-namespace caramel::dataStructure::statements::expressions::atomicExpression {
+namespace caramel::ast::atomicExpression {
 
 class ArrayAccess : public LValue {
 public:
@@ -38,17 +38,17 @@ public:
 
 public:
     ArrayAccess(
-            caramel::dataStructure::symbolTable::Symbol symbol,
-            caramel::dataStructure::statements::expressions::Expression index,
+            caramel::ast::Symbol symbol,
+            caramel::ast::Expression index,
             antlr4::Token *startToken
     );
 
     ~ArrayAccess() override = default;
 
 private:
-    caramel::dataStructure::symbolTable::Symbol mSymbol;
-    caramel::dataStructure::statements::expressions::Expression mIndex;
+    caramel::ast::Symbol mSymbol;
+    caramel::ast::Expression mIndex;
 
 };
 
-} // namespace caramel::dataStructure::statements::expression::atomicExpression
+} // namespace caramel::ast::atomicExpression

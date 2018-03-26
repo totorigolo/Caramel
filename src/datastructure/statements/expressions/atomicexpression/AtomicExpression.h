@@ -27,9 +27,9 @@
 #include "../Expression.h"
 
 
-namespace caramel::dataStructure::statements::expressions::atomicExpression {
+namespace caramel::ast {
 
-class AtomicExpression : public caramel::dataStructure::statements::expressions::Expression {
+class AtomicExpression : public Expression {
 public:
     using Ptr = std::shared_ptr<AtomicExpression>;
     using WeakPtr = std::weak_ptr<AtomicExpression>;
@@ -42,4 +42,4 @@ public:
 
 };
 
-} // namespace caramel::dataStructure::statements::expression::atomicExpression
+} // namespace caramel::ast::atomicExpression

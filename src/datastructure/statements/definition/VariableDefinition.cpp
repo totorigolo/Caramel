@@ -28,28 +28,28 @@
 
 
 
-namespace caramel::dataStructure::statements::definition {
+namespace caramel::ast {
 
 VariableDefinition::VariableDefinition(
-        std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
+        std::shared_ptr<VariableSymbol> symbol,
         antlr4::Token *startToken
 )
         : Definition(startToken, StatementType::VariableDefinition),
           mSymbol(symbol),
-          mInitializer(caramel::dataStructure::statements::expressions::atomicExpression::Constant::defaultConstant(startToken)) {}
+          mInitializer(Constant::defaultConstant(startToken)) {}
 
 VariableDefinition::VariableDefinition(
-        std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
-        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> initializer,
+        std::shared_ptr<VariableSymbol> symbol,
+        std::shared_ptr<Expression> initializer,
         antlr4::Token *startToken
 )
         : Definition(startToken, StatementType::VariableDefinition),
           mInitializer(initializer),
           mSymbol(symbol) {}
 
-std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> VariableDefinition::getVariableSymbol() {
+std::weak_ptr<VariableSymbol> VariableDefinition::getVariableSymbol() {
     return mSymbol;
 }
 
-} // caramel::dataStructure::statements::definition
+} // caramel::ast::definition
 

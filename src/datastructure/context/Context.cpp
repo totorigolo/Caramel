@@ -25,21 +25,21 @@
 #include "Context.h"
 
 
-namespace caramel::dataStructure::context {
+namespace caramel::ast {
 
 Context::Context()
-        : mSymbolTable(std::make_shared<caramel::dataStructure::symbolTable::SymbolTable>()) {
+        : mSymbolTable(std::make_shared<caramel::ast::SymbolTable>()) {
 }
 
 Context::Context(const std::shared_ptr<Context> &parent)
-        : mSymbolTable(std::make_shared<caramel::dataStructure::symbolTable::SymbolTable>(parent->getSymbolTable())) {}
+        : mSymbolTable(std::make_shared<caramel::ast::SymbolTable>(parent->getSymbolTable())) {}
 
-std::shared_ptr<caramel::dataStructure::symbolTable::SymbolTable>
+std::shared_ptr<caramel::ast::SymbolTable>
 Context::getSymbolTable() const {
     return mSymbolTable;
 }
 
-void Context::addStatements(std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> &&statements) {
+void Context::addStatements(std::vector<std::shared_ptr<caramel::ast::Statement>> &&statements) {
     std::move(statements.begin(), statements.end(), std::back_inserter(mStatements));
 }
 

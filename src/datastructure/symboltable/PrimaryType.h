@@ -27,7 +27,7 @@
 #include <cstddef>
 #include <memory>
 
-namespace caramel::dataStructure::symbolTable {
+namespace caramel::ast {
 
 class PrimaryType {
 

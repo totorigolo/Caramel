@@ -28,7 +28,7 @@
 #include "../expressions/Expression.h"
 
 
-namespace caramel::dataStructure::statements::expressions::jumps{
+namespace caramel::ast {
 
 class ReturnStatement : public Jump {
 public:
@@ -37,13 +37,13 @@ public:
 
 public:
     explicit ReturnStatement(antlr4::Token *startToken);
-    explicit ReturnStatement(std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> expression, antlr4::Token *startToken);
+    explicit ReturnStatement(std::shared_ptr<Expression> expression, antlr4::Token *startToken);
 
     ~ReturnStatement() override = default;
 
 private:
-    std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> mExpression;
+    std::shared_ptr<caramel::ast::Expression> mExpression;
 
 };
 
-} // namespace caramel::dataStructure::statements::expressions::jumps
+} // namespace caramel::ast::jumps

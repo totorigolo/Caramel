@@ -28,29 +28,29 @@
 
 #include <memory>
 
-namespace caramel::dataStructure::statements::declaration {
+namespace caramel::ast {
 
-class VariableDeclaration : public caramel::dataStructure::statements::declaration::Declaration {
+class VariableDeclaration : public Declaration {
 public:
     using Ptr = std::shared_ptr<VariableDeclaration>;
     using WeakPtr = std::weak_ptr<VariableDeclaration>;
 
     VariableDeclaration(
-            std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
+            std::weak_ptr<VariableSymbol> symbol,
             antlr4::Token *startToken
     );
 
 public:
 
-    std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() override {
+    std::weak_ptr<Symbol> getSymbol() override {
         throw std::runtime_error("Cannot get the VariableSymbol as Symbol");
     };
 
-    std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol>
+    std::weak_ptr<VariableSymbol>
     getVariableSymbol();
 
 private:
-    std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> mSymbol;
+    std::weak_ptr<VariableSymbol> mSymbol;
 };
 
-} // namespace caramel::dataStructure::statements::declaration
+} // namespace caramel::ast::declaration

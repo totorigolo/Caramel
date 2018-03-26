@@ -101,7 +101,7 @@ Config parseArgs(int argc, const char *argv[]) {
         return config;
 
     } catch (TCLAP::ArgException &e) {
-        using namespace Caramel::Colors;
+        using namespace caramel::colors;
         logger.fatal() << "Error during command line parsing: " << reset
                        << e.error() << " for arg " << e.argId();
         exit(1);

@@ -28,9 +28,9 @@
 #include "../../../exceptions/NotImplementedException.h"
 
 
-namespace caramel::dataStructure::statements::expressions::jumps {
+namespace caramel::ast {
 
-class Jump : public caramel::dataStructure::statements::Statement {
+class Jump : public Statement {
 public:
     using Ptr = std::shared_ptr<Jump>;
     using WeakPtr = std::weak_ptr<Jump>;
@@ -40,4 +40,4 @@ protected:
     virtual ~Jump() = default;
 };
 
-} // namespace caramel::dataStructure::statements::expressions::jumps
+} // namespace caramel::ast::jumps

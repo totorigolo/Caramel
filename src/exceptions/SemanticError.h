@@ -29,7 +29,7 @@
 #include <stdexcept>
 
 
-namespace Caramel::Exceptions {
+namespace caramel::exceptions {
 
 class SemanticError : public std::runtime_error {
 public:

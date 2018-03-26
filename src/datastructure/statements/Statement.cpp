@@ -24,39 +24,49 @@
 
 #include "Statement.h"
 
+namespace caramel::ast {
 
-caramel::dataStructure::statements::Statement::Statement(antlr4::Token *startToken, StatementType type)
+Statement::Statement(antlr4::Token *startToken, StatementType type)
         : mLine{startToken->getLine()},
           mColumn{startToken->getCharPositionInLine()},
           mLength{startToken->getText().length()},
-          mType{type} {
-}
+          mType{type} {}
 
-size_t caramel::dataStructure::statements::Statement::getLine() const {
+size_t Statement::getLine() const {
     return mLine;
 }
 
-size_t caramel::dataStructure::statements::Statement::getColumn() const {
+size_t Statement::getColumn() const {
     return mColumn;
 }
 
-size_t caramel::dataStructure::statements::Statement::getLength() const {
+size_t Statement::getLength() const {
     return mLength;
 }
 
-caramel::dataStructure::statements::StatementType caramel::dataStructure::statements::Statement::getType() const {
+StatementType Statement::getType() const {
     return mType;
 }
 
-std::ostream &caramel::dataStructure::statements::operator<<(std::ostream &os, const StatementType &type) {
+std::ostream & operator<<(std::ostream &os, const StatementType &type) {
     switch (type) {
-        case StatementType::Unknown: return os << "Unknown";
-        case StatementType::Declaration: return os << "Declaration";
-        case StatementType::VariableDeclaration: return os << "VariableDeclaration";
-        case StatementType::FunctionDeclaration: return os << "FunctionDeclaration";
-        case StatementType::ArrayDeclaration: return os << "ArrayDeclaration";
-        case StatementType::Definition: return os << "Definition";
-        case StatementType::VariableDefinition: return os << "VariableDefinition";
-        case StatementType::FunctionDefinition: return os << "FunctionDefinition";
+        case StatementType::Unknown:
+            return os << "Unknown";
+        case StatementType::Declaration:
+            return os << "Declaration";
+        case StatementType::VariableDeclaration:
+            return os << "VariableDeclaration";
+        case StatementType::FunctionDeclaration:
+            return os << "FunctionDeclaration";
+        case StatementType::ArrayDeclaration:
+            return os << "ArrayDeclaration";
+        case StatementType::Definition:
+            return os << "Definition";
+        case StatementType::VariableDefinition:
+            return os << "VariableDefinition";
+        case StatementType::FunctionDefinition:
+            return os << "FunctionDefinition";
     }
+}
+
 }

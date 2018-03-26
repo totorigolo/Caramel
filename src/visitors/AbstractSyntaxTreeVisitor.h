@@ -41,7 +41,7 @@
 #include <stdexcept>
 #include <iostream>
 
-using namespace caramel::dataStructure;
+using namespace caramel::ast;
 
 namespace caramel::visitors {
 
@@ -127,13 +127,13 @@ private:
 
     void popContext();
 
-    std::shared_ptr<caramel::dataStructure::context::Context> currentContext();
+    std::shared_ptr<caramel::ast::Context> currentContext();
 
 private:
-    std::stack<std::shared_ptr<caramel::dataStructure::context::Context>> mContextStack;
+    std::stack<std::shared_ptr<caramel::ast::Context>> mContextStack;
     SourceFileUtil mSourceFileUtil;
 
-    const std::shared_ptr<operators::binaryOperators::PlusOperator> mPlusOperator = std::make_shared<operators::binaryOperators::PlusOperator>();
+    const std::shared_ptr<caramel::ast::PlusOperator> mPlusOperator = std::make_shared<caramel::ast::PlusOperator>();
 };
 
 } // namespace Caramel::Visitors

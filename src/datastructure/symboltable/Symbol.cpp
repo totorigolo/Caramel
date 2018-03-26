@@ -26,48 +26,48 @@
 
 #include <utility>
 
-caramel::dataStructure::symbolTable::Symbol::Symbol(
+caramel::ast::Symbol::Symbol(
         std::string mName,
-        std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> mType,
-        caramel::dataStructure::symbolTable::SymbolType symbolType
+        caramel::ast::PrimaryType::Ptr mType,
+        caramel::ast::SymbolType symbolType
 ) : mDeclaration{}, mDefinition{}, mName{mName}, mType{mType}, mSymbolType{symbolType} {}
 
-std::vector<std::weak_ptr<caramel::dataStructure::statements::Statement>>
-caramel::dataStructure::symbolTable::Symbol::getOccurrences() {
+std::vector<std::weak_ptr<caramel::ast::Statement>>
+caramel::ast::Symbol::getOccurrences() {
     return mOccurrences;
 }
 
 bool
-caramel::dataStructure::symbolTable::Symbol::isDeclared() {
+caramel::ast::Symbol::isDeclared() {
     return (bool) mDeclaration.use_count() > 0;
 }
 
 bool
-caramel::dataStructure::symbolTable::Symbol::isDefined() {
+caramel::ast::Symbol::isDefined() {
     return (bool) mDefinition.use_count() > 0;
 }
 
-std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration>
-caramel::dataStructure::symbolTable::Symbol::getDeclaration() {
+std::shared_ptr<caramel::ast::Declaration>
+caramel::ast::Symbol::getDeclaration() {
     return mDeclaration.lock();
 }
 
-std::shared_ptr<caramel::dataStructure::statements::definition::Definition>
-caramel::dataStructure::symbolTable::Symbol::getDefinition() {
+std::shared_ptr<caramel::ast::Definition>
+caramel::ast::Symbol::getDefinition() {
     return mDefinition.lock();
 }
 
 void
-caramel::dataStructure::symbolTable::Symbol::addDeclaration(
-        const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
+caramel::ast::Symbol::addDeclaration(
+        const std::shared_ptr<caramel::ast::Declaration> &declaration
 ) {
     onDeclaration(declaration);
     mDeclaration = declaration;
 }
 
 void
-caramel::dataStructure::symbolTable::Symbol::addDefinition(
-        const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
+caramel::ast::Symbol::addDefinition(
+        const std::shared_ptr<caramel::ast::Definition> &definition
 ) {
     if (!isDeclared()) {
         onDeclaration(definition);
@@ -78,32 +78,32 @@ caramel::dataStructure::symbolTable::Symbol::addDefinition(
 }
 
 void
-caramel::dataStructure::symbolTable::Symbol::addUsage(const std::shared_ptr<caramel::dataStructure::statements::Statement> &statement) {
+caramel::ast::Symbol::addUsage(const std::shared_ptr<caramel::ast::Statement> &statement) {
     onUsage(statement);
     mOccurrences.push_back(statement);
 }
     
-caramel::dataStructure::symbolTable::SymbolType
-caramel::dataStructure::symbolTable::Symbol::getSymbolType() const {
+caramel::ast::SymbolType
+caramel::ast::Symbol::getSymbolType() const {
     return mSymbolType;
 }
 
-std::string caramel::dataStructure::symbolTable::Symbol::getName() const {
+std::string caramel::ast::Symbol::getName() const {
     return mName;
 }
 
-void caramel::dataStructure::symbolTable::Symbol::onDeclaration(const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration) {}
+void caramel::ast::Symbol::onDeclaration(const std::shared_ptr<caramel::ast::Declaration> &declaration) {}
 
-void caramel::dataStructure::symbolTable::Symbol::onDefinition(const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition) {}
+void caramel::ast::Symbol::onDefinition(const std::shared_ptr<caramel::ast::Definition> &definition) {}
 
-void caramel::dataStructure::symbolTable::Symbol::onUsage(
-        const std::shared_ptr<caramel::dataStructure::statements::Statement> &expression) {}
+void caramel::ast::Symbol::onUsage(
+        const std::shared_ptr<caramel::ast::Statement> &expression) {}
 
-std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> caramel::dataStructure::symbolTable::Symbol::getType() const {
+std::shared_ptr<caramel::ast::PrimaryType> caramel::ast::Symbol::getType() const {
     return mType;
 }
 
-std::string caramel::dataStructure::symbolTable::Symbol::getSymbolTypeAsString() const {
+std::string caramel::ast::Symbol::getSymbolTypeAsString() const {
     switch (mSymbolType) {
         case SymbolType::VariableSymbol:
             return "VariableSymbol";

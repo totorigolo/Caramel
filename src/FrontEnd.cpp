@@ -31,7 +31,7 @@
 
 namespace caramel {
 
-dataStructure::context::Context::Ptr frontEnd(Config const &config) {
+ast::Context::Ptr frontEnd(Config const &config) {
     CARAMEL_UNUSED(config);
 
     // Read the source file
@@ -63,16 +63,16 @@ dataStructure::context::Context::Ptr frontEnd(Config const &config) {
     caramel::visitors::AbstractSyntaxTreeVisitor abstractSyntaxTreeVisitor(config.sourceFile);
     try {
         auto visitorResult = abstractSyntaxTreeVisitor.visit(parser.r());
-        if (!visitorResult.is<dataStructure::context::Context::Ptr>()) {
-            using namespace Caramel::Colors;
+        if (!visitorResult.is<Context::Ptr>()) {
+            using namespace caramel::colors;
             logger.fatal() << "The visitor returned a bad root.";
             exit(1);
         }
 
         // Return the AST root
-        return visitorResult.as<dataStructure::context::Context::Ptr>();
+        return visitorResult.as<Context::Ptr>();
 
-    } catch (Caramel::Exceptions::SemanticError &semanticError) {
+    } catch (caramel::exceptions::SemanticError &semanticError) {
         semanticError.explain(SourceFileUtil(config.sourceFile));
         exit(1);
     }

@@ -29,17 +29,17 @@
 #include "../../../exceptions/NotImplementedException.h"
 
 
-namespace caramel::dataStructure::statements::controlblocks {
+namespace caramel::ast {
 
-class ControlBlock : public caramel::dataStructure::statements::Statement {
+class ControlBlock : public Statement {
 public:
     using Ptr = std::shared_ptr<ControlBlock>;
     using WeakPtr = std::weak_ptr<ControlBlock>;
 
 protected:
-    ControlBlock(antlr4::Token *startToken);
+    explicit ControlBlock(antlr4::Token *startToken);
 
     ~ControlBlock() override = default;
 };
 
-} // caramel::dataStructure::statements::controlblocks
+} // caramel::ast::controlblocks

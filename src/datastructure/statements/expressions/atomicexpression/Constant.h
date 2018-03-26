@@ -28,7 +28,7 @@
 #include "../../../../Any.h"
 
 
-namespace caramel::dataStructure::statements::expressions::atomicExpression {
+namespace caramel::ast {
 
 class Constant : public AtomicExpression {
 public:
@@ -52,4 +52,4 @@ private:
     antlrcpp::Any mValue;
 };
 
-} // namespace caramel::dataStructure::statements::expression::atomicExpression
+} // namespace caramel::ast::atomicExpression

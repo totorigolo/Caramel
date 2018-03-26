@@ -35,14 +35,14 @@
 #include <iostream>
 
 
-namespace Caramel::Exceptions {
+namespace caramel::exceptions {
 
 class SymbolAlreadyDeclaredError : public SemanticError {
 public:
     SymbolAlreadyDeclaredError(std::string const &message,
                                antlr4::ParserRuleContext *antlrContext,
-                               caramel::dataStructure::statements::declaration::Declaration::Ptr const &existingDeclaration,
-                               caramel::dataStructure::statements::declaration::Declaration::Ptr const &faultyDeclaration)
+                               caramel::ast::Declaration::Ptr const &existingDeclaration,
+                               caramel::ast::Declaration::Ptr const &faultyDeclaration)
             : SemanticError(message),
               mAntlrContext{antlrContext},
               mExistingDeclaration{existingDeclaration},
@@ -51,7 +51,7 @@ public:
     }
 
     void explain(SourceFileUtil sourceFileUtil) const override {
-        using namespace Colors;
+        using namespace colors;
 
         // TODO: Create helper functions
         const int LEFT_MARGIN = 4;
@@ -92,8 +92,8 @@ public:
 
 private:
     antlr4::ParserRuleContext *mAntlrContext;
-    caramel::dataStructure::statements::declaration::Declaration::Ptr const &mExistingDeclaration;
-    caramel::dataStructure::statements::declaration::Declaration::Ptr const &mFaultyDeclaration;
+    caramel::ast::Declaration::Ptr const &mExistingDeclaration;
+    caramel::ast::Declaration::Ptr const &mFaultyDeclaration;
 };
 
 } // namespace Caramel::Exceptions

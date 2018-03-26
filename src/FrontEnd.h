@@ -40,6 +40,6 @@
 
 namespace caramel {
 
-dataStructure::context::Context::Ptr frontEnd(Config const &config);
+ast::Context::Ptr frontEnd(Config const &config);
 
 } // namespace Caramel

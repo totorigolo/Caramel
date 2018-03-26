@@ -27,7 +27,7 @@
 #include "Symbol.h"
 #include "VariableSymbol.h"
 
-namespace caramel::dataStructure::symbolTable {
+namespace caramel::ast {
 
 class ArraySymbol : public VariableSymbol {
 public:
@@ -51,9 +51,9 @@ public:
 
     virtual ~ArraySymbol() override = default;
 
-    void onDeclaration(const caramel::dataStructure::statements::declaration::Declaration::Ptr &declaration) override {};
-    void onDefinition(const caramel::dataStructure::statements::definition::Definition::Ptr &definition) override {};
-    void onUsage(const caramel::dataStructure::statements::Statement::Ptr &statement) override {};
+    void onDeclaration(const caramel::ast::Declaration::Ptr &declaration) override {};
+    void onDefinition(const caramel::ast::Definition::Ptr &definition) override {};
+    void onUsage(const caramel::ast::Statement::Ptr &statement) override {};
 
     void setSize(const long &size);
     long getSize();

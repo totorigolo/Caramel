@@ -24,15 +24,17 @@
 
 #include "FunctionDeclaration.h"
 
+namespace caramel::ast {
 
-caramel::dataStructure::statements::declaration::FunctionDeclaration::FunctionDeclaration(
-        std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> symbol,
+FunctionDeclaration::FunctionDeclaration(
+        std::shared_ptr<caramel::ast::FunctionSymbol>
+        symbol,
         antlr4::Token *startToken
-) : Declaration(startToken, StatementType::FunctionDeclaration),
-    mSymbol(std::move(symbol)) {
+) : Declaration(startToken, StatementType::FunctionDeclaration), mSymbol(std::move(symbol)) {}
+
+std::weak_ptr<caramel::ast::FunctionSymbol>
+FunctionDeclaration::getFunctionSymbol() {
+    return mSymbol;
 }
 
-std::weak_ptr<caramel::dataStructure::symbolTable::FunctionSymbol>
-caramel::dataStructure::statements::declaration::FunctionDeclaration::getFunctionSymbol() {
-    return mSymbol;
 }

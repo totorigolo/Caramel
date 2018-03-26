@@ -27,7 +27,7 @@
 #include "../Expression.h"
 
 
-namespace caramel::dataStructure::statements::expressions::functionCall {
+namespace caramel::ast::functionCall {
 
 class FunctionCall : public Expression {
 public:
@@ -40,4 +40,4 @@ public:
 
 };
 
-} // namespace caramel::dataStructure::statements::expressions::functionCall
+} // namespace caramel::ast::functionCall

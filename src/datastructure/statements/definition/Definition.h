@@ -29,18 +29,16 @@
 #include "../../../exceptions/NotImplementedException.h"
 
 
-namespace caramel::dataStructure::statements::definition {
+namespace caramel::ast {
 
-class Definition : public caramel::dataStructure::statements::declaration::Declaration {
+class Definition : public caramel::ast::Declaration {
 public:
     using Ptr = std::shared_ptr<Definition>;
     using WeakPtr = std::shared_ptr<Definition>;
-
-
 
 
 protected:
     explicit Definition(antlr4::Token *startToken, StatementType type = StatementType::Definition);
 };
 
-} // namespace caramel::dataStructure::statements::definition
+} // namespace caramel::ast::definition

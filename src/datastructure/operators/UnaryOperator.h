@@ -27,7 +27,7 @@
 #include "Operator.h"
 #include "../statements/expressions/Expression.h"
 
-namespace caramel::dataStructure::operators {
+namespace caramel::ast {
 
 class UnaryOperator : public Operator {
 public:
@@ -41,8 +41,8 @@ public:
     ~UnaryOperator() override = default;
 
 public:
-    virtual std::shared_ptr<caramel::dataStructure::IR> buildIR(
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &innerEpxression
+    virtual std::shared_ptr<caramel::ast::IR> buildIR(
+            std::shared_ptr<caramel::ast::Expression> const &innerEpxression
     ) = 0;
 };
 

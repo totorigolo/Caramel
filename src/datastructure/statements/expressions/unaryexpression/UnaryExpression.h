@@ -28,17 +28,17 @@
 #include "../../../operators/UnaryOperator.h"
 
 
-namespace caramel::dataStructure::statements::expressions::unaryExpression {
+namespace caramel::ast {
 
-class UnaryExpression : public caramel::dataStructure::statements::expressions::Expression {
+class UnaryExpression : public caramel::ast::Expression {
 public:
     using Ptr = std::shared_ptr<UnaryExpression>;
     using WeakPtr = std::shared_ptr<UnaryExpression>;
 
 public:
     UnaryExpression(
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &innerExpression,
-            std::shared_ptr<caramel::dataStructure::operators::UnaryOperator> const &unaryOperator,
+            std::shared_ptr<caramel::ast::Expression> const &innerExpression,
+            std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
             antlr4::Token *startToken
     );
 
@@ -48,9 +48,9 @@ public:
     std::shared_ptr<IR> getIR() override;
 
 private:
-    std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> mInnerExpression;
-    std::shared_ptr<caramel::dataStructure::operators::UnaryOperator> mUnaryOperator;
+    std::shared_ptr<caramel::ast::Expression> mInnerExpression;
+    std::shared_ptr<caramel::ast::UnaryOperator> mUnaryOperator;
 
 };
 
-} // namespace caramel::dataStructure::statements::expressions::unaryExpression
+} // namespace caramel::ast::unaryExpression

@@ -24,10 +24,10 @@
 
 #include "AtomicExpression.h"
 
-namespace caramel::dataStructure::statements::expressions::atomicExpression {
+namespace caramel::ast {
 
 AtomicExpression::AtomicExpression(antlr4::Token *startToken)
         : Expression(startToken) {
 }
 
-} // namespace caramel::dataStructure::statements::expressions::atomicExpression
+} // namespace caramel::ast::atomicExpression

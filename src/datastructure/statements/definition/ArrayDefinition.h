@@ -27,7 +27,7 @@
 #include "Definition.h"
 
 
-namespace caramel::dataStructure::statements::definition {
+namespace caramel::ast::definition {
 
 class ArrayDefinition : public Definition {
 public:
@@ -41,4 +41,4 @@ public:
 
 };
 
-} // namespace caramel::dataStructure::statements::definition
+} // namespace caramel::ast::definition
