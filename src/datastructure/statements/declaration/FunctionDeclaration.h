@@ -46,7 +46,7 @@ public:
     }
 
     std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() override {
-        throw std::runtime_error("Cannot get the variableSymbol as Symbol");
+        throw std::runtime_error("Cannot get the FunctionSymbol as Symbol");
     };
 
     std::weak_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> getFunctionSymbol();

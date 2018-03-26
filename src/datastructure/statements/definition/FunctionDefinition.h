@@ -29,11 +29,23 @@
 
 namespace caramel::dataStructure::statements::definition {
 
-class FunctionDefinition : public Definition {
+class
+FunctionDefinition : public Definition {
 public:
     using Ptr = std::shared_ptr<FunctionDefinition>;
 
     FunctionDefinition(antlr4::Token *startToken);
+
+    FunctionDefinition(
+            std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> const &functionSymbol,
+            antlr4::Token *startToken
+    );
+
+    std::weak_ptr<symbolTable::Symbol> getSymbol() override;
+
+protected:
+    std::weak_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> mSymbol;
+
 };
 
 } // namespace caramel::dataStructure::statements::definition

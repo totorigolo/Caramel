@@ -40,7 +40,7 @@ public:
     }
 
     std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() override {
-        throw std::runtime_error("Cannot return a valid symbol");
+        throw std::runtime_error("Cannot get the ArraySymbol as Symbol");
     };
 
     std::weak_ptr<caramel::dataStructure::symbolTable::ArraySymbol> getArraySymbol();

@@ -39,12 +39,12 @@ caramel::dataStructure::symbolTable::Symbol::getOccurrences() {
 
 bool
 caramel::dataStructure::symbolTable::Symbol::isDeclared() {
-    return (bool) mDeclaration.lock();
+    return (bool) mDeclaration.use_count() > 0;
 }
 
 bool
 caramel::dataStructure::symbolTable::Symbol::isDefined() {
-    return (bool) mDefinition.lock();
+    return (bool) mDefinition.use_count() > 0;
 }
 
 std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration>

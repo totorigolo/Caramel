@@ -25,6 +25,18 @@
 #include "FunctionDefinition.h"
 
 
-caramel::dataStructure::statements::definition::FunctionDefinition::FunctionDefinition(antlr4::Token *startToken)
+namespace caramel::dataStructure::statements::definition {
+
+FunctionDefinition::FunctionDefinition(antlr4::Token *startToken)
         : Definition(startToken) {
 }
+
+FunctionDefinition::FunctionDefinition(
+        std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> const &functionSymbol,
+        antlr4::Token *startToken) : Definition(startToken), mSymbol(functionSymbol) {}
+
+std::weak_ptr<symbolTable::Symbol> FunctionDefinition::getSymbol() {
+    throw std::runtime_error("Cannot cast FunctionSymbol to Symbol"); // Fixme: Fix cast conversion
+}
+
+} // namespace caramel::dataStructure::statements::definition

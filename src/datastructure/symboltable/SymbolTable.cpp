@@ -145,21 +145,16 @@ SymbolTable::addFunctionDefinition(
         std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> namedParameters,
         const std::shared_ptr<statements::definition::Definition> &definition
 ) {
-    // NotDeclared and not defined
-    if (isNotDeclared(name)) {
+
+    if(isDefined(name)) {
+        throw Caramel::Exceptions::SymbolAlreadyDefinedException(buildAlreadyDefinedErrorMessage(name));
+    } else if (isDeclared(name)) {
+        logger.debug() << "Function already declared" << name;
+    } else {
         mSymbolMap[name] = std::make_shared<FunctionSymbol>(name, returnType);
         mSymbolMap[name]->addDefinition(definition);
-
-        // Declared but not defined
-    } else if (isNotDefined(name)) {
-        // Todo : check if the definition matches with the declaration
-        // Todo : if check is valid, add the definition, else throw an Exception
-
-
-        // Declared and defined
-    } else {
-
     }
+
 }
 
 void
