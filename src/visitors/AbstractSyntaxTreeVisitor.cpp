@@ -30,6 +30,7 @@
 #include "../datastructure/statements/declaration/VariableDeclaration.h"
 #include "../datastructure/statements/declaration/FunctionDeclaration.h"
 #include "../datastructure/statements/definition/VariableDefinition.h"
+#include "../datastructure/statements/definition/FunctionDefinition.h"
 #include "../datastructure/symboltable/ArraySymbol.h"
 #include "../datastructure/statements/declaration/ArrayDeclaration.h"
 #include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
@@ -43,18 +44,16 @@ AbstractSyntaxTreeVisitor::AbstractSyntaxTreeVisitor(std::string const &sourceFi
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
     pushNewContext();
-    visitStatements(ctx->statements());
-    return currentContext();
+    return visitStatements(ctx->statements());
 }
 
 // Return vector<Statement::Ptr>
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::StatementsContext *ctx) {
-
+    logger.trace() << "visit statements: " << ctx->getText();
     using namespace Caramel::Colors;
     using caramel::dataStructure::statements::Statement;
 
     std::vector<Statement::Ptr> statements;
-    // TODO : type identification issue to solve right here
     for (auto statement : ctx->statement()) {
         logger.debug() << "Visiting: " << mSourceFileUtil.getLine(statement->start->getLine());
 
@@ -68,11 +67,61 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::Statemen
             logger.info() << green << "Yay statement:\n" << statement->getText();
         } else {
             logger.warning() << "Skipping unhandled statement:\n" << statement->getText();
-
         }
     }
     currentContext()->addStatements(std::move(statements));
-    return {};
+    return currentContext();
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitBlock(CaramelParser::BlockContext *ctx) {
+    logger.trace() << "visit block: " << ctx->getText();
+
+    using caramel::dataStructure::statements::Statement;
+
+    if (ctx->declarations()) {
+        std::vector<Statement::Ptr> declarations = visitDeclarations(ctx->declarations());
+        currentContext()->addStatements(std::move(declarations));
+    }
+    if (ctx->instructions()) {
+        std::vector<Statement::Ptr> instructions = visitInstructions(ctx->instructions());
+        currentContext()->addStatements(std::move(instructions));
+    }
+
+    return currentContext();
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitDeclarations(CaramelParser::DeclarationsContext *ctx) {
+    logger.trace() << "visit declarations: " << ctx->getText();
+
+    using caramel::dataStructure::statements::Statement;
+
+    std::vector<Statement::Ptr> declarations;
+    for (auto declaration : ctx->declaration()) {
+        antlrcpp::Any r = visitDeclaration(declaration);
+        if (r.is<Statement::Ptr>()) {
+            declarations.push_back(r.as<Statement::Ptr>());
+        } else if (r.is<std::vector<Statement::Ptr>>()) {
+            auto declarationVector = r.as<std::vector<Statement::Ptr>>();
+            std::copy(declarationVector.begin(), declarationVector.end(), std::back_inserter(declarations));
+        } else {
+            logger.warning() << "Skipping unhandled declaration:\n" << declaration->getText();
+        }
+    }
+    return declarations;
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstructions(CaramelParser::InstructionsContext *ctx) {
+    logger.trace() << "visit instructions: " << ctx->getText();
+
+    using caramel::dataStructure::statements::Statement;
+
+    std::vector<Statement::Ptr> instructions;
+    // TODO: Instructions
+    logger.warning() << "Skipping unimplemented instructions at line " << __LINE__ << ".";
+//    for (auto instruction : ctx->instruction()) {
+//        instructions.push_back(visitInstruction(instruction).as<Statement::Ptr>());
+//    }
+    return instructions;
 }
 
 // Return std::string
@@ -151,7 +200,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::
         } else if (nullptr != dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext *>(child)) {
             auto *vdAssignmentContext = dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext *>(child);
             std::string name = visitValidIdentifier(vdAssignmentContext->validIdentifier());
-            // Fixme : replace nullptr by (visitExpression(vdAssignmentContext->expression()).as<Statement::Ptr>());
             Expression::Ptr expression = std::make_shared<Expression>(ctx->getStart());
             logger.trace() << "New variable declared: '" << name << "' with value";
             VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
@@ -164,7 +212,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::
     }
 
     return variables;
-
 }
 
 // Return vector<Statement::Ptr>
@@ -174,7 +221,6 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
     using namespace caramel::dataStructure::symbolTable;
     using caramel::dataStructure::statements::Statement;
     using caramel::dataStructure::statements::declaration::FunctionDeclaration;
-
 
     logger.trace() << "Visiting function declaration: " << ctx->getText() << ' ' << ctx->getStart();
 
@@ -200,10 +246,30 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
 
 // Return vector<Statement::Ptr>
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) {
+    logger.trace() << "Visiting function definition: " << ctx->getText() << ' ' << ctx->getStart();
+
     pushNewContext();
-    auto result = CaramelBaseVisitor::visitFunctionDefinition(ctx);
+
+    using namespace caramel::dataStructure::symbolTable;
+    using caramel::dataStructure::statements::Statement;
+    using caramel::dataStructure::statements::definition::FunctionDefinition;
+
+    auto innerCtx = ctx->functionDeclarationInner();
+
+    PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
+    std::string name = visitValidIdentifier(innerCtx->validIdentifier());
+    std::vector<Symbol::Ptr> params = visitFunctionArguments(innerCtx->functionArguments());
+
+    FunctionDefinition::Ptr functionDefinition = std::make_shared<FunctionDefinition>(ctx->start);
+    FunctionSymbol::Ptr functionSymbol = currentContext()->getSymbolTable()->addFunctionDefinition(
+            ctx, returnType, name, params, functionDefinition);
+    functionDefinition->setSymbol(functionSymbol);
+
+    // Visit the function's block, which adds inner statements into context
+    visitBlock(ctx->block());
+
     popContext();
-    return result;
+    return std::dynamic_pointer_cast<Statement>(functionDefinition);
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) {
@@ -452,16 +518,14 @@ void AbstractSyntaxTreeVisitor::popContext() {
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitChildren(antlr4::tree::ParseTree *node) {
-
     size_t n = node->children.size();
     size_t i = 0;
     while (i < n && nullptr == node->children[i]) { i++; }
     antlrcpp::Any childResult;
-    if(i < n) {
+    if (i < n) {
         childResult = node->children[i]->accept(this);
     } else {
         childResult = defaultResult();
     }
     return childResult;
-
 }

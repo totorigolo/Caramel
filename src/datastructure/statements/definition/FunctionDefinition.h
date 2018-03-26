@@ -25,6 +25,7 @@
 #pragma once
 
 #include "Definition.h"
+#include "../../symboltable/FunctionSymbol.h"
 
 
 namespace caramel::dataStructure::statements::definition {
@@ -34,18 +35,18 @@ FunctionDefinition : public Definition {
 public:
     using Ptr = std::shared_ptr<FunctionDefinition>;
 
-    FunctionDefinition(antlr4::Token *startToken);
+    explicit FunctionDefinition(antlr4::Token *startToken);
 
     FunctionDefinition(
             std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> const &functionSymbol,
             antlr4::Token *startToken
     );
 
+    void setSymbol(symbolTable::FunctionSymbol::Ptr functionSymbol);
     std::weak_ptr<symbolTable::Symbol> getSymbol() override;
 
 protected:
     std::weak_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> mSymbol;
-
 };
 
 } // namespace caramel::dataStructure::statements::definition

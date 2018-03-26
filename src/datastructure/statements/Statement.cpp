@@ -56,5 +56,7 @@ std::ostream &caramel::dataStructure::statements::operator<<(std::ostream &os, c
         case StatementType::FunctionDeclaration: return os << "FunctionDeclaration";
         case StatementType::ArrayDeclaration: return os << "ArrayDeclaration";
         case StatementType::Definition: return os << "Definition";
+        case StatementType::VariableDefinition: return os << "VariableDefinition";
+        case StatementType::FunctionDefinition: return os << "FunctionDefinition";
     }
 }

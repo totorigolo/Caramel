@@ -33,7 +33,11 @@ FunctionDefinition::FunctionDefinition(antlr4::Token *startToken)
 
 FunctionDefinition::FunctionDefinition(
         std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> const &functionSymbol,
-        antlr4::Token *startToken) : Definition(startToken), mSymbol(functionSymbol) {}
+        antlr4::Token *startToken) : Definition(startToken, StatementType::FunctionDefinition), mSymbol(functionSymbol) {}
+
+void FunctionDefinition::setSymbol(symbolTable::FunctionSymbol::Ptr functionSymbol) {
+    mSymbol = functionSymbol;
+}
 
 std::weak_ptr<symbolTable::Symbol> FunctionDefinition::getSymbol() {
     throw std::runtime_error("Cannot cast FunctionSymbol to Symbol"); // Fixme: Fix cast conversion

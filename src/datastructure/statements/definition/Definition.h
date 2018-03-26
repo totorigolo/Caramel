@@ -35,7 +35,7 @@ class Definition : public caramel::dataStructure::statements::declaration::Decla
 public:
     using Ptr = std::shared_ptr<Definition>;
 protected:
-    explicit Definition(antlr4::Token *startToken);
+    explicit Definition(antlr4::Token *startToken, StatementType type = StatementType::Definition);
 };
 
 } // namespace caramel::dataStructure::statements::definition

@@ -32,6 +32,7 @@ namespace caramel::dataStructure::symbolTable {
 class VariableSymbol : public caramel::dataStructure::symbolTable::Symbol {
 public:
     using Ptr = std::shared_ptr<VariableSymbol>;
+    using WeakPtr = std::weak_ptr<VariableSymbol>;
 
     VariableSymbol(
             const std::string &mName,

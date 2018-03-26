@@ -26,6 +26,9 @@
 
 #include "Common.h"
 #include "Symbol.h"
+#include "TypeSymbol.h"
+#include "VariableSymbol.h"
+#include "FunctionSymbol.h"
 #include "../../exceptions/NotImplementedException.h"
 
 #include <CaramelBaseVisitor.h>
@@ -81,7 +84,7 @@ public:
             const std::shared_ptr<statements::declaration::Declaration> &declaration
     );
 
-    void addFunctionDefinition(
+    FunctionSymbol::Ptr addFunctionDefinition(
             antlr4::ParserRuleContext *antlrContext,
             std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &returnType,
             std::string const &name,

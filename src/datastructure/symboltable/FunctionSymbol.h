@@ -32,6 +32,9 @@ namespace caramel::dataStructure::symbolTable {
 
 class FunctionSymbol : public Symbol {
 public:
+    using Ptr = std::shared_ptr<FunctionSymbol>;
+    using WeakPtr = std::weak_ptr<FunctionSymbol>;
+
     static std::shared_ptr<FunctionSymbol> Create(const std::string &mName, const PrimaryType::Ptr &mType) {
         return std::make_shared<FunctionSymbol>(mName, mType);
     }
@@ -65,7 +68,6 @@ public:
 
 private:
     std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> mParameters;
-
 };
 
 } // namespace caramel::dataStructure::symbolTable

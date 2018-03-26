@@ -40,7 +40,9 @@ enum class StatementType {
     VariableDeclaration,
     FunctionDeclaration,
     ArrayDeclaration,
-    Definition
+    Definition,
+    VariableDefinition,
+    FunctionDefinition,
 };
 
 class Statement {

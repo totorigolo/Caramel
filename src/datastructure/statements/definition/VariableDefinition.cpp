@@ -33,7 +33,7 @@ VariableDefinition::VariableDefinition(
         std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
         antlr4::Token *startToken
 )
-        : Definition(startToken),
+        : Definition(startToken, StatementType::VariableDefinition),
           mSymbol(symbol) {
 
     using caramel::dataStructure::statements::expressions::Expression;
@@ -46,7 +46,7 @@ VariableDefinition::VariableDefinition(
         std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> initializer,
         antlr4::Token *startToken
 )
-        : Definition(startToken),
+        : Definition(startToken, StatementType::VariableDefinition),
           mInitializer(initializer),
           mSymbol(symbol) {}
 
