@@ -74,12 +74,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::Statemen
     return {};
 }
 
-// Return std::shared_ptr<Statement>
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatement(CaramelParser::StatementContext *ctx) {
-    // TODO: the "Skipping unhandled statement" problem seems to come from here
-    return visitChildren(ctx);
-}
-
 // Return std::string
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) {
@@ -115,7 +109,8 @@ AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDecla
         std::string name = visitValidIdentifier(validIdentifierCtx);
         VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
 
-        VariableDeclaration::Ptr variableDeclaration = std::make_shared<VariableDeclaration>(variableSymbol, validIdentifierCtx->getStart());
+        VariableDeclaration::Ptr variableDeclaration = std::make_shared<VariableDeclaration>(variableSymbol,
+                                                                                             validIdentifierCtx->getStart());
         variables.push_back(variableDeclaration);
 
         currentContext()->getSymbolTable()->addVariableDeclaration(ctx, typeSymbol->getType(), name,
@@ -123,6 +118,7 @@ AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDecla
 
         logger.trace() << "New variable declared " << name << " of type " << typeSymbol->getType()->getIdentifier();
     }
+
     return variables;
 }
 
@@ -139,24 +135,27 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::
 
     TypeSymbol::Ptr typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
     std::vector<Statement::Ptr> variables;
-    for(auto child : ctx->children) {
-        if(nullptr != dynamic_cast<CaramelParser::ValidIdentifierContext*>(child)) {
-            auto *identifierContext = dynamic_cast<CaramelParser::ValidIdentifierContext*>(child);
+    for (auto child : ctx->children) {
+        if (nullptr != dynamic_cast<CaramelParser::ValidIdentifierContext *>(child)) {
+            auto *identifierContext = dynamic_cast<CaramelParser::ValidIdentifierContext *>(child);
             std::string name = visitValidIdentifier(identifierContext);
             logger.trace() << "New variable declared: '" << name << "' with default value";
             VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
-            VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol, identifierContext->getStart());
+            VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol,
+                                                                                       identifierContext->getStart());
             variables.push_back(variableDef);
 
             currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
 
-        } else if (nullptr != dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext*>(child)) {
-            auto *vdAssignmentContext = dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext*>(child);
+        } else if (nullptr != dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext *>(child)) {
+            auto *vdAssignmentContext = dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext *>(child);
             std::string name = visitValidIdentifier(vdAssignmentContext->validIdentifier());
-            Expression::Ptr expression = visitExpression(vdAssignmentContext->expression());
+            // Fixme : replace nullptr by (visitExpression(vdAssignmentContext->expression()).as<Statement::Ptr>());
+            Expression::Ptr expression = std::make_shared<Expression>(ctx->getStart());
             logger.trace() << "New variable declared: '" << name << "' with value";
             VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
-            VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol, expression, vdAssignmentContext->getStart());
+            VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol, expression,
+                                                                                       vdAssignmentContext->getStart());
             variables.push_back(variableDef);
 
             currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
@@ -182,7 +181,8 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
     PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
     std::string name = visitValidIdentifier(innerCtx->validIdentifier());
     std::vector<Symbol::Ptr> params = visitFunctionArguments(innerCtx->functionArguments());
-    FunctionDeclaration::Ptr functionDeclaration = std::make_shared<FunctionDeclaration>(std::make_shared<FunctionSymbol>(name, returnType), ctx->start);
+    FunctionDeclaration::Ptr functionDeclaration = std::make_shared<FunctionDeclaration>(
+            std::make_shared<FunctionSymbol>(name, returnType), ctx->start);
     currentContext()->getSymbolTable()->addFunctionDeclaration(ctx, returnType, name, params,
                                                                functionDeclaration);
 
@@ -231,7 +231,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArgument(CaramelParser::Fu
         std::stringstream nameSS;
         nameSS << "__unnamed_argument_" << ctx->start->getLine() << "_" << ctx->start->getCharPositionInLine() << "__";
         name = nameSS.str();
-     }
+    }
 
     // Get the type
     TypeSymbol::Ptr type;
@@ -255,7 +255,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
     using caramel::dataStructure::statements::expressions::atomicExpression::AtomicExpression;
     using caramel::dataStructure::statements::expressions::Expression;
 
-    if(nullptr != ctx->validIdentifier()) {
+    if (nullptr != ctx->validIdentifier()) {
         std::string varName = visitValidIdentifier(ctx->validIdentifier());
         AtomicExpression::Ptr atomicExpression = std::make_shared<AtomicExpression>(ctx->getStart());
         currentContext()->getSymbolTable()->addVariableUsage(ctx, varName, atomicExpression);
@@ -311,7 +311,8 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::
 
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveOperator(caramel_unused CaramelParser::AdditiveOperatorContext *ctx) {
+antlrcpp::Any
+AbstractSyntaxTreeVisitor::visitAdditiveOperator(caramel_unused CaramelParser::AdditiveOperatorContext *ctx) {
     using caramel::dataStructure::operators::BinaryOperator;
     return std::dynamic_pointer_cast<BinaryOperator>(mPlusOperator);
 }
@@ -325,7 +326,7 @@ void AbstractSyntaxTreeVisitor::pushNewContext() {
     logger.debug() << "Pushed a new context.";
 
     SymbolTable::Ptr parentTable;
-    if(!mContextStack.empty()) {
+    if (!mContextStack.empty()) {
         Context::Ptr parent = mContextStack.top();
         mContextStack.push(std::make_shared<Context>(parent));
     } else {
@@ -368,13 +369,15 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
         long arraySize = visitArrayBlock(ctx->arrayBlock());
         arraySymbol->setSize(arraySize);
 
-        arrayDeclaration = ArrayDeclaration::Create(arraySymbol, ctx->arrayDeclarationVoidInner()->validIdentifier()->getStart());
+        arrayDeclaration = ArrayDeclaration::Create(arraySymbol,
+                                                    ctx->arrayDeclarationVoidInner()->validIdentifier()->getStart());
 
     } else if (nullptr != ctx->arrayDeclarationInner()) {
         arraySymbol = visitArrayDeclarationInner(ctx->arrayDeclarationInner()).as<ArraySymbol::Ptr>();
 
 
-        arrayDeclaration = ArrayDeclaration::Create(arraySymbol, ctx->arrayDeclarationInner()->validIdentifier()->getStart());
+        arrayDeclaration = ArrayDeclaration::Create(arraySymbol,
+                                                    ctx->arrayDeclarationInner()->validIdentifier()->getStart());
 
     }
 
@@ -382,7 +385,8 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
                                                                arrayDeclaration);
 
 
-    logger.trace() << "New array declared " << arraySymbol->getName() << " of return type " << arraySymbol->getType()  << "and size " << arraySymbol->getSize();
+    logger.trace() << "New array declared " << arraySymbol->getName() << " of return type " << arraySymbol->getType()
+                   << "and size " << arraySymbol->getSize();
 
     //TODO : Cas d'erreur
     return arrayDeclaration;
@@ -420,7 +424,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParse
     std::string name = visitValidIdentifier(ctx->validIdentifier());
     Constant::Ptr arraySize = visitArraySizeDeclaration(ctx->arraySizeDeclaration());
 
-    ArraySymbol::Ptr arraySymbol{ArraySymbol::Create(name, typeSymbol, (long)(arraySize->getValue()))};
+    ArraySymbol::Ptr arraySymbol{ArraySymbol::Create(name, typeSymbol, (long) (arraySize->getValue()))};
 
     return arraySymbol;
 }
@@ -429,7 +433,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParse
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) {
     return visitPositiveConstant(ctx->positiveConstant());
 }
-
 
 
 // Return Constant::Ptr
@@ -444,4 +447,19 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitPositiveConstant(CaramelParser::Po
 void AbstractSyntaxTreeVisitor::popContext() {
     logger.debug() << "Pop context.";
     mContextStack.pop();
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitChildren(antlr4::tree::ParseTree *node) {
+
+    size_t n = node->children.size();
+    size_t i = 0;
+    while (i < n && nullptr == node->children[i]) { i++; }
+    antlrcpp::Any childResult;
+    if(i < n) {
+        childResult = node->children[i]->accept(this);
+    } else {
+        childResult = defaultResult();
+    }
+    return childResult;
+
 }

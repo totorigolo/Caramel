@@ -45,18 +45,21 @@ using namespace caramel::dataStructure;
 
 namespace caramel::visitors {
 
+class ParseTree;
+
 class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
 
 public:
     explicit AbstractSyntaxTreeVisitor(std::string const &sourceFileName);
 
+public:
+    antlrcpp::Any visitChildren(antlr4::tree::ParseTree *node) override;
+
+public:
     antlrcpp::Any visitR(CaramelParser::RContext *ctx) override;
 
     // Return vector<Statement::Ptr>
     antlrcpp::Any visitStatements(CaramelParser::StatementsContext *ctx) override;
-
-    // Return Statement::Ptr
-    antlrcpp::Any visitStatement(CaramelParser::StatementContext *ctx) override;
 
     // Return std::string
     antlrcpp::Any visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) override;
