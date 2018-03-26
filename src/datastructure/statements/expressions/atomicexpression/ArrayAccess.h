@@ -1,3 +1,4 @@
+
 /*
  * MIT License
  *
@@ -25,6 +26,7 @@
 #pragma once
 
 #include "LValue.h"
+#include "../../../symboltable/Symbol.h"
 
 
 namespace caramel::dataStructure::statements::expressions::atomicExpression {
@@ -32,8 +34,21 @@ namespace caramel::dataStructure::statements::expressions::atomicExpression {
 class ArrayAccess : public LValue {
 public:
     using Ptr = std::shared_ptr<ArrayAccess>;
+    using WeakPtr = std::weak_ptr<ArrayAccess>;
 
-    ArrayAccess(antlr4::Token *startToken);
+public:
+    ArrayAccess(
+            caramel::dataStructure::symbolTable::Symbol symbol,
+            caramel::dataStructure::statements::expressions::Expression index,
+            antlr4::Token *startToken
+    );
+
+    ~ArrayAccess() override = default;
+
+private:
+    caramel::dataStructure::symbolTable::Symbol mSymbol;
+    caramel::dataStructure::statements::expressions::Expression mIndex;
+
 };
 
 } // namespace caramel::dataStructure::statements::expression::atomicExpression

@@ -32,8 +32,14 @@ namespace caramel::dataStructure::statements::expressions::atomicExpression {
 class AtomicExpression : public caramel::dataStructure::statements::expressions::Expression {
 public:
     using Ptr = std::shared_ptr<AtomicExpression>;
+    using WeakPtr = std::weak_ptr<AtomicExpression>;
 
+protected:
     explicit AtomicExpression(antlr4::Token *startToken);
+
+public:
+    ~AtomicExpression() override = default;
+
 };
 
 } // namespace caramel::dataStructure::statements::expression::atomicExpression

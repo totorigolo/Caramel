@@ -35,12 +35,16 @@ namespace caramel::dataStructure::statements::expressions {
 class Expression : public caramel::dataStructure::statements::Statement {
 public:
     using Ptr = std::shared_ptr<Expression>;
+    using WeakPtr = std::weak_ptr<Expression>;
 
     // TODO : Manage Type later pls
     virtual antlrcpp::Any getValue() { return {}; };
 
+protected:
+    explicit Expression(antlr4::Token *startToken);
+
 public:
-    Expression(antlr4::Token *startToken);
+    ~Expression() override  = default;
 };
 
 } // namespace caramel::dataStructure::statements::expressions

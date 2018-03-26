@@ -31,6 +31,11 @@ namespace caramel::dataStructure {
 class IR {
 public:
     using Ptr = std::shared_ptr<IR>;
+    using WeakPt = std::weak_ptr<IR>;
+
+protected:
+    explicit IR() = default;
+    virtual ~IR() = default;
 
 };
 

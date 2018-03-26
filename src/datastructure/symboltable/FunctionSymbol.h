@@ -32,7 +32,10 @@ namespace caramel::dataStructure::symbolTable {
 
 class FunctionSymbol : public Symbol {
 public:
-    static std::shared_ptr<FunctionSymbol> Create(const std::string &mName, const PrimaryType::Ptr &mType) {
+    using Ptr = std::shared_ptr<FunctionSymbol>;
+    using WeakPtr = std::weak_ptr<FunctionSymbol>;
+
+    static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
         return std::make_shared<FunctionSymbol>(mName, mType);
     }
 

@@ -25,9 +25,6 @@
 #include "BinaryExpression.h"
 
 
-caramel::dataStructure::statements::expressions::binaryExpression::BinaryExpression::BinaryExpression(antlr4::Token *startToken)
-        : Expression(startToken) {}
-
 caramel::dataStructure::statements::expressions::binaryExpression::BinaryExpression::BinaryExpression(
         std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
         std::shared_ptr<caramel::dataStructure::operators::BinaryOperator> const &binaryOperator,

@@ -32,10 +32,15 @@ namespace caramel::dataStructure::operators {
 class BinaryOperator : public Operator {
 public:
     using Ptr = std::shared_ptr<BinaryOperator>;
+    using WeakPtr = std::shared_ptr<BinaryOperator>;
 
+protected:
     BinaryOperator() = default;
+
+public:
     ~BinaryOperator() override = default;
 
+public:
     virtual std::shared_ptr<caramel::dataStructure::IR> buildIR(
             std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
             std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression

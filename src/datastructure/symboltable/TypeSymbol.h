@@ -32,6 +32,7 @@ namespace caramel::dataStructure::symbolTable {
 class TypeSymbol : public Symbol {
 public:
     using Ptr = std::shared_ptr<TypeSymbol>;
+    using WeakPtr = std::weak_ptr<TypeSymbol>;
 
     static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType) {
         return Ptr(new TypeSymbol(mName, mType));

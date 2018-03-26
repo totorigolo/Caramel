@@ -36,14 +36,7 @@ namespace caramel::dataStructure::context {
 class Context {
 public:
     using Ptr = std::shared_ptr<Context>;
-
-    static Ptr Create() {
-        return std::make_shared<Context>();
-    }
-
-    static Ptr Create(std::shared_ptr<Context> const &parent) {
-        return std::make_shared<Context>(parent);
-    }
+    using WeakPtr = std::weak_ptr<Context>;
 
     Context();
     explicit Context(std::shared_ptr<Context> const &parent);

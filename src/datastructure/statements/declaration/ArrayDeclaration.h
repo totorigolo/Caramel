@@ -32,12 +32,16 @@ namespace caramel::dataStructure::statements::declaration {
 class ArrayDeclaration : public Declaration {
 public:
     using Ptr = std::shared_ptr<ArrayDeclaration>;
+    using WeakPtr = std::weak_ptr<ArrayDeclaration>;
 
-    ArrayDeclaration(std::shared_ptr<caramel::dataStructure::symbolTable::ArraySymbol> symbol, antlr4::Token *startToken);
+    ArrayDeclaration(
+            std::shared_ptr<caramel::dataStructure::symbolTable::ArraySymbol> symbol,
+            antlr4::Token *startToken
+    );
 
-    static Ptr Create(std::shared_ptr<caramel::dataStructure::symbolTable::ArraySymbol> symbol, antlr4::Token *startToken) {
-        return std::make_shared<ArrayDeclaration>(symbol, startToken);
-    }
+    ~ArrayDeclaration() override = default;
+
+public:
 
     std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() override {
         throw std::runtime_error("Cannot get the ArraySymbol as Symbol");

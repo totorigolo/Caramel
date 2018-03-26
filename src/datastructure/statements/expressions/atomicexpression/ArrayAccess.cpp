@@ -26,8 +26,12 @@
 
 namespace caramel::dataStructure::statements::expressions::atomicExpression {
 
-ArrayAccess::ArrayAccess(antlr4::Token *startToken)
-        : LValue(startToken) {
-}
+
+ArrayAccess::ArrayAccess(
+        caramel::dataStructure::symbolTable::Symbol symbol,
+        caramel::dataStructure::statements::expressions::Expression index,
+        antlr4::Token *startToken
+) : LValue(startToken), mSymbol{symbol}, mIndex{index} {}
+
 
 } // namespace caramel::dataStructure::statements::expressions::atomicExpression

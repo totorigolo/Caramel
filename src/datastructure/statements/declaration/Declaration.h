@@ -39,6 +39,9 @@ namespace caramel::dataStructure::statements::declaration {
 class Declaration : public Statement {
 public:
     using Ptr = std::shared_ptr<Declaration>;
+    using WeakPtr = std::weak_ptr<Declaration>;
+
+    ~Declaration() override = default;
 
     // Constructors
 protected:

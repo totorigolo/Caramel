@@ -23,6 +23,7 @@
 */
 
 #include "VariableDefinition.h"
+#include "../expressions/atomicexpression/Constant.h"
 #include <utility>
 
 
@@ -32,14 +33,9 @@ namespace caramel::dataStructure::statements::definition {
 VariableDefinition::VariableDefinition(
         std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
         antlr4::Token *startToken
-)
-        : Definition(startToken),
-          mSymbol(symbol) {
-
-    using caramel::dataStructure::statements::expressions::Expression;
-    this->mInitializer = std::make_shared<Expression>(startToken);
-
-}
+) : Definition(startToken),
+    mSymbol(symbol),
+    mInitializer(caramel::dataStructure::statements::expressions::atomicExpression::Constant::defaultConstant(startToken)) {}
 
 VariableDefinition::VariableDefinition(
         std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,

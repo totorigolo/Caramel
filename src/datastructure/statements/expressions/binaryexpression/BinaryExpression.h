@@ -33,11 +33,7 @@ namespace caramel::dataStructure::statements::expressions::binaryExpression {
 class BinaryExpression : public caramel::dataStructure::statements::expressions::Expression {
 public:
     using Ptr = std::shared_ptr<BinaryExpression>;
-
-    explicit BinaryExpression(antlr4::Token *startToken);
-    static Ptr Create(antlr4::Token *startToken) {
-        return std::make_shared<BinaryExpression>(startToken);
-    }
+    using WeakPtr = std::weak_ptr<BinaryExpression>;
 
     BinaryExpression(
             std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
@@ -45,15 +41,8 @@ public:
             std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression,
             antlr4::Token *startToken
     );
-    static Ptr Create(
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
-            std::shared_ptr<caramel::dataStructure::operators::BinaryOperator> const &binaryOperator,
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression,
-            antlr4::Token *startToken
-    ) {
-        return std::make_shared<BinaryExpression>(leftExpression, binaryOperator, rightExpression, startToken);
-    }
 
+    ~BinaryExpression() override = default;
 
 public:
     std::shared_ptr<IR> getIR() override;

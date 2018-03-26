@@ -26,9 +26,6 @@
 
 
 caramel::dataStructure::statements::expressions::unaryExpression::UnaryExpression::UnaryExpression(
-        antlr4::Token *startToken) : Expression(startToken) {}
-
-caramel::dataStructure::statements::expressions::unaryExpression::UnaryExpression::UnaryExpression(
         std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &innerExpression,
         std::shared_ptr<caramel::dataStructure::operators::UnaryOperator> const &unaryOperator,
         antlr4::Token *startToken

@@ -33,13 +33,17 @@ namespace caramel::dataStructure::statements::expressions::atomicExpression {
 class Constant : public AtomicExpression {
 public:
     using Ptr = std::shared_ptr<Constant>;
+    using WeakPtr = std::weak_ptr<Constant>;
 
-    explicit Constant(antlrcpp::Any mValue, antlr4::Token *startToken);
-
-    static Ptr Create(antlrcpp::Any mValue, antlr4::Token *startToken) {
-        return Ptr(new Constant(std::forward<antlrcpp::Any>(mValue), startToken));
+    static Ptr defaultConstant(antlr4::Token *startToken) {
+        return std::make_shared<Constant>(0, startToken);
     }
 
+public:
+    explicit Constant(antlrcpp::Any mValue, antlr4::Token *startToken);
+    ~Constant() override = default;
+
+public:
     antlrcpp::Any getValue() override {
         return mValue;
     }

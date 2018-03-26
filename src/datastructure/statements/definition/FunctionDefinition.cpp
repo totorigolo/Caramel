@@ -27,16 +27,15 @@
 
 namespace caramel::dataStructure::statements::definition {
 
-FunctionDefinition::FunctionDefinition(antlr4::Token *startToken)
-        : Definition(startToken) {
-}
 
 FunctionDefinition::FunctionDefinition(
+        std::shared_ptr<caramel::dataStructure::context::Context> context,
         std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> const &functionSymbol,
-        antlr4::Token *startToken) : Definition(startToken), mSymbol(functionSymbol) {}
+        antlr4::Token *startToken
+) : Definition(startToken), mContext{context}, mSymbol{functionSymbol} {}
 
-std::weak_ptr<symbolTable::Symbol> FunctionDefinition::getSymbol() {
-    throw std::runtime_error("Cannot cast FunctionSymbol to Symbol"); // Fixme: Fix cast conversion
+std::weak_ptr<symbolTable::FunctionSymbol> FunctionDefinition::getFunctionSymbol() {
+    return mSymbol;
 }
 
 } // namespace caramel::dataStructure::statements::definition

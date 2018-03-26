@@ -22,11 +22,16 @@
  * SOFTWARE.
 */
 
-#include "Expression.h"
+#include "PlusOperator.h"
 
-namespace caramel::dataStructure::statements::expressions {
 
-Expression::Expression(antlr4::Token *startToken)
-        : Statement(startToken) {}
+std::shared_ptr<caramel::dataStructure::IR> caramel::dataStructure::operators::binaryOperators::PlusOperator::buildIR(
+        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
+        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression) {
 
-} // namespace caramel::dataStructure::statements::expressions
+    CARAMEL_UNUSED(leftExpression);
+    CARAMEL_UNUSED(rightExpression);
+    // TODO : Implement the IR generation which happens right here.
+    throw Caramel::Exceptions::NotImplementedException(__FILE__);
+
+}

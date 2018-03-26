@@ -34,9 +34,12 @@ namespace caramel::dataStructure::statements::controlblocks {
 class ControlBlock : public caramel::dataStructure::statements::Statement {
 public:
     using Ptr = std::shared_ptr<ControlBlock>;
+    using WeakPtr = std::weak_ptr<ControlBlock>;
 
 protected:
     ControlBlock(antlr4::Token *startToken);
+
+    ~ControlBlock() override = default;
 };
 
 } // caramel::dataStructure::statements::controlblocks

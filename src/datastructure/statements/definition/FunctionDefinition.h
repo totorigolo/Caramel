@@ -25,6 +25,7 @@
 #pragma once
 
 #include "Definition.h"
+#include "../../context/Context.h"
 
 
 namespace caramel::dataStructure::statements::definition {
@@ -34,16 +35,20 @@ FunctionDefinition : public Definition {
 public:
     using Ptr = std::shared_ptr<FunctionDefinition>;
 
-    FunctionDefinition(antlr4::Token *startToken);
-
     FunctionDefinition(
+            std::shared_ptr<caramel::dataStructure::context::Context> context,
             std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> const &functionSymbol,
             antlr4::Token *startToken
     );
 
-    std::weak_ptr<symbolTable::Symbol> getSymbol() override;
+    ~FunctionDefinition() override = default;
+
+public:
+
+    std::weak_ptr<symbolTable::FunctionSymbol> getFunctionSymbol();
 
 protected:
+    std::shared_ptr<caramel::dataStructure::context::Context> mContext;
     std::weak_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> mSymbol;
 
 };
