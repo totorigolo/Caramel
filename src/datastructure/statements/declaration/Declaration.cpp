@@ -26,8 +26,8 @@
 
 namespace caramel::dataStructure::statements::declaration {
 
-Declaration::Declaration(antlr4::Token *startToken)
-        : Statement(startToken) {
+Declaration::Declaration(antlr4::Token *startToken, StatementType type)
+        : Statement(startToken, type) {
 }
 
 } // caramel::dataStructure::statements::declaration

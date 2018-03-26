@@ -42,7 +42,7 @@ public:
 
     // Constructors
 protected:
-    explicit Declaration(antlr4::Token *startToken);
+    explicit Declaration(antlr4::Token *startToken, StatementType type);
 
 public:
     // Public methods

@@ -50,6 +50,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
 // Return vector<Statement::Ptr>
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::StatementsContext *ctx) {
 
+    using namespace Caramel::Colors;
     using caramel::dataStructure::statements::Statement;
 
     std::vector<Statement::Ptr> statements;
@@ -60,11 +61,11 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::Statemen
         antlrcpp::Any r = visitStatement(statement);
         if (r.is<Statement::Ptr>()) {
             statements.push_back(r.as<Statement::Ptr>());
-            logger.debug() << "Statement ptr";
+            logger.info() << green << "Yay statement:\n" << statement->getText();
         } else if (r.is<std::vector<Statement::Ptr>>()) {
-            logger.debug() << "Vector<Statement>";
             auto statementVector = r.as<std::vector<Statement::Ptr>>();
             std::copy(statementVector.begin(), statementVector.end(), std::back_inserter(statements));
+            logger.info() << green << "Yay statement:\n" << statement->getText();
         } else {
             logger.warning() << "Skipping unhandled statement:\n" << statement->getText();
 
@@ -171,6 +172,7 @@ antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) {
 
     using namespace caramel::dataStructure::symbolTable;
+    using caramel::dataStructure::statements::Statement;
     using caramel::dataStructure::statements::declaration::FunctionDeclaration;
 
 
@@ -193,13 +195,13 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
     }
     traceLogger.show();
 
-    return functionDeclaration;
+    return std::dynamic_pointer_cast<Statement>(functionDeclaration);
 }
 
 // Return vector<Statement::Ptr>
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) {
     pushNewContext();
-    antlrcpp::Any result = CaramelBaseVisitor::visitFunctionDefinition(ctx);
+    auto result = CaramelBaseVisitor::visitFunctionDefinition(ctx);
     popContext();
     return result;
 }

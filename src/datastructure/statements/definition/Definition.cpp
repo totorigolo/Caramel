@@ -26,5 +26,5 @@
 
 
 caramel::dataStructure::statements::definition::Definition::Definition(antlr4::Token *startToken)
-        : Declaration(startToken) {
+        : Declaration(startToken, StatementType::Definition) {
 }
