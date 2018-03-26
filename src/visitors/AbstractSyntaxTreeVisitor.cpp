@@ -32,6 +32,7 @@
 #include "../datastructure/statements/definition/VariableDefinition.h"
 #include "../datastructure/symboltable/ArraySymbol.h"
 #include "../datastructure/statements/declaration/ArrayDeclaration.h"
+#include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
 
 
 using namespace caramel::visitors;
@@ -52,6 +53,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::Statemen
     using caramel::dataStructure::statements::Statement;
 
     std::vector<Statement::Ptr> statements;
+    // TODO : type identification issue to solve right here
     for (auto statement : ctx->statement()) {
         logger.debug() << "Visiting: " << mSourceFileUtil.getLine(statement->start->getLine());
 
@@ -65,6 +67,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::Statemen
             std::copy(statementVector.begin(), statementVector.end(), std::back_inserter(statements));
         } else {
             logger.warning() << "Skipping unhandled statement:\n" << statement->getText();
+
         }
     }
     currentContext()->addStatements(std::move(statements));
@@ -250,42 +253,69 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockCont
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) {
 
     using caramel::dataStructure::statements::expressions::atomicExpression::AtomicExpression;
+    using caramel::dataStructure::statements::expressions::Expression;
 
     if(nullptr != ctx->validIdentifier()) {
         std::string varName = visitValidIdentifier(ctx->validIdentifier());
         AtomicExpression::Ptr atomicExpression = std::make_shared<AtomicExpression>(ctx->getStart());
         currentContext()->getSymbolTable()->addVariableUsage(ctx, varName, atomicExpression);
     }
-    return CaramelBaseVisitor::visitAtomicExpression(ctx);
+    return std::dynamic_pointer_cast<Expression>(visitChildren(ctx).as<AtomicExpression::Ptr>());
 }
 
-// Return Expression::Ptr
+// Return Statement::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitExpression(CaramelParser::ExpressionContext *ctx) {
-
+    using caramel::dataStructure::statements::Statement;
     using caramel::dataStructure::statements::expressions::Expression;
-    return std::make_shared<Expression>(ctx->getStart());
+    return std::dynamic_pointer_cast<Statement>(visitChildren(ctx).as<Expression::Ptr>());
 }
 
 // Return Constant::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
 
+    using caramel::dataStructure::statements::expressions::atomicExpression::AtomicExpression;
     using caramel::dataStructure::statements::expressions::atomicExpression::Constant;
 
     long long value = std::stoll(ctx->getText());
-    return std::make_shared<Constant>(value, ctx->start);
+    return std::dynamic_pointer_cast<AtomicExpression>(std::make_shared<Constant>(value, ctx->start));
 }
 
 // Return Constant::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
 
+    using caramel::dataStructure::statements::expressions::atomicExpression::AtomicExpression;
     using caramel::dataStructure::statements::expressions::atomicExpression::Constant;
 
     char value = ctx->getText().at(0);
-    return std::make_shared<Constant>(value, ctx->start);
+    return std::dynamic_pointer_cast<AtomicExpression>(std::make_shared<Constant>(value, ctx->start));
 }
 
 
 // Private
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) {
+    using namespace caramel::dataStructure::statements::expressions;
+    using caramel::dataStructure::statements::expressions::binaryExpression::BinaryExpression;
+    using caramel::dataStructure::operators::BinaryOperator;
+
+    if (ctx->children.size() == 1) {
+        // One children = No BinaryExpression at this step.
+        return visitChildren(ctx).as<Expression::Ptr>();
+    } else {
+        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+                visitAdditiveExpression(ctx->additiveExpression(0)),
+                visitAdditiveOperator(ctx->additiveOperator()),
+                visitAdditiveExpression(ctx->additiveExpression(1)),
+                ctx->getStart()
+        ));
+    }
+
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveOperator(caramel_unused CaramelParser::AdditiveOperatorContext *ctx) {
+    using caramel::dataStructure::operators::BinaryOperator;
+    return std::dynamic_pointer_cast<BinaryOperator>(mPlusOperator);
+}
+
 void AbstractSyntaxTreeVisitor::pushNewContext() {
 
     using namespace caramel::dataStructure::symbolTable;
@@ -400,13 +430,15 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArraySizeDeclaration(CaramelParser
     return visitPositiveConstant(ctx->positiveConstant());
 }
 
+
+
 // Return Constant::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) {
-
     using caramel::dataStructure::statements::expressions::atomicExpression::Constant;
+    using caramel::dataStructure::statements::expressions::atomicExpression::AtomicExpression;
 
     long long value = std::stoll(ctx->getText());
-    return Constant::Create(value, ctx->start);
+    return std::dynamic_pointer_cast<AtomicExpression>(std::make_shared<Constant>(value, ctx->getStart()));
 }
 
 void AbstractSyntaxTreeVisitor::popContext() {

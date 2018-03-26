@@ -25,10 +25,10 @@
 #include "BinaryExpression.h"
 
 
-caramel::dataStructure::expression::binaryExpression::BinaryExpression::BinaryExpression(antlr4::Token *startToken)
+caramel::dataStructure::statements::expressions::binaryExpression::BinaryExpression::BinaryExpression(antlr4::Token *startToken)
         : Expression(startToken) {}
 
-caramel::dataStructure::expression::binaryExpression::BinaryExpression::BinaryExpression(
+caramel::dataStructure::statements::expressions::binaryExpression::BinaryExpression::BinaryExpression(
         std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
         std::shared_ptr<caramel::dataStructure::operators::BinaryOperator> const &binaryOperator,
         std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression,
@@ -36,7 +36,7 @@ caramel::dataStructure::expression::binaryExpression::BinaryExpression::BinaryEx
         : Expression(startToken), mLeftExpression{leftExpression}, mRightExpression{rightExpression}, mBinaryOperator{binaryOperator} {}
 
 std::shared_ptr<caramel::dataStructure::IR>
-caramel::dataStructure::expression::binaryExpression::BinaryExpression::getIR() {
+caramel::dataStructure::statements::expressions::binaryExpression::BinaryExpression::getIR() {
     return mBinaryOperator->buildIR(mLeftExpression, mRightExpression);
 }
 
