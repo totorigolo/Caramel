@@ -35,12 +35,7 @@ class IfBlock : public ControlBlock {
 public:
 
     using Ptr = std::shared_ptr<IfBlock>;
-
-    explicit IfBlock(antlr4::Token *startToken);
-
-    static Ptr Create(antlr4::Token *startToken) {
-        return std::make_shared<IfBlock>(startToken);
-    }
+    using WeakPtr = std::weak_ptr<IfBlock>;
 
     IfBlock(
             std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &condition,
@@ -48,15 +43,6 @@ public:
             std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &elseBlock,
             antlr4::Token *startToken
     );
-
-    static Ptr Create(
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &condition,
-            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &thenBlock,
-            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &elseBlock,
-            antlr4::Token *startToken
-    ) {
-        return std::make_shared<IfBlock>(condition, thenBlock, elseBlock, startToken);
-    }
 
 private:
     std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> mCondition;

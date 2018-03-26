@@ -25,6 +25,7 @@
 #pragma once
 
 #include "Definition.h"
+#include "../../context/Context.h"
 #include "../../symboltable/FunctionSymbol.h"
 
 
@@ -34,18 +35,22 @@ class
 FunctionDefinition : public Definition {
 public:
     using Ptr = std::shared_ptr<FunctionDefinition>;
-
-    explicit FunctionDefinition(antlr4::Token *startToken);
+    using WeakPtr = std::weak_ptr<FunctionDefinition>;
 
     FunctionDefinition(
-            std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> const &functionSymbol,
+            std::shared_ptr<caramel::dataStructure::context::Context> context,
             antlr4::Token *startToken
     );
 
+    ~FunctionDefinition() override = default;
+
+public:
+
+    std::weak_ptr<symbolTable::FunctionSymbol> getFunctionSymbol();
     void setSymbol(symbolTable::FunctionSymbol::Ptr functionSymbol);
-    std::weak_ptr<symbolTable::Symbol> getSymbol() override;
 
 protected:
+    std::shared_ptr<caramel::dataStructure::context::Context> mContext;
     std::weak_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> mSymbol;
 };
 

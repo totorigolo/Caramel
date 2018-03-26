@@ -34,6 +34,11 @@ namespace caramel::dataStructure::statements::definition {
 class Definition : public caramel::dataStructure::statements::declaration::Declaration {
 public:
     using Ptr = std::shared_ptr<Definition>;
+    using WeakPtr = std::shared_ptr<Definition>;
+
+
+
+
 protected:
     explicit Definition(antlr4::Token *startToken, StatementType type = StatementType::Definition);
 };

@@ -181,6 +181,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::
     using caramel::dataStructure::statements::Statement;
     using caramel::dataStructure::statements::definition::VariableDefinition;
     using caramel::dataStructure::statements::expressions::Expression;
+    using caramel::dataStructure::statements::expressions::atomicExpression::Constant;
 
     logger.trace() << "Visiting variable definition: " << ctx->getText();
 
@@ -201,7 +202,8 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::
         } else if (nullptr != dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext *>(child)) {
             auto *vdAssignmentContext = dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext *>(child);
             std::string name = visitValidIdentifier(vdAssignmentContext->validIdentifier());
-            Expression::Ptr expression = std::make_shared<Expression>(ctx->getStart());
+            // Fixme : replace nullptr by (visitExpression(vdAssignmentContext->expression()).as<Statement::Ptr>());
+            Expression::Ptr expression = Constant::defaultConstant(ctx->getStart());
             logger.trace() << "New variable declared: '" << name << "' with value";
             VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
             VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol, expression,
@@ -249,21 +251,32 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) {
     logger.trace() << "Visiting function definition: " << ctx->getText() << ' ' << ctx->getStart();
 
-    pushNewContext();
+
 
     using namespace caramel::dataStructure::symbolTable;
     using caramel::dataStructure::statements::Statement;
     using caramel::dataStructure::statements::definition::FunctionDefinition;
+    using caramel::dataStructure::context::Context;
 
-    auto innerCtx = ctx->functionDeclarationInner();
+    Context::Ptr parentContext = currentContext();
+    pushNewContext();
+    Context::Ptr functionContext = currentContext();
+
+    CaramelParser::FunctionDeclarationInnerContext *innerCtx = ctx->functionDeclarationInner();
 
     PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
     std::string name = visitValidIdentifier(innerCtx->validIdentifier());
     std::vector<Symbol::Ptr> params = visitFunctionArguments(innerCtx->functionArguments());
 
-    FunctionDefinition::Ptr functionDefinition = std::make_shared<FunctionDefinition>(ctx->start);
-    FunctionSymbol::Ptr functionSymbol = currentContext()->getSymbolTable()->addFunctionDefinition(
-            ctx, returnType, name, params, functionDefinition);
+    FunctionDefinition::Ptr functionDefinition = std::make_shared<FunctionDefinition>(functionContext, ctx->start);
+    FunctionSymbol::Ptr functionSymbol = functionContext->getSymbolTable()->addFunctionDefinition(
+            ctx, returnType, name, params, functionDefinition
+    );
+
+    parentContext->getSymbolTable()->addFunctionDefinition(
+            ctx, returnType, name, params, functionDefinition
+    );
+
     functionDefinition->setSymbol(functionSymbol);
 
     // Visit the function's block, which adds inner statements into context
@@ -322,11 +335,13 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockCont
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) {
 
     using caramel::dataStructure::statements::expressions::atomicExpression::AtomicExpression;
+    using caramel::dataStructure::statements::expressions::atomicExpression::Constant;
     using caramel::dataStructure::statements::expressions::Expression;
 
     if (nullptr != ctx->validIdentifier()) {
         std::string varName = visitValidIdentifier(ctx->validIdentifier());
-        AtomicExpression::Ptr atomicExpression = std::make_shared<AtomicExpression>(ctx->getStart());
+        // Fixme : replace with true atomicExpression constructor
+        AtomicExpression::Ptr atomicExpression = Constant::defaultConstant(ctx->getStart());
         currentContext()->getSymbolTable()->addVariableUsage(ctx, varName, atomicExpression);
     }
     return std::dynamic_pointer_cast<Expression>(visitChildren(ctx).as<AtomicExpression::Ptr>());
@@ -438,14 +453,13 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
         long arraySize = visitArrayBlock(ctx->arrayBlock());
         arraySymbol->setSize(arraySize);
 
-        arrayDeclaration = ArrayDeclaration::Create(arraySymbol,
+        arrayDeclaration = std::make_shared<ArrayDeclaration>(arraySymbol,
                                                     ctx->arrayDeclarationVoidInner()->validIdentifier()->getStart());
 
     } else if (nullptr != ctx->arrayDeclarationInner()) {
         arraySymbol = visitArrayDeclarationInner(ctx->arrayDeclarationInner()).as<ArraySymbol::Ptr>();
 
-
-        arrayDeclaration = ArrayDeclaration::Create(arraySymbol,
+        arrayDeclaration = std::make_shared<ArrayDeclaration>(arraySymbol,
                                                     ctx->arrayDeclarationInner()->validIdentifier()->getStart());
 
     }
@@ -470,7 +484,7 @@ AbstractSyntaxTreeVisitor::visitArrayDeclarationVoidInner(CaramelParser::ArrayDe
 
     auto typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
     std::string name = visitValidIdentifier(ctx->validIdentifier());
-    auto arraySymbol{ArraySymbol::Create(name, typeSymbol, 0)};
+    auto arraySymbol{std::make_shared<ArraySymbol>(name, typeSymbol, 0)};
 
     return arraySymbol;
 }
@@ -497,7 +511,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParse
 //    if (!arraySizeAny.is<Constant::Ptr>()) {
 //        throw Caramel::Exceptions::ArraySizeNonConstantException("Non constant expression not handled for array sizes.");
 //    }
-    ArraySymbol::Ptr arraySymbol = ArraySymbol::Create(name, typeSymbol, arraySize->getValue().as<long long>());
+    ArraySymbol::Ptr arraySymbol = std::make_shared<ArraySymbol>(name, typeSymbol, arraySize->getValue().as<long long>());
 
     return arraySymbol;
 }

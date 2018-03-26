@@ -1,4 +1,3 @@
-
 /*
  * MIT License
  *
@@ -23,32 +22,16 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "LValue.h"
-#include "../../../symboltable/Symbol.h"
+#include "PlusOperator.h"
 
 
-namespace caramel::dataStructure::statements::expressions::atomicExpression {
+std::shared_ptr<caramel::dataStructure::IR> caramel::dataStructure::operators::binaryOperators::PlusOperator::buildIR(
+        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
+        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression) {
 
-class ArrayAccess : public LValue {
-public:
-    using Ptr = std::shared_ptr<ArrayAccess>;
-    using WeakPtr = std::weak_ptr<ArrayAccess>;
+    CARAMEL_UNUSED(leftExpression);
+    CARAMEL_UNUSED(rightExpression);
+    // TODO : Implement the IR generation which happens right here.
+    throw Caramel::Exceptions::NotImplementedException(__FILE__);
 
-public:
-    ArrayAccess(
-            caramel::dataStructure::symbolTable::Symbol symbol,
-            caramel::dataStructure::statements::expressions::Expression index,
-            antlr4::Token *startToken
-    );
-
-    ~ArrayAccess() override = default;
-
-private:
-    caramel::dataStructure::symbolTable::Symbol mSymbol;
-    caramel::dataStructure::statements::expressions::Expression mIndex;
-
-};
-
-} // namespace caramel::dataStructure::statements::expression::atomicExpression
+}

@@ -53,9 +53,8 @@ public:
     using Ptr = std::shared_ptr<Statement>;
     using WeakPtr = std::weak_ptr<Statement>;
 
-    static Ptr Create(antlr4::Token *startToken) {
-        return Ptr(new Statement(startToken));
-    }
+public:
+    virtual ~Statement() = default;
 
     explicit Statement(antlr4::Token *startToken, StatementType type = StatementType::Unknown);
 
@@ -65,7 +64,7 @@ public:
     size_t getLength() const;
     StatementType getType() const;
 
-    virtual std::shared_ptr<IR> getIR() { return std::make_shared<IR>(); }
+    virtual std::shared_ptr<IR> getIR() { throw Caramel::Exceptions::NotImplementedException(__FILE__); }; // Fixme: must be abstract function at the end
 
 private:
     size_t mLine;

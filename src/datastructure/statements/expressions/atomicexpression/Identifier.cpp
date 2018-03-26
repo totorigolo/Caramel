@@ -26,8 +26,13 @@
 
 namespace caramel::dataStructure::statements::expressions::atomicExpression {
 
-Identifier::Identifier(antlr4::Token *startToken)
-        : LValue(startToken) {
+Identifier::Identifier(
+        std::shared_ptr<caramel::dataStructure::symbolTable::Symbol> symbol,
+        antlr4::Token *startToken
+) : LValue(startToken), mSymbol{symbol} {}
+
+std::shared_ptr<caramel::dataStructure::symbolTable::Symbol> Identifier::getSymbol() {
+    return mSymbol;
 }
 
 } // namespace caramel::dataStructure::statements::expressions::atomicExpression

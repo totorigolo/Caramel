@@ -25,5 +25,8 @@
 #include "WhileBlock.h"
 
 
-caramel::dataStructure::statements::controlblocks::WhileBlock::WhileBlock(antlr4::Token *startToken)
-        : ControlBlock(startToken) {}
+caramel::dataStructure::statements::controlblocks::WhileBlock::WhileBlock(
+        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> condition,
+        std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> block,
+        antlr4::Token *token
+) : ControlBlock(token), mCondition{condition}, mBlock{block} {}

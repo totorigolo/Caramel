@@ -32,18 +32,12 @@ namespace caramel::dataStructure::statements::declaration {
 class FunctionDeclaration : public Declaration {
 public:
     using Ptr = std::shared_ptr<FunctionDeclaration>;
+    using WeakPtr = std::weak_ptr<FunctionDeclaration>;
 
     FunctionDeclaration(
             std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> symbol,
             antlr4::Token *startToken
     );
-
-    static Ptr Create(
-            std::shared_ptr<caramel::dataStructure::symbolTable::FunctionSymbol> symbol,
-            antlr4::Token *startToken
-    ) {
-        return std::make_shared<FunctionDeclaration>(symbol, startToken);
-    }
 
     std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() override {
         throw std::runtime_error("Cannot get the FunctionSymbol as Symbol");

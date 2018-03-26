@@ -39,6 +39,9 @@ namespace caramel::dataStructure::statements::declaration {
 class Declaration : public Statement {
 public:
     using Ptr = std::shared_ptr<Declaration>;
+    using WeakPtr = std::weak_ptr<Declaration>;
+
+    ~Declaration() override = default;
 
     // Constructors
 protected:
@@ -46,7 +49,7 @@ protected:
 
 public:
     // Public methods
-    virtual std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() = 0;
+    virtual std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() { throw Caramel::Exceptions::NotImplementedException(__FILE__); };
 };
 
 

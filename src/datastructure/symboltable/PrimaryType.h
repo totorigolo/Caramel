@@ -33,6 +33,7 @@ class PrimaryType {
 
 public:
     using Ptr = std::shared_ptr<PrimaryType>;
+    using WeakPtr = std::weak_ptr<PrimaryType>;
 
     virtual size_t getMemoryLength() const = 0;
     virtual std::string getIdentifier() const = 0;

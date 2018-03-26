@@ -35,10 +35,6 @@ public:
     using Ptr = std::shared_ptr<FunctionSymbol>;
     using WeakPtr = std::weak_ptr<FunctionSymbol>;
 
-    static std::shared_ptr<FunctionSymbol> Create(const std::string &mName, const PrimaryType::Ptr &mType) {
-        return std::make_shared<FunctionSymbol>(mName, mType);
-    }
-
 public:
     FunctionSymbol(
             const std::string &mName,

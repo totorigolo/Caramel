@@ -43,6 +43,7 @@ namespace caramel::dataStructure::symbolTable {
 class SymbolTable {
 public:
     using Ptr = std::shared_ptr<SymbolTable>;
+    using WeakPtr = std::weak_ptr<SymbolTable>;
 
     static std::shared_ptr<SymbolTable> Create() {
         return std::make_shared<SymbolTable>();

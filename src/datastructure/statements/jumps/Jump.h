@@ -33,8 +33,11 @@ namespace caramel::dataStructure::statements::expressions::jumps {
 class Jump : public caramel::dataStructure::statements::Statement {
 public:
     using Ptr = std::shared_ptr<Jump>;
+    using WeakPtr = std::weak_ptr<Jump>;
 
-    Jump(antlr4::Token *startToken);
+protected:
+    explicit Jump(antlr4::Token *startToken);
+    virtual ~Jump() = default;
 };
 
 } // namespace caramel::dataStructure::statements::expressions::jumps

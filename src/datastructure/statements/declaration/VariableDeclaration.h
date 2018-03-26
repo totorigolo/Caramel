@@ -33,18 +33,12 @@ namespace caramel::dataStructure::statements::declaration {
 class VariableDeclaration : public caramel::dataStructure::statements::declaration::Declaration {
 public:
     using Ptr = std::shared_ptr<VariableDeclaration>;
+    using WeakPtr = std::weak_ptr<VariableDeclaration>;
 
     VariableDeclaration(
             std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
             antlr4::Token *startToken
     );
-
-    static Ptr Create(
-            std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
-            antlr4::Token *startToken
-    ) {
-        return std::make_shared<VariableDeclaration>(symbol, startToken);
-    }
 
 public:
 

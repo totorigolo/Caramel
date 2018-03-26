@@ -32,8 +32,12 @@ namespace caramel::dataStructure::operators {
 class Operator {
 public:
     using Ptr = std::shared_ptr<Operator>;
+    using WeakPtr = std::shared_ptr<Operator>;
 
+protected:
     Operator() = default;
+
+public:
     virtual ~Operator() = default;
 };
 
