@@ -1,15 +1,37 @@
+# coding: utf-8
+# MIT License
+#
+# Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 from chef.logger import logger
 from chef.logger import trace
-from chef import seconds_to_string
+from chef import seconds_to_string, exec_, mkdir_and_cd
 from chef import COMMANDS, PATHS, INJECTED_TOKENS_SEPARATOR
 from chef import colored
 from time import time
-import subprocess
-import shlex
 import re
 import os
 
 
+@trace
 def _info_completed_in_seconds(seconds: float):
     logger.info('Completed in {}.'.format(
         colored(seconds_to_string(seconds), color='yellow')))
@@ -100,8 +122,8 @@ def build_grammar_cpp():
     if grammar_time > antlr_pass_time:
         start_time = time()
         logger.info('Compiling grammar in C++...')
-        subprocess.call(shlex.split("{} {} -o {} -visitor -listener -Dlanguage=Cpp -Xexact-output-dir"
-                                    .format(COMMANDS['antlr4'], PATHS['grammar-file'], path)))
+        exec_("{} {} -o {} -visitor -listener -Dlanguage=Cpp -Xexact-output-dir"
+              .format(COMMANDS['antlr4'], PATHS['grammar-file'], path))
         _info_completed_in_seconds(time() - start_time)
     else:
         logger.info('The compiled C++ grammar is up-to-date.')
@@ -126,8 +148,8 @@ def build_grammar_java():
     if grammar_time > antlr_pass_time:
         start_time = time()
         logger.info('Compiling grammar in Java...')
-        subprocess.call(shlex.split("{} {} -o {} -visitor -listener -Xexact-output-dir".format(
-            COMMANDS['antlr4'], PATHS['grammar-file'], path)))
+        exec_("{} {} -o {} -visitor -listener -Xexact-output-dir".format(
+            COMMANDS['antlr4'], PATHS['grammar-file'], path))
         _info_completed_in_seconds(time() - start_time)
     else:
         logger.info('The compiled java grammar is up-to-date.')
@@ -136,11 +158,10 @@ def build_grammar_java():
     if grammar_time > javac_pass_time:
         start_time = time()
         logger.info('Compiling generated java sources...')
-        subprocess.call(
-            shlex.split(COMMANDS['javac']) + [
-                os.path.join(path, file) for file in os.listdir(path) if
-                os.path.isfile(os.path.join(path, file)) and file.endswith(".java")
-            ])
+        exec_(COMMANDS['javac'] + ' ' + ' '.join([
+            os.path.join(path, file) for file in os.listdir(path) if
+            os.path.isfile(os.path.join(path, file)) and file.endswith(".java")
+        ]))
         _info_completed_in_seconds(time() - start_time)
     else:
         logger.info('The compiled java sources are up-to-date.')
@@ -149,34 +170,55 @@ def build_grammar_java():
 @trace
 def build_grammar(args):
     if args.brew:
-        # TODO filename = args.filename if args.filename is not None else get_latest_grammar_file()
         filename = get_latest_grammar_file()
         brew_grammar_file(filename)
-    if args.language == 'java':
-        build_grammar_java()
-    elif args.language == 'cpp':
-        build_grammar_cpp()
-    else:
-        logger.fatal('Wrong language:', args.language)
-        exit(1)
+    build_grammar_java()
+    build_grammar_cpp()
+
+
+@trace
+def build_caramel(args):
+    # Configure the project with CMake
+    initial_cwd = os.getcwd()
+    mkdir_and_cd('build')
+    mkdir_and_cd('cmake-chef-{}'.format('debug' if args.debug else 'release'))
+
+    start_time = time()
+    logger.info('Running CMake...')
+    exec_('cmake ../.. -DCMAKE_BUILD_TYPE={}'.format('Debug' if args.debug else 'Release'))
+    _info_completed_in_seconds(time() - start_time)
+
+    start_time = time()
+    logger.info('Running CMake...')
+    exec_('make')
+    _info_completed_in_seconds(time() - start_time)
+
+    os.chdir(initial_cwd)
 
 
 def build(args):
+    if not args.grammar and not args.caramel and not args.all:
+        logger.warn('Nothing to build.')
+        return
+
     logger.info('Build started...')
     start_time = time()
 
-    if args.brew and not (args.grammar or args.all):
-        logger.warn("Grammar won't be brewed since it's not built.")
+    if args.debug and not args.caramel:
+        logger.warn('--release ignored because -c / --caramel is absent.')
+        args.debug = False
 
     if args.all:
         args.grammar = True
+        args.caramel = True
 
     if args.grammar:
         build_grammar(args)
+    elif args.brew:
+        logger.warn("Grammar won't be brewed since it's not built.")
+
+    if args.caramel:
+        build_caramel(args)
 
     total_time = time() - start_time
-    logger.info('Build finished. Total time: {}.'.format(
-                colored(seconds_to_string(total_time), color='yellow')))
-
-
-print(repr(get_latest_grammar_file()))
+    logger.info('Build finished. Total time: {}.'.format(colored(seconds_to_string(total_time), color='yellow')))

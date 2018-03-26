@@ -1,3 +1,26 @@
+# coding: utf-8
+# MIT License
+#
+# Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 from chef.logger import LoggerLevel
 from chef.logger import logger
 from chef import seconds_to_string
@@ -34,6 +57,7 @@ def _chef():
     parser_build.add_argument('-b', '--brew', help='brew the grammar file', action='store_true')
     parser_build.add_argument('-g', '--grammar', help='build the grammar', action='store_true')
     parser_build.add_argument('-c', '--caramel', help='build the compiler', action='store_true')
+    parser_build.add_argument('-d', '--debug', help='build as debug', action='store_true')
     parser_build.add_argument('-a', '--all', help='build everything', action='store_true')
     parser_build.set_defaults(func=chef.build.build)
 
@@ -42,12 +66,17 @@ def _chef():
 
     # create the "test" command common arguments
     def test_common(sub_test_parser: argparse.ArgumentParser):
-        sub_test_parser.add_argument('--build', help='build before running tests', action='store_true')
-        sub_test_parser.add_argument('--brew', help='brew the grammar file', action='store_true')
-        sub_test_parser.add_argument('--language', '-l',
-                                     help='set the interpreter language', default='java', choices=['java', 'cpp'])
-        sub_test_parser.add_argument('--stdout', help='show the tests stdout output', action='store_true')
-        sub_test_parser.add_argument('--stderr', help='show the tests stderr output', action='store_true')
+        sub_test_parser.add_argument('-b', '--build', help='build before running tests', action='store_true')
+        sub_test_parser.add_argument('-w', '--brew', help='brew the grammar file', action='store_true')
+        sub_test_parser.add_argument('-O', '--stdout', help='show the tests stdout output', action='store_true')
+        sub_test_parser.add_argument('-E', '--stderr', help='show the tests stderr output', action='store_true')
+        sub_test_parser.add_argument('-i', '--interactive', help='run a test in interactive mode', action='store_true')
+        group_test_grammar_gui = sub_test_parser.add_mutually_exclusive_group()
+        group_test_grammar_gui.add_argument('-g', '--gui', help='open a GUI when executing test', action='store_true')
+        group_test_grammar_gui.add_argument('-G', '--gui-on-failure',
+                                            help='open a GUI on failed tests', action='store_true')
+        sub_test_parser.add_argument('-a', '--all', help='run all tests', action='store_true')
+        sub_test_parser.add_argument('test_files', nargs='*', help='test files to test')
 
     # Create the "test" sub-commands
     test_subparsers = parser_test.add_subparsers(title='Available sub-commands')
@@ -56,28 +85,18 @@ def _chef():
     parser_test_grammar = test_subparsers.add_parser('grammar', help='Test the Caramel grammar.')
     parser_test_grammar.set_defaults(func=chef.test.test_grammar)
     test_common(parser_test_grammar)
-    parser_test_grammar.add_argument('--interactive', '-i', help='run a test in interactive mode', action='store_true')
-    group_test_grammar_gui = parser_test_grammar.add_mutually_exclusive_group()
-    group_test_grammar_gui.add_argument('--gui', help='open a GUI when executing test', action='store_true')
-    group_test_grammar_gui.add_argument('--gui-on-failure', help='open a GUI on failed tests', action='store_true')
-    parser_test_grammar.add_argument('--all', help='run all tests', action='store_true')
-    parser_test_grammar.add_argument('test_files', nargs='*', help='test files to test')
 
     # Create the parser for the "test semantic" command
     parser_test_semantic = test_subparsers.add_parser('semantic', help='Test the Caramel semantic analysis.')
     parser_test_semantic.set_defaults(func=chef.test.test_semantic)
     test_common(parser_test_semantic)
-    parser_test_semantic.add_argument('--interactive', '-i', help='run a test in interactive mode', action='store_true')
-    group_test_semantic_gui = parser_test_semantic.add_mutually_exclusive_group()
-    group_test_semantic_gui.add_argument('--gui', help='open a GUI when executing test', action='store_true')
-    group_test_semantic_gui.add_argument('--gui-on-failure', help='open a GUI on failed tests', action='store_true')
-    parser_test_semantic.add_argument('--all', help='run all tests', action='store_true')
-    parser_test_semantic.add_argument('test_files', nargs='*', help='test files to test')
+    parser_test_semantic.add_argument('-d', '--debug', help='run Caramel as debug', action='store_true')
 
     # Create the parser for the "test all" command
     parser_test_all = test_subparsers.add_parser('all', help='Run all tests.')
     parser_test_all.set_defaults(func=chef.test.test_all)
     test_common(parser_test_all)
+    parser_test_all.add_argument('-d', '--debug', help='run Caramel as debug', action='store_true')
 
     # parse the command line and call the appropriate submodule
     args = parser.parse_args()

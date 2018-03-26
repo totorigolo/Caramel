@@ -1,14 +1,40 @@
-import datetime
+# coding: utf-8
+# MIT License
+#
+# Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 try:
     from termcolor import colored
 except ModuleNotFoundError:
     from sys import stderr
     print('You should install `termcolor` to have the colored console output.', file=stderr)
-
     # noinspection PyUnusedLocal
     def colored(text, *args, **kwargs):
         return text
+
+from chef.logger import trace, logger
+import subprocess
+import datetime
+import shlex
+import os
 
 PATHS = {
     'java-grammar': 'build/java-grammar',
@@ -40,3 +66,18 @@ INJECTED_TOKENS_SEPARATOR = '// InjectedTokens'
 
 def seconds_to_string(seconds: float):
     return str(datetime.timedelta(seconds=seconds))
+
+
+@trace
+def exec_(command: str):
+    subprocess.run(shlex.split(command))
+
+
+@trace
+def mkdir_and_cd(path: str):
+    if not os.path.exists(path):
+        os.mkdir(path)
+    elif os.path.isfile(path):
+        logger.fatal('{} is a file, but should be a directory. Aborting.'.format(path))
+        exit(1)
+    os.chdir(path)
