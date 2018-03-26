@@ -54,7 +54,7 @@ def _chef():
 
     # create the parser for the "build" command
     parser_build = subparsers.add_parser('build', help='Make the Chef cook some Caramel.')
-    parser_build.add_argument('-b', '--brew', help='brew the grammar file', action='store_true')
+    parser_build.add_argument('-w', '--brew', help='brew the grammar file', action='store_true')
     parser_build.add_argument('-g', '--grammar', help='build the grammar', action='store_true')
     parser_build.add_argument('-c', '--caramel', help='build the compiler', action='store_true')
     parser_build.add_argument('-d', '--debug', help='build as debug', action='store_true')
