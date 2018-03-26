@@ -43,8 +43,13 @@ SymbolTable::addVariableDeclaration(
         const std::shared_ptr<statements::declaration::Declaration> &declaration
 ) {
     using namespace Caramel::Exceptions;
-    if (isDefined(name)) {
-        throw SymbolAlreadyDefinedException(buildAlreadyDefinedErrorMessage(name));
+    if (isDefined(name)) {/*
+        throw SymbolAlreadyDefinedException(
+                buildAlreadyDefinedErrorMessage(name),
+                antlrContext,
+                getSymbol(name)->getDefinition(),
+                definition // pas bon, pas de definition ici
+        );*/
     } else if (isDeclared(name)) {
         throw SymbolAlreadyDeclaredError(
                 buildAlreadyDeclaredErrorMessage(name),
@@ -67,7 +72,12 @@ SymbolTable::addVariableDefinition(
 ) {
     using namespace Caramel::Exceptions;
     if (isDefined(name)) {
-        throw SymbolAlreadyDefinedException(buildAlreadyDefinedErrorMessage(name));
+        throw SymbolAlreadyDefinedException(
+                buildAlreadyDefinedErrorMessage(name),
+                antlrContext,
+                getSymbol(name)->getDefinition(),
+                definition
+        );
     } else if (isDeclared(name)) {
         Symbol::Ptr recordedSymbol = mSymbolMap[name];
         if (recordedSymbol->getSymbolType() != SymbolType::VariableSymbol) {
@@ -143,7 +153,12 @@ SymbolTable::addFunctionDefinition(
         const std::shared_ptr<statements::definition::Definition> &definition
 ) {
     if (isDefined(name)) {
-        throw Caramel::Exceptions::SymbolAlreadyDefinedException(buildAlreadyDefinedErrorMessage(name));
+        throw Caramel::Exceptions::SymbolAlreadyDefinedException(
+                buildAlreadyDefinedErrorMessage(name),
+                antlrContext,
+                getSymbol(name)->getDefinition(),
+                definition
+        );
     } else if (!isDeclared(name)) {
         mSymbolMap[name] = std::make_shared<FunctionSymbol>(name, returnType);
     }

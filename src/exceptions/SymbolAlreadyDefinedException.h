@@ -28,15 +28,62 @@
 
 namespace Caramel::Exceptions {
 
-class SymbolAlreadyDefinedException : public std::runtime_error {
+    class SymbolAlreadyDefinedException : public SemanticError {
+    public:
+        SymbolAlreadyDefinedException(std::string const &message,
+                                   antlr4::ParserRuleContext *antlrContext,
+                                   caramel::dataStructure::statements::definition::Definition::Ptr const &existingDefinition,
+                                   caramel::dataStructure::statements::definition::Definition::Ptr const &faultyDefinition)
+                : SemanticError(message),
+                  mAntlrContext{antlrContext},
+                  mExistingDefinition{existingDefinition},
+                  mFaultyDefinition{faultyDefinition} {
+        }
 
-public:
-    explicit SymbolAlreadyDefinedException(const std::string &__arg) : runtime_error(__arg) {}
+        void explain(SourceFileUtil sourceFileUtil) const override {
+            using namespace Colors;
 
-    explicit SymbolAlreadyDefinedException(const char * c) : runtime_error(c){}
+            // TODO: Create helper functions
+            const int LEFT_MARGIN = 4;
 
-    explicit SymbolAlreadyDefinedException(const std::runtime_error & ex) : runtime_error(ex){}
+            // Get shorter names for these
+            auto const &start = mAntlrContext->getStart();
+            auto const startLine = start->getLine();
+            auto const startColumn = int(start->getCharPositionInLine());
+            auto const &stop = mAntlrContext->getStop();
+            auto const stopColumn = int(stop->getCharPositionInLine());
 
-};
+            // TODO: Handle multi-line statements
+            if (start->getLine() != stop->getLine()) {
+                logger.warning() << "Errors are buggy for multi-line statements.";
+            }
 
-} // namespace Caramel::Exception
+            // Strip the left and right spaces
+            std::string line(sourceFileUtil.getLine(startLine));
+            size_t begin = line.find_first_not_of(' ');
+            size_t end = line.find_last_not_of(' ') + 1;
+            line = line.substr(begin, end - begin);
+
+            std::stringstream posInfoSS;
+            posInfoSS << startLine << ':' << startColumn;
+            std::string posInfo(posInfoSS.str());
+            auto posInfoLength = int(posInfo.length());
+
+            // Print the error
+            std::cerr << red << bold << "semantic error at " << posInfo << ": " << reset
+                      << what() << std::endl
+                      << posInfo << std::setfill(' ') << std::setw(LEFT_MARGIN) << ""
+                      << line << std::endl
+                      << std::setfill(' ') << std::setw(LEFT_MARGIN + posInfoLength + startColumn - int(begin)) << ""
+                      << "^"
+                      << std::setfill('~') << std::setw(stopColumn - startColumn) << ""
+                      << std::endl;
+        }
+
+    private:
+        antlr4::ParserRuleContext *mAntlrContext;
+        caramel::dataStructure::statements::definition::Definition::Ptr const &mExistingDefinition;
+        caramel::dataStructure::statements::definition::Definition::Ptr const &mFaultyDefinition;
+    };
+
+} // namespace Caramel::Exceptions
