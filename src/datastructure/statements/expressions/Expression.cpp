@@ -26,7 +26,8 @@
 
 namespace caramel::ast {
 
-Expression::Expression(antlr4::Token *startToken)
-        : Statement(startToken) {}
+Expression::Expression(antlr4::Token *startToken, StatementType type)
+        : Statement(startToken, type) {
+}
 
 } // namespace caramel::ast::expressions

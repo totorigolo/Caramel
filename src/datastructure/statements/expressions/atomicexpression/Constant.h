@@ -40,8 +40,8 @@ public:
     }
 
 public:
-    explicit Constant(antlrcpp::Any mValue, antlr4::Token *startToken);
     ~Constant() override = default;
+    explicit Constant(antlrcpp::Any mValue, antlr4::Token *startToken, StatementType type = StatementType::Constant);
 
 public:
     antlrcpp::Any getValue() override {

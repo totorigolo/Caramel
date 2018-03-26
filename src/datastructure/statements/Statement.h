@@ -43,6 +43,9 @@ enum class StatementType {
     Definition,
     VariableDefinition,
     FunctionDefinition,
+    Expression,
+    AtomicExpression,
+    Constant
 };
 
 class Statement {

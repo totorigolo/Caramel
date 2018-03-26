@@ -41,7 +41,8 @@ public:
     virtual antlrcpp::Any getValue() { return {}; };
 
 protected:
-    explicit Expression(antlr4::Token *startToken);
+    explicit Expression(antlr4::Token *startToken, StatementType type = StatementType::Expression);
+
 
 public:
     ~Expression() override  = default;

@@ -34,6 +34,7 @@
 #include "../datastructure/symboltable/ArraySymbol.h"
 #include "../datastructure/statements/declaration/ArrayDeclaration.h"
 #include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
+#include "../exceptions/ArraySizeNonConstantException.h"
 
 
 using namespace caramel::visitors;
@@ -146,7 +147,6 @@ AbstractSyntaxTreeVisitor::visitTypeParameter(CaramelParser::TypeParameterContex
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) {
 
-    // Symbols
     using namespace caramel::ast;
 
     logger.trace() << "Visiting variable declaration: " << ctx->getText();
@@ -332,6 +332,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
 // Return Statement::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitExpression(CaramelParser::ExpressionContext *ctx) {
     using namespace caramel::ast;
+    // TODO : change to expression
     return std::dynamic_pointer_cast<Statement>(visitChildren(ctx).as<Expression::Ptr>());
 }
 
@@ -423,6 +424,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
     if (nullptr != ctx->arrayDeclarationVoidInner()) {
         arraySymbol = visitArrayDeclarationVoidInner(ctx->arrayDeclarationVoidInner()).as<ArraySymbol::Ptr>();
 
+        //vector<Expression::Ptr> arrayBlock;
         long arraySize = visitArrayBlock(ctx->arrayBlock());
         arraySymbol->setSize(arraySize);
 
@@ -465,7 +467,9 @@ AbstractSyntaxTreeVisitor::visitArrayDeclarationVoidInner(CaramelParser::ArrayDe
 
 // Return long
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) {
-    return ctx->expression().size();
+    using namespace caramel::ast;
+    std::vector<Statement> statements;
+    return ctx->expression();
 }
 
 // Return Symbol::Ptr
@@ -476,9 +480,12 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParse
 
     auto typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
     std::string name = visitValidIdentifier(ctx->validIdentifier());
-    Constant::Ptr arraySize = visitArraySizeDeclaration(ctx->arraySizeDeclaration());
-
-    ArraySymbol::Ptr arraySymbol{std::make_shared<ArraySymbol>(name, typeSymbol, (long) (arraySize->getValue()))};
+    antlrcpp::Any arraySizeAny = visitArraySizeDeclaration(ctx->arraySizeDeclaration());
+    Constant::Ptr arraySize = std::dynamic_pointer_cast<Constant>(arraySizeAny.as<AtomicExpression::Ptr>());
+//    if (!arraySizeAny.is<Constant::Ptr>()) {
+//        throw Caramel::Exceptions::ArraySizeNonConstantException("Non constant expression not handled for array sizes.");
+//    }
+    ArraySymbol::Ptr arraySymbol = std::make_shared<ArraySymbol>(name, typeSymbol, arraySize->getValue().as<long long>());
 
     return arraySymbol;
 }

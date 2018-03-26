@@ -35,7 +35,7 @@ public:
     using WeakPtr = std::weak_ptr<AtomicExpression>;
 
 protected:
-    explicit AtomicExpression(antlr4::Token *startToken);
+    explicit AtomicExpression(antlr4::Token *startToken, StatementType type = StatementType::AtomicExpression);
 
 public:
     ~AtomicExpression() override = default;

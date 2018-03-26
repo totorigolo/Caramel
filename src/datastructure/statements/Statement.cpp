@@ -50,22 +50,17 @@ StatementType Statement::getType() const {
 
 std::ostream & operator<<(std::ostream &os, const StatementType &type) {
     switch (type) {
-        case StatementType::Unknown:
-            return os << "Unknown";
-        case StatementType::Declaration:
-            return os << "Declaration";
-        case StatementType::VariableDeclaration:
-            return os << "VariableDeclaration";
-        case StatementType::FunctionDeclaration:
-            return os << "FunctionDeclaration";
-        case StatementType::ArrayDeclaration:
-            return os << "ArrayDeclaration";
-        case StatementType::Definition:
-            return os << "Definition";
-        case StatementType::VariableDefinition:
-            return os << "VariableDefinition";
-        case StatementType::FunctionDefinition:
-            return os << "FunctionDefinition";
+        case StatementType::Unknown: return os << "Unknown";
+        case StatementType::Declaration: return os << "Declaration";
+        case StatementType::VariableDeclaration: return os << "VariableDeclaration";
+        case StatementType::FunctionDeclaration: return os << "FunctionDeclaration";
+        case StatementType::ArrayDeclaration: return os << "ArrayDeclaration";
+        case StatementType::Definition: return os << "Definition";
+        case StatementType::VariableDefinition: return os << "VariableDefinition";
+        case StatementType::FunctionDefinition: return os << "FunctionDefinition";
+        case StatementType::Expression: return os << "Expression";
+        case StatementType::AtomicExpression: return os << "AtomicExpression";
+        case StatementType::Constant: return os << "Constant";
     }
 }
 
