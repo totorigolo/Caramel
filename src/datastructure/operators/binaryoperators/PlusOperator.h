@@ -29,25 +29,24 @@
 #include <Common.h>
 #include "../BinaryOperator.h"
 
-namespace caramel::dataStructure::operators::binaryOperators {
+namespace caramel::ast {
 
 class PlusOperator : public BinaryOperator {
 public:
 
     using Ptr = std::shared_ptr<PlusOperator>;
+    using WeakPtr = std::weak_ptr<PlusOperator>;
 
-    static Ptr Create() {
-        return Ptr(new PlusOperator());
-    }
+public:
+    explicit PlusOperator() = default;
 
+public:
+    ~PlusOperator() override = default;
+
+public:
     std::shared_ptr<IR>
-    buildIR(std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression) override {
-        CARAMEL_UNUSED(leftExpression);
-        CARAMEL_UNUSED(rightExpression);
-        // TODO : Implement the IR generation which happens right here.
-        throw Caramel::Exceptions::NotImplementedException(__FILE__);
-    }
+    buildIR(std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+            std::shared_ptr<caramel::ast::Expression> const &rightExpression) override;
 
 };
 

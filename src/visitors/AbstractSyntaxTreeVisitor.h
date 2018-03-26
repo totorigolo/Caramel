@@ -41,7 +41,7 @@
 #include <stdexcept>
 #include <iostream>
 
-using namespace caramel::dataStructure;
+using namespace caramel::ast;
 
 namespace caramel::visitors {
 
@@ -58,35 +58,36 @@ public:
 public:
     antlrcpp::Any visitR(CaramelParser::RContext *ctx) override;
 
-    // Return vector<Statement::Ptr>
+    // Returns vector<Statement::Ptr>
     antlrcpp::Any visitStatements(CaramelParser::StatementsContext *ctx) override;
 
-    // Return vector<Statement::Ptr>
+    // Returns vector<Statement::Ptr>
     antlrcpp::Any visitBlock(CaramelParser::BlockContext *ctx) override;
 
-    // Return vector<Statement::Ptr>
+    // Returns vector<Statement::Ptr>
     antlrcpp::Any visitDeclarations(CaramelParser::DeclarationsContext *ctx) override;
 
-    // Return vector<Statement::Ptr>
+    // Returns vector<Statement::Ptr>
     antlrcpp::Any visitInstructions(CaramelParser::InstructionsContext *ctx) override;
 
-    // Return std::string
+    // Returns std::string
     antlrcpp::Any visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) override;
 
-    // Return SymbolType::Ptr (in a Symbol::Ptr)
+    // Returns SymbolType::Ptr (in a Symbol::Ptr)
     antlrcpp::Any visitTypeParameter(CaramelParser::TypeParameterContext *ctx) override;
 
-    // Return vector<Statement::Ptr>
+    // Returns vector<Statement::Ptr>
     antlrcpp::Any visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) override;
 
-    // Return vector<Statement::Ptr>
+    // Returns vector<Statement::Ptr>
     antlrcpp::Any visitVariableDefinition(CaramelParser::VariableDefinitionContext *ctx) override;
 
+    // Returns AtomicExpression::Ptr
     antlrcpp::Any visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) override;
 
     antlrcpp::Any visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) override;
 
-    // Return FunctionDefinition::Ptr
+    // Returns FunctionDefinition::Ptr
     antlrcpp::Any visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) override;
 
     antlrcpp::Any visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) override;
@@ -95,26 +96,30 @@ public:
 
     antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override;
 
-    // Return Expression::Ptr
+    // Returns Expression::Ptr
     antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
 
-    // Return Expression::Ptr
+    // Returns Expression::Ptr
     antlrcpp::Any visitExpression(CaramelParser::ExpressionContext *ctx) override;
 
-    // Return Constant::Ptr
+    // Returns AtomicExpression::Ptr
     antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
 
-    // Return Constant::Ptr
+    // Returns AtomicExpression::Ptr
     antlrcpp::Any visitCharConstant(CaramelParser::CharConstantContext *ctx) override;
 
+    // Returns ArrayDeclaration:PTR
     antlrcpp::Any visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) override;
 
+    // Returns Symbol::Ptr
     antlrcpp::Any visitArrayDeclarationVoidInner(CaramelParser::ArrayDeclarationVoidInnerContext *ctx) override;
 
+    // Returns Symbol::Ptr
     antlrcpp::Any visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) override;
 
     antlrcpp::Any visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) override;
 
+    // Returns AtomicExpression::Ptr
     antlrcpp::Any visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) override;
 
     antlrcpp::Any visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) override;
@@ -127,13 +132,13 @@ private:
 
     void popContext();
 
-    std::shared_ptr<caramel::dataStructure::context::Context> currentContext();
+    std::shared_ptr<caramel::ast::Context> currentContext();
 
 private:
-    std::stack<std::shared_ptr<caramel::dataStructure::context::Context>> mContextStack;
+    std::stack<std::shared_ptr<caramel::ast::Context>> mContextStack;
     SourceFileUtil mSourceFileUtil;
 
-    const std::shared_ptr<operators::binaryOperators::PlusOperator> mPlusOperator = std::make_shared<operators::binaryOperators::PlusOperator>();
+    const std::shared_ptr<caramel::ast::PlusOperator> mPlusOperator = std::make_shared<caramel::ast::PlusOperator>();
 };
 
 } // namespace Caramel::Visitors

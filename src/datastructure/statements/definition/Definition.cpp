@@ -25,6 +25,9 @@
 #include "Definition.h"
 
 
-caramel::dataStructure::statements::definition::Definition::Definition(antlr4::Token *startToken, StatementType type)
-        : Declaration(startToken, type) {
+namespace caramel::ast {
+
+Definition::Definition(antlr4::Token *startToken, StatementType type)
+        : Declaration(startToken, type) {}
+
 }

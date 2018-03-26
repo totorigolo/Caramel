@@ -27,13 +27,18 @@
 #include "Definition.h"
 
 
-namespace caramel::dataStructure::statements::definition {
+namespace caramel::ast::definition {
 
 class ArrayDefinition : public Definition {
 public:
     using Ptr = std::shared_ptr<ArrayDefinition>;
+    using WeakPtr = std::weak_ptr<ArrayDefinition>;
 
-    ArrayDefinition(antlr4::Token *startToken);
+public:
+
+    explicit ArrayDefinition(antlr4::Token *startToken);
+    ~ArrayDefinition() override = default;
+
 };
 
-} // namespace caramel::dataStructure::statements::definition
+} // namespace caramel::ast::definition

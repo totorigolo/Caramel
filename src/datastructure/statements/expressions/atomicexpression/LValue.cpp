@@ -25,10 +25,10 @@
 #include "LValue.h"
 
 
-namespace caramel::dataStructure::statements::expressions::atomicExpression {
+namespace caramel::ast::atomicExpression {
 
 LValue::LValue(antlr4::Token *startToken)
         : AtomicExpression(startToken) {
 }
 
-} // namespace caramel::dataStructure::statements::expressions::atomicExpression
+} // namespace caramel::ast::atomicExpression

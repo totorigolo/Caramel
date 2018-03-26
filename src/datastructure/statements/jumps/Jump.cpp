@@ -24,10 +24,10 @@
 
 #include "Jump.h"
 
-namespace caramel::dataStructure::statements::expressions::jumps {
+namespace caramel::ast {
 
 Jump::Jump(antlr4::Token *startToken)
         : Statement(startToken) {
 }
 
-} // namespace caramel::dataStructure::statements::expressions::jumps
+} // namespace caramel::ast::jumps

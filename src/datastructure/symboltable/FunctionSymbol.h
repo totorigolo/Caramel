@@ -28,46 +28,42 @@
 #include <vector>
 
 
-namespace caramel::dataStructure::symbolTable {
+namespace caramel::ast {
 
 class FunctionSymbol : public Symbol {
 public:
     using Ptr = std::shared_ptr<FunctionSymbol>;
     using WeakPtr = std::weak_ptr<FunctionSymbol>;
 
-    static std::shared_ptr<FunctionSymbol> Create(const std::string &mName, const PrimaryType::Ptr &mType) {
-        return std::make_shared<FunctionSymbol>(mName, mType);
-    }
-
 public:
     FunctionSymbol(
             const std::string &mName,
-            const std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> &mType
+            const std::shared_ptr<PrimaryType> &mType
     );
 
     ~FunctionSymbol() override = default;
 
     void onDeclaration(
-            const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
+            const std::shared_ptr<Declaration> &declaration
     ) override { Symbol::onDeclaration(declaration); };
 
     void onDefinition(
-            const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
+            const std::shared_ptr<Definition> &definition
     ) override { Symbol::onDefinition(definition); };
 
     void
     onUsage(
-            const std::shared_ptr<caramel::dataStructure::statements::Statement> &statement
+            const std::shared_ptr<Statement> &statement
     ) override { Symbol::onUsage(statement); };
 
-    std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> getNamedParameters() const;
+    std::vector<std::shared_ptr<Symbol>> getNamedParameters() const;
 
     void setParameters(
-            const std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> &namedParameters
+            const std::vector<std::shared_ptr<Symbol>> &namedParameters
     );
 
 private:
-    std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> mParameters;
+    std::vector<std::shared_ptr<Symbol>> mParameters;
 };
 
 } // namespace caramel::dataStructure::symbolTable

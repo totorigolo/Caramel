@@ -29,44 +29,30 @@
 #include "../expressions/Expression.h"
 
 
-namespace caramel::dataStructure::statements::controlblocks {
+namespace caramel::ast {
 
 class IfBlock : public ControlBlock {
 public:
 
     using Ptr = std::shared_ptr<IfBlock>;
-
-    explicit IfBlock(antlr4::Token *startToken);
-
-    static Ptr Create(antlr4::Token *startToken) {
-        return std::make_shared<IfBlock>(startToken);
-    }
+    using WeakPtr = std::weak_ptr<IfBlock>;
 
     IfBlock(
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &condition,
-            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &thenBlock,
-            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &elseBlock,
+            std::shared_ptr<caramel::ast::Expression> const &condition,
+            std::vector<std::shared_ptr<caramel::ast::Statement>> const &thenBlock,
+            std::vector<std::shared_ptr<caramel::ast::Statement>> const &elseBlock,
             antlr4::Token *startToken
     );
 
-    static Ptr Create(
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &condition,
-            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &thenBlock,
-            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &elseBlock,
-            antlr4::Token *startToken
-    ) {
-        return std::make_shared<IfBlock>(condition, thenBlock, elseBlock, startToken);
-    }
-
 private:
-    std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> mCondition;
+    std::shared_ptr<caramel::ast::Expression> mCondition;
     std::vector<
-            std::shared_ptr<caramel::dataStructure::statements::Statement>
+            std::shared_ptr<caramel::ast::Statement>
     > mThenBlock;
     std::vector<
-            std::shared_ptr<caramel::dataStructure::statements::Statement>
+            std::shared_ptr<caramel::ast::Statement>
     > mElseBlock;
 
 };
 
-} // namespace caramel::dataStructure::statements::controlblocks
+} // namespace caramel::ast::controlblocks

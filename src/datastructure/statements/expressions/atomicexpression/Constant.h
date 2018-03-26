@@ -28,18 +28,22 @@
 #include "../../../../Any.h"
 
 
-namespace caramel::dataStructure::statements::expressions::atomicExpression {
+namespace caramel::ast {
 
 class Constant : public AtomicExpression {
 public:
     using Ptr = std::shared_ptr<Constant>;
+    using WeakPtr = std::weak_ptr<Constant>;
 
-    explicit Constant(antlrcpp::Any mValue, antlr4::Token *startToken);
-
-    static Ptr Create(antlrcpp::Any mValue, antlr4::Token *startToken) {
-        return Ptr(new Constant(std::forward<antlrcpp::Any>(mValue), startToken));
+    static Ptr defaultConstant(antlr4::Token *startToken) {
+        return std::make_shared<Constant>(0, startToken);
     }
 
+public:
+    ~Constant() override = default;
+    explicit Constant(antlrcpp::Any mValue, antlr4::Token *startToken, StatementType type = StatementType::Constant);
+
+public:
     antlrcpp::Any getValue() override {
         return mValue;
     }
@@ -48,4 +52,4 @@ private:
     antlrcpp::Any mValue;
 };
 
-} // namespace caramel::dataStructure::statements::expression::atomicExpression
+} // namespace caramel::ast::atomicExpression

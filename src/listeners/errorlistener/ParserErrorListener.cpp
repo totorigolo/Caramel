@@ -33,7 +33,7 @@ void ParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::To
         if(lastErrorLine == -1) {
             lastErrorLine = 0;
         }
-        using namespace Caramel::Colors;
+        using namespace caramel::colors;
         std::cerr << "Error at line " << line << ':' << charPositionInLine << std::endl;
         std::string textLine = sourceStream.getLine(line, lastErrorLine, false);
         std::cerr << red << textLine << reset << std::endl;

@@ -27,9 +27,9 @@
 #include "Symbol.h"
 #include "TypeSymbol.h"
 
-namespace caramel::dataStructure::symbolTable {
+namespace caramel::ast {
 
-class VariableSymbol : public caramel::dataStructure::symbolTable::Symbol {
+class VariableSymbol : public caramel::ast::Symbol {
 public:
     using Ptr = std::shared_ptr<VariableSymbol>;
     using WeakPtr = std::weak_ptr<VariableSymbol>;
@@ -60,15 +60,15 @@ public:
     ~VariableSymbol() override = default;
 
     void onDeclaration(
-            const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
+            const std::shared_ptr<caramel::ast::Declaration> &declaration
     ) override { Symbol::onDeclaration(declaration); };
 
     void onDefinition(
-            const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
+            const std::shared_ptr<caramel::ast::Definition> &definition
     ) override { Symbol::onDefinition(definition); };
 
     void onUsage(
-            const std::shared_ptr<caramel::dataStructure::statements::Statement> &statement
+            const std::shared_ptr<caramel::ast::Statement> &statement
     ) override { Symbol::onUsage(statement); };
 
 

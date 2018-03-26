@@ -27,13 +27,17 @@
 #include <memory>
 #include "../statements/IR.h"
 
-namespace caramel::dataStructure::operators {
+namespace caramel::ast {
 
 class Operator {
 public:
     using Ptr = std::shared_ptr<Operator>;
+    using WeakPtr = std::shared_ptr<Operator>;
 
+protected:
     Operator() = default;
+
+public:
     virtual ~Operator() = default;
 };
 

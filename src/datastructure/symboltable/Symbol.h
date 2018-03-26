@@ -34,7 +34,7 @@
 #include <memory>
 
 
-namespace caramel::dataStructure::symbolTable {
+namespace caramel::ast {
 
 enum class SymbolType {
     FunctionSymbol,
@@ -50,19 +50,19 @@ public:
 
     virtual ~Symbol() = default;
 
-    std::vector<std::weak_ptr<caramel::dataStructure::statements::Statement>> getOccurrences();
+    std::vector<std::weak_ptr<caramel::ast::Statement>> getOccurrences();
 
     bool isDeclared();
     bool isDefined();
 
-    std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> getDeclaration();
-    std::shared_ptr<caramel::dataStructure::statements::definition::Definition> getDefinition();
+    std::shared_ptr<caramel::ast::Declaration> getDeclaration();
+    std::shared_ptr<caramel::ast::Definition> getDefinition();
 
-    std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> getType() const;
+    std::shared_ptr<caramel::ast::PrimaryType> getType() const;
 
-    void addDeclaration(const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration);
-    void addDefinition(const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition);
-    void addUsage(const std::shared_ptr<caramel::dataStructure::statements::Statement> &statement);
+    void addDeclaration(const std::shared_ptr<caramel::ast::Declaration> &declaration);
+    void addDefinition(const std::shared_ptr<caramel::ast::Definition> &definition);
+    void addUsage(const std::shared_ptr<caramel::ast::Statement> &statement);
 
     SymbolType getSymbolType() const;
     std::string getSymbolTypeAsString() const;
@@ -72,29 +72,29 @@ public:
 protected:
     Symbol(
             std::string mName,
-            caramel::dataStructure::symbolTable::PrimaryType::Ptr mType,
-            caramel::dataStructure::symbolTable::SymbolType symbolType
+            std::shared_ptr<PrimaryType> mType,
+            SymbolType symbolType
     );
 
     virtual void onDeclaration(
-            const std::shared_ptr<caramel::dataStructure::statements::declaration::Declaration> &declaration
+            const std::shared_ptr<caramel::ast::Declaration> &declaration
     );
     virtual void onDefinition(
-            const std::shared_ptr<caramel::dataStructure::statements::definition::Definition> &definition
+            const std::shared_ptr<caramel::ast::Definition> &definition
     );
     virtual void onUsage(
-            const std::shared_ptr<caramel::dataStructure::statements::Statement> &statement
+            const std::shared_ptr<caramel::ast::Statement> &statement
     );
 
 protected:
-    std::weak_ptr<caramel::dataStructure::statements::declaration::Declaration> mDeclaration;
-    std::weak_ptr<caramel::dataStructure::statements::definition::Definition> mDefinition;
-    std::vector<std::weak_ptr<caramel::dataStructure::statements::Statement>> mOccurrences;
+    std::weak_ptr<caramel::ast::Declaration> mDeclaration;
+    std::weak_ptr<caramel::ast::Definition> mDefinition;
+    std::vector<std::weak_ptr<caramel::ast::Statement>> mOccurrences;
 
 private:
     std::string mName;
-    caramel::dataStructure::symbolTable::PrimaryType::Ptr mType;
-    caramel::dataStructure::symbolTable::SymbolType mSymbolType;
+    PrimaryType::Ptr mType;
+    SymbolType mSymbolType;
 };
 
 } // namespace caramel::dataStructure::symbolTable

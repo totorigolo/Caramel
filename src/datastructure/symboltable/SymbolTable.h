@@ -38,11 +38,12 @@
 #include <memory>
 
 
-namespace caramel::dataStructure::symbolTable {
+namespace caramel::ast {
 
 class SymbolTable {
 public:
     using Ptr = std::shared_ptr<SymbolTable>;
+    using WeakPtr = std::weak_ptr<SymbolTable>;
 
     static std::shared_ptr<SymbolTable> Create() {
         return std::make_shared<SymbolTable>();
@@ -58,57 +59,57 @@ public:
 
     void addVariableDeclaration(
             antlr4::ParserRuleContext *antlrContext,
-            std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &primaryType,
+            std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
             std::string const &name,
-            const std::shared_ptr<statements::declaration::Declaration> &declaration
+            const std::shared_ptr<Declaration> &declaration
     );
 
     void addVariableDefinition(
             antlr4::ParserRuleContext *antlrContext,
-            std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &primaryType,
+            std::shared_ptr<PrimaryType> const &primaryType,
             std::string const &name,
-            const std::shared_ptr<statements::definition::Definition> &definition
+            const std::shared_ptr<Definition> &definition
     );
 
     void addVariableUsage(
             antlr4::ParserRuleContext *antlrContext,
             std::string const &name,
-            const std::shared_ptr<statements::Statement> &expression
+            const std::shared_ptr<Statement> &expression
     );
 
     void addFunctionDeclaration(
             antlr4::ParserRuleContext *antlrContext,
-            std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &returnType,
+            std::shared_ptr<caramel::ast::PrimaryType> const &returnType,
             std::string const &name,
-            std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> namedParameters,
-            const std::shared_ptr<statements::declaration::Declaration> &declaration
+            std::vector<std::shared_ptr<caramel::ast::Symbol>> namedParameters,
+            const std::shared_ptr<Declaration> &declaration
     );
 
     FunctionSymbol::Ptr addFunctionDefinition(
             antlr4::ParserRuleContext *antlrContext,
-            std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &returnType,
+            std::shared_ptr<caramel::ast::PrimaryType> const &returnType,
             std::string const &name,
-            std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> namedParameters,
-            const std::shared_ptr<statements::definition::Definition> &definition
+            std::vector<std::shared_ptr<caramel::ast::Symbol>> namedParameters,
+            const std::shared_ptr<Definition> &definition
     );
 
     void addFunctionCall(
             antlr4::ParserRuleContext *antlrContext,
             std::string const &name,
-            std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> const &valueParameters,
-            const std::shared_ptr<statements::Statement> &statement
+            std::vector<std::shared_ptr<caramel::ast::Symbol>> const &valueParameters,
+            const std::shared_ptr<Statement> &statement
     );
 
     void addPrimaryType(
-            std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &primaryType,
+            std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
             std::string const &name
     );
 
     void addType(
             antlr4::ParserRuleContext *antlrContext,
-            std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &primaryType,
+            std::shared_ptr<PrimaryType> const &primaryType,
             std::string const &name,
-            std::weak_ptr<caramel::dataStructure::statements::definition::Definition> const &definition
+            std::weak_ptr<Definition> const &definition
     );
 
     bool hasSymbol(std::string const &name);
@@ -137,7 +138,7 @@ private:
 
     std::string buildMismatchSymbolTypeErrorMessage(std::string const &variableName, SymbolType requiredSymbolType);
 
-    std::string buildMismatchTypeErrorMessage(std::string const &variableName, std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> const &requiredType);
+    std::string buildMismatchTypeErrorMessage(std::string const &variableName, std::shared_ptr<PrimaryType> const &requiredType);
 
     std::string buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType);
 

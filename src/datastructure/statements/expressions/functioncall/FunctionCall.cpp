@@ -24,10 +24,10 @@
 
 #include "FunctionCall.h"
 
-namespace caramel::dataStructure::statements::expressions::functionCall {
+namespace caramel::ast::functionCall {
 
 FunctionCall::FunctionCall(antlr4::Token *startToken)
         : Expression(startToken) {
 }
 
-} // namespace caramel::dataStructure::statements::expression
+} // namespace caramel::ast::expression

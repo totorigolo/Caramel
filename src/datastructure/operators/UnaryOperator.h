@@ -27,17 +27,22 @@
 #include "Operator.h"
 #include "../statements/expressions/Expression.h"
 
-namespace caramel::dataStructure::operators {
+namespace caramel::ast {
 
 class UnaryOperator : public Operator {
 public:
     using Ptr = std::shared_ptr<UnaryOperator>;
+    using WeakPtr = std::weak_ptr<UnaryOperator>;
 
+protected:
     explicit UnaryOperator() = default;
+
+public:
     ~UnaryOperator() override = default;
 
-    virtual std::shared_ptr<caramel::dataStructure::IR> buildIR(
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &innerEpxression
+public:
+    virtual std::shared_ptr<caramel::ast::IR> buildIR(
+            std::shared_ptr<caramel::ast::Expression> const &innerEpxression
     ) = 0;
 };
 

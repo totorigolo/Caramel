@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-namespace Caramel::Colors {
+namespace caramel::colors {
 
 #define DEFINE_COLOR(name, special_str)        \
 inline std::ostream &name(std::ostream &os) {  \

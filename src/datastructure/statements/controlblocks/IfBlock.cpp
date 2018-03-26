@@ -25,11 +25,15 @@
 #include "IfBlock.h"
 
 
-caramel::dataStructure::statements::controlblocks::IfBlock::IfBlock(antlr4::Token *startToken)
-        : ControlBlock(startToken) {}
+namespace caramel::ast {
 
-caramel::dataStructure::statements::controlblocks::IfBlock::IfBlock(
-        std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &condition,
-        std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &thenBlock,
-        std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> const &elseBlock,
-        antlr4::Token *startToken) : ControlBlock(startToken), mCondition(condition), mThenBlock(thenBlock), mElseBlock(elseBlock) {}
+IfBlock::IfBlock(
+        std::shared_ptr<caramel::ast::Expression> const
+        &condition,
+        std::vector<std::shared_ptr<caramel::ast::Statement>> const &thenBlock,
+        std::vector<std::shared_ptr<caramel::ast::Statement>> const
+        &elseBlock,
+        antlr4::Token *startToken
+) : ControlBlock(startToken), mCondition(condition), mThenBlock(thenBlock), mElseBlock(elseBlock) {}
+
+}

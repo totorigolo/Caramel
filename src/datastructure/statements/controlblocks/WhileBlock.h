@@ -28,32 +28,25 @@
 #include "../expressions/Expression.h"
 
 
-namespace caramel::dataStructure::statements::controlblocks {
+namespace caramel::ast {
 
 class WhileBlock : public ControlBlock {
 public:
     using Ptr = std::shared_ptr<WhileBlock>;
-
-    WhileBlock(antlr4::Token *startToken);
+    using WeakPtr = std::weak_ptr<WhileBlock>;
 
     WhileBlock(
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> condition,
-            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> block
+            std::shared_ptr<caramel::ast::Expression> condition,
+            std::vector<std::shared_ptr<caramel::ast::Statement>> block,
+            antlr4::Token *token
     );
 
-    static Ptr Create(
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> condition,
-            std::vector<std::shared_ptr<caramel::dataStructure::statements::Statement>> block
-    ) {
-        return std::make_shared<WhileBlock>(condition, block);
-    }
-
 private:
-    std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> mCondition;
+    std::shared_ptr<caramel::ast::Expression> mCondition;
     std::vector<
-            std::shared_ptr<caramel::dataStructure::statements::Statement>
+            std::shared_ptr<caramel::ast::Statement>
     > mBlock;
 
 };
 
-} // namespace caramel::dataStructure::statements::controlblocks
+} // namespace caramel::ast::controlblocks

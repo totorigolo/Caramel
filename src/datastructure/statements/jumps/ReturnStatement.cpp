@@ -23,12 +23,18 @@
 */
 
 #include "ReturnStatement.h"
+#include "../expressions/atomicexpression/Constant.h"
 
 
-namespace caramel::dataStructure::statements::expressions::jumps {
+namespace caramel::ast {
 
-ReturnStatement::ReturnStatement(antlr4::Token *startToken)
-        : Jump(startToken) {
-}
+ReturnStatement::ReturnStatement(
+        antlr4::Token *startToken
+) : Jump(startToken), mExpression{Constant::defaultConstant(startToken)} {}
 
-} // namespace caramel::dataStructure::statements::expressions::jumps
+ReturnStatement::ReturnStatement(
+        std::shared_ptr<Expression> expression,
+        antlr4::Token *startToken
+) : Jump(startToken), mExpression{expression} {}
+
+} // namespace caramel::ast::jumps

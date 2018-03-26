@@ -60,7 +60,7 @@ Logger::Trace Logger::trace() {
 }
 
 void Logger::Fatal::show() {
-    using namespace Caramel::Colors;
+    using namespace caramel::colors;
     auto message = mLoggedStream.str();
     if (mLogger.getLevel() >= FATAL && !message.empty()) {
         std::cerr << red << bold << "[FATAL]" << reset << ' '
@@ -70,7 +70,7 @@ void Logger::Fatal::show() {
 }
 
 void Logger::Warning::show() {
-    using namespace Caramel::Colors;
+    using namespace caramel::colors;
     auto message = mLoggedStream.str();
     if (mLogger.getLevel() >= WARN && !message.empty()) {
         std::cerr << yellow << bold << "[WARNING]" << reset << ' '
@@ -80,7 +80,7 @@ void Logger::Warning::show() {
 }
 
 void Logger::Info::show() {
-    using namespace Caramel::Colors;
+    using namespace caramel::colors;
     auto message = mLoggedStream.str();
     if (mLogger.getLevel() >= INFO && !message.empty()) {
         std::cerr << blue << bold << "[INFO]" << reset << ' '
@@ -90,7 +90,7 @@ void Logger::Info::show() {
 }
 
 void Logger::Debug::show() {
-    using namespace Caramel::Colors;
+    using namespace caramel::colors;
     auto message = mLoggedStream.str();
     if (mLogger.getLevel() >= DEBUG && !message.empty()) {
         std::cerr << cyan << bold << "[DEBUG]" << reset << ' '
@@ -100,7 +100,7 @@ void Logger::Debug::show() {
 }
 
 void Logger::Trace::show() {
-    using namespace Caramel::Colors;
+    using namespace caramel::colors;
     auto message = mLoggedStream.str();
     if (mLogger.getLevel() >= TRACE && !message.empty()) {
         std::cerr << magenta << bold << "[TRACE]" << reset << ' '

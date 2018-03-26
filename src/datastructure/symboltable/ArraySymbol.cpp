@@ -4,7 +4,7 @@
 
 #include "ArraySymbol.h"
 
-namespace caramel::dataStructure::symbolTable {
+namespace caramel::ast {
 
 ArraySymbol::ArraySymbol(
         const std::string &mName,

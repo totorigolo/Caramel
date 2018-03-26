@@ -26,11 +26,16 @@
 
 #include <memory>
 
-namespace caramel::dataStructure {
+namespace caramel::ast {
 
 class IR {
 public:
     using Ptr = std::shared_ptr<IR>;
+    using WeakPt = std::weak_ptr<IR>;
+
+protected:
+    explicit IR() = default;
+    virtual ~IR() = default;
 
 };
 

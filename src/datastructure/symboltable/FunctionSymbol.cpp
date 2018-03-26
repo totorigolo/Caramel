@@ -25,26 +25,28 @@
 #include "FunctionSymbol.h"
 
 
-caramel::dataStructure::symbolTable::FunctionSymbol::FunctionSymbol(
+namespace caramel::ast {
+
+FunctionSymbol::FunctionSymbol(
         const std::string &mName,
-        const std::shared_ptr<caramel::dataStructure::symbolTable::PrimaryType> &mType
-)
-        : Symbol(mName, mType, SymbolType::FunctionSymbol),
-          mParameters() {
+        const std::shared_ptr<caramel::ast::PrimaryType> &mType
+) : Symbol(mName, mType, SymbolType::FunctionSymbol),
+    mParameters() {
 }
 
-std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>>
-caramel::dataStructure::symbolTable::FunctionSymbol::getNamedParameters() const {
+std::vector<std::shared_ptr<Symbol>>
+FunctionSymbol::getNamedParameters() const {
     return mParameters;
 }
 
-void caramel::dataStructure::symbolTable::FunctionSymbol::setParameters(
-        const std::vector<std::shared_ptr<caramel::dataStructure::symbolTable::Symbol>> &namedParameters
+void FunctionSymbol::setParameters(
+        const std::vector<std::shared_ptr<caramel::ast::Symbol>> &namedParameters
 ) {
     mParameters.clear();
-    for(const auto &parameter : namedParameters) {
+    for (const auto &parameter : namedParameters) {
         mParameters.push_back(parameter);
     }
 }
 
+} // namespace caramel::ast
 

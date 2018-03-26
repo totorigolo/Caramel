@@ -28,41 +28,30 @@
 #include "../../../operators/BinaryOperator.h"
 
 
-namespace caramel::dataStructure::statements::expressions::binaryExpression {
+namespace caramel::ast {
 
-class BinaryExpression : public caramel::dataStructure::statements::expressions::Expression {
+class BinaryExpression : public caramel::ast::Expression {
 public:
     using Ptr = std::shared_ptr<BinaryExpression>;
-
-    explicit BinaryExpression(antlr4::Token *startToken);
-    static Ptr Create(antlr4::Token *startToken) {
-        return std::make_shared<BinaryExpression>(startToken);
-    }
+    using WeakPtr = std::weak_ptr<BinaryExpression>;
 
     BinaryExpression(
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
-            std::shared_ptr<caramel::dataStructure::operators::BinaryOperator> const &binaryOperator,
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression,
+            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+            std::shared_ptr<caramel::ast::BinaryOperator> const &binaryOperator,
+            std::shared_ptr<caramel::ast::Expression> const &rightExpression,
             antlr4::Token *startToken
     );
-    static Ptr Create(
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &leftExpression,
-            std::shared_ptr<caramel::dataStructure::operators::BinaryOperator> const &binaryOperator,
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> const &rightExpression,
-            antlr4::Token *startToken
-    ) {
-        return std::make_shared<BinaryExpression>(leftExpression, binaryOperator, rightExpression, startToken);
-    }
 
+    ~BinaryExpression() override = default;
 
 public:
     std::shared_ptr<IR> getIR() override;
 
 private:
-    std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> mLeftExpression;
-    std::shared_ptr<caramel::dataStructure::operators::BinaryOperator> mBinaryOperator;
-    std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> mRightExpression;
+    std::shared_ptr<caramel::ast::Expression> mLeftExpression;
+    std::shared_ptr<caramel::ast::BinaryOperator> mBinaryOperator;
+    std::shared_ptr<caramel::ast::Expression> mRightExpression;
 
 };
 
-} // namespace caramel::dataStructure::expression::binaryExpression
+} // namespace caramel::ast::binaryExpression

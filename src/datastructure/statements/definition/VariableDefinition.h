@@ -26,48 +26,34 @@
 #include "Definition.h"
 #include "../expressions/Expression.h"
 
-namespace caramel::dataStructure::statements::definition {
+namespace caramel::ast {
 
-class VariableDefinition : public caramel::dataStructure::statements::definition::Definition {
+class VariableDefinition : public Definition {
 public:
     using Ptr = std::shared_ptr<VariableDefinition>;
 
     VariableDefinition(
-            std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
+            std::shared_ptr<caramel::ast::VariableSymbol> symbol,
             antlr4::Token *startToken
     );
-
-    static Ptr Create(
-            std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
-            antlr4::Token *startToken
-    ) {
-        // Fixme : replace nullptr par numeric constant = 0
-        return std::make_shared<VariableDefinition>(symbol, startToken);
-    }
 
     VariableDefinition(
-            std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> initializer,
+            std::shared_ptr<caramel::ast::VariableSymbol> symbol,
+            std::shared_ptr<caramel::ast::Expression> initializer,
             antlr4::Token *startToken
     );
 
-    static Ptr Create(
-            std::shared_ptr<caramel::dataStructure::symbolTable::VariableSymbol> symbol,
-            std::shared_ptr<caramel::dataStructure::statements::expressions::Expression> initializer,
-            antlr4::Token *startToken
-    ) {
-        return std::make_shared<VariableDefinition>(symbol, initializer, startToken);
-    }
+    ~VariableDefinition() override = default;
 
 public:
-    std::weak_ptr<caramel::dataStructure::symbolTable::Symbol> getSymbol() override {
+    std::weak_ptr<caramel::ast::Symbol> getSymbol() override {
         throw std::runtime_error("Cannot return a valid symbol");
     };
-    std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> getVariableSymbol();
+    std::weak_ptr<VariableSymbol> getVariableSymbol();
 
 private:
-    std::weak_ptr<caramel::dataStructure::symbolTable::VariableSymbol> mSymbol;
-    std::weak_ptr<caramel::dataStructure::statements::expressions::Expression> mInitializer;
+    std::weak_ptr<caramel::ast::VariableSymbol> mSymbol;
+    std::weak_ptr<caramel::ast::Expression> mInitializer;
 };
 
-} // namespace caramel::dataStructure::statements::definition
+} // namespace caramel::ast::definition

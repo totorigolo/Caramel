@@ -24,10 +24,15 @@
 
 #include "Identifier.h"
 
-namespace caramel::dataStructure::statements::expressions::atomicExpression {
+namespace caramel::ast::atomicExpression {
 
-Identifier::Identifier(antlr4::Token *startToken)
-        : LValue(startToken) {
+Identifier::Identifier(
+        std::shared_ptr<caramel::ast::Symbol> symbol,
+        antlr4::Token *startToken
+) : LValue(startToken), mSymbol{symbol} {}
+
+std::shared_ptr<caramel::ast::Symbol> Identifier::getSymbol() {
+    return mSymbol;
 }
 
-} // namespace caramel::dataStructure::statements::expressions::atomicExpression
+} // namespace caramel::ast::atomicExpression

@@ -22,12 +22,16 @@
  * SOFTWARE.
 */
 
-#include "ArrayDefinition.h"
+#include "PlusOperator.h"
 
-namespace caramel::ast::definition {
 
-ArrayDefinition::ArrayDefinition(antlr4::Token *startToken)
-        : Definition(startToken) {
+std::shared_ptr<caramel::ast::IR> caramel::ast::PlusOperator::buildIR(
+        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+        std::shared_ptr<caramel::ast::Expression> const &rightExpression) {
+
+    CARAMEL_UNUSED(leftExpression);
+    CARAMEL_UNUSED(rightExpression);
+    // TODO : Implement the IR generation which happens right here.
+    throw Caramel::Exceptions::NotImplementedException(__FILE__);
+
 }
-
-} // namespace caramel::ast::definition

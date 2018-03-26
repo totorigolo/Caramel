@@ -25,15 +25,25 @@
 #pragma once
 
 #include "Jump.h"
+#include "../expressions/Expression.h"
 
 
-namespace caramel::dataStructure::statements::expressions::jumps{
+namespace caramel::ast {
 
 class ReturnStatement : public Jump {
 public:
     using Ptr = std::shared_ptr<ReturnStatement>;
+    using WeakPtr = std::weak_ptr<ReturnStatement>;
 
-    ReturnStatement(antlr4::Token *startToken);
+public:
+    explicit ReturnStatement(antlr4::Token *startToken);
+    explicit ReturnStatement(std::shared_ptr<Expression> expression, antlr4::Token *startToken);
+
+    ~ReturnStatement() override = default;
+
+private:
+    std::shared_ptr<caramel::ast::Expression> mExpression;
+
 };
 
-} // namespace caramel::dataStructure::statements::expressions::jumps
+} // namespace caramel::ast::jumps

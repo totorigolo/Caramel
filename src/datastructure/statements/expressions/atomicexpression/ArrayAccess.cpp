@@ -24,10 +24,14 @@
 
 #include "ArrayAccess.h"
 
-namespace caramel::dataStructure::statements::expressions::atomicExpression {
+namespace caramel::ast::atomicExpression {
 
-ArrayAccess::ArrayAccess(antlr4::Token *startToken)
-        : LValue(startToken) {
-}
 
-} // namespace caramel::dataStructure::statements::expressions::atomicExpression
+ArrayAccess::ArrayAccess(
+        caramel::ast::Symbol symbol,
+        caramel::ast::Expression index,
+        antlr4::Token *startToken
+) : LValue(startToken), mSymbol{symbol}, mIndex{index} {}
+
+
+} // namespace caramel::ast::atomicExpression

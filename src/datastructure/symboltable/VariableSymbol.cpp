@@ -24,7 +24,7 @@
 
 #include "VariableSymbol.h"
 
-namespace caramel::dataStructure::symbolTable {
+namespace caramel::ast {
 
 VariableSymbol::VariableSymbol(
         const std::string &mName,

@@ -27,13 +27,17 @@
 #include "../Expression.h"
 
 
-namespace caramel::dataStructure::statements::expressions::functionCall {
+namespace caramel::ast::functionCall {
 
 class FunctionCall : public Expression {
 public:
     using Ptr = std::shared_ptr<FunctionCall>;
+    using WeakPtr = std::shared_ptr<FunctionCall>;
 
-    FunctionCall(antlr4::Token *startToken);
+public:
+    explicit FunctionCall(antlr4::Token *startToken);
+    ~FunctionCall() override = default;
+
 };
 
-} // namespace caramel::dataStructure::statements::expressions::functionCall
+} // namespace caramel::ast::functionCall
