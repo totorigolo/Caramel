@@ -250,21 +250,32 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) {
     logger.trace() << "Visiting function definition: " << ctx->getText() << ' ' << ctx->getStart();
 
-    pushNewContext();
+
 
     using namespace caramel::dataStructure::symbolTable;
     using caramel::dataStructure::statements::Statement;
     using caramel::dataStructure::statements::definition::FunctionDefinition;
+    using caramel::dataStructure::context::Context;
 
-    auto innerCtx = ctx->functionDeclarationInner();
+    Context::Ptr parentContext = currentContext();
+    pushNewContext();
+    Context::Ptr functionContext = currentContext();
+
+    CaramelParser::FunctionDeclarationInnerContext *innerCtx = ctx->functionDeclarationInner();
 
     PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
     std::string name = visitValidIdentifier(innerCtx->validIdentifier());
     std::vector<Symbol::Ptr> params = visitFunctionArguments(innerCtx->functionArguments());
 
-    FunctionDefinition::Ptr functionDefinition = std::make_shared<FunctionDefinition>(currentContext(),ctx->start);
-    FunctionSymbol::Ptr functionSymbol = currentContext()->getSymbolTable()->addFunctionDefinition(
-            ctx, returnType, name, params, functionDefinition);
+    FunctionDefinition::Ptr functionDefinition = std::make_shared<FunctionDefinition>(functionContext, ctx->start);
+    FunctionSymbol::Ptr functionSymbol = functionContext->getSymbolTable()->addFunctionDefinition(
+            ctx, returnType, name, params, functionDefinition
+    );
+
+    parentContext->getSymbolTable()->addFunctionDefinition(
+            ctx, returnType, name, params, functionDefinition
+    );
+
     functionDefinition->setSymbol(functionSymbol);
 
     // Visit the function's block, which adds inner statements into context

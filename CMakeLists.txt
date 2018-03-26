@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.8)
 
 #### Basic project settings
 # Project name
-project(Caramel-frontend)
+project(Caramel)
 
 # Version numbers
 set(VERSION_MAJOR 0)
@@ -54,7 +54,7 @@ file(GLOB_RECURSE SOURCE_FILES
         "src/*.h"
         )
 
-add_executable(Caramel_frontend ${SOURCE_FILES})
+add_executable(Caramel ${SOURCE_FILES})
 
 # Check if Chef has been invoked before
 if(NOT EXISTS "${CMAKE_SOURCE_DIR}/build/cpp-grammar")
@@ -62,12 +62,12 @@ if(NOT EXISTS "${CMAKE_SOURCE_DIR}/build/cpp-grammar")
 endif()
 
 # For Grammar library and Caramel, set include directories. Caramel should have Grammar headers included.
-target_include_directories(Caramel_frontend SYSTEM PRIVATE ${PROJECT_LIBRARY_DIR}/antlr4-runtime-headers)
-target_include_directories(Caramel_frontend PRIVATE ${CMAKE_SOURCE_DIR}/build/cpp-grammar)
+target_include_directories(Caramel SYSTEM PRIVATE ${PROJECT_LIBRARY_DIR}/antlr4-runtime-headers)
+target_include_directories(Caramel PRIVATE ${CMAKE_SOURCE_DIR}/build/cpp-grammar)
 
 # Add the tclap library.
-target_include_directories(Caramel_frontend SYSTEM PRIVATE ${PROJECT_LIBRARY_DIR}/tclap/include)
+target_include_directories(Caramel SYSTEM PRIVATE ${PROJECT_LIBRARY_DIR}/tclap/include)
 
 # Link Caramel
-target_link_libraries(Caramel_frontend ${ANTLR_RUNTIME})
-target_link_libraries(Caramel_frontend Grammar)
+target_link_libraries(Caramel ${ANTLR_RUNTIME})
+target_link_libraries(Caramel Grammar)
