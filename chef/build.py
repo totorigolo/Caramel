@@ -1,8 +1,8 @@
-from tools.logger import logger
-from tools.logger import trace
-from tools import seconds_to_string
-from tools import COMMANDS, PATHS, INJECTED_TOKENS_SEPARATOR
-from termcolor import colored
+from chef.logger import logger
+from chef.logger import trace
+from chef import seconds_to_string
+from chef import COMMANDS, PATHS, INJECTED_TOKENS_SEPARATOR
+from chef import colored
 from time import time
 import subprocess
 import shlex

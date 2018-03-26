@@ -1,5 +1,14 @@
 import datetime
 
+try:
+    from termcolor import colored
+except ModuleNotFoundError:
+    from sys import stderr
+    print('You should install `termcolor` to have the colored console output.', file=stderr)
+
+    # noinspection PyUnusedLocal
+    def colored(text, *args, **kwargs):
+        return text
 
 PATHS = {
     'java-grammar': 'build/java-grammar',

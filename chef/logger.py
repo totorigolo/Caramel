@@ -1,4 +1,4 @@
-from termcolor import colored
+from chef import colored
 from enum import IntEnum
 import inspect
 from functools import wraps

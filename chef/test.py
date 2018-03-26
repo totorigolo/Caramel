@@ -1,7 +1,7 @@
-from tools.logger import logger
-from tools.logger import trace
-from tools import COMMANDS, PATHS, seconds_to_string
-from termcolor import colored
+from chef.logger import logger
+from chef.logger import trace
+from chef import COMMANDS, PATHS, seconds_to_string
+from chef import colored
 from copy import copy
 from time import time
 import subprocess
