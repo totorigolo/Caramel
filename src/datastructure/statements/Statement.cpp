@@ -58,6 +58,7 @@ std::ostream & operator<<(std::ostream &os, const StatementType &type) {
         case StatementType::Definition: return os << "Definition";
         case StatementType::VariableDefinition: return os << "VariableDefinition";
         case StatementType::FunctionDefinition: return os << "FunctionDefinition";
+        case StatementType::ArrayDefinition: return os << "ArrayDefinition";
         case StatementType::Expression: return os << "Expression";
         case StatementType::AtomicExpression: return os << "AtomicExpression";
         case StatementType::Constant: return os << "Constant";

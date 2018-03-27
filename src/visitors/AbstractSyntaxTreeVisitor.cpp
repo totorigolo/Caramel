@@ -29,10 +29,11 @@
 #include "../datastructure/symboltable/FunctionSymbol.h"
 #include "../datastructure/statements/declaration/VariableDeclaration.h"
 #include "../datastructure/statements/declaration/FunctionDeclaration.h"
+#include "../datastructure/statements/declaration/ArrayDeclaration.h"
 #include "../datastructure/statements/definition/VariableDefinition.h"
 #include "../datastructure/statements/definition/FunctionDefinition.h"
+#include "../datastructure/statements/definition/ArrayDefinition.h"
 #include "../datastructure/symboltable/ArraySymbol.h"
-#include "../datastructure/statements/declaration/ArrayDeclaration.h"
 #include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
 #include "../exceptions/ArraySizeNonConstantException.h"
 #include "../datastructure/statements/jumps/Jump.h"
@@ -384,6 +385,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
 
     ArraySymbol::Ptr arraySymbol;
     ArrayDeclaration::Ptr arrayDeclaration;
+    ArrayDefinition::Ptr arrayDefinition;
 
     if (nullptr != ctx->arrayDeclarationVoidInner()) {
         arraySymbol = visitArrayDeclarationVoidInner(ctx->arrayDeclarationVoidInner()).as<ArraySymbol::Ptr>();
@@ -395,16 +397,33 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
         arrayDeclaration = std::make_shared<ArrayDeclaration>(arraySymbol,
                                                     ctx->arrayDeclarationVoidInner()->validIdentifier()->getStart());
 
+        arrayDefinition = std::make_shared<ArrayDefinition>(arraySymbol,expressions,ctx->start);
+
     } else if (nullptr != ctx->arrayDeclarationInner()) {
         arraySymbol = visitArrayDeclarationInner(ctx->arrayDeclarationInner()).as<ArraySymbol::Ptr>();
 
         arrayDeclaration = std::make_shared<ArrayDeclaration>(arraySymbol,
                                                     ctx->arrayDeclarationInner()->validIdentifier()->getStart());
 
+        if (nullptr != ctx->arrayBlock()) {
+            std::vector<Expression::Ptr> expressions = visitArrayBlock(ctx->arrayBlock());
+            arrayDefinition = std::make_shared<ArrayDefinition>(arraySymbol,expressions,ctx->start);
+        } else {
+            arrayDefinition = std::make_shared<ArrayDefinition>(arraySymbol,ctx->start);
+        }
+
     }
 
     currentContext()->getSymbolTable()->addVariableDeclaration(ctx, arraySymbol->getType(), arraySymbol->getName(),
                                                                arrayDeclaration);
+    currentContext()->getSymbolTable()->addVariableDefinition(ctx,arraySymbol->getType(),arraySymbol->getName(),arrayDefinition);
+
+
+
+
+
+   // ArrayDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol, expression,
+    //                                                                        vdAssignmentContext->getStart());
 
 
     logger.trace() << "New array declared : '" << arraySymbol->getName() << "' with return type " << arraySymbol->getType()->getIdentifier()
