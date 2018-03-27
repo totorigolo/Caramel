@@ -35,6 +35,8 @@
 #include "../datastructure/statements/declaration/ArrayDeclaration.h"
 #include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
 #include "../exceptions/ArraySizeNonConstantException.h"
+#include "../datastructure/statements/jumps/Jump.h"
+#include "../datastructure/statements/controlblocks/ControlBlock.h"
 
 
 using namespace caramel::visitors;
@@ -270,7 +272,13 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArguments(CaramelParser::F
 
     std::vector<Symbol::Ptr> params;
     for (auto argument : ctx->functionArgument()) {
-        params.push_back(visitFunctionArgument(argument).as<VariableSymbol::Ptr>());
+        antlrcpp::Any symbol = visitFunctionArgument(argument);
+        if(symbol.is<ArraySymbol::Ptr>()) {
+            params.push_back(symbol.as<ArraySymbol::Ptr>());
+        } else if (symbol.is<VariableSymbol::Ptr>()) {
+            params.push_back(symbol.as<VariableSymbol::Ptr>());
+        }
+
     }
     return params;
 }
@@ -320,12 +328,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
     return std::dynamic_pointer_cast<Expression>(visitChildren(ctx).as<AtomicExpression::Ptr>());
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitExpression(CaramelParser::ExpressionContext *ctx) {
-    using namespace caramel::ast;
-    // TODO : change to expression
-    return std::dynamic_pointer_cast<Statement>(visitChildren(ctx).as<Expression::Ptr>());
-}
-
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
 
     using namespace caramel::ast;
@@ -365,6 +367,17 @@ AbstractSyntaxTreeVisitor::visitAdditiveOperator(caramel_unused CaramelParser::A
     return std::dynamic_pointer_cast<BinaryOperator>(mPlusOperator);
 }
 
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstruction(CaramelParser::InstructionContext *ctx) {
+    using namespace caramel::ast;
+    if (ctx->jump()) { // pour kévin : != nullptr
+        return std::dynamic_pointer_cast<Statement>(visitJump(ctx->jump()).as<Jump::Ptr>());
+    } else if (ctx->controlBlock()) {
+        return std::dynamic_pointer_cast<Statement>(visitControlBlock(ctx->controlBlock()).as<ControlBlock::Ptr>());
+    }
+
+    return std::dynamic_pointer_cast<Statement>(visitExpression(ctx->expression()).as<Expression::Ptr>());
+}
+
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) {
 
     using namespace caramel::ast;
@@ -375,8 +388,8 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
     if (nullptr != ctx->arrayDeclarationVoidInner()) {
         arraySymbol = visitArrayDeclarationVoidInner(ctx->arrayDeclarationVoidInner()).as<ArraySymbol::Ptr>();
 
-        //vector<Expression::Ptr> arrayBlock;
-        long arraySize = visitArrayBlock(ctx->arrayBlock());
+        std::vector<Expression::Ptr> expressions = visitArrayBlock(ctx->arrayBlock());
+        long arraySize = expressions.size();
         arraySymbol->setSize(arraySize);
 
         arrayDeclaration = std::make_shared<ArrayDeclaration>(arraySymbol,
@@ -394,11 +407,11 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
                                                                arrayDeclaration);
 
 
-    logger.trace() << "New array declared " << arraySymbol->getName() << " of return type " << arraySymbol->getType()
-                   << "and size " << arraySymbol->getSize();
+    logger.trace() << "New array declared : '" << arraySymbol->getName() << "' with return type " << arraySymbol->getType()->getIdentifier()
+                   << ", size " << arraySymbol->getSize();
 
     //TODO : Cas d'erreur
-    return arrayDeclaration;
+    return std::dynamic_pointer_cast<Statement>(arrayDeclaration);
 }
 
 antlrcpp::Any
@@ -417,8 +430,12 @@ AbstractSyntaxTreeVisitor::visitArrayDeclarationVoidInner(CaramelParser::ArrayDe
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) {
     using namespace caramel::ast;
-    std::vector<Statement> statements;
-    return ctx->expression();
+    std::vector<Expression::Ptr> expressions;
+    for (auto expression : ctx->expression()) {
+        Expression::Ptr exp = visitExpression(expression);
+        expressions.push_back(exp);
+    }
+    return expressions;
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) {
