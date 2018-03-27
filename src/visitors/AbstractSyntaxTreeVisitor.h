@@ -93,6 +93,9 @@ public:
 
     antlrcpp::Any visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) override;
 
+    antlrcpp::Any visitControlBlock(CaramelParser::ControlBlockContext *ctx) override;
+
+    /// Returns IfBlock::Ptr
     antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override;
 
     /// Returns Expression::Ptr

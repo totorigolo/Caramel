@@ -86,16 +86,20 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitBlock(CaramelParser::BlockContext 
 
     using caramel::ast::Statement;
 
+    std::vector<Statement::Ptr> returnStatements;
+
     if (ctx->declarations()) {
         std::vector<Statement::Ptr> declarations = visitDeclarations(ctx->declarations());
         currentContext()->addStatements(std::move(declarations));
+        returnStatements=declarations;
     }
     if (ctx->instructions()) {
         std::vector<Statement::Ptr> instructions = visitInstructions(ctx->instructions());
         currentContext()->addStatements(std::move(instructions));
+        returnStatements=instructions;
     }
 
-    return currentContext();
+    return returnStatements;
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitDeclarations(CaramelParser::DeclarationsContext *ctx) {
@@ -125,10 +129,10 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstructions(CaramelParser::Instru
 
     std::vector<Statement::Ptr> instructions;
     // TODO: Instructions
-    logger.warning() << "Skipping unimplemented instructions at line " << __LINE__ << ".";
-//    for (auto instruction : ctx->instruction()) {
-//        instructions.push_back(visitInstruction(instruction).as<Statement::Ptr>());
-//    }
+    //logger.warning() << "Skipping unimplemented instructions at line " << __LINE__ << ".";
+    for (auto instruction : ctx->instruction()) {
+        instructions.push_back(visitInstruction(instruction).as<Statement::Ptr>());
+    }
     return instructions;
 }
 
@@ -311,10 +315,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArgument(CaramelParser::Fu
     } else {
         return std::make_shared<VariableSymbol>(name, type);
     }
-}
-
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockContext *ctx) {
-    return CaramelBaseVisitor::visitIfBlock(ctx);
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) {
@@ -524,3 +524,4 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitChildren(antlr4::tree::ParseTree *
     }
     return childResult;
 }
+

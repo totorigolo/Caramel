@@ -100,7 +100,7 @@ controlBlock
   | forBlock
   ;
 ifBlock
-  : IfKeyword_ WS_* L_Par_ WS_* expression WS_* R_Par_ WS_* block? (WS_* ElseKeyword_ WS_* (ifBlock|block))?
+  : IfKeyword_ WS_* L_Par_ WS_* expression WS_* R_Par_ WS_* block (WS_* ElseKeyword_ WS_* (ifBlock|block))?
   ;
 whileBlock
   : WhileKeyWord_ WS_* L_Par_ WS_* expression WS_* R_Par_ WS_* block?
