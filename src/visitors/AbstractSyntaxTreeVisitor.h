@@ -28,6 +28,8 @@
 #include "../datastructure/context/Context.h"
 #include "../util/SourceFileUtil.h"
 #include "../datastructure/operators/binaryoperators/PlusOperator.h"
+#include "../datastructure/operators/binaryoperators/MultOperator.h"
+#include "../datastructure/operators/binaryoperators/BitwiseShiftOperator.h"
 
 
 #pragma GCC diagnostic push
@@ -96,9 +98,6 @@ public:
     /// Returns Expression::Ptr
     antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
 
-    /// Returns Expression::Ptr
-    antlrcpp::Any visitExpression(CaramelParser::ExpressionContext *ctx) override;
-
     /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
 
@@ -120,9 +119,16 @@ public:
     /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) override;
 
+    /// Returns Expression::Ptr
     antlrcpp::Any visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) override;
 
+    /// Returns BinaryOperator::Ptr
     antlrcpp::Any visitAdditiveOperator(CaramelParser::AdditiveOperatorContext *ctx) override;
+
+    /// Returns Statement::Ptr
+    antlrcpp::Any visitInstruction(CaramelParser::InstructionContext *ctx) override;
+
+    antlrcpp::Any visitExpression(CaramelParser::ExpressionContext *ctx) override;
 
 
 private:
@@ -136,7 +142,9 @@ private:
     std::stack<std::shared_ptr<caramel::ast::Context>> mContextStack;
     SourceFileUtil mSourceFileUtil;
 
-    const std::shared_ptr<caramel::ast::PlusOperator> mPlusOperator = std::make_shared<caramel::ast::PlusOperator>();
+    const std::shared_ptr<caramel::ast::BitwiseShiftOperator> mBitwiseShiftOperator;
+    const std::shared_ptr<caramel::ast::PlusOperator> mPlusOperator;
+    const std::shared_ptr<caramel::ast::MultOperator> mMultOperator;
 };
 
 } // namespace caramel::visitors

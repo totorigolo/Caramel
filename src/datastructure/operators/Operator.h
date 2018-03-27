@@ -25,7 +25,7 @@
 #pragma once
 
 #include <memory>
-#include "../statements/IR.h"
+#include "../statements/Statement.h"
 
 namespace caramel::ast {
 
@@ -39,6 +39,7 @@ protected:
 
 public:
     virtual ~Operator() = default;
+    virtual StatementType expressionType() = 0;
 };
 
 } // namespace caramel::ast
