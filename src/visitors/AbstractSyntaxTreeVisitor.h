@@ -96,9 +96,6 @@ public:
     /// Returns Expression::Ptr
     antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
 
-    /// Returns Expression::Ptr
-    antlrcpp::Any visitExpression(CaramelParser::ExpressionContext *ctx) override;
-
     /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
 
@@ -120,9 +117,14 @@ public:
     /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) override;
 
+    /// Returns Expression::Ptr
     antlrcpp::Any visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) override;
 
+    /// Returns BinaryOperator::Ptr
     antlrcpp::Any visitAdditiveOperator(CaramelParser::AdditiveOperatorContext *ctx) override;
+
+    /// Returns Statement::Ptr
+    antlrcpp::Any visitInstruction(CaramelParser::InstructionContext *ctx) override;
 
 
 private:
