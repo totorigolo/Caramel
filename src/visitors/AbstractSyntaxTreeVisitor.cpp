@@ -270,7 +270,13 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArguments(CaramelParser::F
 
     std::vector<Symbol::Ptr> params;
     for (auto argument : ctx->functionArgument()) {
-        params.push_back(visitFunctionArgument(argument).as<VariableSymbol::Ptr>());
+        antlrcpp::Any symbol = visitFunctionArgument(argument);
+        if(symbol.is<ArraySymbol::Ptr>()) {
+            params.push_back(symbol.as<ArraySymbol::Ptr>());
+        } else if (symbol.is<VariableSymbol::Ptr>()) {
+            params.push_back(symbol.as<VariableSymbol::Ptr>());
+        }
+
     }
     return params;
 }
