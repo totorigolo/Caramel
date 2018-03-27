@@ -40,9 +40,14 @@
 
 
 using namespace caramel::visitors;
+using namespace caramel::ast;
 
 AbstractSyntaxTreeVisitor::AbstractSyntaxTreeVisitor(std::string const &sourceFileName)
-        : mSourceFileUtil{sourceFileName} {
+        : mSourceFileUtil{sourceFileName},
+          mBitwiseShiftOperator(std::make_shared<BitwiseShiftOperator>()),
+          mPlusOperator(std::make_shared<PlusOperator>()),
+          mMultOperator(std::make_shared<MultOperator>())
+{
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
@@ -336,29 +341,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharCo
 
     char value = ctx->getText().at(0);
     return std::dynamic_pointer_cast<AtomicExpression>(std::make_shared<Constant>(value, ctx->start));
-}
-
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) {
-    using namespace caramel::ast;
-
-    if (ctx->children.size() == 1) {
-        // One children = No BinaryExpression at this step.
-        return visitChildren(ctx).as<Expression::Ptr>();
-    } else {
-        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
-                visitAdditiveExpression(ctx->additiveExpression(0)),
-                visitAdditiveOperator(ctx->additiveOperator()),
-                visitAdditiveExpression(ctx->additiveExpression(1)),
-                ctx->getStart()
-        ));
-    }
-
-}
-
-antlrcpp::Any
-AbstractSyntaxTreeVisitor::visitAdditiveOperator(caramel_unused CaramelParser::AdditiveOperatorContext *ctx) {
-    using caramel::ast::BinaryOperator;
-    return std::dynamic_pointer_cast<BinaryOperator>(mPlusOperator);
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstruction(CaramelParser::InstructionContext *ctx) {

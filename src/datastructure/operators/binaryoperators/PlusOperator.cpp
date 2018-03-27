@@ -35,3 +35,7 @@ std::shared_ptr<caramel::ast::IR> caramel::ast::PlusOperator::buildIR(
     // TODO : Implement the IR generation which happens right here.
     throw caramel::exceptions::NotImplementedException(__FILE__);
 }
+
+caramel::ast::StatementType caramel::ast::PlusOperator::expressionType() {
+    return StatementType::AdditiveExpression;
+}

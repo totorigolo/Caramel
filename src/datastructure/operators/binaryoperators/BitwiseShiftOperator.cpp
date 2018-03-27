@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +22,18 @@
  * SOFTWARE.
 */
 
-#include "BinaryExpression.h"
-
-
-namespace caramel::ast {
-
-BinaryExpression::BinaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-        std::shared_ptr<caramel::ast::BinaryOperator> const &binaryOperator,
-        std::shared_ptr<caramel::ast::Expression> const &rightExpression,
-        antlr4::Token *startToken
-) : Expression(startToken, StatementType::BinaryExpression),
-    mLeftExpression{leftExpression},
-    mRightExpression{rightExpression},
-    mBinaryOperator{binaryOperator} {}
+#include "BitwiseShiftOperator.h"
 
 std::shared_ptr<caramel::ast::IR>
-BinaryExpression::getIR() {
-    return mBinaryOperator->buildIR(mLeftExpression, mRightExpression);
+caramel::ast::BitwiseShiftOperator::buildIR(std::shared_ptr <caramel::ast::Expression> const &leftExpression,
+                                            std::shared_ptr <caramel::ast::Expression> const &rightExpression) {
+    CARAMEL_UNUSED(leftExpression);
+    CARAMEL_UNUSED(rightExpression);
+
+    // TODO : Implement the IR generation which happens right here.
+    throw caramel::exceptions::NotImplementedException(__FILE__);
 }
 
+caramel::ast::StatementType caramel::ast::BitwiseShiftOperator::expressionType() {
+    return StatementType::BitwiseShiftExpression;
 }
-
