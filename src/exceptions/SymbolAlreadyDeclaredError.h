@@ -88,12 +88,18 @@ public:
                   << "^"
                   << std::setfill('~') << std::setw(stopColumn - startColumn) << ""
                   << std::endl;
+        if (1) {
+            //TODO: test if different type, return primary type instead of statement type
+            std::cerr << bold << "Note: " << reset
+                      << "different previous type, was " << mExistingDeclaration->getType() << " now " << mFaultyDeclaration->getType()
+                      << std::endl;
+        }
     }
 
 private:
     antlr4::ParserRuleContext *mAntlrContext;
-    caramel::ast::Declaration::Ptr const &mExistingDeclaration;
-    caramel::ast::Declaration::Ptr const &mFaultyDeclaration;
+    caramel::ast::Declaration::Ptr mExistingDeclaration;
+    caramel::ast::Declaration::Ptr mFaultyDeclaration;
 };
 
 } // namespace caramel::exceptions

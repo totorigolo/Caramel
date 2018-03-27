@@ -22,25 +22,23 @@
  * SOFTWARE.
 */
 
-#include "BinaryExpression.h"
+#pragma once
 
+#include <CaramelParser.h>
+#include <memory>
 
-namespace caramel::ast {
+namespace caramel::util {
 
-BinaryExpression::BinaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-        std::shared_ptr<caramel::ast::BinaryOperator> const &binaryOperator,
-        std::shared_ptr<caramel::ast::Expression> const &rightExpression,
-        antlr4::Token *startToken
-) : Expression(startToken, StatementType::BinaryExpression),
-    mLeftExpression{leftExpression},
-    mRightExpression{rightExpression},
-    mBinaryOperator{binaryOperator} {}
-
-std::shared_ptr<caramel::ast::IR>
-BinaryExpression::getIR() {
-    return mBinaryOperator->buildIR(mLeftExpression, mRightExpression);
+template<typename To, typename ToInner = typename To::element_type, class In>
+To castTo(In const &r) {
+    return std::dynamic_pointer_cast<ToInner>(r);
 }
 
+template<class In, typename To, typename ToInner = typename To::element_type>
+To castAnyTo(antlrcpp::Any r) {
+    return std::dynamic_pointer_cast<ToInner>(r.as<In>());
 }
+
+} // namespace caramel::util
+
 

@@ -27,7 +27,7 @@
 namespace caramel::ast::definition {
 
 ArrayDefinition::ArrayDefinition(antlr4::Token *startToken)
-        : Definition(startToken) {
+        : Definition(startToken, StatementType::ArrayDefinition) {
 }
 
 } // namespace caramel::ast

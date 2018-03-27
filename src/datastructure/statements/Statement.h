@@ -34,6 +34,7 @@
 namespace caramel::ast {
 
 // TODO: Remove this unneeded enum
+// TODO: Split into distinct StatementType cpp files.
 enum class StatementType {
     Unknown,
     Declaration,
@@ -42,10 +43,19 @@ enum class StatementType {
     ArrayDeclaration,
     Definition,
     VariableDefinition,
+    ArrayDefinition,
     FunctionDefinition,
     Expression,
+    UnaryExpression,
     AtomicExpression,
-    Constant
+    Constant,
+
+    // BinaryExpression w/ sub-types
+    BinaryExpression,
+    BitwiseShiftExpression,
+    AdditiveExpression,
+    MultiplicativeExpression
+
 };
 
 class Statement {
