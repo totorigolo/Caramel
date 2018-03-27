@@ -123,6 +123,7 @@ public:
 
     antlrcpp::Any visitAdditiveOperator(CaramelParser::AdditiveOperatorContext *ctx) override;
 
+    antlrcpp::Any visitTypeDefinition(CaramelParser::TypeDefinitionContext *ctx) override;
 
 private:
     void pushNewContext(); //
@@ -136,6 +137,16 @@ private:
     SourceFileUtil mSourceFileUtil;
 
     const std::shared_ptr<caramel::ast::PlusOperator> mPlusOperator = std::make_shared<caramel::ast::PlusOperator>();
+
+    template <typename To, typename ToInner = typename To::element_type, class In>
+    To castTo(In const & r) {
+        return std::dynamic_pointer_cast<ToInner>(r);
+    }
+
+    template <class In, typename To, typename ToInner = typename To::element_type>
+    To castAnyTo(antlrcpp::Any const & r) {
+        return std::dynamic_pointer_cast<ToInner>(r.as<In>());
+    }
 };
 
 } // namespace caramel::visitors

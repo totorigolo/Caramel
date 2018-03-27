@@ -134,9 +134,17 @@ AbstractSyntaxTreeVisitor::visitTypeParameter(CaramelParser::TypeParameterContex
 
     using namespace caramel::ast;
 
-    Symbol::Ptr symbol = currentContext()->getSymbolTable()->getSymbol(ctx->getText());
-    TypeSymbol::Ptr typeSymbol = std::dynamic_pointer_cast<TypeSymbol>(symbol);
-    return typeSymbol;
+    std::string symbolName = ctx->getText();
+    if(currentContext()->getSymbolTable()->hasSymbol(symbolName)) {
+        Symbol::Ptr symbol = currentContext()->getSymbolTable()->getSymbol(symbolName);
+        TypeSymbol::Ptr typeSymbol = std::dynamic_pointer_cast<TypeSymbol>(symbol);
+        return typeSymbol;
+    } else {
+
+        logger.warning() << "Default symbol " << symbolName << " is created with void_t as return type";
+        return std::make_shared<TypeSymbol>( symbolName, Void_t::Create() );
+    }
+
 }
 
 antlrcpp::Any
@@ -502,4 +510,20 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitChildren(antlr4::tree::ParseTree *
         childResult = defaultResult();
     }
     return childResult;
+}
+
+// Return Declaration::Ptr
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitTypeDefinition(CaramelParser::TypeDefinitionContext *ctx) {
+
+    logger.trace() << "Visiting type definition " << ctx->getText();
+
+    using namespace caramel::ast;
+
+    TypeSymbol::Ptr primaryTypeSymbol = visitTypeParameter(ctx->typeParameter()[0]);
+    TypeSymbol::Ptr typeAliasDefault = visitTypeParameter(ctx->typeParameter()[1]);
+
+    TypeDefinition::Ptr typeDefinition = std::make_shared<TypeDefinition>( ctx->getStart(), typeAliasDefault->getName(), primaryTypeSymbol );
+    currentContext()->getSymbolTable()->addType(ctx, typeDefinition);
+
+    return castTo<Statement::Ptr>(typeDefinition);
 }
