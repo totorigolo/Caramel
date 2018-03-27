@@ -5,7 +5,7 @@ r
 
 // Program statements
 statements
-  : MultilineWhiteSpace_* statement (MultilineWhiteSpace_* statement)* MultilineWhiteSpace_*
+  : WS_* statement (WS_* statement)* WS_*
   ;
 statement
   : instruction
@@ -13,69 +13,69 @@ statement
   ;
 
 instructions
-  : MultilineWhiteSpace_* instruction (MultilineWhiteSpace_* instruction)* MultilineWhiteSpace_*
+  : WS_* instruction (WS_* instruction)* WS_*
   ;
 instruction
-  : jump MultilineWhiteSpace_* InstructionSeparator
+  : jump WS_* InstructionSeparator
   | controlBlock
-  | expression MultilineWhiteSpace_* InstructionSeparator
+  | expression WS_* InstructionSeparator
   | InstructionSeparator
   ;
 
 declarations
-  : MultilineWhiteSpace_* declaration (MultilineWhiteSpace_* declaration)* MultilineWhiteSpace_*
+  : WS_* declaration (WS_* declaration)* WS_*
   ;
 
 declaration
   : functionDefinition
-  | functionDeclaration MultilineWhiteSpace_* InstructionSeparator
-  | arrayDeclaration MultilineWhiteSpace_* InstructionSeparator
-  | arrayDefinition MultilineWhiteSpace_* InstructionSeparator
-  | variableDeclaration MultilineWhiteSpace_* InstructionSeparator
-  | variableDefinition MultilineWhiteSpace_* InstructionSeparator
+  | functionDeclaration WS_* InstructionSeparator
+  | arrayDeclaration WS_* InstructionSeparator
+  | arrayDefinition WS_* InstructionSeparator
+  | variableDeclaration WS_* InstructionSeparator
+  | variableDefinition WS_* InstructionSeparator
   | InstructionSeparator
   ;
 
 // Declarations
 functionDeclarationInner
-  : typeParameter InlineWhiteSpace_+ validIdentifier functionArguments
+  : typeParameter InlineWS_+ validIdentifier functionArguments
   ;
 functionDeclaration
   : functionDeclarationInner
   ;
 functionDefinition
-  : functionDeclarationInner MultilineWhiteSpace_* block ;
+  : functionDeclarationInner WS_* block ;
 
 variableDeclaration
-  : 'extern' InlineWhiteSpace_+ typeParameter InlineWhiteSpace_+ validIdentifier (InlineWhiteSpace_* Comma_ InlineWhiteSpace_* validIdentifier)*
+  : 'extern' InlineWS_+ typeParameter InlineWS_+ validIdentifier (WS_* Comma_ WS_* validIdentifier)*
   ;
 variableDefinition
-  : typeParameter InlineWhiteSpace_* (variableDefinitionAssignment|validIdentifier) MultilineWhiteSpace_* (MultilineWhiteSpace_* Comma_ InlineWhiteSpace_* (variableDefinitionAssignment|validIdentifier))*
+  : typeParameter InlineWS_* (variableDefinitionAssignment|validIdentifier) (WS_* Comma_ WS_* (variableDefinitionAssignment|validIdentifier))*
   ;
 variableDefinitionAssignment
-  : validIdentifier InlineWhiteSpace_* Assignment_ InlineWhiteSpace_ expression ;
+  : validIdentifier WS_* Assignment_ InlineWS_* expression ;
 
 arrayDeclarationVoidInner
-  : typeParameter InlineWhiteSpace_+ validIdentifier InlineWhiteSpace_* arraySizeDeclarationVoid
+  : typeParameter InlineWS_+ validIdentifier InlineWS_* arraySizeDeclarationVoid
   ;
 arrayDeclarationInner
-  : typeParameter InlineWhiteSpace_+ validIdentifier InlineWhiteSpace_* arraySizeDeclaration
+  : typeParameter InlineWS_+ validIdentifier InlineWS_* arraySizeDeclaration
   ;
 
 arrayDeclaration
-  : 'extern' InlineWhiteSpace_* arrayDeclarationInner
-  | 'extern' InlineWhiteSpace_* arrayDeclarationVoidInner
+  : 'extern' InlineWS_* arrayDeclarationInner
+  | 'extern' InlineWS_* arrayDeclarationVoidInner
   ;
 
 arrayDefinition
-  : arrayDeclarationVoidInner MultilineWhiteSpace_* assignmentOperator MultilineWhiteSpace_* arrayBlock
-  | arrayDeclarationInner (MultilineWhiteSpace_* assignmentOperator MultilineWhiteSpace_* arrayBlock)?
+  : arrayDeclarationVoidInner WS_* assignmentOperator WS_* arrayBlock
+  | arrayDeclarationInner (WS_* assignmentOperator WS_* arrayBlock)?
   ;
 arraySizeDeclaration
-  : L_Bracket_ InlineWhiteSpace_* positiveConstant InlineWhiteSpace_* R_Bracket_
+  : L_Bracket_ InlineWS_* positiveConstant InlineWS_* R_Bracket_
   ;
 arraySizeDeclarationVoid
-  : L_Bracket_ InlineWhiteSpace_* R_Bracket_
+  : L_Bracket_ InlineWS_* R_Bracket_
   ;
 
 // Jump instructions
@@ -84,8 +84,7 @@ jump
   | returnJump
   ;
 returnJump
-  : ReturnKeyword_ InlineWhiteSpace_* expression
-  | ReturnKeyword_
+  : ReturnKeyword_ (InlineWS_* expression)?
   ;
 breakJump : BreakKeyword_ ;
 
@@ -96,39 +95,39 @@ controlBlock
   | forBlock
   ;
 ifBlock
-  : IfKeyword_ MultilineWhiteSpace_* L_Par_ MultilineWhiteSpace_* expression InlineWhiteSpace_* R_Par_ MultilineWhiteSpace_* block? (MultilineWhiteSpace_* ElseKeyword_ MultilineWhiteSpace_* (ifBlock|block))?
+  : IfKeyword_ WS_* L_Par_ WS_* expression WS_* R_Par_ WS_* block? (WS_* ElseKeyword_ WS_* (ifBlock|block))?
   ;
 whileBlock
-  : WhileKeyWord_ MultilineWhiteSpace_* L_Par_ InlineWhiteSpace_* expression InlineWhiteSpace_* R_Par_ MultilineWhiteSpace_* block?
+  : WhileKeyWord_ WS_* L_Par_ WS_* expression WS_* R_Par_ WS_* block?
   ;
 forBlock
-  : ForKeyword_ MultilineWhiteSpace_* L_Par_
-      InlineWhiteSpace_* expression? InlineWhiteSpace_* Semilicon_
-      InlineWhiteSpace_* expression? InlineWhiteSpace_* Semilicon_
-      InlineWhiteSpace_* expression? InlineWhiteSpace_* R_Par_
-      MultilineWhiteSpace_ * block?
+  : ForKeyword_ WS_* L_Par_
+      WS_* expression? WS_* Semilicon_
+      WS_* expression? WS_* Semilicon_
+      WS_* expression? WS_* R_Par_
+      WS_ * block?
   ;
 
 // Blocks
 block
-  : L_CBracket_ MultilineWhiteSpace_* declarations? MultilineWhiteSpace_* instructions? MultilineWhiteSpace_* R_CBracket_
+  : L_CBracket_ WS_* declarations? WS_* instructions? WS_* R_CBracket_
   ;
 
 arrayBlock
-  : L_CBracket_ MultilineWhiteSpace_* R_CBracket_
-  | L_CBracket_ MultilineWhiteSpace_* expression (MultilineWhiteSpace_* Comma_ MultilineWhiteSpace_* expression)* MultilineWhiteSpace_* R_CBracket_
+  : L_CBracket_ WS_* R_CBracket_
+  | L_CBracket_ WS_* expression (WS_* Comma_ WS_* expression)* WS_* R_CBracket_
   ;
 
 // Function definition helpers
 functionArguments
-  : L_Par_ InlineWhiteSpace_* R_Par_
-  | L_Par_ MultilineWhiteSpace_* functionArgument (MultilineWhiteSpace_* Comma_ MultilineWhiteSpace_*  functionArgument)* MultilineWhiteSpace_* R_Par_
+  : L_Par_ InlineWS_* R_Par_
+  | L_Par_ WS_* functionArgument (WS_* Comma_ WS_*  functionArgument)* WS_* R_Par_
   ;
 functionArgument
-  : typeParameter MultilineWhiteSpace_* validIdentifier? MultilineWhiteSpace_* (functionArgumentArraySuffix)?
+  : typeParameter WS_* validIdentifier? WS_* (functionArgumentArraySuffix)?
   ;
 functionArgumentArraySuffix
-  : '[' MultilineWhiteSpace_* (expression)? MultilineWhiteSpace_* ']'
+  : '[' WS_* (expression)? WS_* ']'
   ;
 
 // Type & identifiers
@@ -142,64 +141,64 @@ lvalue
   : validIdentifier arrayAccess?
   ;
 atomicExpression // As right value
-  : L_Par_ MultilineWhiteSpace_* expression MultilineWhiteSpace_* R_Par_ // '(' e ')'
+  : L_Par_ WS_* expression WS_* R_Par_ // '(' e ')'
   | validIdentifier
   | numberConstant
   | charConstant
   ;
 
 assignment
-  : lvalue InlineWhiteSpace_* assignmentOperator InlineWhiteSpace_* expression
+  : lvalue InlineWS_* assignmentOperator InlineWS_* expression
   ;
 
 expression : assignment | disjunction ;
 
 disjunction
   : conjunction
-  | disjunction MultilineWhiteSpace_* OrOp_ MultilineWhiteSpace_* conjunction
+  | disjunction WS_* OrOp_ WS_* conjunction
   ;
 conjunction
   : orBitwiseExpression
-  | conjunction MultilineWhiteSpace_* AndOp_ MultilineWhiteSpace_* conjunction
+  | conjunction WS_* AndOp_ WS_* conjunction
   ;
 
 orBitwiseExpression
   : xorBitwiseExpression
-  | orBitwiseExpression MultilineWhiteSpace_* BitwiseOr_ MultilineWhiteSpace_* orBitwiseExpression
+  | orBitwiseExpression WS_* BitwiseOr_ WS_* orBitwiseExpression
   ;
 
 xorBitwiseExpression
   : andBitwiseExpression
-  | xorBitwiseExpression MultilineWhiteSpace_* BitwiseXor_ MultilineWhiteSpace_* xorBitwiseExpression
+  | xorBitwiseExpression WS_* BitwiseXor_ WS_* xorBitwiseExpression
   ;
 
 andBitwiseExpression
   : equalityComparison
-  | andBitwiseExpression MultilineWhiteSpace_* BitwiseAnd_ MultilineWhiteSpace_* andBitwiseExpression
+  | andBitwiseExpression WS_* BitwiseAnd_ WS_* andBitwiseExpression
   ;
 
 equalityComparison
   : comparison
-  | equalityComparison MultilineWhiteSpace_* equalityOperator MultilineWhiteSpace_* equalityComparison
+  | equalityComparison WS_* equalityOperator WS_* equalityComparison
   ;
 
 comparison
   : bitwiseShiftExpression
-  | comparison MultilineWhiteSpace_* comparativeOperator MultilineWhiteSpace_* comparison
+  | comparison WS_* comparativeOperator WS_* comparison
   ;
 
 bitwiseShiftExpression
   : additiveExpression
-  | bitwiseShiftExpression MultilineWhiteSpace_* bitwiseShiftOperator MultilineWhiteSpace_* bitwiseShiftExpression
+  | bitwiseShiftExpression WS_* bitwiseShiftOperator WS_* bitwiseShiftExpression
   ;
 
 additiveExpression
   : multiplicativeExpression
-  | additiveExpression MultilineWhiteSpace_* additiveOperator MultilineWhiteSpace_* additiveExpression
+  | additiveExpression WS_* additiveOperator WS_* additiveExpression
   ;
 multiplicativeExpression
   : prefixUnaryExpression
-  | multiplicativeExpression MultilineWhiteSpace_* multiplicativeOperator MultilineWhiteSpace_* multiplicativeExpression
+  | multiplicativeExpression WS_* multiplicativeOperator WS_* multiplicativeExpression
   ;
 
 prefixUnaryExpression :     prefixUnaryOperator* postfixUnaryExpression;
@@ -211,7 +210,7 @@ additiveOperator : ( Plus_ | Minus_ ) ;
 comparativeOperator : ( LowerThan_ | LowerEqThan_ | GreaterThan_ | GreaterEqThan_ ) ;
 equalityOperator : ( EqualityOp_ | DiffOp_ ) ;
 postfixUnaryOperator : ( IncOp_ | DecOp_ ) ;
-prefixUnaryOperator : ( Minus_ | IncOp_ | DecOp_ | InvOp_ ' '* | BitwiseNot_ ' '* | cast InlineWhiteSpace_*) ;
+prefixUnaryOperator : ( Minus_ | IncOp_ | DecOp_ | InvOp_ ' '* | BitwiseNot_ ' '* | cast InlineWS_*) ;
 bitwiseShiftOperator : ( RightShiftOp_ | LeftShiftOp_ ) ;
 assignmentOperator : ( Assignment_ | PlusAssign_ | MinusAssign_ | TimesAssign_ | DivAssign_ | ModAssign_ | BitwiseAndAssign_ | BitwiseOrAssign_ | BitwiseXorAssign_ | BitwiseNotAssign_ ) ;
 
@@ -222,17 +221,17 @@ postfixUnaryOperation
   ;
 
 cast
-  : L_Par_ InlineWhiteSpace_* typeParameter InlineWhiteSpace_* R_Par_
+  : L_Par_ InlineWS_* typeParameter InlineWS_* R_Par_
   ;
 
 
 callSufix
-  : L_Par_ InlineWhiteSpace_* R_Par_
-  | L_Par_ InlineWhiteSpace_* expression (InlineWhiteSpace_* Comma_ InlineWhiteSpace_* expression )* InlineWhiteSpace_* R_Par_
+  : L_Par_ InlineWS_* R_Par_
+  | L_Par_ InlineWS_* expression (InlineWS_* Comma_ InlineWS_* expression )* InlineWS_* R_Par_
   ;
 
 arrayAccess
-  : L_Bracket_ InlineWhiteSpace_* expression InlineWhiteSpace_* R_Bracket_
+  : L_Bracket_ InlineWS_* expression InlineWS_* R_Bracket_
   ;
 
 // Constants
@@ -262,6 +261,8 @@ LineComment
     : '//' ~[\r\n]* -> skip ;
 Macro
     : '#' ~[\r\n]* -> skip ;
+WS
+    : WS_ -> skip ;
 
 
 // Do not delete the following comment line
@@ -275,9 +276,9 @@ Underscore_ : '_' ;
 DigitSeparator_ : '.' ;
 CarryReturn_ : '\\r' ;
 Tab_ : '\\t' ;
-InlineWhiteSpace_ : ( WS_ | Tab_ | CarryReturn_ );
-MultilineWhiteSpace_ : ( InlineWhiteSpace_ | NewLine_ );
-WS_ : ' ' ;
+Space_ : ' ' ;
+InlineWS_ : ( Space_ | Tab_ | CarryReturn_ );
+WS_ : ( InlineWS_ | NewLine_ );
 PlusAssign_ : '+=' ;
 MinusAssign_ : '-=' ;
 TimesAssign_ : '*=' ;
