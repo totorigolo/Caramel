@@ -29,10 +29,11 @@
 #include "../datastructure/symboltable/FunctionSymbol.h"
 #include "../datastructure/statements/declaration/VariableDeclaration.h"
 #include "../datastructure/statements/declaration/FunctionDeclaration.h"
+#include "../datastructure/statements/declaration/ArrayDeclaration.h"
 #include "../datastructure/statements/definition/VariableDefinition.h"
 #include "../datastructure/statements/definition/FunctionDefinition.h"
+#include "../datastructure/statements/definition/ArrayDefinition.h"
 #include "../datastructure/symboltable/ArraySymbol.h"
-#include "../datastructure/statements/declaration/ArrayDeclaration.h"
 #include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
 #include "../exceptions/ArraySizeNonConstantException.h"
 #include "../datastructure/statements/jumps/Jump.h"
@@ -188,31 +189,27 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::
 
     TypeSymbol::Ptr typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
     std::vector<Statement::Ptr> variables;
-    for (auto child : ctx->children) {
-        if (nullptr != dynamic_cast<CaramelParser::ValidIdentifierContext *>(child)) {
-            auto *identifierContext = dynamic_cast<CaramelParser::ValidIdentifierContext *>(child);
-            std::string name = visitValidIdentifier(identifierContext);
-            logger.trace() << "New variable declared: '" << name << "' with default value";
-            VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
-            VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol,
-                                                                                       identifierContext->getStart());
-            variables.push_back(variableDef);
+    for (auto varDefValue : ctx->validIdentifier()) {
+        std::string name = visitValidIdentifier(varDefValue);
+        logger.trace() << "New variable declared: '" << name << "' with default value";
+        VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
+        VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol,
+                                                                                   varDefValue->getStart());
+        variables.push_back(variableDef);
 
-            currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
+        currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
+    }
+    for (auto varWithValue : ctx->variableDefinitionAssignment()) {
+        std::string name = visitValidIdentifier(varWithValue->validIdentifier());
 
-        } else if (nullptr != dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext *>(child)) {
-            auto *vdAssignmentContext = dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext *>(child);
-            std::string name = visitValidIdentifier(vdAssignmentContext->validIdentifier());
-            // Fixme : replace nullptr by (visitExpression(vdAssignmentContext->expression()).as<Statement::Ptr>());
-            Expression::Ptr expression = Constant::defaultConstant(ctx->getStart());
-            logger.trace() << "New variable declared: '" << name << "' with value";
-            VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
-            VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol, expression,
-                                                                                       vdAssignmentContext->getStart());
-            variables.push_back(variableDef);
+        Expression::Ptr expression = visitExpression(varWithValue->expression());
+        logger.trace() << "New variable declared: '" << name << "' with value " << varWithValue->expression()->getText();
 
-            currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
-        }
+        VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
+        VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol, expression,
+                                                                                   varWithValue->getStart());
+        variables.push_back(variableDef);
+        currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
     }
 
     return variables;
@@ -381,6 +378,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
 
     ArraySymbol::Ptr arraySymbol;
     ArrayDeclaration::Ptr arrayDeclaration;
+    ArrayDefinition::Ptr arrayDefinition;
 
     if (ctx->arrayDeclarationVoidInner()) {
         arraySymbol = visitArrayDeclarationVoidInner(ctx->arrayDeclarationVoidInner()).as<ArraySymbol::Ptr>();
@@ -402,10 +400,25 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
                 ctx->arrayDeclarationInner()->validIdentifier()->getStart()
         );
 
+        if (nullptr != ctx->arrayBlock()) {
+            std::vector<Expression::Ptr> expressions = visitArrayBlock(ctx->arrayBlock());
+            arrayDefinition = std::make_shared<ArrayDefinition>(arraySymbol,expressions,ctx->start);
+        } else {
+            arrayDefinition = std::make_shared<ArrayDefinition>(arraySymbol,ctx->start);
+        }
+
     }
 
     currentContext()->getSymbolTable()->addVariableDeclaration(ctx, arraySymbol->getType(), arraySymbol->getName(),
                                                                arrayDeclaration);
+    currentContext()->getSymbolTable()->addVariableDefinition(ctx,arraySymbol->getType(),arraySymbol->getName(),arrayDefinition);
+
+
+
+
+
+   // ArrayDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol, expression,
+    //                                                                        vdAssignmentContext->getStart());
 
 
     logger.trace() << "New array declared : '" << arraySymbol->getName() << "' with return type " << arraySymbol->getType()->getIdentifier()

@@ -28,15 +28,57 @@
 
 namespace caramel::exceptions {
 
-class UndefinedSymbolException : public std::runtime_error {
+class UndefinedSymbolError : public SemanticError {
 
 public:
-    explicit UndefinedSymbolException(const std::string &__arg) : runtime_error(__arg) {}
+    UndefinedSymbolError(std::string const &message,
+                         antlr4::ParserRuleContext *antlrContext)
+            : SemanticError(message),
+              mAntlrContext{antlrContext}{}
 
-    explicit UndefinedSymbolException(const char * c) : runtime_error(c){}
 
-    explicit UndefinedSymbolException(const std::runtime_error & ex) : runtime_error(ex){}
+    void explain(SourceFileUtil sourceFileUtil) const override {
+        using namespace caramel::colors;
 
+        // TODO: Create helper functions
+        const int LEFT_MARGIN = 4;
+
+        // Get shorter names for these
+        auto const &start = mAntlrContext->getStart();
+        auto const startLine = start->getLine();
+        auto const startColumn = int(start->getCharPositionInLine());
+        auto const &stop = mAntlrContext->getStop();
+        auto const stopColumn = int(stop->getCharPositionInLine());
+
+        // TODO: Handle multi-line statements
+        if (start->getLine() != stop->getLine()) {
+            logger.warning() << "Errors are buggy for multi-line statements.";
+        }
+
+        // Strip the left and right spaces
+        std::string line(sourceFileUtil.getLine(startLine));
+        size_t begin = line.find_first_not_of(' ');
+        size_t end = line.find_last_not_of(' ') + 1;
+        line = line.substr(begin, end - begin);
+
+        std::stringstream posInfoSS;
+        posInfoSS << startLine << ':' << startColumn;
+        std::string posInfo(posInfoSS.str());
+        auto posInfoLength = int(posInfo.length());
+
+        // Print the error
+        std::cerr << red << bold << "semantic error at " << posInfo << ": " << reset
+                  << what() << std::endl
+                  << posInfo << std::setfill(' ') << std::setw(LEFT_MARGIN) << ""
+                  << line << std::endl
+                  << std::setfill(' ') << std::setw(LEFT_MARGIN + posInfoLength + startColumn - int(begin)) << ""
+                  << "^"
+                  << std::setfill('~') << std::setw(stopColumn - startColumn) << ""
+                  << std::endl;
+    }
+
+private:
+    antlr4::ParserRuleContext *mAntlrContext;
 };
 
 } // namespace caramel::exception

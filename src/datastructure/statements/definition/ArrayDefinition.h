@@ -25,20 +25,37 @@
 #pragma once
 
 #include "Definition.h"
+#include "../expressions/Expression.h"
 
 
-namespace caramel::ast::definition {
+namespace caramel::ast {
 
 class ArrayDefinition : public Definition {
 public:
     using Ptr = std::shared_ptr<ArrayDefinition>;
-    using WeakPtr = std::weak_ptr<ArrayDefinition>;
 
-public:
+    ArrayDefinition(
+            std::shared_ptr<caramel::ast::ArraySymbol> symbol,
+            antlr4::Token *startToken
+    );
 
-    explicit ArrayDefinition(antlr4::Token *startToken);
+    ArrayDefinition(
+            std::shared_ptr<caramel::ast::ArraySymbol> symbol,
+            std::vector<std::shared_ptr<caramel::ast::Expression>> initializer,
+            antlr4::Token *startToken
+    );
+
     ~ArrayDefinition() override = default;
 
+public:
+    std::weak_ptr<caramel::ast::Symbol> getSymbol() override {
+        throw std::runtime_error("Cannot return a valid symbol");
+    };
+    std::weak_ptr<ArraySymbol> getArraySymbol();
+
+private:
+    std::weak_ptr<caramel::ast::ArraySymbol> mSymbol;
+    std::vector<std::weak_ptr<caramel::ast::Expression>> mInitializer;
 };
 
 } // namespace caramel::ast

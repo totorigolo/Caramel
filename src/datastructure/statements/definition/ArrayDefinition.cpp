@@ -24,10 +24,38 @@
 
 #include "ArrayDefinition.h"
 
-namespace caramel::ast::definition {
+#include "../../symboltable/ArraySymbol.h"
+#include "../expressions/atomicexpression/Constant.h"
 
-ArrayDefinition::ArrayDefinition(antlr4::Token *startToken)
-        : Definition(startToken, StatementType::ArrayDefinition) {
+namespace caramel::ast {
+
+ArrayDefinition::ArrayDefinition(
+        std::shared_ptr<ArraySymbol> symbol,
+        antlr4::Token *startToken
+)
+        : ArrayDefinition(symbol, {}, startToken) {
+}
+
+ArrayDefinition::ArrayDefinition(
+        std::shared_ptr<ArraySymbol> symbol,
+        std::vector<std::shared_ptr<Expression>> initializer,
+        antlr4::Token *startToken
+)
+        : Definition(startToken, StatementType::ArrayDefinition),
+          mSymbol(symbol) {
+
+    long arraySize = symbol->getSize();
+    long initializerSize = initializer.size();
+    for (int i = 0; i < initializerSize; i++) {
+        mInitializer.push_back(initializer.at(i));
+    }
+    for (long i = initializerSize ; i < arraySize; i++ ){
+        mInitializer.push_back(Constant::defaultConstant(startToken));
+    }
+}
+
+std::weak_ptr<ArraySymbol> ArrayDefinition::getArraySymbol() {
+    return mSymbol;
 }
 
 } // namespace caramel::ast
