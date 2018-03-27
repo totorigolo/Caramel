@@ -37,10 +37,7 @@ using namespace caramel::colors;
 using namespace caramel::visitors;
 
 AbstractSyntaxTreeVisitor::AbstractSyntaxTreeVisitor(std::string const &sourceFileName)
-        : mSourceFileUtil{sourceFileName},
-          mBitwiseShiftOperator{std::make_shared<BitwiseShiftOperator>()},
-          mMultOperator{std::make_shared<MultOperator>()},
-          mPlusOperator{std::make_shared<PlusOperator>()} {
+        : mSourceFileUtil{sourceFileName} {
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {

@@ -24,3 +24,37 @@
 
 #pragma once
 
+#include <memory>
+#include <Common.h>
+#include "../BinaryOperator.h"
+
+namespace caramel::ast {
+
+class RightShiftOperator : public BinaryOperator {
+public:
+    using Ptr = std::shared_ptr<RightShiftOperator>;
+    using WeakPtr = std::weak_ptr<RightShiftOperator>;
+
+    static constexpr const char* SYMBOL = ">>";
+
+public:
+    RightShiftOperator() = default;
+
+public:
+    ~RightShiftOperator() override = default;
+
+public:
+    std::shared_ptr<ir::IR> buildIR(
+            std::shared_ptr<ir::BasicBlock> const &currentBasicBlock,
+            std::shared_ptr<Expression> const &leftExpression,
+            std::shared_ptr<Expression> const &rightExpression
+    ) override;
+
+    StatementType getExpressionType() const override;
+
+    std::string getToken() const override;
+};
+
+}
+
+

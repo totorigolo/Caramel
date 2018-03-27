@@ -28,9 +28,7 @@
 #include "../Console.h"
 #include "../utils/SourceFileUtil.h"
 #include "../ast/context/Context.h"
-#include "../ast/operators/binaryoperators/PlusOperator.h"
-#include "../ast/operators/binaryoperators/MultOperator.h"
-#include "../ast/operators/binaryoperators/BitwiseShiftOperator.h"
+#include "../ast/operators/binaryoperators/BinaryOperatorIndex.h"
 
 
 #pragma GCC diagnostic push
@@ -165,6 +163,14 @@ public:
     /// Returns WhileBlock::Ptr
     antlrcpp::Any visitWhileBlock(CaramelParser::WhileBlockContext *ctx) override;
 
+    antlrcpp::Any visitBitwiseShiftExpression(CaramelParser::BitwiseShiftExpressionContext *ctx) override;
+
+    antlrcpp::Any visitMultiplicativeExpression(CaramelParser::MultiplicativeExpressionContext *ctx) override;
+
+    antlrcpp::Any visitMultiplicativeOperator(CaramelParser::MultiplicativeOperatorContext *ctx) override;
+
+    antlrcpp::Any visitBitwiseShiftOperator(CaramelParser::BitwiseShiftOperatorContext *ctx) override;
+
 private:
     std::shared_ptr<caramel::ast::Context> currentContext(); //
     friend class ContextPusher;
@@ -175,9 +181,7 @@ private:
     std::stack<std::shared_ptr<caramel::ast::Context>> mContextStack;
     utils::SourceFileUtil mSourceFileUtil;
 
-    const std::shared_ptr<caramel::ast::BitwiseShiftOperator> mBitwiseShiftOperator;
-    const std::shared_ptr<caramel::ast::MultOperator> mMultOperator;
-    const std::shared_ptr<caramel::ast::PlusOperator> mPlusOperator = std::make_shared<caramel::ast::PlusOperator>();
+    BinaryOperatorIndex binaryOperatorIndex;
 };
 
 class ContextPusher {

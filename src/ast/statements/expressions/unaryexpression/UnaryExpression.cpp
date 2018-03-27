@@ -31,7 +31,7 @@ UnaryExpression::UnaryExpression(
         std::shared_ptr<caramel::ast::Expression> const &innerExpression,
         std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
         antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
+) : Expression(startToken, mUnaryOperator->getExpressionType()),
     mInnerExpression{innerExpression},
     mUnaryOperator{unaryOperator} {}
 

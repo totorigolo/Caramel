@@ -23,17 +23,18 @@
 */
 
 #include "AbstractSyntaxTreeVisitor.h"
-#include "../Logger.h"
-#include "../utils/Common.h"
 #include "../ast/statements/expressions/atomicexpression/Constant.h"
 #include "../ast/statements/expressions/binaryexpression/BinaryExpression.h"
-#include "../ast/statements/expressions/atomicexpression/AtomicExpression.h"
 
+#define FIND_BINARY_OP(ctx) binaryOperatorIndex.getOpForToken((ctx)->getText())
 
 using namespace caramel::ast;
 using namespace caramel::utils;
 using namespace caramel::colors;
 using namespace caramel::visitors;
+
+//--------------------------------------------------------------------------------------------------------
+// Binary Expressions
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitExpression(CaramelParser::ExpressionContext *ctx) {
     logger.trace() << "visiting expression: " << grey <<ctx->getText();
@@ -42,7 +43,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitExpression(CaramelParser::Expressi
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) {
     logger.trace() << "visiting additive expression: " << grey <<ctx->getText();
-    return visitChildren(ctx);
     if (ctx->children.size() == 1) {
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();
@@ -57,9 +57,13 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::
 }
 
 antlrcpp::Any
-AbstractSyntaxTreeVisitor::visitAdditiveOperator(caramel_unused CaramelParser::AdditiveOperatorContext *ctx) {
-    logger.trace() << "visiting additive operator: " << grey <<ctx->getText();
-    return std::dynamic_pointer_cast<BinaryOperator>(mPlusOperator);
+AbstractSyntaxTreeVisitor::visitBitwiseShiftExpression(CaramelParser::BitwiseShiftExpressionContext *ctx) {
+    return CaramelBaseVisitor::visitBitwiseShiftExpression(ctx);
+}
+
+antlrcpp::Any
+AbstractSyntaxTreeVisitor::visitMultiplicativeExpression(CaramelParser::MultiplicativeExpressionContext *ctx) {
+    return CaramelBaseVisitor::visitMultiplicativeExpression(ctx);
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) {
@@ -79,26 +83,8 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
     return castTo<Expression::Ptr>(result);
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
-    logger.trace() << "visiting number constant: " << grey <<ctx->getText();
-
-    long long value = std::stoll(ctx->getText());
-    return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->start));
-}
-
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
-    logger.trace() << "visiting char constant: " << grey <<ctx->getText();
-
-    char value = ctx->getText().at(0);
-    return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->start));
-}
-
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) {
-    logger.trace() << "visiting positive constant: " << grey <<ctx->getText();
-
-    long long value = std::stoll(ctx->getText());
-    return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->getStart()));
-}
+//--------------------------------------------------------------------------------------------------------
+// Unary Expressions
 
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) {
@@ -128,4 +114,50 @@ AbstractSyntaxTreeVisitor::visitPostfixUnaryExpression(CaramelParser::PostfixUna
     } else {
         return atomicExpression;
     }
+}
+
+//--------------------------------------------------------------------------------------------------------
+// Binary Operators
+
+antlrcpp::Any
+AbstractSyntaxTreeVisitor::visitAdditiveOperator(caramel_unused CaramelParser::AdditiveOperatorContext *ctx) {
+    logger.trace() << "visiting additive operator: " << grey <<ctx->getText();
+    return FIND_BINARY_OP(ctx);
+}
+
+antlrcpp::Any
+AbstractSyntaxTreeVisitor::visitMultiplicativeOperator(CaramelParser::MultiplicativeOperatorContext *ctx) {
+    logger.trace() << "visiting multiplicative operator: " << grey << ctx->getText();
+    return FIND_BINARY_OP(ctx);
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitBitwiseShiftOperator(CaramelParser::BitwiseShiftOperatorContext *ctx) {
+    return FIND_BINARY_OP(ctx);
+}
+
+//--------------------------------------------------------------------------------------------------------
+// Unary Operators
+
+//--------------------------------------------------------------------------------------------------------
+// LValue
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
+    logger.trace() << "visiting number constant: " << grey <<ctx->getText();
+
+    long long value = std::stoll(ctx->getText());
+    return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->start));
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
+    logger.trace() << "visiting char constant: " << grey <<ctx->getText();
+
+    char value = ctx->getText().at(0);
+    return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->start));
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) {
+    logger.trace() << "visiting positive constant: " << grey <<ctx->getText();
+
+    long long value = std::stoll(ctx->getText());
+    return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->getStart()));
 }

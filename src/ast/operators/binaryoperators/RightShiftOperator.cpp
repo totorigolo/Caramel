@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,40 +22,29 @@
  * SOFTWARE.
 */
 
-#include "BinaryExpression.h"
-
+#include "RightShiftOperator.h"
 
 namespace caramel::ast {
 
-BinaryExpression::BinaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-        std::shared_ptr<caramel::ast::BinaryOperator> const &binaryOperator,
-        std::shared_ptr<caramel::ast::Expression> const &rightExpression,
-        antlr4::Token *startToken
-) : Expression(startToken, StatementType::BinaryExpression),
-    mLeftExpression{leftExpression},
-    mBinaryOperator{binaryOperator},
-    mRightExpression{rightExpression} {}
-
-std::shared_ptr<caramel::ir::IR>
-BinaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
+std::shared_ptr<ir::IR>
+RightShiftOperator::buildIR(
+        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock,
+        std::shared_ptr<Expression> const &leftExpression,
+        std::shared_ptr<Expression> const &rightExpression
 ) {
-    return mBinaryOperator->buildIR(currentBasicBlock, mLeftExpression, mRightExpression);
+    CARAMEL_UNUSED(leftExpression);
+    CARAMEL_UNUSED(rightExpression);
+
+    // TODO : Implement the IR generation which happens right here.
+    throw caramel::exceptions::NotImplementedException(__FILE__);
 }
 
-bool BinaryExpression::shouldReturnAnIR() const {
-    return true;
+StatementType RightShiftOperator::getExpressionType() const {
+    return StatementType::BitwiseShiftExpression;
 }
 
-void BinaryExpression::acceptAstDotVisit() {
-    addNode(thisId(), "BinaryExpression: " + std::string(mBinaryOperator->getToken()));
+std::string RightShiftOperator::getToken() const {
+    return SYMBOL;
 }
 
-void BinaryExpression::visitChildrenAstDot() {
-    // TODO :: implement child visit
-    AstDotNode::visitChildrenAstDot();
-}
-
-}
-
+} // namespace caramel::ast

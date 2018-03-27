@@ -38,6 +38,10 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::MultOperator::buildIR(
     throw caramel::exceptions::NotImplementedException(__FILE__);
 }
 
-caramel::ast::StatementType caramel::ast::MultOperator::expressionType() {
+caramel::ast::StatementType caramel::ast::MultOperator::getExpressionType() const {
     return StatementType::MultiplicativeExpression;
+}
+
+std::string caramel::ast::MultOperator::getToken() const {
+    return SYMBOL;
 }

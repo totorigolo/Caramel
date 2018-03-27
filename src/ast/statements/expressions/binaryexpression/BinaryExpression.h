@@ -52,6 +52,10 @@ public:
             std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
     ) override;
 
+    void visitChildrenAstDot() override;
+
+    void acceptAstDotVisit() override;
+
 private:
     std::shared_ptr<caramel::ast::Expression> mLeftExpression;
     std::shared_ptr<caramel::ast::BinaryOperator> mBinaryOperator;

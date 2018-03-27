@@ -22,22 +22,25 @@
  * SOFTWARE.
 */
 
-#include "BitwiseShiftOperator.h"
+#pragma once
 
-std::shared_ptr<caramel::ir::IR>
-caramel::ast::BitwiseShiftOperator::buildIR(
-        std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-        std::shared_ptr<caramel::ast::Expression> const &rightExpression
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+#include "../BinaryOperator.h"
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+namespace caramel::ast {
+
+class BinaryOperatorIndex {
+
+public:
+    BinaryOperatorIndex();
+
+    BinaryOperator::Ptr getOpForToken(std::string token);
+
+private:
+    typedef std::map<std::string, BinaryOperator::Ptr> IndexMap;
+
+    IndexMap index;
+
+};
+
 }
 
-caramel::ast::StatementType caramel::ast::BitwiseShiftOperator::expressionType() {
-    return StatementType::BitwiseShiftExpression;
-}

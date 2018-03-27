@@ -47,6 +47,10 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::PlusOperator::buildIR(
 
 }
 
-caramel::ast::StatementType caramel::ast::PlusOperator::expressionType() {
+caramel::ast::StatementType caramel::ast::PlusOperator::getExpressionType() const {
     return StatementType::AdditiveExpression;
+}
+
+std::string caramel::ast::PlusOperator::getToken() const {
+    return SYMBOL;
 }
