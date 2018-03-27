@@ -33,13 +33,13 @@ namespace caramel::exceptions {
     class SymbolAlreadyDefinedError : public SemanticError {
     public:
         SymbolAlreadyDefinedError(std::string const &message,
-                                   antlr4::ParserRuleContext *antlrContext,
-                                   caramel::ast::Definition::Ptr const &existingDefinition,
-                                   caramel::ast::Definition::Ptr const &faultyDefinition)
+                                  antlr4::ParserRuleContext *antlrContext,
+                                  caramel::ast::Definition::Ptr const &existingDefinition,
+                                  caramel::ast::Declaration::Ptr const &faultyDeclaration)
                 : SemanticError(message),
                   mAntlrContext{antlrContext},
                   mExistingDefinition{existingDefinition},
-                  mFaultyDefinition{faultyDefinition} {
+                  mFaultyDeclaration{faultyDeclaration}{
         }
 
         void explain(SourceFileUtil sourceFileUtil) const override {
@@ -80,12 +80,18 @@ namespace caramel::exceptions {
                       << "^"
                       << std::setfill('~') << std::setw(stopColumn - startColumn) << ""
                       << std::endl;
+            if (1) {
+                //TODO: test if different type, return primary type instead of statement type
+                std::cerr << bold << "Note: " << reset
+                          << "different previous type, was " << mExistingDefinition->getType() << " now " << mFaultyDeclaration->getType()
+                          << std::endl;
+            }
         }
 
     private:
         antlr4::ParserRuleContext *mAntlrContext;
-        caramel::ast::Definition::Ptr const &mExistingDefinition;
-        caramel::ast::Definition::Ptr const &mFaultyDefinition;
+        caramel::ast::Definition::Ptr mExistingDefinition;
+        caramel::ast::Declaration::Ptr mFaultyDeclaration;
     };
 
 } // namespace caramel::exceptions

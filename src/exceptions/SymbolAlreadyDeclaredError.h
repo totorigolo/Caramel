@@ -37,63 +37,69 @@
 
 namespace caramel::exceptions {
 
-class SymbolAlreadyDeclaredError : public SemanticError {
-public:
-    SymbolAlreadyDeclaredError(std::string const &message,
-                               antlr4::ParserRuleContext *antlrContext,
-                               caramel::ast::Declaration::Ptr const &existingDeclaration,
-                               caramel::ast::Declaration::Ptr const &faultyDeclaration)
-            : SemanticError(message),
-              mAntlrContext{antlrContext},
-              mExistingDeclaration{existingDeclaration},
-              mFaultyDeclaration{faultyDeclaration} {
-//        explain();
-    }
-
-    void explain(SourceFileUtil sourceFileUtil) const override {
-        using namespace colors;
-
-        // TODO: Create helper functions
-        const int LEFT_MARGIN = 4;
-
-        // Get shorter names for these
-        auto const &start = mAntlrContext->getStart();
-        auto const startLine = start->getLine();
-        auto const startColumn = int(start->getCharPositionInLine());
-        auto const &stop = mAntlrContext->getStop();
-        auto const stopColumn = int(stop->getCharPositionInLine());
-
-        // TODO: Handle multi-line statements
-        if (start->getLine() != stop->getLine()) {
-            logger.warning() << "Errors are buggy for multi-line statements.";
+    class SymbolAlreadyDeclaredError : public SemanticError {
+    public:
+        SymbolAlreadyDeclaredError(std::string const &message,
+                                   antlr4::ParserRuleContext *antlrContext,
+                                   caramel::ast::Declaration::Ptr const &existingDeclaration,
+                                   caramel::ast::Declaration::Ptr const &faultyDeclaration)
+                : SemanticError(message),
+                  mAntlrContext{antlrContext},
+                  mExistingDeclaration{existingDeclaration},
+                  mFaultyDeclaration{faultyDeclaration} {
+    //        explain();
         }
 
-        // Strip the left and right spaces
-        std::string line(sourceFileUtil.getLine(startLine));
-        size_t begin = line.find_first_not_of(' ');
-        size_t end = line.find_last_not_of(' ') + 1;
-        line = line.substr(begin, end - begin);
+        void explain(SourceFileUtil sourceFileUtil) const override {
+            using namespace colors;
 
-        std::stringstream posInfoSS;
-        posInfoSS << startLine << ':' << startColumn;
-        std::string posInfo(posInfoSS.str());
-        auto posInfoLength = int(posInfo.length());
+            // TODO: Create helper functions
+            const int LEFT_MARGIN = 4;
 
-        // Print the error
-        std::cerr << red << bold << "semantic error at " << posInfo << ": " << reset
-                  << what() << std::endl
-                  << posInfo << std::setfill(' ') << std::setw(LEFT_MARGIN) << ""
-                  << line << std::endl
-                  << std::setfill(' ') << std::setw(LEFT_MARGIN + posInfoLength + startColumn - int(begin)) << ""
-                  << "^"
-                  << std::setfill('~') << std::setw(stopColumn - startColumn) << ""
-                  << std::endl;
-    }
+            // Get shorter names for these
+            auto const &start = mAntlrContext->getStart();
+            auto const startLine = start->getLine();
+            auto const startColumn = int(start->getCharPositionInLine());
+            auto const &stop = mAntlrContext->getStop();
+            auto const stopColumn = int(stop->getCharPositionInLine());
 
-private:
-    antlr4::ParserRuleContext *mAntlrContext;
-    caramel::ast::Declaration::Ptr const &mExistingDeclaration;
-    caramel::ast::Declaration::Ptr const &mFaultyDeclaration;
-};
+            // TODO: Handle multi-line statements
+            if (start->getLine() != stop->getLine()) {
+                logger.warning() << "Errors are buggy for multi-line statements.";
+            }
+
+            // Strip the left and right spaces
+            std::string line(sourceFileUtil.getLine(startLine));
+            size_t begin = line.find_first_not_of(' ');
+            size_t end = line.find_last_not_of(' ') + 1;
+            line = line.substr(begin, end - begin);
+
+            std::stringstream posInfoSS;
+            posInfoSS << startLine << ':' << startColumn;
+            std::string posInfo(posInfoSS.str());
+            auto posInfoLength = int(posInfo.length());
+
+            // Print the error
+            std::cerr << red << bold << "semantic error at " << posInfo << ": " << reset
+                      << what() << std::endl
+                      << posInfo << std::setfill(' ') << std::setw(LEFT_MARGIN) << ""
+                      << line << std::endl
+                      << std::setfill(' ') << std::setw(LEFT_MARGIN + posInfoLength + startColumn - int(begin)) << ""
+                      << "^"
+                      << std::setfill('~') << std::setw(stopColumn - startColumn) << ""
+                      << std::endl;
+            if (1) {
+                //TODO: test if different type, return primary type instead of statement type
+                std::cerr << bold << "Note: " << reset
+                          << "different previous type, was " << mExistingDeclaration->getType() << " now " << mFaultyDeclaration->getType()
+                          << std::endl;
+            }
+        }
+
+    private:
+        antlr4::ParserRuleContext *mAntlrContext;
+        caramel::ast::Declaration::Ptr mExistingDeclaration;
+        caramel::ast::Declaration::Ptr mFaultyDeclaration;
+    };
 
 } // namespace caramel::exceptions
