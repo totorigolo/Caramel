@@ -9,7 +9,7 @@ void foo(int8_t a0, int8_t b0, int8_t c0);
 
 int32_t main(int32_t, char argv) {
     int32_t a, b = 0;
-    char c = '!';
+    int16_t c;
 
     void foo(int8_t a1, int8_t b1, int8_t c1) {
         void bar(int16_t param) {
