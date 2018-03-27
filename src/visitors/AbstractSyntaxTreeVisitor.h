@@ -28,6 +28,8 @@
 #include "../datastructure/context/Context.h"
 #include "../util/SourceFileUtil.h"
 #include "../datastructure/operators/binaryoperators/PlusOperator.h"
+#include "../datastructure/operators/binaryoperators/MultOperator.h"
+#include "../datastructure/operators/binaryoperators/BitwiseShiftOperator.h"
 
 
 #pragma GCC diagnostic push
@@ -126,6 +128,8 @@ public:
     /// Returns Statement::Ptr
     antlrcpp::Any visitInstruction(CaramelParser::InstructionContext *ctx) override;
 
+    antlrcpp::Any visitExpression(CaramelParser::ExpressionContext *ctx) override;
+
 
 private:
     void pushNewContext(); //
@@ -138,7 +142,9 @@ private:
     std::stack<std::shared_ptr<caramel::ast::Context>> mContextStack;
     SourceFileUtil mSourceFileUtil;
 
-    const std::shared_ptr<caramel::ast::PlusOperator> mPlusOperator = std::make_shared<caramel::ast::PlusOperator>();
+    const std::shared_ptr<caramel::ast::BitwiseShiftOperator> mBitwiseShiftOperator;
+    const std::shared_ptr<caramel::ast::PlusOperator> mPlusOperator;
+    const std::shared_ptr<caramel::ast::MultOperator> mMultOperator;
 };
 
 } // namespace caramel::visitors

@@ -47,6 +47,8 @@ public:
     buildIR(std::shared_ptr<caramel::ast::Expression> const &leftExpression,
             std::shared_ptr<caramel::ast::Expression> const &rightExpression) override;
 
+    StatementType expressionType() override;
+
 };
 
 } // namespace caramel::ast

@@ -24,34 +24,21 @@
 
 #pragma once
 
-#include "SemanticError.h"
-#include "../datastructure/context/Context.h"
-#include "../datastructure/statements/Statement.h"
-#include "../Console.h"
-#include "../util/SourceFileUtil.h"
-#include "../Logger.h"
-
-#include <iomanip>
-#include <iostream>
-
+#include <stdexcept>
 
 namespace caramel::exceptions {
 
-class SymbolAlreadyDeclaredError : public SemanticError {
+class UndefinedSymbolError : public SemanticError {
+
 public:
-    SymbolAlreadyDeclaredError(std::string const &message,
-                               antlr4::ParserRuleContext *antlrContext,
-                               caramel::ast::Declaration::Ptr const &existingDeclaration,
-                               caramel::ast::Declaration::Ptr const &faultyDeclaration)
+    UndefinedSymbolError(std::string const &message,
+                         antlr4::ParserRuleContext *antlrContext)
             : SemanticError(message),
-              mAntlrContext{antlrContext},
-              mExistingDeclaration{existingDeclaration},
-              mFaultyDeclaration{faultyDeclaration} {
-//        explain();
-    }
+              mAntlrContext{antlrContext}{}
+
 
     void explain(SourceFileUtil sourceFileUtil) const override {
-        using namespace colors;
+        using namespace caramel::colors;
 
         // TODO: Create helper functions
         const int LEFT_MARGIN = 4;
@@ -88,18 +75,10 @@ public:
                   << "^"
                   << std::setfill('~') << std::setw(stopColumn - startColumn) << ""
                   << std::endl;
-        if (1) {
-            //TODO: test if different type, return primary type instead of statement type
-            std::cerr << bold << "Note: " << reset
-                      << "different previous type, was " << mExistingDeclaration->getType() << " now " << mFaultyDeclaration->getType()
-                      << std::endl;
-        }
     }
 
 private:
     antlr4::ParserRuleContext *mAntlrContext;
-    caramel::ast::Declaration::Ptr mExistingDeclaration;
-    caramel::ast::Declaration::Ptr mFaultyDeclaration;
 };
 
-} // namespace caramel::exceptions
+} // namespace caramel::exception

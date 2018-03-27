@@ -57,11 +57,19 @@ std::ostream & operator<<(std::ostream &os, const StatementType &type) {
         case StatementType::ArrayDeclaration: return os << "ArrayDeclaration";
         case StatementType::Definition: return os << "Definition";
         case StatementType::VariableDefinition: return os << "VariableDefinition";
+        case StatementType::ArrayDefinition: return os << "ArrayDefinition";
         case StatementType::FunctionDefinition: return os << "FunctionDefinition";
         case StatementType::ArrayDefinition: return os << "ArrayDefinition";
         case StatementType::Expression: return os << "Expression";
+        case StatementType::UnaryExpression: return os << "UnaryExpression";
         case StatementType::AtomicExpression: return os << "AtomicExpression";
         case StatementType::Constant: return os << "Constant";
+            // BinaryExpression w/ sub-types
+        case StatementType::BinaryExpression: return os << "BinaryExpression";
+        case StatementType::BitwiseShiftExpression: return os << "BitwiseShiftExpression";
+        case StatementType::AdditiveExpression: return os << "AdditiveExpression";
+        case StatementType::MultiplicativeExpression: return os << "MultiplicativeExpression";
+
     }
     return os;
 }

@@ -27,7 +27,7 @@
 #include "../../Logger.h"
 #include "../../exceptions/SymbolAlreadyDeclaredError.h"
 #include "../../exceptions/SymbolAlreadyDefinedError.h"
-#include "../../exceptions/UndefinedSymbolException.h"
+#include "../../exceptions/UndefinedSymbolError.h"
 #include "../../exceptions/DeclarationMismatchException.h"
 
 
@@ -43,13 +43,13 @@ SymbolTable::addVariableDeclaration(
         const std::shared_ptr<Declaration> &declaration
 ) {
     using namespace caramel::exceptions;
-    if (isDefined(name)) {/*
+    if (isDefined(name)) {
         throw SymbolAlreadyDefinedError(
                 buildAlreadyDefinedErrorMessage(name),
                 antlrContext,
                 getSymbol(name)->getDefinition(),
-                definition // pas bon, pas de definition ici
-        );*/
+                declaration
+        );
     } else if (isDeclared(name)) {
         throw SymbolAlreadyDeclaredError(
                 buildAlreadyDeclaredErrorMessage(name),
@@ -114,8 +114,9 @@ SymbolTable::addVariableUsage(
             parent = parent->getParentTable();
         }
         if (nullptr == parent) {
-            throw UndefinedSymbolException(
-                    buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol)
+            throw UndefinedSymbolError(
+                    buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol),
+                    antlrContext
             );
         }
     }
@@ -252,14 +253,18 @@ SymbolTable::buildAlreadyDefinedErrorMessage(std::string const &variableName) {
     switch (previousDeclaration->getSymbolType()) {
         case SymbolType::FunctionSymbol:
             res << "a function with the same name is already defined at line "
-                << previousDeclaration->getOccurrences().at(0).lock()->getLine();
+                << previousDeclaration->getDefinition()->getLine();
             break;
         case SymbolType::VariableSymbol:
             res << "a variable with the same name is already defined at line "
-                << previousDeclaration->getOccurrences().at(0).lock()->getLine();
+                << previousDeclaration->getDefinition()->getLine();
             break;
         case SymbolType::TypeSymbol:
             res << variableName << " is a reserved type identifier";
+            break;
+        case SymbolType::ArraySymbol:
+            res << "an array with the same name is already defined at line "
+                << previousDeclaration->getDefinition()->getLine();
             break;
     }
     return res.str();
@@ -275,11 +280,11 @@ SymbolTable::buildAlreadyDeclaredErrorMessage(std::string const &variableName) {
     switch (previousDeclaration->getSymbolType()) {
         case SymbolType::FunctionSymbol:
             res << "a function with the same name is already declared at line "
-                << previousDeclaration->getOccurrences().at(0).lock()->getLine();
+                << previousDeclaration->getDeclaration()->getLine();
             break;
         case SymbolType::VariableSymbol:
             res << "a variable with the same name is already declared at line "
-                << previousDeclaration->getOccurrences().at(0).lock()->getLine();
+                << previousDeclaration->getDeclaration()->getLine();
             break;
         case SymbolType::TypeSymbol:
             res << variableName << " is a reserved type identifier";

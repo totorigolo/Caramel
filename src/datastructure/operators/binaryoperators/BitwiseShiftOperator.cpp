@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,18 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "BitwiseShiftOperator.h"
 
-#include <stdexcept>
+std::shared_ptr<caramel::ast::IR>
+caramel::ast::BitwiseShiftOperator::buildIR(std::shared_ptr <caramel::ast::Expression> const &leftExpression,
+                                            std::shared_ptr <caramel::ast::Expression> const &rightExpression) {
+    CARAMEL_UNUSED(leftExpression);
+    CARAMEL_UNUSED(rightExpression);
 
-namespace caramel::exceptions {
+    // TODO : Implement the IR generation which happens right here.
+    throw caramel::exceptions::NotImplementedException(__FILE__);
+}
 
-class UndefinedSymbolException : public std::runtime_error {
-
-public:
-    explicit UndefinedSymbolException(const std::string &__arg) : runtime_error(__arg) {}
-
-    explicit UndefinedSymbolException(const char * c) : runtime_error(c){}
-
-    explicit UndefinedSymbolException(const std::runtime_error & ex) : runtime_error(ex){}
-
-};
-
-} // namespace caramel::exception
+caramel::ast::StatementType caramel::ast::BitwiseShiftOperator::expressionType() {
+    return StatementType::BitwiseShiftExpression;
+}
