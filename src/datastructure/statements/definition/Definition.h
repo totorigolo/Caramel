@@ -31,7 +31,7 @@
 
 namespace caramel::ast {
 
-class Definition : public caramel::ast::Declaration {
+class Definition : public Declaration {
 public:
     using Ptr = std::shared_ptr<Definition>;
     using WeakPtr = std::shared_ptr<Definition>;
@@ -39,6 +39,9 @@ public:
 
 protected:
     explicit Definition(antlr4::Token *startToken, StatementType type = StatementType::Definition);
+
+public:
+    ~Definition() override = default;
 };
 
 } // namespace caramel::ast

@@ -111,5 +111,7 @@ std::string caramel::ast::Symbol::getSymbolTypeAsString() const {
             return "TypeSymbol";
         case SymbolType::FunctionSymbol:
             return "FunctionSymbol";
+        case SymbolType::ArraySymbol:
+            return "ArraySymbol";
     }
 }

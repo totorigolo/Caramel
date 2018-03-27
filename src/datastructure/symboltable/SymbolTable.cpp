@@ -29,6 +29,7 @@
 #include "../../exceptions/SymbolAlreadyDefinedError.h"
 #include "../../exceptions/UndefinedSymbolException.h"
 #include "../../exceptions/DeclarationMismatchException.h"
+#include "../statements/definition/TypeDefinition.h"
 
 
 namespace caramel::ast {
@@ -202,18 +203,18 @@ SymbolTable::addPrimaryType(
 void
 SymbolTable::addType(
         antlr4::ParserRuleContext *antlrContext,
-        std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
-        std::string const &name,
-        std::weak_ptr<Definition> const &definition
+        std::shared_ptr<TypeDefinition> definition
 ) {
-    // FIXME: Use the right AST type instead of definition, when typedef will be handled.
+
+    std::string typaAlias = definition->getTypeSymbol().lock()->getName();
+    PrimaryType::Ptr primaryType = definition->getTypeSymbol().lock()->getType();
 
     // Not declared and not defined
-    if (isNotDeclared(name)) {
-        mSymbolMap[name] = std::make_shared<TypeSymbol>(name, primaryType);
-        mSymbolMap[name]->addDefinition(definition.lock());
+    if (isNotDeclared(typaAlias)) {
+        mSymbolMap[typaAlias] = std::make_shared<TypeSymbol>(typaAlias, primaryType);
+        mSymbolMap[typaAlias]->addDefinition(definition);
     } else {
-        // Todo : throws SymbolAlreadyDefinedError
+        throw caramel::exceptions::SymbolAlreadyDeclaredError("Cannot execute typedef", antlrContext, mSymbolMap[typaAlias]->getDeclaration(), std::dynamic_pointer_cast<Declaration>(definition));
     }
 }
 

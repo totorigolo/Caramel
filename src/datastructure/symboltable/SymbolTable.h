@@ -30,6 +30,7 @@
 #include "VariableSymbol.h"
 #include "FunctionSymbol.h"
 #include "../../exceptions/NotImplementedException.h"
+#include "../statements/definition/TypeDefinition.h"
 
 #include <CaramelBaseVisitor.h>
 
@@ -47,10 +48,6 @@ public:
 
     static std::shared_ptr<SymbolTable> Create() {
         return std::make_shared<SymbolTable>();
-    }
-
-    static Ptr Create(std::shared_ptr<SymbolTable> const &parentTable) {
-        return std::make_shared<SymbolTable>(parentTable);
     }
 
     SymbolTable() = default;
@@ -107,9 +104,7 @@ public:
 
     void addType(
             antlr4::ParserRuleContext *antlrContext,
-            std::shared_ptr<PrimaryType> const &primaryType,
-            std::string const &name,
-            std::weak_ptr<Definition> const &definition
+            std::shared_ptr<TypeDefinition> definition
     );
 
     bool hasSymbol(std::string const &name);

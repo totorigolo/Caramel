@@ -24,35 +24,36 @@
 
 #pragma once
 
-
-#include "Symbol.h"
+#include "Definition.h"
+#include "../../symboltable/TypeSymbol.h"
 
 namespace caramel::ast {
 
-class TypeSymbol : public Symbol {
+class TypeDefinition : public Definition {
 public:
-    using Ptr = std::shared_ptr<TypeSymbol>;
-    using WeakPtr = std::weak_ptr<TypeSymbol>;
+    using Ptr = std::shared_ptr<TypeDefinition>;
+    using WeakPtr = std::weak_ptr<TypeDefinition>;
 
 public:
-    TypeSymbol(const std::string &mName, std::shared_ptr<PrimaryType> mType);
+    TypeDefinition(
+            antlr4::Token *startToken,
+            std::string const &name,
+            std::shared_ptr<TypeSymbol> typeSymbol
+    );
 
-    ~TypeSymbol() override = default;
+    ~TypeDefinition() override = default;
 
-    void onDeclaration(
-            const std::shared_ptr<caramel::ast::Declaration> &declaration
-    ) override { Symbol::onDeclaration(declaration); }
+public:
 
-    void onDefinition(
-            const std::shared_ptr<caramel::ast::Definition> &definition
-    ) override { Symbol::onDefinition(definition); };
+    std::weak_ptr<TypeSymbol> getTypeSymbol();
+    void setSymbol(std::shared_ptr<TypeSymbol> typeSymbol);
 
-    void onUsage(
-            const std::shared_ptr<caramel::ast::Statement> &statement
-    ) override { Symbol::onUsage(statement); };
+protected:
+    std::string mName;
+    std::weak_ptr<TypeSymbol> mSymbol;
+
 };
 
-} // namespace caramel::dataStructure::symbolTable
-
+} // namespace caramel::ast
 
 
