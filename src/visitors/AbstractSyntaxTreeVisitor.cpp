@@ -322,8 +322,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitExpression(CaramelParser::ExpressionContext *ctx) {
     using namespace caramel::ast;
-    // TODO : change to expression
-    return std::dynamic_pointer_cast<Statement>(visitChildren(ctx).as<Expression::Ptr>());
+    return visitChildren(ctx).as<Expression::Ptr>();
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
@@ -375,8 +374,8 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
     if (nullptr != ctx->arrayDeclarationVoidInner()) {
         arraySymbol = visitArrayDeclarationVoidInner(ctx->arrayDeclarationVoidInner()).as<ArraySymbol::Ptr>();
 
-        //vector<Expression::Ptr> arrayBlock;
-        long arraySize = visitArrayBlock(ctx->arrayBlock());
+        std::vector<Expression::Ptr> expressions = visitArrayBlock(ctx->arrayBlock());
+        long arraySize = expressions.size();
         arraySymbol->setSize(arraySize);
 
         arrayDeclaration = std::make_shared<ArrayDeclaration>(arraySymbol,
@@ -394,11 +393,11 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
                                                                arrayDeclaration);
 
 
-    logger.trace() << "New array declared " << arraySymbol->getName() << " of return type " << arraySymbol->getType()
-                   << "and size " << arraySymbol->getSize();
+    logger.trace() << "New array declared : '" << arraySymbol->getName() << "' with return type " << arraySymbol->getType()->getIdentifier()
+                   << ", size " << arraySymbol->getSize();
 
     //TODO : Cas d'erreur
-    return arrayDeclaration;
+    return std::dynamic_pointer_cast<Statement>(arrayDeclaration);
 }
 
 antlrcpp::Any
@@ -417,8 +416,12 @@ AbstractSyntaxTreeVisitor::visitArrayDeclarationVoidInner(CaramelParser::ArrayDe
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) {
     using namespace caramel::ast;
-    std::vector<Statement> statements;
-    return ctx->expression();
+    std::vector<Expression::Ptr> expressions;
+    for (auto expression : ctx->expression()) {
+        Expression::Ptr exp = visitExpression(expression);
+        expressions.push_back(exp);
+    }
+    return expressions;
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) {

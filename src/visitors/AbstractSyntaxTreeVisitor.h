@@ -105,7 +105,7 @@ public:
     /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitCharConstant(CaramelParser::CharConstantContext *ctx) override;
 
-    /// Returns ArrayDeclaration:PTR
+    /// Returns Statement::Ptr
     antlrcpp::Any visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) override;
 
     /// Returns Symbol::Ptr
@@ -114,6 +114,7 @@ public:
     /// Returns Symbol::Ptr
     antlrcpp::Any visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) override;
 
+    /// Returns vector<Expression::Ptr>
     antlrcpp::Any visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) override;
 
     /// Returns AtomicExpression::Ptr
