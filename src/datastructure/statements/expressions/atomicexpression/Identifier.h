@@ -28,7 +28,7 @@
 #include "../../../symboltable/Symbol.h"
 
 
-namespace caramel::ast::atomicExpression {
+namespace caramel::ast {
 
 class Identifier : public LValue {
 public:
@@ -37,16 +37,16 @@ public:
 
 public:
     explicit Identifier(
-            std::shared_ptr<caramel::ast::Symbol> symbol,
+            std::shared_ptr<Symbol> symbol,
             antlr4::Token *startToken
     );
 
     ~Identifier() override = default;
 
-    std::shared_ptr<caramel::ast::Symbol> getSymbol();
+    std::shared_ptr<Symbol> getSymbol();
 
 private:
-    std::shared_ptr<caramel::ast::Symbol> mSymbol;
+    std::shared_ptr<Symbol> mSymbol;
 
 };
 

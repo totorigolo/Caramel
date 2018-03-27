@@ -29,6 +29,7 @@ using namespace caramel::ast;
 using namespace caramel::visitors;
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) {
+    return visitChildren(ctx);
     if (ctx->children.size() == 1) {
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();

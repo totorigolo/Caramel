@@ -39,6 +39,7 @@
 #include "../datastructure/statements/jumps/Jump.h"
 #include "../datastructure/statements/controlblocks/ControlBlock.h"
 #include "../datastructure/statements/jumps/ReturnStatement.h"
+#include "../datastructure/statements/expressions/atomicexpression/Identifier.h"
 
 
 using namespace caramel::visitors;
@@ -133,6 +134,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstructions(CaramelParser::Instru
     return instructions;
 }
 
+// Return std::string
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) {
     return ctx->getText();
 }
@@ -199,7 +201,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::
 
         currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
     }
-    for (auto varWithValue : ctx->variableDefinitionAssignment()) {
+    for (auto *varWithValue : ctx->variableDefinitionAssignment()) {
         std::string name = visitValidIdentifier(varWithValue->validIdentifier());
 
         Expression::Ptr expression = visitExpression(varWithValue->expression());
@@ -322,7 +324,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockCont
     return CaramelBaseVisitor::visitIfBlock(ctx);
 }
 
-// return Expression::Ptr
+// return Expression::Ptr | Symbol::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) {
 
     using namespace caramel::ast;
@@ -330,9 +332,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
     Expression::Ptr result;
     if (ctx->validIdentifier()) {
         std::string varName = visitValidIdentifier(ctx->validIdentifier());
-        // Fixme : replace with true atomicExpression constructor
-        result = castTo<Expression::Ptr>(Constant::defaultConstant(ctx->getStart()));
-        currentContext()->getSymbolTable()->addVariableUsage(ctx, varName, castTo<Statement::Ptr>(result));
+        Symbol::Ptr symbol = currentContext()->getSymbolTable()->addVariableUsage(ctx, varName, castTo<Statement::Ptr>(result));
     } else if (ctx->charConstant()) {
         result = castAnyTo<AtomicExpression::Ptr, Expression::Ptr>(visitCharConstant(ctx->charConstant()));
     } else if (ctx->numberConstant()) {
@@ -571,5 +571,43 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitReturnJump(CaramelParser::ReturnJu
     returnStatement = std::make_shared<ReturnStatement>(returnedExpression, ctx->getStart());
 
     return castTo<Jump::Ptr>(returnStatement);
+}
+
+antlrcpp::Any
+AbstractSyntaxTreeVisitor::visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) {
+
+    using namespace caramel::ast;
+
+    antlrcpp::Any atomicExpression = visitAtomicExpression(ctx->atomicExpression());
+
+    if(ctx->postfixUnaryOperation().size() > 0) {
+
+        for(CaramelParser::PostfixUnaryOperationContext *postFixCtx : ctx->postfixUnaryOperation()) {
+            if(postFixCtx->callSufix()) {
+
+                if(!atomicExpression.is<FunctionSymbol::Ptr>()) {
+                    throw std::runtime_error("Cannot use function call on non function symbol");
+                }
+
+            } else if (postFixCtx->arrayAccess()) {
+
+                if(!atomicExpression.is<VariableSymbol::Ptr>()) {
+
+                }
+
+            } else if (postFixCtx->postfixUnaryOperator()) {
+                if(!atomicExpression.is<VariableSymbol::Ptr>()) {
+                    throw std::runtime_error("Cannot use postfix Unary Operator on non variable symbol");
+                }
+            }
+        }
+
+    }
+
+    if(atomicExpression.is<Symbol::Ptr>()) {
+
+    } else {
+        return atomicExpression;
+    }
 
 }

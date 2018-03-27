@@ -68,7 +68,7 @@ public:
             const std::shared_ptr<Definition> &definition
     );
 
-    void addVariableUsage(
+    Symbol::Ptr addVariableUsage(
             antlr4::ParserRuleContext *antlrContext,
             std::string const &name,
             const std::shared_ptr<Statement> &expression

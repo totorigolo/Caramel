@@ -5,11 +5,12 @@ r
 
 // Program statements
 statements
-  : WS_* statement (WS_* statement)* WS_*
+  : WS_* statement (WS_* statement WS_* )* WS_*
   ;
 statement
   : instruction
   | declaration
+  | InstructionSeparator
   ;
 
 instructions
@@ -19,7 +20,6 @@ instruction
   : jump WS_* InstructionSeparator
   | controlBlock
   | expression WS_* InstructionSeparator
-  | InstructionSeparator
   ;
 
 declarations
@@ -34,7 +34,6 @@ declaration
   | arrayDefinition WS_* InstructionSeparator
   | variableDeclaration WS_* InstructionSeparator
   | variableDefinition WS_* InstructionSeparator
-  | InstructionSeparator
   ;
 
 // Declarations

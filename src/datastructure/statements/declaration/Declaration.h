@@ -32,6 +32,7 @@ namespace caramel::ast {
     class FunctionSymbol;
     class VariableSymbol;
     class ArraySymbol;
+    class UndefinedSymbol;
 }
 
 namespace caramel::ast {

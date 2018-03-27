@@ -27,7 +27,7 @@
 #include "AtomicExpression.h"
 
 
-namespace caramel::ast::atomicExpression {
+namespace caramel::ast {
 
 class LValue : public AtomicExpression {
 public:
@@ -36,6 +36,8 @@ public:
 
 protected:
     explicit LValue(antlr4::Token *startToken);
+
+public:
     ~LValue() override = default;
 };
 

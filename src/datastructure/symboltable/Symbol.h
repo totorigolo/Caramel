@@ -50,19 +50,19 @@ public:
 
     virtual ~Symbol() = default;
 
-    std::vector<std::weak_ptr<caramel::ast::Statement>> getOccurrences();
+    std::vector<std::weak_ptr<Statement>> getOccurrences();
 
     bool isDeclared();
     bool isDefined();
 
-    std::shared_ptr<caramel::ast::Declaration> getDeclaration();
-    std::shared_ptr<caramel::ast::Definition> getDefinition();
+    std::shared_ptr<Declaration> getDeclaration();
+    std::shared_ptr<Definition> getDefinition();
 
-    std::shared_ptr<caramel::ast::PrimaryType> getType() const;
+    std::shared_ptr<PrimaryType> getType() const;
 
-    void addDeclaration(const std::shared_ptr<caramel::ast::Declaration> &declaration);
-    void addDefinition(const std::shared_ptr<caramel::ast::Definition> &definition);
-    void addUsage(const std::shared_ptr<caramel::ast::Statement> &statement);
+    void addDeclaration(const std::shared_ptr<Declaration> &declaration);
+    void addDefinition(const std::shared_ptr<Definition> &definition);
+    void addUsage(const std::shared_ptr<Statement> &statement);
 
     SymbolType getSymbolType() const;
     std::string getSymbolTypeAsString() const;
@@ -77,19 +77,19 @@ protected:
     );
 
     virtual void onDeclaration(
-            const std::shared_ptr<caramel::ast::Declaration> &declaration
+            const std::shared_ptr<Declaration> &declaration
     );
     virtual void onDefinition(
-            const std::shared_ptr<caramel::ast::Definition> &definition
+            const std::shared_ptr<Definition> &definition
     );
     virtual void onUsage(
-            const std::shared_ptr<caramel::ast::Statement> &statement
+            const std::shared_ptr<Statement> &statement
     );
 
 protected:
-    std::weak_ptr<caramel::ast::Declaration> mDeclaration;
-    std::weak_ptr<caramel::ast::Definition> mDefinition;
-    std::vector<std::weak_ptr<caramel::ast::Statement>> mOccurrences;
+    std::weak_ptr<Declaration> mDeclaration;
+    std::weak_ptr<Definition> mDefinition;
+    std::vector<std::weak_ptr<Statement>> mOccurrences;
 
 private:
     std::string mName;

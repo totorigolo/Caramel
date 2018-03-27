@@ -136,6 +136,8 @@ public:
 
     antlrcpp::Any visitReturnJump(CaramelParser::ReturnJumpContext *ctx) override;
 
+    antlrcpp::Any visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) override;
+
 private:
     void pushNewContext(); //
     void popContext(); //

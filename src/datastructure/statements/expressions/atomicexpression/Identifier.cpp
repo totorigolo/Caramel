@@ -24,7 +24,7 @@
 
 #include "Identifier.h"
 
-namespace caramel::ast::atomicExpression {
+namespace caramel::ast {
 
 Identifier::Identifier(
         std::shared_ptr<caramel::ast::Symbol> symbol,

@@ -98,7 +98,7 @@ SymbolTable::addVariableDefinition(
     }
 }
 
-void
+Symbol::Ptr
 SymbolTable::addVariableUsage(
         antlr4::ParserRuleContext *antlrContext,
         std::string const &name,
@@ -108,6 +108,7 @@ SymbolTable::addVariableUsage(
     using namespace caramel::exceptions;
     if (isDefined(name)) {
         mSymbolMap[name]->addUsage(statement);
+        return mSymbolMap[name];
     } else {
         // Fixme : Try to find the variable in the parent context or throw a VariableUndefinedException
         SymbolTable::Ptr parent = getParentTable();
@@ -119,6 +120,8 @@ SymbolTable::addVariableUsage(
                     buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol),
                     antlrContext
             );
+        } else {
+            return parent->getSymbol(name);
         }
     }
 }

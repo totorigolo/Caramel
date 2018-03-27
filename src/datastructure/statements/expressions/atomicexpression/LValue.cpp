@@ -25,7 +25,7 @@
 #include "LValue.h"
 
 
-namespace caramel::ast::atomicExpression {
+namespace caramel::ast {
 
 LValue::LValue(antlr4::Token *startToken)
         : AtomicExpression(startToken) {
