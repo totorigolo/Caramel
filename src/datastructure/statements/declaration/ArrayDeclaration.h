@@ -41,6 +41,9 @@ public:
 
     ~ArrayDeclaration() override = default;
 
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
+
 public:
 
     std::weak_ptr<Symbol> getSymbol() override {

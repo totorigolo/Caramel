@@ -22,36 +22,30 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "../symboltable/SymbolTable.h"
-#include "../statements/Statement.h"
-
-#include <memory>
-#include <vector>
+#include "AstDotNode.h"
 
 
-namespace caramel::ast {
+std::stringstream caramel::AstDotNode::sNodes;
+std::stringstream caramel::AstDotNode::sEdges;
 
-class Context : public AstDotNode {
-public:
-    using Ptr = std::shared_ptr<Context>;
-    using WeakPtr = std::weak_ptr<Context>;
+void caramel::AstDotNode::addNode(size_t id, const std::string &name) {
+    AstDotNode::sNodes << "\tnode" << id << "[label=\"" << name << "\"]\n";
+}
 
-    Context();
-    explicit Context(std::shared_ptr<Context> const &parent);
+void caramel::AstDotNode::addEdge(size_t id1, size_t id2) {
+    AstDotNode::sEdges << "\tnode" << id1 << " -> " << "node" << id2 << ";\n";
+}
 
-    std::shared_ptr<caramel::ast::SymbolTable> getSymbolTable() const;
+std::string caramel::AstDotNode::getDotFile() {
+    acceptAstDotVisit();
+    return "digraph {\n"
+           "\tordering=out;\n"
+           "\tranksep=.4;\n"
+           "\tnode [shape=box, fixedsize=false, fontsize=12, fontname=\"Helvetica\", fontcolor=\"blue\"\n"
+           "\t\twidth=.25, height=.25, color=\"black\", fillcolor=\"lightgrey\", style=\"filled, solid\"];\n"
+           "\tedge [arrowsize=.5, color=\"black\"]\n\n" + AstDotNode::sNodes.str() + AstDotNode::sEdges.str() + "}\n";
+}
 
-    void addStatements(std::vector<std::shared_ptr<caramel::ast::Statement>> &&statements);
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-private:
-
-    std::shared_ptr<caramel::ast::SymbolTable> mSymbolTable;
-    std::vector<std::shared_ptr<caramel::ast::Statement>> mStatements;
-};
-
-} // namespace caramel::dataStructure::context
+size_t caramel::AstDotNode::thisId() const {
+    return size_t(this);
+}

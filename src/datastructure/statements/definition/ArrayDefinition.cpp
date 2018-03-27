@@ -27,35 +27,42 @@
 #include "../../symboltable/ArraySymbol.h"
 #include "../expressions/atomicexpression/Constant.h"
 
+
 namespace caramel::ast {
 
 ArrayDefinition::ArrayDefinition(
-        std::shared_ptr<ArraySymbol> symbol,
-        antlr4::Token *startToken
-)
-        : ArrayDefinition(symbol, {}, startToken) {
-}
-
-ArrayDefinition::ArrayDefinition(
-        std::shared_ptr<ArraySymbol> symbol,
         std::vector<std::shared_ptr<Expression>> initializer,
         antlr4::Token *startToken
 )
         : Definition(startToken, StatementType::ArrayDefinition),
-          mSymbol(symbol) {
-
-    long arraySize = symbol->getSize();
-    long initializerSize = initializer.size();
-    for (int i = 0; i < initializerSize; i++) {
-        mInitializer.push_back(initializer.at(i));
-    }
-    for (long i = initializerSize ; i < arraySize; i++ ){
-        mInitializer.push_back(Constant::defaultConstant(startToken));
-    }
+          mStartToken{startToken},
+          mSymbol{} {
+    std::move(initializer.begin(), initializer.end(), std::back_inserter(mInitializer));
 }
 
 std::weak_ptr<ArraySymbol> ArrayDefinition::getArraySymbol() {
     return mSymbol;
+}
+
+void ArrayDefinition::setArraySymbol(std::shared_ptr<ArraySymbol> const &arraySymbol) {
+    mSymbol = arraySymbol;
+
+    long arraySize = arraySymbol->getSize();
+    long initializerSize = mInitializer.size();
+    for (int i = 0; i < initializerSize; i++) {
+        mInitializer.push_back(mInitializer.at(i));
+    }
+    for (long i = initializerSize; i < arraySize; i++) {
+        mInitializer.push_back(Constant::defaultConstant(mStartToken));
+    }
+}
+
+void ArrayDefinition::acceptAstDotVisit() {
+    addNode(thisId(), "ArrayDefinition (block not shown)");
+}
+
+void ArrayDefinition::visitChildrenAstDot() {
+    // TODO: Visit the expressions in the block
 }
 
 } // namespace caramel::ast

@@ -23,18 +23,27 @@
 */
 
 #include "FunctionDeclaration.h"
+#include "../../symboltable/FunctionSymbol.h"
+
 
 namespace caramel::ast {
 
-FunctionDeclaration::FunctionDeclaration(
-        std::shared_ptr<caramel::ast::FunctionSymbol>
-        symbol,
-        antlr4::Token *startToken
-) : Declaration(startToken, StatementType::FunctionDeclaration), mSymbol(std::move(symbol)) {}
+FunctionDeclaration::FunctionDeclaration(antlr4::Token *startToken)
+        : Declaration(startToken, StatementType::FunctionDeclaration), mSymbol{} {}
 
-std::weak_ptr<caramel::ast::FunctionSymbol>
+caramel::ast::FunctionSymbol::WeakPtr
 FunctionDeclaration::getFunctionSymbol() {
     return mSymbol;
 }
+
+void FunctionDeclaration::setFunctionSymbol(std::shared_ptr<caramel::ast::FunctionSymbol> const &functionSymbol) {
+    mSymbol = functionSymbol;
+}
+
+void FunctionDeclaration::acceptAstDotVisit() {
+    addNode(thisId(), "FunctionDeclaration: " + mSymbol.lock()->getName());
+}
+
+void FunctionDeclaration::visitChildrenAstDot() {}
 
 } // namespace caramel::ast

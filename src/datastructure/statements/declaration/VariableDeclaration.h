@@ -25,6 +25,7 @@
 #pragma once
 
 #include "Declaration.h"
+#include "../../symboltable/VariableSymbol.h"
 
 #include <memory>
 
@@ -35,19 +36,16 @@ public:
     using Ptr = std::shared_ptr<VariableDeclaration>;
     using WeakPtr = std::weak_ptr<VariableDeclaration>;
 
-    VariableDeclaration(
-            std::weak_ptr<VariableSymbol> symbol,
-            antlr4::Token *startToken
-    );
+    VariableDeclaration(VariableSymbol::WeakPtr symbol, antlr4::Token *startToken);
 
-public:
-
-    std::weak_ptr<Symbol> getSymbol() override {
+    Symbol::WeakPtr getSymbol() override {
         throw std::runtime_error("Cannot get the VariableSymbol as Symbol");
     };
 
-    std::weak_ptr<VariableSymbol>
-    getVariableSymbol();
+    VariableSymbol::WeakPtr getVariableSymbol();
+
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
 
 private:
     std::weak_ptr<VariableSymbol> mSymbol;

@@ -27,11 +27,10 @@
 
 namespace caramel::ast {
 
-
 FunctionDefinition::FunctionDefinition(
         std::shared_ptr<caramel::ast::Context> context,
         antlr4::Token *startToken
-) : Definition(startToken, StatementType::FunctionDefinition), mContext{context}, mSymbol{} {}
+) : Definition(startToken, StatementType::FunctionDefinition), mContext{std::move(context)}, mSymbol{} {}
 
 std::weak_ptr<FunctionSymbol> FunctionDefinition::getFunctionSymbol() {
     return mSymbol;
@@ -41,6 +40,14 @@ void FunctionDefinition::setSymbol(FunctionSymbol::Ptr functionSymbol) {
     mSymbol = functionSymbol;
 }
 
+void FunctionDefinition::acceptAstDotVisit() {
+    addNode(thisId(), "FunctionDefinition: " + mSymbol.lock()->getName());
+    visitChildrenAstDot();
+}
 
+void FunctionDefinition::visitChildrenAstDot() {
+    addEdge(thisId(), mContext->thisId());
+    mContext->acceptAstDotVisit();
+}
 
 } // namespace caramel::ast
