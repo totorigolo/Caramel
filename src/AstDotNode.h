@@ -24,34 +24,37 @@
 
 #pragma once
 
-#include "../symboltable/SymbolTable.h"
-#include "../statements/Statement.h"
+#include "Logger.h"
 
-#include <memory>
-#include <vector>
+#include <string>
+#include <sstream>
 
+namespace caramel {
 
-namespace caramel::ast {
-
-class Context : public AstDotNode {
+class AstDotNode {
 public:
-    using Ptr = std::shared_ptr<Context>;
-    using WeakPtr = std::weak_ptr<Context>;
+    AstDotNode() = default;
+    virtual ~AstDotNode() = default;
 
-    Context();
-    explicit Context(std::shared_ptr<Context> const &parent);
+    void addNode(size_t id, const std::string &name);
 
-    std::shared_ptr<caramel::ast::SymbolTable> getSymbolTable() const;
+    void addEdge(size_t id1, size_t id2);
 
-    void addStatements(std::vector<std::shared_ptr<caramel::ast::Statement>> &&statements);
+    virtual void acceptAstDotVisit() {
+        logger.warning() << "Default accept() for " << thisId() << '.';
+    }
 
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
+    virtual void visitChildrenAstDot() {
+        logger.warning() << "Default visitChildren().";
+    }
+
+    std::string getDotFile();
+
+    size_t thisId() const;
 
 private:
-
-    std::shared_ptr<caramel::ast::SymbolTable> mSymbolTable;
-    std::vector<std::shared_ptr<caramel::ast::Statement>> mStatements;
+    static std::stringstream sNodes;
+    static std::stringstream sEdges;
 };
 
-} // namespace caramel::dataStructure::context
+} // namespace caramel

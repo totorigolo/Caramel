@@ -24,34 +24,36 @@
 
 #pragma once
 
-#include "../symboltable/SymbolTable.h"
-#include "../statements/Statement.h"
+#include "../Console.h"
+#include "SemanticError.h"
 
-#include <memory>
-#include <vector>
+#include <stdexcept>
+
+namespace caramel::exceptions {
+
+    class FunctionDefinitionNumberOfParametersMismatchError : public SemanticError {
+    public:
+        FunctionDefinitionNumberOfParametersMismatchError(std::string const &message,
+                                   antlr4::ParserRuleContext *antlrContext,
+                                   unsigned long declaredSize,
+                                   unsigned long definedSize)
+                : SemanticError(message),
+                  mAntlrContext{antlrContext},
+                  mDeclaredSize{declaredSize},
+                  mDefinedSize{definedSize} {
+        }
+
+        void explain(SourceFileUtil sourceFileUtil) const override {
+            //todo
+            logger.fatal() << "FunctionDefinitionNumberOfParametersMismatchError not implemented.";
+        }
 
 
-namespace caramel::ast {
 
-class Context : public AstDotNode {
-public:
-    using Ptr = std::shared_ptr<Context>;
-    using WeakPtr = std::weak_ptr<Context>;
+    private:
+        antlr4::ParserRuleContext *mAntlrContext;
+        unsigned long const &mDeclaredSize;
+        unsigned long const &mDefinedSize;
+    };
 
-    Context();
-    explicit Context(std::shared_ptr<Context> const &parent);
-
-    std::shared_ptr<caramel::ast::SymbolTable> getSymbolTable() const;
-
-    void addStatements(std::vector<std::shared_ptr<caramel::ast::Statement>> &&statements);
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-private:
-
-    std::shared_ptr<caramel::ast::SymbolTable> mSymbolTable;
-    std::vector<std::shared_ptr<caramel::ast::Statement>> mStatements;
-};
-
-} // namespace caramel::dataStructure::context
+} // namespace caramel::exceptions

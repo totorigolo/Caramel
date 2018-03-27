@@ -24,32 +24,40 @@
 
 #include "VariableDefinition.h"
 #include "../expressions/atomicexpression/Constant.h"
+#include "../../symboltable/VariableSymbol.h"
 #include <utility>
-
 
 
 namespace caramel::ast {
 
 VariableDefinition::VariableDefinition(
-        std::shared_ptr<VariableSymbol> symbol,
         antlr4::Token *startToken
 )
-        : Definition(startToken, StatementType::VariableDefinition),
-          mSymbol(symbol),
-          mInitializer(Constant::defaultConstant(startToken)) {}
+        : VariableDefinition(Constant::defaultConstant(startToken), startToken) {
+}
 
 VariableDefinition::VariableDefinition(
-        std::shared_ptr<VariableSymbol> symbol,
-        std::shared_ptr<Expression> initializer,
+        std::shared_ptr<Expression> const &initializer,
         antlr4::Token *startToken
 )
         : Definition(startToken, StatementType::VariableDefinition),
-          mInitializer(initializer),
-          mSymbol(symbol) {}
+          mSymbol{},
+          mInitializer(initializer) {}
 
-std::weak_ptr<VariableSymbol> VariableDefinition::getVariableSymbol() {
+VariableSymbol::WeakPtr VariableDefinition::getVariableSymbol() {
     return mSymbol;
 }
 
-} // caramel::ast::definition
+void VariableDefinition::setVariableSymbol(std::shared_ptr<VariableSymbol> variableSymbol) {
+    mSymbol = variableSymbol;
+}
 
+void VariableDefinition::acceptAstDotVisit() {
+    addNode(thisId(), "VariableDefinition: " + mSymbol.lock()->getName());
+}
+
+void VariableDefinition::visitChildrenAstDot() {
+    logger.warning() << "VariableDefinition children not shown.";
+}
+
+} // caramel::ast::definition

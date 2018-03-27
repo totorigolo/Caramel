@@ -26,6 +26,7 @@
 
 #include "../../exceptions/NotImplementedException.h"
 #include "IR.h"
+#include "../../AstDotNode.h"
 #include <Token.h>
 #include <memory>
 #include <ostream>
@@ -58,23 +59,24 @@ enum class StatementType {
 
 };
 
-class Statement {
+class Statement : public AstDotNode {
 public:
     using Ptr = std::shared_ptr<Statement>;
     using WeakPtr = std::weak_ptr<Statement>;
 
 public:
-    virtual ~Statement() = default;
+    ~Statement() override = default;
 
     explicit Statement(antlr4::Token *startToken, StatementType type = StatementType::Unknown);
 
-public:
     size_t getLine() const;
     size_t getColumn() const;
     size_t getLength() const;
     StatementType getType() const;
 
     virtual std::shared_ptr<IR> getIR() { throw caramel::exceptions::NotImplementedException(__FILE__); }; // Fixme: must be abstract function at the end
+
+    void acceptAstDotVisit() override;
 
 private:
     size_t mLine;

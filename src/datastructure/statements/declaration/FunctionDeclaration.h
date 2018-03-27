@@ -34,16 +34,18 @@ public:
     using Ptr = std::shared_ptr<FunctionDeclaration>;
     using WeakPtr = std::weak_ptr<FunctionDeclaration>;
 
-    FunctionDeclaration(
-            std::shared_ptr<caramel::ast::FunctionSymbol> symbol,
-            antlr4::Token *startToken
-    );
+    explicit FunctionDeclaration(antlr4::Token *startToken);
 
     std::weak_ptr<caramel::ast::Symbol> getSymbol() override {
         throw std::runtime_error("Cannot get the FunctionSymbol as Symbol");
     };
 
     std::weak_ptr<caramel::ast::FunctionSymbol> getFunctionSymbol();
+
+    void setFunctionSymbol(std::shared_ptr<caramel::ast::FunctionSymbol> const& functionSymbol);
+
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
 
 private:
     std::weak_ptr<caramel::ast::FunctionSymbol> mSymbol;
