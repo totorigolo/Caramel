@@ -25,11 +25,36 @@
 #include "ArrayDefinition.h"
 
 #include "../../symboltable/ArraySymbol.h"
+#include "../expressions/atomicexpression/Constant.h"
 
-namespace caramel::ast::definition {
 
-ArrayDefinition::ArrayDefinition(antlr4::Token *startToken)
-        : Definition(startToken) {
+namespace caramel::ast {
+
+ArrayDefinition::ArrayDefinition(
+        std::vector<std::shared_ptr<Expression>> initializer,
+        antlr4::Token *startToken
+)
+        : Definition(startToken, StatementType::ArrayDefinition),
+          mStartToken{startToken},
+          mSymbol{} {
+    std::move(initializer.begin(), initializer.end(), std::back_inserter(mInitializer));
+}
+
+std::weak_ptr<ArraySymbol> ArrayDefinition::getArraySymbol() {
+    return mSymbol;
+}
+
+void ArrayDefinition::setArraySymbol(std::shared_ptr<ArraySymbol> const &arraySymbol) {
+    mSymbol = arraySymbol;
+
+    long arraySize = arraySymbol->getSize();
+    long initializerSize = mInitializer.size();
+    for (int i = 0; i < initializerSize; i++) {
+        mInitializer.push_back(mInitializer.at(i));
+    }
+    for (long i = initializerSize; i < arraySize; i++) {
+        mInitializer.push_back(Constant::defaultConstant(mStartToken));
+    }
 }
 
 void ArrayDefinition::acceptAstDotVisit() {

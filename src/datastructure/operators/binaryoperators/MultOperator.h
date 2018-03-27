@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +22,33 @@
  * SOFTWARE.
 */
 
-#include "BinaryExpression.h"
+#pragma once
 
+#include <memory>
+#include <Common.h>
+#include "../BinaryOperator.h"
 
 namespace caramel::ast {
 
-BinaryExpression::BinaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-        std::shared_ptr<caramel::ast::BinaryOperator> const &binaryOperator,
-        std::shared_ptr<caramel::ast::Expression> const &rightExpression,
-        antlr4::Token *startToken
-) : Expression(startToken, StatementType::BinaryExpression),
-    mLeftExpression{leftExpression},
-    mRightExpression{rightExpression},
-    mBinaryOperator{binaryOperator} {}
+class MultOperator : public BinaryOperator {
+public:
+    using Ptr = std::shared_ptr<MultOperator>;
+    using WeakPtr = std::weak_ptr<MultOperator>;
 
-std::shared_ptr<caramel::ast::IR>
-BinaryExpression::getIR() {
-    return mBinaryOperator->buildIR(mLeftExpression, mRightExpression);
+public:
+    MultOperator() = default;
+
+public:
+    ~MultOperator() override = default;
+
+public:
+    std::shared_ptr<IR>
+    buildIR(std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+            std::shared_ptr<caramel::ast::Expression> const &rightExpression) override;
+
+    StatementType expressionType() override;
+};
+
 }
 
-}
 
