@@ -53,41 +53,38 @@ public:
     explicit AbstractSyntaxTreeVisitor(std::string const &sourceFileName);
 
 public:
-    antlrcpp::Any visitChildren(antlr4::tree::ParseTree *node) override;
-
-public:
     antlrcpp::Any visitR(CaramelParser::RContext *ctx) override;
 
-    // Returns vector<Statement::Ptr>
+    /// Returns vector<Statement::Ptr>
     antlrcpp::Any visitStatements(CaramelParser::StatementsContext *ctx) override;
 
-    // Returns vector<Statement::Ptr>
+    /// Returns vector<Statement::Ptr>
     antlrcpp::Any visitBlock(CaramelParser::BlockContext *ctx) override;
 
-    // Returns vector<Statement::Ptr>
+    /// Returns vector<Statement::Ptr>
     antlrcpp::Any visitDeclarations(CaramelParser::DeclarationsContext *ctx) override;
 
-    // Returns vector<Statement::Ptr>
+    /// Returns vector<Statement::Ptr>
     antlrcpp::Any visitInstructions(CaramelParser::InstructionsContext *ctx) override;
 
-    // Returns std::string
+    /// Returns std::string
     antlrcpp::Any visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) override;
 
-    // Returns SymbolType::Ptr (in a Symbol::Ptr)
+    /// Returns SymbolType::Ptr (in a Symbol::Ptr)
     antlrcpp::Any visitTypeParameter(CaramelParser::TypeParameterContext *ctx) override;
 
-    // Returns vector<Statement::Ptr>
+    /// Returns vector<Statement::Ptr>
     antlrcpp::Any visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) override;
 
-    // Returns vector<Statement::Ptr>
+    /// Returns vector<Statement::Ptr>
     antlrcpp::Any visitVariableDefinition(CaramelParser::VariableDefinitionContext *ctx) override;
 
-    // Returns AtomicExpression::Ptr
+    /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) override;
 
     antlrcpp::Any visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) override;
 
-    // Returns FunctionDefinition::Ptr
+    /// Returns FunctionDefinition::Ptr
     antlrcpp::Any visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) override;
 
     antlrcpp::Any visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) override;
@@ -96,30 +93,30 @@ public:
 
     antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override;
 
-    // Returns Expression::Ptr
+    /// Returns Expression::Ptr
     antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
 
-    // Returns Expression::Ptr
+    /// Returns Expression::Ptr
     antlrcpp::Any visitExpression(CaramelParser::ExpressionContext *ctx) override;
 
-    // Returns AtomicExpression::Ptr
+    /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
 
-    // Returns AtomicExpression::Ptr
+    /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitCharConstant(CaramelParser::CharConstantContext *ctx) override;
 
-    // Returns ArrayDeclaration:PTR
+    /// Returns ArrayDeclaration:PTR
     antlrcpp::Any visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) override;
 
-    // Returns Symbol::Ptr
+    /// Returns Symbol::Ptr
     antlrcpp::Any visitArrayDeclarationVoidInner(CaramelParser::ArrayDeclarationVoidInnerContext *ctx) override;
 
-    // Returns Symbol::Ptr
+    /// Returns Symbol::Ptr
     antlrcpp::Any visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) override;
 
     antlrcpp::Any visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) override;
 
-    // Returns AtomicExpression::Ptr
+    /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) override;
 
     antlrcpp::Any visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) override;
@@ -128,11 +125,11 @@ public:
 
 
 private:
-    void pushNewContext();
+    void pushNewContext(); //
+    void popContext(); //
+    std::shared_ptr<caramel::ast::Context> currentContext(); //
 
-    void popContext();
-
-    std::shared_ptr<caramel::ast::Context> currentContext();
+    antlrcpp::Any visitChildren(antlr4::tree::ParseTree *node) override;
 
 private:
     std::stack<std::shared_ptr<caramel::ast::Context>> mContextStack;

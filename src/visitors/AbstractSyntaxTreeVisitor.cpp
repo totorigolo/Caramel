@@ -48,7 +48,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
     return visitStatements(ctx->statements());
 }
 
-// Return vector<Statement::Ptr>
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::StatementsContext *ctx) {
     logger.trace() << "visit statements: " << ctx->getText();
     using namespace caramel::colors;
@@ -125,13 +124,10 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstructions(CaramelParser::Instru
     return instructions;
 }
 
-// Return std::string
-antlrcpp::Any
-AbstractSyntaxTreeVisitor::visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) {
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) {
     return ctx->getText();
 }
 
-// Return SymbolType::Ptr (in a Symbol::Ptr)
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitTypeParameter(CaramelParser::TypeParameterContext *ctx) {
     logger.trace() << "type parameter: " << ctx->getText();
@@ -143,7 +139,6 @@ AbstractSyntaxTreeVisitor::visitTypeParameter(CaramelParser::TypeParameterContex
     return typeSymbol;
 }
 
-// Return vector<std::shared_ptr<Statement>>
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) {
 
@@ -169,7 +164,6 @@ AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDecla
     return variables;
 }
 
-// Return vector<Statement::Ptr>
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::VariableDefinitionContext *ctx) {
 
     using namespace caramel::ast;
@@ -208,7 +202,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::
     return variables;
 }
 
-// Return vector<Statement::Ptr>
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) {
 
@@ -236,7 +229,6 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
     return std::dynamic_pointer_cast<Statement>(functionDeclaration);
 }
 
-// Return vector<Statement::Ptr>
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) {
     logger.trace() << "Visiting function definition: " << ctx->getText() << ' ' << ctx->getStart();
 
@@ -315,7 +307,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockCont
     return CaramelBaseVisitor::visitIfBlock(ctx);
 }
 
-// Return Expression::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) {
 
     using namespace caramel::ast;
@@ -329,14 +320,12 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
     return std::dynamic_pointer_cast<Expression>(visitChildren(ctx).as<AtomicExpression::Ptr>());
 }
 
-// Return Statement::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitExpression(CaramelParser::ExpressionContext *ctx) {
     using namespace caramel::ast;
     // TODO : change to expression
     return std::dynamic_pointer_cast<Statement>(visitChildren(ctx).as<Expression::Ptr>());
 }
 
-// Return Constant::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
 
     using namespace caramel::ast;
@@ -345,7 +334,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::Numb
     return std::dynamic_pointer_cast<AtomicExpression>(std::make_shared<Constant>(value, ctx->start));
 }
 
-// Return Constant::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
 
     using namespace caramel::ast;
@@ -354,8 +342,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharCo
     return std::dynamic_pointer_cast<AtomicExpression>(std::make_shared<Constant>(value, ctx->start));
 }
 
-
-// Private
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) {
     using namespace caramel::ast;
 
@@ -377,41 +363,6 @@ antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitAdditiveOperator(caramel_unused CaramelParser::AdditiveOperatorContext *ctx) {
     using caramel::ast::BinaryOperator;
     return std::dynamic_pointer_cast<BinaryOperator>(mPlusOperator);
-}
-
-void AbstractSyntaxTreeVisitor::pushNewContext() {
-
-    using namespace caramel::ast;
-
-    logger.debug() << "Pushed a new context.";
-
-    SymbolTable::Ptr parentTable;
-    if (!mContextStack.empty()) {
-        Context::Ptr parent = mContextStack.top();
-        mContextStack.push(std::make_shared<Context>(parent));
-    } else {
-        mContextStack.push(std::make_shared<Context>());
-    }
-
-    SymbolTable::Ptr symbolTable = currentContext()->getSymbolTable();
-
-    PrimaryType::Ptr void_t = Void_t::Create();
-    PrimaryType::Ptr char_t = Char::Create();
-    PrimaryType::Ptr int8_t = Int8_t::Create();
-    PrimaryType::Ptr int16_t = Int16_t::Create();
-    PrimaryType::Ptr int32_t = Int32_t::Create();
-    PrimaryType::Ptr int64_t = Int64_t::Create();
-
-    symbolTable->addPrimaryType(void_t, void_t->getIdentifier());
-    symbolTable->addPrimaryType(char_t, char_t->getIdentifier());
-    symbolTable->addPrimaryType(int8_t, int8_t->getIdentifier());
-    symbolTable->addPrimaryType(int16_t, int16_t->getIdentifier());
-    symbolTable->addPrimaryType(int32_t, int32_t->getIdentifier());
-    symbolTable->addPrimaryType(int64_t, int64_t->getIdentifier());
-}
-
-std::shared_ptr<Context> AbstractSyntaxTreeVisitor::currentContext() {
-    return mContextStack.top();
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) {
@@ -450,7 +401,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
     return arrayDeclaration;
 }
 
-// Return Symbol::Ptr
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitArrayDeclarationVoidInner(CaramelParser::ArrayDeclarationVoidInnerContext *ctx) {
 
@@ -465,14 +415,12 @@ AbstractSyntaxTreeVisitor::visitArrayDeclarationVoidInner(CaramelParser::ArrayDe
     return arraySymbol;
 }
 
-// Return long
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) {
     using namespace caramel::ast;
     std::vector<Statement> statements;
     return ctx->expression();
 }
 
-// Return Symbol::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) {
     logger.trace() << "Visiting array declaration : " << ctx->getText();
 
@@ -491,18 +439,51 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParse
     return arraySymbol;
 }
 
-// Return Constant::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) {
     return visitPositiveConstant(ctx->positiveConstant());
 }
 
 
-// Return Constant::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) {
     using namespace caramel::ast;
 
     long long value = std::stoll(ctx->getText());
     return std::dynamic_pointer_cast<AtomicExpression>(std::make_shared<Constant>(value, ctx->getStart()));
+}
+
+void AbstractSyntaxTreeVisitor::pushNewContext() {
+
+    using namespace caramel::ast;
+
+    logger.debug() << "Pushed a new context.";
+
+    SymbolTable::Ptr parentTable;
+    if (!mContextStack.empty()) {
+        Context::Ptr parent = mContextStack.top();
+        mContextStack.push(std::make_shared<Context>(parent));
+    } else {
+        mContextStack.push(std::make_shared<Context>());
+    }
+
+    SymbolTable::Ptr symbolTable = currentContext()->getSymbolTable();
+
+    PrimaryType::Ptr void_t = Void_t::Create();
+    PrimaryType::Ptr char_t = Char::Create();
+    PrimaryType::Ptr int8_t = Int8_t::Create();
+    PrimaryType::Ptr int16_t = Int16_t::Create();
+    PrimaryType::Ptr int32_t = Int32_t::Create();
+    PrimaryType::Ptr int64_t = Int64_t::Create();
+
+    symbolTable->addPrimaryType(void_t, void_t->getIdentifier());
+    symbolTable->addPrimaryType(char_t, char_t->getIdentifier());
+    symbolTable->addPrimaryType(int8_t, int8_t->getIdentifier());
+    symbolTable->addPrimaryType(int16_t, int16_t->getIdentifier());
+    symbolTable->addPrimaryType(int32_t, int32_t->getIdentifier());
+    symbolTable->addPrimaryType(int64_t, int64_t->getIdentifier());
+}
+
+std::shared_ptr<Context> AbstractSyntaxTreeVisitor::currentContext() {
+    return mContextStack.top();
 }
 
 void AbstractSyntaxTreeVisitor::popContext() {
