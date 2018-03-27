@@ -394,11 +394,11 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
                                                                arrayDeclaration);
 
 
-    logger.trace() << "New array declared " << arraySymbol->getName() << " of return type " << arraySymbol->getType()
-                   << "and size " << arraySymbol->getSize();
+    logger.trace() << "New array declared " << arraySymbol->getName() << " of return type " << arraySymbol->getType()->getIdentifier()
+                   << " and size " << arraySymbol->getSize();
 
     //TODO : Cas d'erreur
-    return arrayDeclaration;
+    return std::dynamic_pointer_cast<Statement>(arrayDeclaration);
 }
 
 antlrcpp::Any
