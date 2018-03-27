@@ -27,7 +27,7 @@
 #include "../../Logger.h"
 #include "../../exceptions/SymbolAlreadyDeclaredError.h"
 #include "../../exceptions/SymbolAlreadyDefinedError.h"
-#include "../../exceptions/UndefinedSymbolException.h"
+#include "../../exceptions/UndefinedSymbolError.h"
 #include "../../exceptions/DeclarationMismatchException.h"
 
 
