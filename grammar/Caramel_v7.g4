@@ -27,7 +27,8 @@ declarations
   ;
 
 declaration
-  : functionDefinition
+  : typeDefinition WS_* InstructionSeparator
+  | functionDefinition
   | functionDeclaration WS_* InstructionSeparator
   | arrayDeclaration WS_* InstructionSeparator
   | arrayDefinition WS_* InstructionSeparator
@@ -37,6 +38,10 @@ declaration
   ;
 
 // Declarations
+typeDefinition
+  : 'typedef' InlineWS_+ typeParameter InlineWS_+ typeParameter
+  ;
+
 functionDeclarationInner
   : typeParameter InlineWS_+ validIdentifier functionArguments
   ;
