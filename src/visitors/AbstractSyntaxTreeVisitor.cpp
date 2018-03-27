@@ -179,31 +179,27 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::
 
     TypeSymbol::Ptr typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
     std::vector<Statement::Ptr> variables;
-    for (auto child : ctx->children) {
-        if (nullptr != dynamic_cast<CaramelParser::ValidIdentifierContext *>(child)) {
-            auto *identifierContext = dynamic_cast<CaramelParser::ValidIdentifierContext *>(child);
-            std::string name = visitValidIdentifier(identifierContext);
-            logger.trace() << "New variable declared: '" << name << "' with default value";
-            VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
-            VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol,
-                                                                                       identifierContext->getStart());
-            variables.push_back(variableDef);
+    for (auto varDefValue : ctx->validIdentifier()) {
+        std::string name = visitValidIdentifier(varDefValue);
+        logger.trace() << "New variable declared: '" << name << "' with default value";
+        VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
+        VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol,
+                                                                                   varDefValue->getStart());
+        variables.push_back(variableDef);
 
-            currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
+        currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
+    }
+    for (auto varWithValue : ctx->variableDefinitionAssignment()) {
+        std::string name = visitValidIdentifier(varWithValue->validIdentifier());
 
-        } else if (nullptr != dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext *>(child)) {
-            auto *vdAssignmentContext = dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext *>(child);
-            std::string name = visitValidIdentifier(vdAssignmentContext->validIdentifier());
-            // Fixme : replace nullptr by (visitExpression(vdAssignmentContext->expression()).as<Statement::Ptr>());
-            Expression::Ptr expression = Constant::defaultConstant(ctx->getStart());
-            logger.trace() << "New variable declared: '" << name << "' with value";
-            VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
-            VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol, expression,
-                                                                                       vdAssignmentContext->getStart());
-            variables.push_back(variableDef);
+        Expression::Ptr expression = visitExpression(varWithValue->expression());
+        logger.trace() << "New variable declared: '" << name << "' with value " << varWithValue->expression()->getText();
 
-            currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
-        }
+        VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
+        VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol, expression,
+                                                                                   varWithValue->getStart());
+        variables.push_back(variableDef);
+        currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
     }
 
     return variables;
@@ -329,8 +325,15 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
         // Fixme : replace with true atomicExpression constructor
         AtomicExpression::Ptr atomicExpression = Constant::defaultConstant(ctx->getStart());
         currentContext()->getSymbolTable()->addVariableUsage(ctx, varName, atomicExpression);
+    } else if (ctx->numberConstant()){
+        AtomicExpression::Ptr atomicExpression = visitNumberConstant(ctx->numberConstant());
+        return std::dynamic_pointer_cast<Expression>(atomicExpression);
+    } else {
+        throw std::runtime_error("son not managed in atomic expression");
     }
-    return std::dynamic_pointer_cast<Expression>(visitChildren(ctx).as<AtomicExpression::Ptr>());
+    return {};
+
+    //return std::dynamic_pointer_cast<Expression>(visitChildren(ctx).as<AtomicExpression::Ptr>());
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {

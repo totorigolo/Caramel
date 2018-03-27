@@ -114,8 +114,9 @@ SymbolTable::addVariableUsage(
             parent = parent->getParentTable();
         }
         if (nullptr == parent) {
-            throw UndefinedSymbolException(
-                    buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol)
+            throw UndefinedSymbolError(
+                    buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol),
+                    antlrContext
             );
         }
     }
