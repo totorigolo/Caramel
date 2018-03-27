@@ -43,7 +43,6 @@ enum class StatementType {
     ArrayDeclaration,
     Definition,
     VariableDefinition,
-    ArrayDefinition,
     FunctionDefinition,
     ArrayDefinition,
     Expression,
