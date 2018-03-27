@@ -177,12 +177,12 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::
             auto *identifierContext = dynamic_cast<CaramelParser::ValidIdentifierContext *>(child);
             std::string name = visitValidIdentifier(identifierContext);
             logger.trace() << "New variable declared: '" << name << "' with default value";
-            VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
-            VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol,
-                                                                                       identifierContext->getStart());
+            VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(identifierContext->getStart());
             variables.push_back(variableDef);
 
-            currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
+            VariableSymbol::Ptr variableSymbol = currentContext()->getSymbolTable()->addVariableDefinition(
+                    ctx, typeSymbol->getType(), name, variableDef);
+            variableDef->setVariableSymbol(variableSymbol);
 
         } else if (nullptr != dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext *>(child)) {
             auto *vdAssignmentContext = dynamic_cast<CaramelParser::VariableDefinitionAssignmentContext *>(child);
@@ -190,12 +190,13 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::
             // Fixme : replace nullptr by (visitExpression(vdAssignmentContext->expression()).as<Statement::Ptr>());
             Expression::Ptr expression = Constant::defaultConstant(ctx->getStart());
             logger.trace() << "New variable declared: '" << name << "' with value";
-            VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, typeSymbol);
-            VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(variableSymbol, expression,
-                                                                                       vdAssignmentContext->getStart());
+            VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(
+                    expression, vdAssignmentContext->getStart());
             variables.push_back(variableDef);
 
-            currentContext()->getSymbolTable()->addVariableDefinition(ctx, typeSymbol->getType(), name, variableDef);
+            VariableSymbol::Ptr variableSymbol = currentContext()->getSymbolTable()->addVariableDefinition(
+                    ctx, typeSymbol->getType(), name, variableDef);
+            variableDef->setVariableSymbol(variableSymbol);
         }
     }
 
@@ -214,10 +215,10 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
     PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
     std::string name = visitValidIdentifier(innerCtx->validIdentifier());
     std::vector<Symbol::Ptr> params = visitFunctionArguments(innerCtx->functionArguments());
-    FunctionDeclaration::Ptr functionDeclaration = std::make_shared<FunctionDeclaration>(
-            std::make_shared<FunctionSymbol>(name, returnType), ctx->start);
-    currentContext()->getSymbolTable()->addFunctionDeclaration(ctx, returnType, name, params,
-                                                               functionDeclaration);
+    FunctionDeclaration::Ptr functionDeclaration = std::make_shared<FunctionDeclaration>(ctx->start);
+    FunctionSymbol::Ptr functionSymbol = currentContext()->getSymbolTable()->addFunctionDeclaration(
+            ctx, returnType, name, params, functionDeclaration);
+    functionDeclaration->setFunctionSymbol(functionSymbol);
 
     auto traceLogger = logger.trace();
     traceLogger << "New function declared " << name << " with return type " << returnType->getIdentifier();

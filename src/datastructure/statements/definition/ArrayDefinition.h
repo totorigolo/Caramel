@@ -35,10 +35,11 @@ public:
     using WeakPtr = std::weak_ptr<ArrayDefinition>;
 
 public:
-
     explicit ArrayDefinition(antlr4::Token *startToken);
     ~ArrayDefinition() override = default;
 
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
 };
 
 } // namespace caramel::ast

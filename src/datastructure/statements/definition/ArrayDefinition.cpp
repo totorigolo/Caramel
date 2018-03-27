@@ -24,10 +24,20 @@
 
 #include "ArrayDefinition.h"
 
+#include "../../symboltable/ArraySymbol.h"
+
 namespace caramel::ast::definition {
 
 ArrayDefinition::ArrayDefinition(antlr4::Token *startToken)
         : Definition(startToken) {
+}
+
+void ArrayDefinition::acceptAstDotVisit() {
+    addNode(thisId(), "ArrayDefinition (block not shown)");
+}
+
+void ArrayDefinition::visitChildrenAstDot() {
+    // TODO: Visit the expressions in the block
 }
 
 } // namespace caramel::ast

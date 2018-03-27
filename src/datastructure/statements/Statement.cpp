@@ -48,6 +48,10 @@ StatementType Statement::getType() const {
     return mType;
 }
 
+void Statement::acceptAstDotVisit() {
+    logger.warning() << "Default accept() for " << thisId() << ", which is a " << mType << '.';
+}
+
 std::ostream & operator<<(std::ostream &os, const StatementType &type) {
     switch (type) {
         case StatementType::Unknown: return os << "Unknown";

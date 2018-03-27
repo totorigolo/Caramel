@@ -32,28 +32,30 @@ class VariableDefinition : public Definition {
 public:
     using Ptr = std::shared_ptr<VariableDefinition>;
 
-    VariableDefinition(
-            std::shared_ptr<caramel::ast::VariableSymbol> symbol,
+public:
+    explicit VariableDefinition(
             antlr4::Token *startToken
     );
 
     VariableDefinition(
-            std::shared_ptr<caramel::ast::VariableSymbol> symbol,
-            std::shared_ptr<caramel::ast::Expression> initializer,
+            std::shared_ptr<caramel::ast::Expression> const &initializer,
             antlr4::Token *startToken
     );
 
     ~VariableDefinition() override = default;
 
-public:
-    std::weak_ptr<caramel::ast::Symbol> getSymbol() override {
+    std::weak_ptr<Symbol> getSymbol() override {
         throw std::runtime_error("Cannot return a valid symbol");
     };
     std::weak_ptr<VariableSymbol> getVariableSymbol();
+    void setVariableSymbol(std::shared_ptr<VariableSymbol> variableSymbol);
+
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
 
 private:
-    std::weak_ptr<caramel::ast::VariableSymbol> mSymbol;
-    std::weak_ptr<caramel::ast::Expression> mInitializer;
+    std::weak_ptr<VariableSymbol> mSymbol;
+    std::weak_ptr<Expression> mInitializer;
 };
 
 } // namespace caramel::ast

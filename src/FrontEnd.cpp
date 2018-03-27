@@ -69,8 +69,12 @@ ast::Context::Ptr frontEnd(Config const &config) {
             exit(1);
         }
 
-        // Return the AST root
-        return visitorResult.as<Context::Ptr>();
+        // The AST root
+        auto context = visitorResult.as<Context::Ptr>();
+
+        std::cout << context->getDotFile() << std::endl;
+
+        return context;
 
     } catch (caramel::exceptions::SemanticError &semanticError) {
         semanticError.explain(SourceFileUtil(config.sourceFile));
