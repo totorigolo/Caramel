@@ -41,4 +41,4 @@ protected:
     explicit Definition(antlr4::Token *startToken, StatementType type = StatementType::Definition);
 };
 
-} // namespace caramel::ast::definition
+} // namespace caramel::ast

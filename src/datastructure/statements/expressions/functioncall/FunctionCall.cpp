@@ -30,4 +30,4 @@ FunctionCall::FunctionCall(antlr4::Token *startToken)
         : Expression(startToken) {
 }
 
-} // namespace caramel::ast::expression
+} // namespace caramel::ast

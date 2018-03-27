@@ -34,4 +34,4 @@ ArrayAccess::ArrayAccess(
 ) : LValue(startToken), mSymbol{symbol}, mIndex{index} {}
 
 
-} // namespace caramel::ast::atomicExpression
+} // namespace caramel::ast

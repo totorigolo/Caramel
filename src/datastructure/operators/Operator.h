@@ -41,7 +41,4 @@ public:
     virtual ~Operator() = default;
 };
 
-} // namespace caramel::dataStructure::operators
-
-
-
+} // namespace caramel::ast

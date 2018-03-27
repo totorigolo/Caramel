@@ -31,4 +31,4 @@ Declaration::Declaration(
         StatementType type
 ) : Statement(startToken, type) {}
 
-} // caramel::ast::declaration
+} // caramel::ast

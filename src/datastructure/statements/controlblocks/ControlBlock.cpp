@@ -30,4 +30,4 @@ ControlBlock::ControlBlock(
         antlr4::Token *startToken
 ) : Statement(startToken) {}
 
-}
+} // namespace caramel::ast

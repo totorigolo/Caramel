@@ -39,4 +39,4 @@ protected:
     ~LValue() override = default;
 };
 
-} // namespace caramel::ast::atomicExpression
+} // namespace caramel::ast

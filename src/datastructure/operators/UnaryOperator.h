@@ -42,11 +42,8 @@ public:
 
 public:
     virtual std::shared_ptr<caramel::ast::IR> buildIR(
-            std::shared_ptr<caramel::ast::Expression> const &innerEpxression
+            std::shared_ptr<caramel::ast::Expression> const &innerExpression
     ) = 0;
 };
 
-} // namespace caramel::dataStructure::operators
-
-
-
+} // namespace caramel::ast

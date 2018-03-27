@@ -56,4 +56,4 @@ private:
     std::weak_ptr<caramel::ast::Expression> mInitializer;
 };
 
-} // namespace caramel::ast::definition
+} // namespace caramel::ast

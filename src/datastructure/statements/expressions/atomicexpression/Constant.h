@@ -51,4 +51,4 @@ private:
     antlrcpp::Any mValue;
 };
 
-} // namespace caramel::ast::atomicExpression
+} // namespace caramel::ast

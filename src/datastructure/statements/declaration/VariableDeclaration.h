@@ -53,4 +53,4 @@ private:
     std::weak_ptr<VariableSymbol> mSymbol;
 };
 
-} // namespace caramel::ast::declaration
+} // namespace caramel::ast

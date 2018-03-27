@@ -36,4 +36,4 @@ std::weak_ptr<ArraySymbol> ArrayDeclaration::getArraySymbol() {
     return mSymbol;
 }
 
-} // caramel::ast::declaration
+} // caramel::ast

@@ -43,4 +43,4 @@ void FunctionDefinition::setSymbol(FunctionSymbol::Ptr functionSymbol) {
 
 
 
-} // namespace caramel::ast::definition
+} // namespace caramel::ast

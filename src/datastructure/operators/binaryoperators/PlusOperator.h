@@ -24,10 +24,10 @@
 
 #pragma once
 
-
 #include <memory>
 #include <Common.h>
 #include "../BinaryOperator.h"
+
 
 namespace caramel::ast {
 
@@ -49,6 +49,4 @@ public:
 
 };
 
-}
-
-
+} // namespace caramel::ast

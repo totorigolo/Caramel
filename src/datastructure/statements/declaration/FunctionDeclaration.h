@@ -49,4 +49,4 @@ private:
     std::weak_ptr<caramel::ast::FunctionSymbol> mSymbol;
 };
 
-} // namespace caramel::ast::declaration
+} // namespace caramel::ast

@@ -41,4 +41,4 @@ public:
 
 };
 
-} // namespace caramel::ast::definition
+} // namespace caramel::ast

@@ -40,4 +40,4 @@ protected:
     virtual ~Jump() = default;
 };
 
-} // namespace caramel::ast::jumps
+} // namespace caramel::ast

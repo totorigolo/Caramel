@@ -37,4 +37,4 @@ ReturnStatement::ReturnStatement(
         antlr4::Token *startToken
 ) : Jump(startToken), mExpression{expression} {}
 
-} // namespace caramel::ast::jumps
+} // namespace caramel::ast

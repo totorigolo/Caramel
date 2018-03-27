@@ -42,4 +42,4 @@ public:
 
 };
 
-} // namespace caramel::ast::atomicExpression
+} // namespace caramel::ast

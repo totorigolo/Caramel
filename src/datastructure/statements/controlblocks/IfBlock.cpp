@@ -34,6 +34,7 @@ IfBlock::IfBlock(
         std::vector<std::shared_ptr<caramel::ast::Statement>> const
         &elseBlock,
         antlr4::Token *startToken
-) : ControlBlock(startToken), mCondition(condition), mThenBlock(thenBlock), mElseBlock(elseBlock) {}
-
+) : ControlBlock(startToken), mCondition(condition), mThenBlock(thenBlock), mElseBlock(elseBlock) {
 }
+
+} // namespace caramel::ast

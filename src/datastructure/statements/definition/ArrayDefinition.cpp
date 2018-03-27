@@ -30,4 +30,4 @@ ArrayDefinition::ArrayDefinition(antlr4::Token *startToken)
         : Definition(startToken) {
 }
 
-} // namespace caramel::ast::definition
+} // namespace caramel::ast

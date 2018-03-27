@@ -37,4 +37,4 @@ std::vector<std::shared_ptr<caramel::ast::Statement>> block,
 
 ControlBlock (token), mCondition{condition}, mBlock{block} {}
 
-}
+} // namespace caramel::ast

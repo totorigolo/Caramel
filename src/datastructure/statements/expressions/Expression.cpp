@@ -30,4 +30,4 @@ Expression::Expression(antlr4::Token *startToken, StatementType type)
         : Statement(startToken, type) {
 }
 
-} // namespace caramel::ast::expressions
+} // namespace caramel::ast

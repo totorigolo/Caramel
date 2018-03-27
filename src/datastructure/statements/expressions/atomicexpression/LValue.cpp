@@ -31,4 +31,4 @@ LValue::LValue(antlr4::Token *startToken)
         : AtomicExpression(startToken) {
 }
 
-} // namespace caramel::ast::atomicExpression
+} // namespace caramel::ast

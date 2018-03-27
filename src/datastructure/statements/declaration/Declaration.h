@@ -53,4 +53,4 @@ public:
 };
 
 
-} // namespace caramel::ast::declaration
+} // namespace caramel::ast

@@ -30,4 +30,4 @@ Jump::Jump(antlr4::Token *startToken)
         : Statement(startToken) {
 }
 
-} // namespace caramel::ast::jumps
+} // namespace caramel::ast

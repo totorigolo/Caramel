@@ -35,4 +35,4 @@ std::shared_ptr<caramel::ast::Symbol> Identifier::getSymbol() {
     return mSymbol;
 }
 
-} // namespace caramel::ast::atomicExpression
+} // namespace caramel::ast

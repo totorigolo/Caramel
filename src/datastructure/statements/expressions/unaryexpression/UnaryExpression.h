@@ -53,4 +53,4 @@ private:
 
 };
 
-} // namespace caramel::ast::unaryExpression
+} // namespace caramel::ast

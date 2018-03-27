@@ -54,4 +54,4 @@ protected:
     std::weak_ptr<caramel::ast::FunctionSymbol> mSymbol;
 };
 
-} // namespace caramel::ast::definition
+} // namespace caramel::ast

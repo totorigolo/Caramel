@@ -48,7 +48,4 @@ public:
     
 };
 
-} // namespace caramel::dataStructure::operators
-
-
-
+} // namespace caramel::ast

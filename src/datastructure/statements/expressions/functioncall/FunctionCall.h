@@ -40,4 +40,4 @@ public:
 
 };
 
-} // namespace caramel::ast::functionCall
+} // namespace caramel::ast

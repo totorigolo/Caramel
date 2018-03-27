@@ -48,4 +48,4 @@ public:
     ~Expression() override  = default;
 };
 
-} // namespace caramel::ast::expressions
+} // namespace caramel::ast

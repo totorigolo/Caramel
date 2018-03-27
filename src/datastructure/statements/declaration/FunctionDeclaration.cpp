@@ -37,4 +37,4 @@ FunctionDeclaration::getFunctionSymbol() {
     return mSymbol;
 }
 
-}
+} // namespace caramel::ast

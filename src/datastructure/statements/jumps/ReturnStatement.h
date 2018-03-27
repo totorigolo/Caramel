@@ -46,4 +46,4 @@ private:
 
 };
 
-} // namespace caramel::ast::jumps
+} // namespace caramel::ast

@@ -31,4 +31,4 @@ Constant::Constant(antlrcpp::Any mValue, antlr4::Token *startToken, StatementTyp
         mValue(std::move(mValue)) {
 }
 
-} // namespace caramel::ast::atomicExpression
+} // namespace caramel::ast
