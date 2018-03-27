@@ -36,4 +36,10 @@ std::weak_ptr<ArraySymbol> ArrayDeclaration::getArraySymbol() {
     return mSymbol;
 }
 
+void ArrayDeclaration::acceptAstDotVisit() {
+    addNode(thisId(), "ArrayDeclaration: ");
+}
+
+void ArrayDeclaration::visitChildrenAstDot() {}
+
 } // caramel::ast

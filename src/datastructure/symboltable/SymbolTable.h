@@ -57,14 +57,14 @@ public:
 
     explicit SymbolTable(SymbolTable::Ptr const &parentTable);
 
-    void addVariableDeclaration(
+    VariableSymbol::Ptr addVariableDeclaration(
             antlr4::ParserRuleContext *antlrContext,
             std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
             std::string const &name,
             const std::shared_ptr<Declaration> &declaration
     );
 
-    void addVariableDefinition(
+    VariableSymbol::Ptr addVariableDefinition(
             antlr4::ParserRuleContext *antlrContext,
             std::shared_ptr<PrimaryType> const &primaryType,
             std::string const &name,
@@ -77,7 +77,7 @@ public:
             const std::shared_ptr<Statement> &expression
     );
 
-    void addFunctionDeclaration(
+    FunctionSymbol::Ptr addFunctionDeclaration(
             antlr4::ParserRuleContext *antlrContext,
             std::shared_ptr<caramel::ast::PrimaryType> const &returnType,
             std::string const &name,
@@ -105,7 +105,7 @@ public:
             std::string const &name
     );
 
-    void addType(
+    TypeSymbol::Ptr addType(
             antlr4::ParserRuleContext *antlrContext,
             std::shared_ptr<PrimaryType> const &primaryType,
             std::string const &name,

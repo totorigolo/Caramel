@@ -38,7 +38,7 @@ namespace caramel::ast {
 
 SymbolTable::SymbolTable(SymbolTable::Ptr const &parentTable) : mParentTable(parentTable) {}
 
-void
+VariableSymbol::Ptr
 SymbolTable::addVariableDeclaration(
         antlr4::ParserRuleContext *antlrContext,
         std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
@@ -66,7 +66,7 @@ SymbolTable::addVariableDeclaration(
     }
 }
 
-void
+VariableSymbol::Ptr
 SymbolTable::addVariableDefinition(
         antlr4::ParserRuleContext *antlrContext,
         std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
@@ -94,9 +94,12 @@ SymbolTable::addVariableDefinition(
             );
         }
         recordedSymbol->addDefinition(definition);
+        return std::dynamic_pointer_cast<VariableSymbol>(recordedSymbol);
     } else {
-        mSymbolMap[name] = std::make_shared<VariableSymbol>(name, primaryType);
-        mSymbolMap[name]->addDefinition(definition);
+        VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, primaryType);
+        mSymbolMap[name] = variableSymbol;
+        variableSymbol->addDefinition(definition);
+        return variableSymbol;
     }
 }
 
@@ -125,7 +128,7 @@ SymbolTable::addVariableUsage(
     }
 }
 
-void
+FunctionSymbol::Ptr
 SymbolTable::addFunctionDeclaration(
         antlr4::ParserRuleContext *antlrContext,
         std::shared_ptr<caramel::ast::PrimaryType> const &returnType,
@@ -133,12 +136,12 @@ SymbolTable::addFunctionDeclaration(
         std::vector<std::shared_ptr<caramel::ast::Symbol>> namedParameters,
         const std::shared_ptr<Declaration> &declaration
 ) {
-
     if (isNotDeclared(name)) {
         FunctionSymbol::Ptr functionSymbol = std::make_shared<FunctionSymbol>(name, returnType);
-        functionSymbol->setParameters(namedParameters);
         mSymbolMap[name] = functionSymbol;
-        mSymbolMap[name]->addDeclaration(declaration);
+        functionSymbol->addDeclaration(declaration);
+        functionSymbol->setParameters(namedParameters);
+        return functionSymbol;
     } else {
         using namespace caramel::exceptions;
         throw SymbolAlreadyDeclaredError(
@@ -245,7 +248,7 @@ SymbolTable::addPrimaryType(
     }
 }
 
-void
+TypeSymbol::Ptr
 SymbolTable::addType(
         antlr4::ParserRuleContext *antlrContext,
         std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
@@ -256,8 +259,10 @@ SymbolTable::addType(
 
     // Not declared and not defined
     if (isNotDeclared(name)) {
-        mSymbolMap[name] = std::make_shared<TypeSymbol>(name, primaryType);
-        mSymbolMap[name]->addDefinition(definition.lock());
+        TypeSymbol::Ptr typeSymbol = std::make_shared<TypeSymbol>(name, primaryType);
+        mSymbolMap[name] = typeSymbol;
+        typeSymbol->addDefinition(definition.lock());
+        return typeSymbol;
     } else {
         // Todo : throws SymbolAlreadyDefinedError
     }

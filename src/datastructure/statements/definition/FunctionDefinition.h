@@ -45,9 +45,11 @@ public:
     ~FunctionDefinition() override = default;
 
 public:
-
-    std::weak_ptr<FunctionSymbol> getFunctionSymbol();
+    FunctionSymbol::WeakPtr getFunctionSymbol();
     void setSymbol(FunctionSymbol::Ptr functionSymbol);
+
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
 
 protected:
     std::shared_ptr<caramel::ast::Context> mContext;

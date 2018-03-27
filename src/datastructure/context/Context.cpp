@@ -43,4 +43,16 @@ void Context::addStatements(std::vector<std::shared_ptr<caramel::ast::Statement>
     std::move(statements.begin(), statements.end(), std::back_inserter(mStatements));
 }
 
+void Context::acceptAstDotVisit() {
+    addNode(thisId(), "Context");
+    visitChildrenAstDot();
+}
+
+void Context::visitChildrenAstDot() {
+    for (auto const& statement : mStatements) {
+        addEdge(thisId(), statement->thisId());
+        statement->acceptAstDotVisit();
+    }
+}
+
 } // namespace caramel::ast
