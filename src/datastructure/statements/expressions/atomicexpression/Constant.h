@@ -25,7 +25,6 @@
 #pragma once
 
 #include "AtomicExpression.h"
-#include "../../../../Any.h"
 
 
 namespace caramel::ast {

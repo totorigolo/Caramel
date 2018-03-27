@@ -24,16 +24,18 @@
 
 #pragma once
 
+#include "../Console.h"
+
 #include <stdexcept>
 
 namespace caramel::exceptions {
 
-    class SymbolAlreadyDefinedException : public SemanticError {
+    class SymbolAlreadyDefinedError : public SemanticError {
     public:
-        SymbolAlreadyDefinedException(std::string const &message,
+        SymbolAlreadyDefinedError(std::string const &message,
                                    antlr4::ParserRuleContext *antlrContext,
-                                   caramel::dataStructure::statements::definition::Definition::Ptr const &existingDefinition,
-                                   caramel::dataStructure::statements::definition::Definition::Ptr const &faultyDefinition)
+                                   caramel::ast::Definition::Ptr const &existingDefinition,
+                                   caramel::ast::Definition::Ptr const &faultyDefinition)
                 : SemanticError(message),
                   mAntlrContext{antlrContext},
                   mExistingDefinition{existingDefinition},
@@ -41,7 +43,7 @@ namespace caramel::exceptions {
         }
 
         void explain(SourceFileUtil sourceFileUtil) const override {
-            using namespace Colors;
+            using namespace caramel::colors;
 
             // TODO: Create helper functions
             const int LEFT_MARGIN = 4;
@@ -82,8 +84,8 @@ namespace caramel::exceptions {
 
     private:
         antlr4::ParserRuleContext *mAntlrContext;
-        caramel::dataStructure::statements::definition::Definition::Ptr const &mExistingDefinition;
-        caramel::dataStructure::statements::definition::Definition::Ptr const &mFaultyDefinition;
+        caramel::ast::Definition::Ptr const &mExistingDefinition;
+        caramel::ast::Definition::Ptr const &mFaultyDefinition;
     };
 
-} // namespace Caramel::Exceptions
+} // namespace caramel::exceptions

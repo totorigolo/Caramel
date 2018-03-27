@@ -477,13 +477,14 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParse
     logger.trace() << "Visiting array declaration : " << ctx->getText();
 
     using namespace caramel::ast;
+    using namespace caramel::exceptions;
 
     auto typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
     std::string name = visitValidIdentifier(ctx->validIdentifier());
     antlrcpp::Any arraySizeAny = visitArraySizeDeclaration(ctx->arraySizeDeclaration());
     Constant::Ptr arraySize = std::dynamic_pointer_cast<Constant>(arraySizeAny.as<AtomicExpression::Ptr>());
 //    if (!arraySizeAny.is<Constant::Ptr>()) {
-//        throw Caramel::Exceptions::ArraySizeNonConstantException("Non constant expression not handled for array sizes.");
+//        throw ArraySizeNonConstantException("Non constant expression not handled for array sizes.");
 //    }
     ArraySymbol::Ptr arraySymbol = std::make_shared<ArraySymbol>(name, typeSymbol, arraySize->getValue().as<long long>());
 

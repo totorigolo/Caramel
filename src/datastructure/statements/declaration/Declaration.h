@@ -49,7 +49,7 @@ protected:
 
 public:
     // Public methods
-    virtual std::weak_ptr<caramel::ast::Symbol> getSymbol() { throw Caramel::Exceptions::NotImplementedException(__FILE__); };
+    virtual std::weak_ptr<caramel::ast::Symbol> getSymbol() { throw caramel::exceptions::NotImplementedException(__FILE__); };
 };
 
 

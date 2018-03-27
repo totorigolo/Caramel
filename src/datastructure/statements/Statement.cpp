@@ -62,6 +62,7 @@ std::ostream & operator<<(std::ostream &os, const StatementType &type) {
         case StatementType::AtomicExpression: return os << "AtomicExpression";
         case StatementType::Constant: return os << "Constant";
     }
+    return os;
 }
 
 }

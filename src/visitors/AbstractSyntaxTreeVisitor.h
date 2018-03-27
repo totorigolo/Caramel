@@ -141,4 +141,4 @@ private:
     const std::shared_ptr<caramel::ast::PlusOperator> mPlusOperator = std::make_shared<caramel::ast::PlusOperator>();
 };
 
-} // namespace Caramel::Visitors
+} // namespace caramel::visitors

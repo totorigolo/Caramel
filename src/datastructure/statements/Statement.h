@@ -64,7 +64,7 @@ public:
     size_t getLength() const;
     StatementType getType() const;
 
-    virtual std::shared_ptr<IR> getIR() { throw Caramel::Exceptions::NotImplementedException(__FILE__); }; // Fixme: must be abstract function at the end
+    virtual std::shared_ptr<IR> getIR() { throw caramel::exceptions::NotImplementedException(__FILE__); }; // Fixme: must be abstract function at the end
 
 private:
     size_t mLine;
@@ -75,4 +75,4 @@ private:
 
 std::ostream &operator<<(std::ostream &os, const StatementType &type);
 
-} // namespace Caramel::DataStructure::statements
+} // namespace caramel::ast

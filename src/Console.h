@@ -59,4 +59,4 @@ DEFINE_COLOR(cyan_bckg, "\x1B[46m")
 DEFINE_COLOR(grey_bckg, "\x1B[47m")
 DEFINE_COLOR(darkgrey_bckg, "\x1B[40m")
 
-} // namespace Caramel::Colors
+} // namespace caramel::colors

@@ -96,4 +96,4 @@ private:
     caramel::ast::Declaration::Ptr const &mFaultyDeclaration;
 };
 
-} // namespace Caramel::Exceptions
+} // namespace caramel::exceptions

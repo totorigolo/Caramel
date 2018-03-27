@@ -33,12 +33,11 @@ namespace caramel::ast {
 
 class PlusOperator : public BinaryOperator {
 public:
-
     using Ptr = std::shared_ptr<PlusOperator>;
     using WeakPtr = std::weak_ptr<PlusOperator>;
 
 public:
-    explicit PlusOperator() = default;
+    PlusOperator() = default;
 
 public:
     ~PlusOperator() override = default;

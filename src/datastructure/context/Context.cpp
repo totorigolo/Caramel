@@ -43,4 +43,4 @@ void Context::addStatements(std::vector<std::shared_ptr<caramel::ast::Statement>
     std::move(statements.begin(), statements.end(), std::back_inserter(mStatements));
 }
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::ast

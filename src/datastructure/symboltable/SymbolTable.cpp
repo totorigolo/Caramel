@@ -26,9 +26,9 @@
 
 #include "../../Logger.h"
 #include "../../exceptions/SymbolAlreadyDeclaredError.h"
-#include "../../exceptions/DeclarationMismatchException.h"
-#include "../../exceptions/SymbolAlreadyDefinedException.h"
+#include "../../exceptions/SymbolAlreadyDefinedError.h"
 #include "../../exceptions/UndefinedSymbolException.h"
+#include "../../exceptions/DeclarationMismatchException.h"
 
 
 namespace caramel::ast {
@@ -42,9 +42,9 @@ SymbolTable::addVariableDeclaration(
         std::string const &name,
         const std::shared_ptr<Declaration> &declaration
 ) {
-    using namespace Caramel::Exceptions;
+    using namespace caramel::exceptions;
     if (isDefined(name)) {/*
-        throw SymbolAlreadyDefinedException(
+        throw SymbolAlreadyDefinedError(
                 buildAlreadyDefinedErrorMessage(name),
                 antlrContext,
                 getSymbol(name)->getDefinition(),
@@ -72,7 +72,7 @@ SymbolTable::addVariableDefinition(
 ) {
     using namespace caramel::exceptions;
     if (isDefined(name)) {
-        throw SymbolAlreadyDefinedException(
+        throw SymbolAlreadyDefinedError(
                 buildAlreadyDefinedErrorMessage(name),
                 antlrContext,
                 getSymbol(name)->getDefinition(),
@@ -104,7 +104,7 @@ SymbolTable::addVariableUsage(
         const std::shared_ptr<Statement> &statement
 ) {
 
-    using namespace Caramel::Exceptions;
+    using namespace caramel::exceptions;
     if (isDefined(name)) {
         mSymbolMap[name]->addUsage(statement);
     } else {
@@ -152,8 +152,9 @@ SymbolTable::addFunctionDefinition(
         std::vector<std::shared_ptr<caramel::ast::Symbol>> namedParameters,
         const std::shared_ptr<Definition> &definition
 ) {
+    using namespace caramel::exceptions;
     if (isDefined(name)) {
-        throw Caramel::Exceptions::SymbolAlreadyDefinedException(
+        throw SymbolAlreadyDefinedError(
                 buildAlreadyDefinedErrorMessage(name),
                 antlrContext,
                 getSymbol(name)->getDefinition(),
@@ -194,7 +195,7 @@ SymbolTable::addPrimaryType(
         mSymbolMap[name] = std::make_shared<TypeSymbol>(name, primaryType);
         mSymbolMap[name]->addDefinition(nullptr); // TODO: Is it safe?
     } else {
-        // Todo : throws SymbolAlreadyDefinedException
+        // Todo : throws SymbolAlreadyDefinedError
     }
 }
 
@@ -212,7 +213,7 @@ SymbolTable::addType(
         mSymbolMap[name] = std::make_shared<TypeSymbol>(name, primaryType);
         mSymbolMap[name]->addDefinition(definition.lock());
     } else {
-        // Todo : throws SymbolAlreadyDefinedException
+        // Todo : throws SymbolAlreadyDefinedError
     }
 }
 
@@ -331,6 +332,9 @@ SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &name, SymbolTyp
         case SymbolType::TypeSymbol:
             res << "type";
             break;
+        case SymbolType::ArraySymbol:
+            res << "array";
+            break;
     }
     res << " '" << name << "' is not defined before";
     return res.str();
@@ -341,4 +345,4 @@ SymbolTable::getParentTable() {
     return mParentTable;
 }
 
-} //namespace Caramel::DataStructure
+} // namespace caramel::ast

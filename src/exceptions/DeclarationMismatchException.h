@@ -39,4 +39,4 @@ public:
 
 };
 
-} // namespace Caramel::Exception
+} // namespace caramel::exception

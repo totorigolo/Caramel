@@ -38,4 +38,4 @@ public:
     virtual void explain(SourceFileUtil sourceFileUtil) const = 0;
 };
 
-} // namespace Caramel::Exceptions
+} // namespace caramel::exceptions

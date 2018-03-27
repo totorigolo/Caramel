@@ -26,7 +26,7 @@
 
 namespace caramel::ast {
 
-Constant::Constant(Caramel::Any mValue, antlr4::Token *startToken, StatementType type)
+Constant::Constant(antlrcpp::Any mValue, antlr4::Token *startToken, StatementType type)
         : AtomicExpression(startToken, type),
         mValue(std::move(mValue)) {
 }

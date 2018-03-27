@@ -53,4 +53,4 @@ private:
     std::weak_ptr<ArraySymbol> mSymbol;
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::ast

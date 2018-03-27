@@ -26,7 +26,7 @@
 
 #include <stdexcept>
 
-namespace Caramel::Exceptions {
+namespace caramel::exceptions {
 
 class NotImplementedException : public std::runtime_error {
 
@@ -39,4 +39,4 @@ public:
 
 };
 
-} // namespace Caramel::Exception
+} // namespace caramel::exception

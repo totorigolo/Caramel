@@ -40,4 +40,4 @@ VariableDeclaration::getVariableSymbol() {
     return mSymbol;
 }
 
-} // Caramel::DataStructure
+} // namespace caramel::ast

@@ -32,6 +32,6 @@ std::shared_ptr<caramel::ast::IR> caramel::ast::PlusOperator::buildIR(
     CARAMEL_UNUSED(leftExpression);
     CARAMEL_UNUSED(rightExpression);
     // TODO : Implement the IR generation which happens right here.
-    throw Caramel::Exceptions::NotImplementedException(__FILE__);
+    throw caramel::exceptions::NotImplementedException(__FILE__);
 
 }

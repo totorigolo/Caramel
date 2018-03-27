@@ -62,6 +62,6 @@ private:
     long mSize;
 };
 
-} // namespace Caramel::DataStructure
+} // namespace caramel::ast
 
 
