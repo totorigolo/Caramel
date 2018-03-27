@@ -25,6 +25,9 @@
 #pragma once
 
 #include "../util/SourceFileUtil.h"
+#include "../datastructure/symboltable/Symbol.h"
+#include "../datastructure/context/Context.h"
+#include "../datastructure/statements/Statement.h"
 
 #include <stdexcept>
 

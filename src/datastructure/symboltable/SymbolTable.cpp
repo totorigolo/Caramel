@@ -45,14 +45,16 @@ SymbolTable::addVariableDeclaration(
     using namespace caramel::exceptions;
     if (isDefined(name)) {
         throw SymbolAlreadyDefinedError(
-                buildAlreadyDefinedErrorMessage(name),
+                name,
+                mSymbolMap[name],
                 antlrContext,
                 getSymbol(name)->getDefinition(),
                 declaration
         );
     } else if (isDeclared(name)) {
         throw SymbolAlreadyDeclaredError(
-                buildAlreadyDeclaredErrorMessage(name),
+                name,
+                mSymbolMap[name],
                 antlrContext,
                 getSymbol(name)->getDeclaration(),
                 declaration
@@ -73,7 +75,8 @@ SymbolTable::addVariableDefinition(
     using namespace caramel::exceptions;
     if (isDefined(name)) {
         throw SymbolAlreadyDefinedError(
-                buildAlreadyDefinedErrorMessage(name),
+                name,
+                mSymbolMap[name],
                 antlrContext,
                 getSymbol(name)->getDefinition(),
                 definition
@@ -137,7 +140,8 @@ SymbolTable::addFunctionDeclaration(
     } else {
         using namespace caramel::exceptions;
         throw SymbolAlreadyDeclaredError(
-                buildAlreadyDeclaredErrorMessage(name),
+                name,
+                mSymbolMap[name],
                 antlrContext,
                 getSymbol(name)->getDeclaration(),
                 declaration
@@ -156,7 +160,8 @@ SymbolTable::addFunctionDefinition(
     using namespace caramel::exceptions;
     if (isDefined(name)) {
         throw SymbolAlreadyDefinedError(
-                buildAlreadyDefinedErrorMessage(name),
+                name,
+                mSymbolMap[name],
                 antlrContext,
                 getSymbol(name)->getDefinition(),
                 definition
@@ -244,55 +249,6 @@ SymbolTable::isDefined(const std::string &name) {
     return hasSymbol(name) && mSymbolMap[name]->isDefined();
 }
 
-std::string
-SymbolTable::buildAlreadyDefinedErrorMessage(std::string const &variableName) {
-
-    std::stringstream res;
-    res << "Cannot use identifier: " << variableName << " because ";
-    Symbol::Ptr previousDeclaration = mSymbolMap[variableName];
-    switch (previousDeclaration->getSymbolType()) {
-        case SymbolType::FunctionSymbol:
-            res << "a function with the same name is already defined at line "
-                << previousDeclaration->getDefinition()->getLine();
-            break;
-        case SymbolType::VariableSymbol:
-            res << "a variable with the same name is already defined at line "
-                << previousDeclaration->getDefinition()->getLine();
-            break;
-        case SymbolType::TypeSymbol:
-            res << variableName << " is a reserved type identifier";
-            break;
-        case SymbolType::ArraySymbol:
-            res << "an array with the same name is already defined at line "
-                << previousDeclaration->getDefinition()->getLine();
-            break;
-    }
-    return res.str();
-
-}
-
-std::string
-SymbolTable::buildAlreadyDeclaredErrorMessage(std::string const &variableName) {
-
-    std::stringstream res;
-    res << "Cannot use identifier: " << variableName << " because ";
-    Symbol::Ptr previousDeclaration = mSymbolMap[variableName];
-    switch (previousDeclaration->getSymbolType()) {
-        case SymbolType::FunctionSymbol:
-            res << "a function with the same name is already declared at line "
-                << previousDeclaration->getDeclaration()->getLine();
-            break;
-        case SymbolType::VariableSymbol:
-            res << "a variable with the same name is already declared at line "
-                << previousDeclaration->getDeclaration()->getLine();
-            break;
-        case SymbolType::TypeSymbol:
-            res << variableName << " is a reserved type identifier";
-            break;
-    }
-    return res.str();
-
-}
 
 std::string
 SymbolTable::buildMismatchSymbolTypeErrorMessage(std::string const &variableName,

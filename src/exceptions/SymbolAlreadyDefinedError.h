@@ -33,10 +33,11 @@ namespace caramel::exceptions {
 class SymbolAlreadyDefinedError : public SemanticError {
 public:
     SymbolAlreadyDefinedError(std::string const &message,
+                              Symbol::Ptr symbol,
                               antlr4::ParserRuleContext *antlrContext,
                               caramel::ast::Definition::Ptr const &existingDefinition,
                               caramel::ast::Declaration::Ptr const &faultyDeclaration)
-            : SemanticError(message),
+            : SemanticError(buildAlreadyDefinedErrorMessage(message, symbol)),
               mAntlrContext{antlrContext},
               mExistingDefinition{existingDefinition},
               mFaultyDeclaration{faultyDeclaration}{
@@ -86,6 +87,29 @@ public:
                       << "different previous type, was " << mExistingDefinition->getType() << " now " << mFaultyDeclaration->getType()
                       << std::endl;
         }
+    }
+
+    std::string
+    buildAlreadyDefinedErrorMessage(std::string const &variableName, Symbol::Ptr symbol) {
+
+        std::stringstream res;
+        res << "Cannot use identifier: " << variableName << " because ";
+        Symbol::Ptr previousDeclaration = symbol;
+        switch (previousDeclaration->getSymbolType()) {
+            case SymbolType::FunctionSymbol:
+                res << "a function with the same name is already declared at line "
+                    << previousDeclaration->getDefinition()->getLine();
+                break;
+            case SymbolType::VariableSymbol:
+                res << "a variable with the same name is already declared at line "
+                    << previousDeclaration->getDefinition()->getLine();
+                break;
+            case SymbolType::TypeSymbol:
+                res << variableName << " is a reserved type identifier";
+                break;
+        }
+        return res.str();
+
     }
 
 private:
