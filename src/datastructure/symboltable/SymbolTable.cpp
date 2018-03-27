@@ -29,6 +29,9 @@
 #include "../../exceptions/SymbolAlreadyDefinedError.h"
 #include "../../exceptions/UndefinedSymbolError.h"
 #include "../../exceptions/DeclarationMismatchException.h"
+#include "../../exceptions/FunctionDefinitionNumberOfParametersMismatchError.h"
+#include "../../exceptions/FunctionDefinitionParameterNameMismatchError.h"
+#include "../../exceptions/FunctionDefinitionParameterTypeMismatchError.h"
 
 
 namespace caramel::ast {
@@ -137,6 +140,7 @@ SymbolTable::addFunctionDeclaration(
         FunctionSymbol::Ptr functionSymbol = std::make_shared<FunctionSymbol>(name, returnType);
         mSymbolMap[name] = functionSymbol;
         functionSymbol->addDeclaration(declaration);
+        functionSymbol->setParameters(namedParameters);
         return functionSymbol;
     } else {
         using namespace caramel::exceptions;
@@ -166,7 +170,47 @@ SymbolTable::addFunctionDefinition(
                 definition
         );
     } else if (!isDeclared(name)) {
-        mSymbolMap[name] = std::make_shared<FunctionSymbol>(name, returnType);
+        FunctionSymbol::Ptr functionSymbol = std::make_shared<FunctionSymbol>(name, returnType);
+        functionSymbol->setParameters(namedParameters);
+        mSymbolMap[name] = functionSymbol;
+    } else {
+        FunctionSymbol::Ptr declaredSymbol = std::dynamic_pointer_cast<FunctionSymbol>(mSymbolMap[name]);
+
+        std::vector<std::shared_ptr<caramel::ast::Symbol>> declaredParameters = declaredSymbol->getNamedParameters();
+        if (declaredParameters.size() == namedParameters.size()){
+            for (int i = 0 ; i < declaredSymbol->getNamedParameters().size(); i++ ){
+                std::string declaredParameterName = declaredParameters.at(i)->getName();
+                std::string const declaredParameterTypeIdentifier = declaredParameters.at(i)->getType()->getIdentifier();
+
+                std::string parameterName = namedParameters.at(i)->getName();
+                std::string const parameterTypeIdentifier = namedParameters.at(i)->getType()->getIdentifier();
+
+                if(declaredParameterName != parameterName){
+                    throw FunctionDefinitionParameterNameMismatchError(
+                            buildFunctionDefinitionParameterNameMismatchErrorMessage(name,declaredParameterName,parameterName),
+                            antlrContext,
+                            declaredParameterName,
+                            parameterName
+                    );
+                }
+                if(declaredParameterTypeIdentifier != parameterTypeIdentifier){
+                    throw FunctionDefinitionParameterTypeMismatchError(
+                            buildFunctionDefinitionParameterTypeMismatchErrorMessage(name,declaredParameters.at(i)->getType(),namedParameters.at(i)->getType()),
+                            antlrContext,
+                            declaredParameters.at(i)->getType(),
+                            namedParameters.at(i)->getType()
+                    );
+                }
+            }
+        } else {
+            throw FunctionDefinitionNumberOfParametersMismatchError(
+                    buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(name, declaredParameters.size(),
+                                                                                  namedParameters.size()),
+                    antlrContext,
+                    declaredParameters.size(),
+                    namedParameters.size()
+            );
+        }
     }
     FunctionSymbol::Ptr symbol = std::dynamic_pointer_cast<FunctionSymbol>(mSymbolMap[name]);
     symbol->addDefinition(definition);
@@ -355,5 +399,51 @@ std::shared_ptr<SymbolTable>
 SymbolTable::getParentTable() {
     return mParentTable;
 }
+
+    std::string
+    SymbolTable::buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(const std::string &name, unsigned long declaredSize,
+                                                                                   unsigned long definedSize) {
+        std::stringstream res;
+        res << "The function: ";
+        res << name;
+        res << " was previously declared with ";
+        res << declaredSize;
+        res << " parameter(s).\n";
+        res << "Actual definition has ";
+        res << definedSize;
+        res << " parameter(s).\n";
+        return res.str();
+    }
+
+    std::string SymbolTable::buildFunctionDefinitionParameterNameMismatchErrorMessage(const std::string &name,
+                                                                                      std::string declaredName,
+                                                                                      std::string definedName) {
+        std::stringstream res;
+        res << "The function: ";
+        res << name;
+        res << " was previously declared with a parameter called ";
+        res << declaredName;
+        res << "  .\n";
+        res << "Actual parameter name is ";
+        res << definedName;
+        res << " .\n";
+        return res.str();
+    }
+
+    std::string SymbolTable::buildFunctionDefinitionParameterTypeMismatchErrorMessage(const std::string &basic_string,
+                                                                               std::shared_ptr<PrimaryType> declaredType,
+                                                                               std::shared_ptr<PrimaryType> declaredName) {
+        std::stringstream res;
+        res << "The function: ";
+        res << declaredType->getIdentifier();
+        res << " was previously declared with a parameter of type ";
+        res << declaredName;
+        res << " .\n";
+        res << "Actual parameter type is ";
+        res << declaredName->getIdentifier();
+        res << " .\n";
+        return res.str();
+
+    }
 
 } // namespace caramel::ast

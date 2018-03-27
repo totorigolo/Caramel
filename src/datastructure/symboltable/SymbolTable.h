@@ -133,15 +133,18 @@ private:
     inline bool isNotDefined(std::string const &name) { return !isDefined(name); }
 
     std::string buildAlreadyDefinedErrorMessage(std::string const &variableName);
-
     std::string buildAlreadyDeclaredErrorMessage(std::string const &variableName);
-
     std::string buildMismatchSymbolTypeErrorMessage(std::string const &variableName, SymbolType requiredSymbolType);
-
     std::string buildMismatchTypeErrorMessage(std::string const &variableName, std::shared_ptr<PrimaryType> const &requiredType);
-
     std::string buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType);
+    std::string buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(const std::string &name, unsigned long declaredSize,
+                                                                                  unsigned long definedSize);
+    std::string buildFunctionDefinitionParameterNameMismatchErrorMessage(const std::string &name, std::string declaredName,
+                                                                         std::string definedName);
 
+    std::string buildFunctionDefinitionParameterTypeMismatchErrorMessage(const std::string &basic_string,
+                                                                         std::shared_ptr<PrimaryType> shared_ptr,
+                                                                         std::shared_ptr<PrimaryType> sharedPtr);
 };
 
 } // namespace caramel::dataStructure::symbolTable

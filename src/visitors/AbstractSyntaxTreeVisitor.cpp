@@ -243,30 +243,36 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::
 
     Context::Ptr parentContext = currentContext();
     pushNewContext();
-    Context::Ptr functionContext = currentContext();
 
-    CaramelParser::FunctionDeclarationInnerContext *innerCtx = ctx->functionDeclarationInner();
+    try{
+        Context::Ptr functionContext = currentContext();
 
-    PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
-    std::string name = visitValidIdentifier(innerCtx->validIdentifier());
-    std::vector<Symbol::Ptr> params = visitFunctionArguments(innerCtx->functionArguments());
+        CaramelParser::FunctionDeclarationInnerContext *innerCtx = ctx->functionDeclarationInner();
 
-    FunctionDefinition::Ptr functionDefinition = std::make_shared<FunctionDefinition>(functionContext, ctx->start);
-    FunctionSymbol::Ptr functionSymbol = functionContext->getSymbolTable()->addFunctionDefinition(
-            ctx, returnType, name, params, functionDefinition
-    );
+        PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
+        std::string name = visitValidIdentifier(innerCtx->validIdentifier());
+        std::vector<Symbol::Ptr> params = visitFunctionArguments(innerCtx->functionArguments());
 
-    parentContext->getSymbolTable()->addFunctionDefinition(
-            ctx, returnType, name, params, functionDefinition
-    );
+        FunctionDefinition::Ptr functionDefinition = std::make_shared<FunctionDefinition>(functionContext, ctx->start);
+        FunctionSymbol::Ptr functionSymbol = functionContext->getSymbolTable()->addFunctionDefinition(
+                ctx, returnType, name, params, functionDefinition
+        );
 
-    functionDefinition->setSymbol(functionSymbol);
+        parentContext->getSymbolTable()->addFunctionDefinition(
+                ctx, returnType, name, params, functionDefinition
+        );
 
-    // Visit the function's block, which adds inner statements into context
-    visitBlock(ctx->block());
+        functionDefinition->setSymbol(functionSymbol);
 
-    popContext();
-    return std::dynamic_pointer_cast<Statement>(functionDefinition);
+        // Visit the function's block, which adds inner statements into context
+        visitBlock(ctx->block());
+
+        popContext();
+        return std::dynamic_pointer_cast<Statement>(functionDefinition);
+    } catch(...) {
+        popContext();
+        throw;
+    }
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) {
