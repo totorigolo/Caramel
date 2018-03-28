@@ -70,3 +70,17 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockCont
 
     return  ifBlock;
 }
+
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitWhileBlock(CaramelParser::WhileBlockContext *ctx) {
+    using namespace caramel::ast;
+
+    logger.trace() << "visit while block: ";
+
+    Expression::Ptr expression = visitExpression(ctx->expression());
+    logger.trace() << "while condition :";
+    std::vector<Statement::Ptr> block = visitBlock(ctx->block());
+
+    WhileBlock::Ptr whileBlock = std::make_shared<WhileBlock>(expression,block,ctx->start);
+    return whileBlock;
+}

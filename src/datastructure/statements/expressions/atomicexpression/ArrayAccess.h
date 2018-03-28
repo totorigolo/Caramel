@@ -38,16 +38,19 @@ public:
 
 public:
     ArrayAccess(
-            caramel::ast::Symbol symbol,
-            caramel::ast::Expression index,
+            caramel::ast::Symbol::Ptr symbol,
+            caramel::ast::Expression::Ptr index,
             antlr4::Token *startToken
     );
 
     ~ArrayAccess() override = default;
 
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
+
 private:
-    caramel::ast::Symbol mSymbol;
-    caramel::ast::Expression mIndex;
+    caramel::ast::Symbol::Ptr mSymbol;
+    caramel::ast::Expression::Ptr mIndex;
 
 };
 

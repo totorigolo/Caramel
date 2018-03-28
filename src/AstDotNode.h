@@ -40,6 +40,8 @@ public:
 
     void addEdge(size_t id1, size_t id2);
 
+    void addEdge(size_t id1, size_t id2, const std::string &label);
+
     virtual void acceptAstDotVisit() {
         logger.warning() << "Default accept() for " << thisId() << '.';
     }
@@ -55,6 +57,7 @@ public:
 private:
     static std::stringstream sNodes;
     static std::stringstream sEdges;
+
 };
 
 } // namespace caramel

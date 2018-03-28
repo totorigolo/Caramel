@@ -8,14 +8,10 @@ int32_t main(int32_t, char argv) {
     int8_t b = 2;
     int8_t c = 4;
 
-    if (1) {
-        7;
-        6;
-    } else if (0) {
-        6;
-        5;
-    } else {
-        7;
-        5;
+    while (1) {
+        1;
+        2;
+        3;
     }
+
 }

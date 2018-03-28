@@ -40,15 +40,15 @@ public:
 
 public:
     ~Constant() override = default;
-    explicit Constant(antlrcpp::Any mValue, antlr4::Token *startToken, StatementType type = StatementType::Constant);
+    explicit Constant(long long mValue, antlr4::Token *startToken, StatementType type = StatementType::Constant);
 
-public:
-    antlrcpp::Any getValue() override {
-        return mValue;
-    }
+    long long getValue();
+
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
 
 private:
-    antlrcpp::Any mValue;
+    long long mValue;
 };
 
 } // namespace caramel::ast

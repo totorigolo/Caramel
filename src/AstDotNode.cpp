@@ -36,6 +36,10 @@ void caramel::AstDotNode::addEdge(size_t id1, size_t id2) {
     AstDotNode::sEdges << "\tnode" << id1 << " -> " << "node" << id2 << ";\n";
 }
 
+void caramel::AstDotNode::addEdge(size_t id1, size_t id2, const std::string &label) {
+    AstDotNode::sEdges << "\tnode" << id1 << " -> " << "node" << id2 << " [label="+label+"];\n";
+}
+
 std::string caramel::AstDotNode::getDotFile() {
     acceptAstDotVisit();
     return "digraph {\n"

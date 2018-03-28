@@ -26,9 +26,19 @@
 
 namespace caramel::ast {
 
-Constant::Constant(antlrcpp::Any mValue, antlr4::Token *startToken, StatementType type)
+Constant::Constant(long long mValue, antlr4::Token *startToken, StatementType type)
         : AtomicExpression(startToken, type),
-        mValue(std::move(mValue)) {
+        mValue(mValue) {
 }
+
+long long Constant::getValue() {
+    return mValue;
+}
+
+void Constant::acceptAstDotVisit() {
+    addNode(thisId(), "Constant: " + std::to_string(mValue));
+}
+
+void Constant::visitChildrenAstDot() {}
 
 } // namespace caramel::ast

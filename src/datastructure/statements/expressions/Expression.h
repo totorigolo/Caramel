@@ -37,9 +37,6 @@ public:
     using Ptr = std::shared_ptr<Expression>;
     using WeakPtr = std::weak_ptr<Expression>;
 
-    // TODO : Manage Type later pls
-    virtual antlrcpp::Any getValue() { return {}; };
-
 protected:
     explicit Expression(antlr4::Token *startToken, StatementType type = StatementType::Expression);
 

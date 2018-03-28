@@ -28,13 +28,36 @@
 namespace caramel::ast {
 
 IfBlock::IfBlock(
-        std::shared_ptr<caramel::ast::Expression> const
-        &condition,
+        std::shared_ptr<caramel::ast::Expression> const &condition,
         std::vector<std::shared_ptr<caramel::ast::Statement>> const &thenBlock,
-        std::vector<std::shared_ptr<caramel::ast::Statement>> const
-        &elseBlock,
+        std::vector<std::shared_ptr<caramel::ast::Statement>> const &elseBlock,
         antlr4::Token *startToken
 ) : ControlBlock(startToken), mCondition(condition), mThenBlock(thenBlock), mElseBlock(elseBlock) {
 }
+
+void IfBlock::acceptAstDotVisit() {
+    addNode(thisId(), "If: ");
+    visitChildrenAstDot();
+}
+
+void IfBlock::visitChildrenAstDot() {
+    addEdge(thisId(), mCondition->thisId(),"condition");
+    mCondition->acceptAstDotVisit();
+
+    addNode(thisId()+1, "Then block: ");
+    addEdge(thisId(), thisId()+1);
+    for (const auto &thenStatement : mThenBlock) {
+        addEdge(thisId()+1, thenStatement->thisId());
+        thenStatement->acceptAstDotVisit();
+    }
+
+    addNode(thisId()+2, "Else block: ");
+    addEdge(thisId(), thisId()+2);
+    for (const auto &elseStatement : mElseBlock) {
+        addEdge(thisId()+2, elseStatement->thisId());
+        elseStatement->acceptAstDotVisit();
+    }
+}
+
 
 } // namespace caramel::ast
