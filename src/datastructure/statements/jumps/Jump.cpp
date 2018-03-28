@@ -26,8 +26,8 @@
 
 namespace caramel::ast {
 
-Jump::Jump(antlr4::Token *startToken)
-        : Statement(startToken) {
+Jump::Jump(antlr4::Token *startToken, StatementType type)
+        : Statement(startToken, type) {
 }
 
 } // namespace caramel::ast

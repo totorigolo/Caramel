@@ -49,6 +49,8 @@ enum class StatementType {
     VariableDefinition,
     FunctionDefinition,
     ArrayDefinition,
+    Jump,
+    ReturnStatement,
     Expression,
     UnaryExpression,
     AtomicExpression,

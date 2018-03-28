@@ -36,7 +36,7 @@ public:
     using WeakPtr = std::weak_ptr<Jump>;
 
 protected:
-    explicit Jump(antlr4::Token *startToken);
+    explicit Jump(antlr4::Token *startToken, StatementType type = StatementType::Jump);
     virtual ~Jump() = default;
 };
 
