@@ -17,9 +17,9 @@ instructions
   : WS_* instruction (WS_* instruction)* WS_*
   ;
 instruction
-  : jump WS_* InstructionSeparator
+  : jump (WS_* InstructionSeparator)+
   | controlBlock
-  | expression WS_* InstructionSeparator
+  | expression (WS_* InstructionSeparator)+
   ;
 
 declarations
@@ -27,13 +27,13 @@ declarations
   ;
 
 declaration
-  : typeDefinition WS_* InstructionSeparator
+  : typeDefinition (WS_* InstructionSeparator)+
   | functionDefinition
-  | functionDeclaration WS_* InstructionSeparator
-  | arrayDeclaration WS_* InstructionSeparator
-  | arrayDefinition WS_* InstructionSeparator
-  | variableDeclaration WS_* InstructionSeparator
-  | variableDefinition WS_* InstructionSeparator
+  | functionDeclaration (WS_* InstructionSeparator)+
+  | arrayDeclaration (WS_* InstructionSeparator)+
+  | arrayDefinition (WS_* InstructionSeparator)+
+  | variableDeclaration (WS_* InstructionSeparator)+
+  | variableDefinition (WS_* InstructionSeparator)+
   ;
 
 // Declarations
@@ -98,18 +98,19 @@ controlBlock
   | whileBlock
   | forBlock
   ;
+
 ifBlock
-  : IfKeyword_ WS_* L_Par_ WS_* expression WS_* R_Par_ WS_* block? (WS_* ElseKeyword_ WS_* (ifBlock|block))?
+  : IfKeyword_ WS_* L_Par_ WS_* expression WS_* R_Par_ WS_* block (WS_* ElseKeyword_ WS_* (ifBlock|block))?
   ;
 whileBlock
   : WhileKeyWord_ WS_* L_Par_ WS_* expression WS_* R_Par_ WS_* block?
   ;
 forBlock
   : ForKeyword_ WS_* L_Par_
-      WS_* expression? WS_* Semilicon_
-      WS_* expression? WS_* Semilicon_
-      WS_* expression? WS_* R_Par_
-      WS_ * block?
+      WS_* expression WS_* Semilicon_
+      WS_* expression WS_* Semilicon_
+      WS_* expression WS_* R_Par_
+      WS_ * block
   ;
 
 // Blocks

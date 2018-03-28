@@ -25,25 +25,26 @@
 #pragma once
 
 #include "SemanticError.h"
-#include "../datastructure/context/Context.h"
-#include "../datastructure/statements/Statement.h"
+
 #include "../Console.h"
 #include "../util/SourceFileUtil.h"
 #include "../Logger.h"
 
+
 #include <iomanip>
 #include <iostream>
 
-
+using namespace caramel::ast;
 namespace caramel::exceptions {
 
 class SymbolAlreadyDeclaredError : public SemanticError {
 public:
     SymbolAlreadyDeclaredError(std::string const &message,
+                               Symbol::Ptr symbol,
                                antlr4::ParserRuleContext *antlrContext,
                                caramel::ast::Declaration::Ptr const &existingDeclaration,
                                caramel::ast::Declaration::Ptr const &faultyDeclaration)
-            : SemanticError(message),
+            : SemanticError(buildAlreadyDeclaredErrorMessage(message, symbol)),
               mAntlrContext{antlrContext},
               mExistingDeclaration{existingDeclaration},
               mFaultyDeclaration{faultyDeclaration} {
@@ -96,10 +97,37 @@ public:
         }
     }
 
+    std::string buildAlreadyDeclaredErrorMessage(std::string const &variableName, Symbol::Ptr symbol) {
+
+        std::stringstream res;
+        res << "Cannot use identifier: " << variableName << " because ";
+        Symbol::Ptr previousDeclaration = symbol;
+        Symbol rawSymbol = *symbol;
+        switch (previousDeclaration->getSymbolType()) {
+            case SymbolType::FunctionSymbol:
+                res << "a function with the same name is already defined at line "
+                    << previousDeclaration->getDeclaration()->getLine();
+                break;
+            case SymbolType::VariableSymbol:
+                res << "a variable with the same name is already defined at line "
+                    << previousDeclaration->getDeclaration()->getLine();
+                break;
+            case SymbolType::TypeSymbol:
+                res << variableName << " is a reserved type identifier";
+                break;
+            case SymbolType::ArraySymbol:
+                res << "an array with the same name is already defined at line "
+                    << previousDeclaration->getDeclaration()->getLine();
+                break;
+        }
+        return res.str();
+
+    }
+
 private:
     antlr4::ParserRuleContext *mAntlrContext;
-    caramel::ast::Declaration::Ptr mExistingDeclaration;
-    caramel::ast::Declaration::Ptr mFaultyDeclaration;
+    Declaration::Ptr mExistingDeclaration;
+    Declaration::Ptr mFaultyDeclaration;
 };
 
 } // namespace caramel::exceptions

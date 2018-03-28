@@ -22,33 +22,47 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "AtomicExpression.h"
+#include "ForBlock.h"
 
 
 namespace caramel::ast {
 
-class Constant : public AtomicExpression {
-public:
-    using Ptr = std::shared_ptr<Constant>;
-    using WeakPtr = std::weak_ptr<Constant>;
+ForBlock::ForBlock(
+        std::shared_ptr<caramel::ast::Expression> begin,
+        std::shared_ptr<caramel::ast::Expression> end,
+        std::shared_ptr<caramel::ast::Expression> step,
+        std::vector<std::shared_ptr<caramel::ast::Statement>> block,
+        antlr4::Token
+*token
+) :
 
-    static Ptr defaultConstant(antlr4::Token *startToken) {
-        return std::make_shared<Constant>(0, startToken);
+ControlBlock (token), mBegin(std::move(begin)), mEnd(std::move(end)), mStep(std::move(step)), mBlock(std::move(block)) {}
+
+void ForBlock::acceptAstDotVisit() {
+    addNode(thisId(), "For: ");
+    visitChildrenAstDot();
+}
+
+void ForBlock::visitChildrenAstDot() {
+    addNode(thisId()+1, "Condition: ");
+    addEdge(thisId(), thisId()+1);
+
+    addEdge(thisId()+1, mBegin->thisId(),"begin");
+    mBegin->acceptAstDotVisit();
+
+    addEdge(thisId()+1, mEnd->thisId(),"end");
+    mEnd->acceptAstDotVisit();
+
+    addEdge(thisId()+1, mStep->thisId(),"step");
+    mStep->acceptAstDotVisit();
+
+    addNode(thisId()+2, "Block: ");
+    addEdge(thisId(), thisId()+2);
+    for (const auto &blockStatement : mBlock) {
+        addEdge(thisId()+2, blockStatement->thisId());
+        blockStatement->acceptAstDotVisit();
     }
+}
 
-public:
-    ~Constant() override = default;
-    explicit Constant(long long mValue, antlr4::Token *startToken, StatementType type = StatementType::Constant);
-
-    long long getValue();
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-private:
-    long long mValue;
-};
 
 } // namespace caramel::ast

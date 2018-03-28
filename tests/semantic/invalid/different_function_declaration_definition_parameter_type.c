@@ -5,15 +5,15 @@
 #include <stdio.h>
 #include <stdint.h>
 
-void foo(int8_t a0, int8_t b0, int8_t c0, int8_t array0[]);
+void foo(int8_t name);
 
 int32_t main(int32_t, char argv) {
     int32_t a, b = 0;
-    char c = '!';
+    //char c = '!';
     return 0;
 }
 
-void foo(int8_t a1, int8_t b1, int8_t c1)
+void foo(int16_t name)
 {
     char a2, b2, c2;
 }

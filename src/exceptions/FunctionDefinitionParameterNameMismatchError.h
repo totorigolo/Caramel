@@ -46,6 +46,7 @@ namespace caramel::exceptions {
 
         void explain(SourceFileUtil sourceFileUtil) const override {
             //todo
+            logger.fatal() << "FunctionDefinitionParameterNameMismatchError not implemented.";
         }
 
     private:

@@ -88,16 +88,20 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitBlock(CaramelParser::BlockContext 
 
     using caramel::ast::Statement;
 
+    std::vector<Statement::Ptr> returnStatements;
+
     if (ctx->declarations()) {
         std::vector<Statement::Ptr> declarations = visitDeclarations(ctx->declarations());
-        currentContext()->addStatements(std::move(declarations));
+        //currentContext()->addStatements(std::move(declarations));
+        std::move(declarations.begin(),declarations.end(),std::back_inserter(returnStatements));
     }
     if (ctx->instructions()) {
         std::vector<Statement::Ptr> instructions = visitInstructions(ctx->instructions());
-        currentContext()->addStatements(std::move(instructions));
+        //currentContext()->addStatements(std::move(instructions));
+        std::move(instructions.begin(),instructions.end(),std::back_inserter(returnStatements));
     }
 
-    return currentContext();
+    return returnStatements;
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitDeclarations(CaramelParser::DeclarationsContext *ctx) {
@@ -275,8 +279,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::
 
         functionDefinition->setSymbol(functionSymbol);
 
-        // Visit the function's block, which adds inner statements into context
-        visitBlock(ctx->block());
+        functionContext->addStatements(visitBlock(ctx->block()));
 
         popContext();
         return castTo<Statement::Ptr>(functionDefinition);
@@ -469,7 +472,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParse
 //        throw ArraySizeNonConstantException("Non constant expression not handled for array sizes.");
 //    }
     ArraySymbol::Ptr arraySymbol = std::make_shared<ArraySymbol>(name, typeSymbol,
-                                                                 arraySize->getValue().as<long long>());
+                                                                 arraySize->getValue());
 
     return arraySymbol;
 }

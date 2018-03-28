@@ -28,10 +28,19 @@ namespace caramel::ast::atomicExpression {
 
 
 ArrayAccess::ArrayAccess(
-        caramel::ast::Symbol symbol,
-        caramel::ast::Expression index,
+        caramel::ast::Symbol::Ptr symbol,
+        caramel::ast::Expression::Ptr index,
         antlr4::Token *startToken
-) : LValue(startToken), mSymbol{symbol}, mIndex{index} {}
+) : LValue(startToken), mSymbol(std::move(symbol)), mIndex(std::move(index)) {}
+
+void ArrayAccess::acceptAstDotVisit() {
+    addNode(thisId(), "Array Access: " + mSymbol->getName());
+}
+
+void ArrayAccess::visitChildrenAstDot() {
+    addEdge(thisId(), mIndex->thisId());
+    mIndex->acceptAstDotVisit();
+}
 
 
 } // namespace caramel::ast

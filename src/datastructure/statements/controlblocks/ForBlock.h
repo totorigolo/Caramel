@@ -24,31 +24,36 @@
 
 #pragma once
 
-#include "AtomicExpression.h"
+#include "ControlBlock.h"
+#include "../expressions/Expression.h"
 
 
 namespace caramel::ast {
 
-class Constant : public AtomicExpression {
+class ForBlock : public ControlBlock {
 public:
-    using Ptr = std::shared_ptr<Constant>;
-    using WeakPtr = std::weak_ptr<Constant>;
+    using Ptr = std::shared_ptr<ForBlock>;
+    using WeakPtr = std::weak_ptr<ForBlock>;
 
-    static Ptr defaultConstant(antlr4::Token *startToken) {
-        return std::make_shared<Constant>(0, startToken);
-    }
-
-public:
-    ~Constant() override = default;
-    explicit Constant(long long mValue, antlr4::Token *startToken, StatementType type = StatementType::Constant);
-
-    long long getValue();
+    ForBlock(
+            std::shared_ptr<caramel::ast::Expression> begin,
+            std::shared_ptr<caramel::ast::Expression> end,
+            std::shared_ptr<caramel::ast::Expression> step,
+            std::vector<std::shared_ptr<caramel::ast::Statement>> block,
+            antlr4::Token *token
+    );
 
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
 private:
-    long long mValue;
+    std::shared_ptr<caramel::ast::Expression> mBegin;
+    std::shared_ptr<caramel::ast::Expression> mEnd;
+    std::shared_ptr<caramel::ast::Expression> mStep;
+    std::vector<
+            std::shared_ptr<caramel::ast::Statement>
+    > mBlock;
+
 };
 
 } // namespace caramel::ast

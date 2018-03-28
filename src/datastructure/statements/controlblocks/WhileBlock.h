@@ -41,6 +41,9 @@ public:
             antlr4::Token *token
     );
 
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
+
 private:
     std::shared_ptr<caramel::ast::Expression> mCondition;
     std::vector<
