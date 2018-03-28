@@ -5,13 +5,13 @@
 #include <stdio.h>
 #include <stdint.h>
 
-void foo(int8_t a0, int8_t b0, int8_t c0);
+void foo(int8_t a, int8_t b, int8_t c);
 
 int32_t main(int32_t, char argv) {
     int32_t a, b = 0;
     int16_t c;
 
-    void foo(int8_t a1, int8_t b1, int8_t c1) {
+    void foo(int8_t a, int8_t b, int8_t c) {
         void bar(int16_t param) {
             int8_t x = 0;
             void baz() {

@@ -108,6 +108,8 @@ public:
     );
 
     bool hasSymbol(std::string const &name);
+    bool thisHasSymbol(std::string const &name);
+    bool parentHasSymbol(std::string const &name);
 
     std::shared_ptr<Symbol> getSymbol(antlr4::ParserRuleContext *antlrContext, std::string const &name);
 

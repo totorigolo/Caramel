@@ -39,8 +39,7 @@ namespace caramel::ast {
 
 SymbolTable::SymbolTable(SymbolTable::Ptr const &parentTable) : mParentTable(parentTable) {}
 
-VariableSymbol::Ptr
-SymbolTable::addVariableDeclaration(
+VariableSymbol::Ptr SymbolTable::addVariableDeclaration(
         antlr4::ParserRuleContext *antlrContext,
         std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
         std::string const &name,
@@ -48,29 +47,30 @@ SymbolTable::addVariableDeclaration(
 ) {
     using namespace caramel::exceptions;
     if (isDefined(name)) {
+        auto const &symbol = getSymbol(antlrContext, name);
         throw SymbolAlreadyDefinedError(
                 name,
-                mSymbolMap[name],
+                symbol,
                 antlrContext,
-                getSymbol(antlrContext, name)->getDefinition(),
+                symbol->getDefinition(),
                 declaration
         );
     } else if (isDeclared(name)) {
+        auto const &symbol = getSymbol(antlrContext, name);
         throw SymbolAlreadyDeclaredError(
                 name,
-                mSymbolMap[name],
+                symbol,
                 antlrContext,
-                getSymbol(antlrContext, name)->getDeclaration(),
+                symbol->getDeclaration(),
                 declaration
         );
     } else {
         mSymbolMap[name] = std::make_shared<VariableSymbol>(name, primaryType);
-        mSymbolMap[name]->addDeclaration(declaration);
+        mSymbolMap.at(name)->addDeclaration(declaration);
     }
 }
 
-VariableSymbol::Ptr
-SymbolTable::addVariableDefinition(
+VariableSymbol::Ptr SymbolTable::addVariableDefinition(
         antlr4::ParserRuleContext *antlrContext,
         std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
         std::string const &name,
@@ -78,15 +78,16 @@ SymbolTable::addVariableDefinition(
 ) {
     using namespace caramel::exceptions;
     if (isDefined(name)) {
+        auto const &symbol = getSymbol(antlrContext, name);
         throw SymbolAlreadyDefinedError(
                 name,
-                mSymbolMap[name],
+                symbol,
                 antlrContext,
-                getSymbol(antlrContext, name)->getDefinition(),
+                symbol->getDefinition(),
                 definition
         );
     } else if (isDeclared(name)) {
-        Symbol::Ptr recordedSymbol = mSymbolMap[name];
+        Symbol::Ptr recordedSymbol = getSymbol(antlrContext, name);
         if (recordedSymbol->getSymbolType() != SymbolType::VariableSymbol) {
             throw DeclarationMismatchException(
                     buildMismatchSymbolTypeErrorMessage(name, SymbolType::VariableSymbol)
@@ -107,34 +108,30 @@ SymbolTable::addVariableDefinition(
     }
 }
 
-Symbol::Ptr
-SymbolTable::addVariableUsage(
+Symbol::Ptr SymbolTable::addVariableUsage(
         antlr4::ParserRuleContext *antlrContext,
         std::string const &name,
         const std::shared_ptr<Statement> &statement
 ) {
     using namespace caramel::exceptions;
     if (isDefined(name)) {
-        mSymbolMap[name]->addUsage(statement);
-        return mSymbolMap[name];
+        auto const &symbol = getSymbol(antlrContext, name);
+        symbol->addUsage(statement);
+        return symbol;
     } else {
         SymbolTable::Ptr parent = getParentTable();
-        while (parent && parent->isNotDeclared(name)) {
-            parent = parent->getParentTable();
-        }
-        if (nullptr == parent) {
+        if (parent) {
+            return parent->addVariableUsage(antlrContext, name, statement);
+        } else {
             throw UndefinedSymbolError(
                     buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol),
                     antlrContext
             );
-        } else {
-            return parent->addVariableUsage(antlrContext, name, statement);
         }
     }
 }
 
-FunctionSymbol::Ptr
-SymbolTable::addFunctionDeclaration(
+FunctionSymbol::Ptr SymbolTable::addFunctionDeclaration(
         antlr4::ParserRuleContext *antlrContext,
         std::shared_ptr<caramel::ast::PrimaryType> const &returnType,
         std::string const &name,
@@ -149,18 +146,18 @@ SymbolTable::addFunctionDeclaration(
         return functionSymbol;
     } else {
         using namespace caramel::exceptions;
+        auto const &symbol = getSymbol(antlrContext, name);
         throw SymbolAlreadyDeclaredError(
                 name,
-                mSymbolMap[name],
+                symbol,
                 antlrContext,
-                getSymbol(antlrContext, name)->getDeclaration(),
+                symbol->getDeclaration(),
                 declaration
         );
     }
 }
 
-FunctionSymbol::Ptr
-SymbolTable::addFunctionDefinition(
+FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
         antlr4::ParserRuleContext *antlrContext,
         std::shared_ptr<caramel::ast::PrimaryType> const &returnType,
         std::string const &name,
@@ -169,11 +166,12 @@ SymbolTable::addFunctionDefinition(
 ) {
     using namespace caramel::exceptions;
     if (isDefined(name)) {
+        auto const &symbol = getSymbol(antlrContext, name);
         throw SymbolAlreadyDefinedError(
                 name,
-                mSymbolMap[name],
+                symbol,
                 antlrContext,
-                getSymbol(antlrContext, name)->getDefinition(),
+                symbol->getDefinition(),
                 definition
         );
     } else if (!isDeclared(name)) {
@@ -181,7 +179,7 @@ SymbolTable::addFunctionDefinition(
         functionSymbol->setParameters(namedParameters);
         mSymbolMap[name] = functionSymbol;
     } else {
-        FunctionSymbol::Ptr declaredSymbol = std::dynamic_pointer_cast<FunctionSymbol>(mSymbolMap[name]);
+        FunctionSymbol::Ptr declaredSymbol = std::dynamic_pointer_cast<FunctionSymbol>(getSymbol(antlrContext, name));
 
         std::vector<std::shared_ptr<caramel::ast::Symbol>> declaredParameters = declaredSymbol->getNamedParameters();
         if (declaredParameters.size() == namedParameters.size()) {
@@ -222,38 +220,36 @@ SymbolTable::addFunctionDefinition(
             );
         }
     }
-    FunctionSymbol::Ptr symbol = std::dynamic_pointer_cast<FunctionSymbol>(mSymbolMap[name]);
+    FunctionSymbol::Ptr symbol = std::dynamic_pointer_cast<FunctionSymbol>(getSymbol(antlrContext, name));
     symbol->addDefinition(definition);
     return symbol;
 }
 
-void
-SymbolTable::addFunctionCall(
+void SymbolTable::addFunctionCall(
         antlr4::ParserRuleContext *antlrContext,
         std::string const &name,
         std::vector<std::shared_ptr<caramel::ast::Symbol>> const &valueParameters,
         const std::shared_ptr<Statement> &statement
 ) {
-
+    logger.warning() << "addFunctionCall() not implemented!";
     if (isDefined(name)) {
         // Todo : maybe checks if the valueParameters may match with the namedParameters of the function
-        mSymbolMap[name]->addUsage(statement);
+        getSymbol(antlrContext, name)->addUsage(statement);
     } else {
         // Todo : Try to find the function in the parent context or throw a FunctionUndefinedException
     }
 
 }
 
-void
-SymbolTable::addPrimaryType(
+void SymbolTable::addPrimaryType(
         std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
         std::string const &name
 ) {
     // Not declared and not defined
     if (isNotDeclared(name)) {
         mSymbolMap[name] = std::make_shared<TypeSymbol>(name, primaryType);
-        mSymbolMap[name]->addDeclaration(nullptr); // TODO: Is it safe?
-        mSymbolMap[name]->addDefinition(nullptr); // TODO: Is it safe?
+        mSymbolMap.at(name)->addDeclaration(nullptr); // TODO: Is it safe?
+        mSymbolMap.at(name)->addDefinition(nullptr); // TODO: Is it safe?
     } else {
         // Todo : throws SymbolAlreadyDefinedError
     }
@@ -284,16 +280,24 @@ SymbolTable::addType(
     }
 }
 
-bool
-SymbolTable::hasSymbol(std::string const &name) {
+bool SymbolTable::hasSymbol(std::string const &name) {
+    return thisHasSymbol(name) || parentHasSymbol(name);
+
+}
+
+bool SymbolTable::thisHasSymbol(std::string const &name) {
     return mSymbolMap.find(name) != mSymbolMap.end();
+}
+
+bool SymbolTable::parentHasSymbol(std::string const &name) {
+    return getParentTable() && getParentTable()->hasSymbol(name);
 }
 
 std::shared_ptr<Symbol>
 SymbolTable::getSymbol(antlr4::ParserRuleContext *antlrContext, std::string const &name) {
     using namespace caramel::exceptions;
-    if (isDeclared(name)) {
-        return mSymbolMap[name];
+    if (thisHasSymbol(name)) {
+        return mSymbolMap.at(name);
     } else {
         SymbolTable::Ptr parent = getParentTable();
         if (parent) {
@@ -305,11 +309,13 @@ SymbolTable::getSymbol(antlr4::ParserRuleContext *antlrContext, std::string cons
 }
 
 bool SymbolTable::isDeclared(const std::string &name) {
-    return hasSymbol(name) && mSymbolMap[name]->isDeclared();
+    return (thisHasSymbol(name) && mSymbolMap.at(name)->isDeclared()) ||
+           (getParentTable() && getParentTable()->isDeclared(name));
 }
 
 bool SymbolTable::isDefined(const std::string &name) {
-    return hasSymbol(name) && mSymbolMap[name]->isDefined();
+    return (thisHasSymbol(name) && mSymbolMap.at(name)->isDefined()) ||
+           (getParentTable() && getParentTable()->isDefined(name));
 }
 
 
