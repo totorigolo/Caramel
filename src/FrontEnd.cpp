@@ -47,16 +47,20 @@ ast::Context::Ptr frontEnd(Config const &config) {
     parser.removeErrorListeners();
     parser.addErrorListener(&errorListener);
 
-    // Generate the dot of the tree if asked
+    // Generate the dot of the syntax tree if asked
     if (config.syntaxTreeDot) {
         Listeners::DotExportListener dotExport(&parser);
         tree::ParseTreeWalker::DEFAULT.walk(&dotExport, parser.r());
 
         // Write the dot file to disc
         ofstream out;
-        out.open("out.dot");
+        out.open("syntaxTree.dot");
         out << dotExport.getDotFile();
         out.close();
+
+        // Generate the PDF
+        // TODO: Dirty, change this.
+        system("dot -T pdf -o syntaxTree.pdf syntaxTree.dot");
     }
 
     // Create the visitor which will generate the AST
@@ -72,7 +76,18 @@ ast::Context::Ptr frontEnd(Config const &config) {
         // The AST root
         auto context = visitorResult.as<Context::Ptr>();
 
-        std::cout << context->getDotFile() << std::endl;
+        // Generate the dot of the ast if asked
+        if (config.astDot) {
+            // Write the dot file to disc
+            ofstream out;
+            out.open("ast.dot");
+            out << context->getDotFile();
+            out.close();
+
+            // Generate the PDF
+            // TODO: Dirty, change this.
+            system("dot -T pdf -o ast.pdf ast.dot");
+        }
 
         return context;
 

@@ -63,9 +63,13 @@ Config parseArgs(int argc, const char *argv[]) {
         TCLAP::SwitchArg optimizeArg("O", "optimize", "Generate optimized code");
         cmd.add(optimizeArg);
 
-        // Optimization flag
+        // Syntax tree - DOT export
         TCLAP::SwitchArg syntaxTreeDotArg("", "syntax-tree-dot", "Generate a DOT of the syntax tree");
         cmd.add(syntaxTreeDotArg);
+
+        // AST - DOT export
+        TCLAP::SwitchArg astDotArg("", "ast-dot", "Generate a DOT of the AST");
+        cmd.add(astDotArg);
 
         // Compile flag
         TCLAP::SwitchArg compileArg("c", "compile", "Generate assembly code");
@@ -85,18 +89,20 @@ Config parseArgs(int argc, const char *argv[]) {
 
         // Create the config from the parsed args
         Config config{};
-        if (goodDefaultsArg.getValue()) {
-            config.staticAnalysis = true;
-            config.optimize = true;
-            config.compile = true;
-            config.syntaxTreeDot = false;
-        } else {
-            config.staticAnalysis = staticAnalysisArg.getValue();
-            config.optimize = optimizeArg.getValue();
-            config.compile = compileArg.getValue();
-            config.syntaxTreeDot = syntaxTreeDotArg.getValue();
-        }
+        config.staticAnalysis = staticAnalysisArg.getValue();
+        config.optimize = optimizeArg.getValue();
+        config.compile = compileArg.getValue();
+        config.syntaxTreeDot = syntaxTreeDotArg.getValue();
+        config.astDot = astDotArg.getValue();
         config.sourceFile = sourceFileArg.getValue();
+
+        if (goodDefaultsArg.getValue()) {
+            if (!staticAnalysisArg.isSet()) config.staticAnalysis = true;
+            if (!optimizeArg.isSet()) config.optimize = true;
+            if (!compileArg.isSet()) config.compile = true;
+            if (!syntaxTreeDotArg.isSet()) config.syntaxTreeDot = false;
+            if (!astDotArg.isSet()) config.astDot = false;
+        }
 
         return config;
 

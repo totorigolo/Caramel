@@ -32,5 +32,6 @@ struct Config {
     bool optimize = false;
     bool compile = false;
     bool syntaxTreeDot = false;
+    bool astDot = false;
     std::string sourceFile;
 };
