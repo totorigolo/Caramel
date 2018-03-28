@@ -27,6 +27,7 @@
 #include "../datastructure/statements/controlblocks/IfBlock.h"
 #include "../datastructure/statements/controlblocks/WhileBlock.h"
 #include "../Logger.h"
+#include "../datastructure/statements/controlblocks/ForBlock.h"
 
 
 using namespace caramel::ast;
@@ -40,7 +41,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitControlBlock(CaramelParser::Contro
     } else if (nullptr != ctx->whileBlock()){
         return std::dynamic_pointer_cast<ControlBlock>(visitWhileBlock(ctx->whileBlock()).as<WhileBlock::Ptr>());
     } else if (nullptr != ctx->forBlock()) {
-
+        return std::dynamic_pointer_cast<ControlBlock>(visitForBlock(ctx->forBlock()).as<ForBlock::Ptr>());
     }
 
     return CaramelBaseVisitor::visitControlBlock(ctx);
@@ -83,4 +84,20 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitWhileBlock(CaramelParser::WhileBlo
 
     WhileBlock::Ptr whileBlock = std::make_shared<WhileBlock>(expression,block,ctx->start);
     return whileBlock;
+}
+
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitForBlock(CaramelParser::ForBlockContext *ctx) {
+    using namespace caramel::ast;
+
+    logger.trace() << "visit for block: ";
+
+    Expression::Ptr begin = visitExpression(ctx->expression(0));
+    Expression::Ptr end = visitExpression(ctx->expression(1));
+    Expression::Ptr step = visitExpression(ctx->expression(2));
+    logger.trace() << "for condition :";
+    std::vector<Statement::Ptr> block = visitBlock(ctx->block());
+
+    ForBlock::Ptr forblock = std::make_shared<ForBlock>(begin,end,step,block,ctx->start);
+    return forblock;
 }

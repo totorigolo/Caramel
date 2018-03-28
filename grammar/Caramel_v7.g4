@@ -107,10 +107,10 @@ whileBlock
   ;
 forBlock
   : ForKeyword_ WS_* L_Par_
-      WS_* expression? WS_* Semilicon_
-      WS_* expression? WS_* Semilicon_
-      WS_* expression? WS_* R_Par_
-      WS_ * block?
+      WS_* expression WS_* Semilicon_
+      WS_* expression WS_* Semilicon_
+      WS_* expression WS_* R_Par_
+      WS_ * block
   ;
 
 // Blocks

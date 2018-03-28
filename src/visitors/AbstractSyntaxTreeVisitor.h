@@ -101,6 +101,9 @@ public:
     /// Returns WhileBlock::Ptr
     antlrcpp::Any visitWhileBlock(CaramelParser::WhileBlockContext *ctx) override;
 
+    /// Returns ForBlock::Ptr
+    antlrcpp::Any visitForBlock(CaramelParser::ForBlockContext *ctx) override;
+
     /// Returns Expression::Ptr
     antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
 
