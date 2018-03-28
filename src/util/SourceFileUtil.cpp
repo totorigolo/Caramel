@@ -23,20 +23,23 @@
 */
 
 #include "SourceFileUtil.h"
+#include "../Logger.h"
 
-
-SourceFileUtil::SourceFileUtil(const std::string &fileName) : fileName(fileName), inputStream(fileName) {}
+SourceFileUtil::SourceFileUtil(const std::string &fileName)
+        : mFileName(fileName), mInputStream(fileName) {
+    logger.trace() << "New SourceFileUtil(" << fileName << ")";
+}
 
 std::string SourceFileUtil::getLine(size_t line, size_t currentCursorLine, bool resetToHead) {
     std::string buffer;
     size_t i = currentCursorLine;
     while (i < line - 1) { // Moves the cursor to the right line
-        inputStream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        mInputStream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         i++;
     }
-    std::getline(inputStream, buffer);
+    std::getline(mInputStream, buffer);
     if (resetToHead) {
-        inputStream.seekg(0);
+        mInputStream.seekg(0);
     }
     return buffer;
 }

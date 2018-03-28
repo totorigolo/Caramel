@@ -47,6 +47,6 @@ public:
     std::string getLine(size_t line, size_t currentCursorLine = 0, bool resetToHead = true);
 
 private:
-    std::string fileName;
-    mutable std::ifstream inputStream;
+    std::string mFileName;
+    std::ifstream mInputStream;
 };
