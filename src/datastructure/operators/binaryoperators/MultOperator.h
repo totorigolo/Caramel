@@ -42,7 +42,7 @@ public:
     ~MultOperator() override = default;
 
 public:
-    std::shared_ptr<IR>
+    std::shared_ptr<caramel::ir::IR>
     buildIR(std::shared_ptr<caramel::ast::Expression> const &leftExpression,
             std::shared_ptr<caramel::ast::Expression> const &rightExpression) override;
 

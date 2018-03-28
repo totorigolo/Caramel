@@ -22,4 +22,23 @@
  * SOFTWARE.
 */
 
+#include <utility>
+#include <vector>
 #include "IR.h"
+#include "BasicBlock.h"
+
+namespace caramel::ir {
+
+IR::IR(
+        std::shared_ptr<BasicBlock> parentBlock,
+        Operation op,
+        caramel::ast::SymbolType symbolType,
+       std::vector<std::string> parameters
+) : mParentBlock{parentBlock},
+    mOperation{op},
+    mType{symbolType},
+    mParameters{std::move(parameters)} {}
+
+void IR::generateAssembly(std::ostream &output) {}
+
+} // namespace caramel::ir

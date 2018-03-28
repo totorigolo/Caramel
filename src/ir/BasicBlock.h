@@ -24,11 +24,52 @@
 
 #pragma once
 
+#include "IR.h"
+#include "CFG.h"
+#include "../datastructure/symboltable/Symbol.h"
+#include <ostream>
+#include <vector>
 
+namespace caramel::ir {
 
 class BasicBlock {
+public:
+    using Ptr = std::shared_ptr<BasicBlock>;
+    using WeakPtr = std::shared_ptr<BasicBlock>;
 
+    BasicBlock(
+            std::shared_ptr<CFG> cfg,
+            std::string const &entryName
+    );
+
+    virtual ~BasicBlock() = default;
+
+public:
+    void generateAssembly(std::ostream &output);
+
+    void addIRInstruction(
+            Operation op,
+            caramel::ast::SymbolType type,
+            std::vector<std::string> params
+    );
+
+    std::shared_ptr<BasicBlock> getNextWhenTrue() const;
+    std::shared_ptr<BasicBlock> getNextWhenFalse() const;
+
+private:
+    /**
+     * pointer to the next basic block, true branch. If nullptr, return from procedure
+     */
+    std::shared_ptr<BasicBlock> mExitWhenTrue;
+    /**
+     * pointer to the next basic block, false branch. If nullptr, the basic block ends with an unconditional jump
+     */
+    std::shared_ptr<BasicBlock> mExitWhenFalse;
+    std::string mLabelName;
+    std::weak_ptr<CFG> mCfg;
+    std::vector<std::shared_ptr<IR>> mInstructions;
 };
 
+} // namespace caramel::ir
 
 

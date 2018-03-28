@@ -24,19 +24,48 @@
 
 #pragma once
 
+#include "../datastructure/symboltable/Symbol.h"
 #include <memory>
 
-namespace caramel::ast {
+namespace caramel::ir {
+
+class BasicBlock;
+
+enum class Operation {
+    ldconst,
+    add,
+    sub,
+    mul,
+    rmem,
+    wmem,
+    call,
+    cmp_eq,
+    cmp_lt,
+    cmp_le
+};
 
 class IR {
 public:
     using Ptr = std::shared_ptr<IR>;
     using WeakPt = std::weak_ptr<IR>;
 
-protected:
-    explicit IR() = default;
+public:
+    explicit IR(
+            std::shared_ptr<BasicBlock> parentBlock,
+            Operation op,
+            caramel::ast::SymbolType symbolType,
+            std::vector<std::string> parameters
+    );
+
     virtual ~IR() = default;
 
+    void generateAssembly(std::ostream &output);
+
+private:
+    std::weak_ptr<BasicBlock> mParentBlock;
+    Operation mOperation;
+    caramel::ast::SymbolType mType;
+    std::vector<std::string> mParameters;
 };
 
 } // namespace caramel::dataStructure

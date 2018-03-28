@@ -41,7 +41,7 @@ public:
     ~BinaryOperator() override = default;
 
 public:
-    virtual std::shared_ptr<caramel::ast::IR> buildIR(
+    virtual std::shared_ptr<caramel::ir::IR> buildIR(
             std::shared_ptr<caramel::ast::Expression> const &leftExpression,
             std::shared_ptr<caramel::ast::Expression> const &rightExpression
     ) = 0;

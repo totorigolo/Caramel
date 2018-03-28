@@ -23,3 +23,39 @@
 */
 
 #include "BasicBlock.h"
+
+namespace caramel::ir {
+
+BasicBlock::BasicBlock(
+        std::shared_ptr<caramel::ir::CFG> cfg,
+        std::string const &entryName
+) : mExitWhenTrue{},
+    mExitWhenFalse{},
+    mLabelName{entryName},
+    mCfg{cfg},
+    mInstructions{} {}
+
+void BasicBlock::addIRInstruction(Operation op, caramel::ast::SymbolType type, std::vector<std::string> params) {
+    IR::Ptr instruction = std::make_shared<IR>(std::shared_ptr<BasicBlock>(this), op, type, params);
+    mInstructions.push_back(instruction);
+}
+
+void BasicBlock::generateAssembly(std::ostream &output) {
+    output << mLabelName << ':' << std::endl;
+    for(IR::Ptr const &instr : mInstructions) {
+        output << "  ";
+        instr->generateAssembly(output);
+        output << std::endl;
+    }
+    output << std::endl;
+}
+
+std::shared_ptr<BasicBlock> BasicBlock::getNextWhenTrue() const {
+    return mExitWhenTrue;
+}
+
+std::shared_ptr<BasicBlock> BasicBlock::getNextWhenFalse() const {
+    return mExitWhenFalse;
+}
+
+} // namespace caramel::ir

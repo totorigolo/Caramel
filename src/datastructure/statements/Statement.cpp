@@ -23,6 +23,7 @@
 */
 
 #include "Statement.h"
+#include "../../ir/IR.h"
 
 namespace caramel::ast {
 

@@ -24,7 +24,7 @@
 
 #include "BitwiseShiftOperator.h"
 
-std::shared_ptr<caramel::ast::IR>
+std::shared_ptr<caramel::ir::IR>
 caramel::ast::BitwiseShiftOperator::buildIR(std::shared_ptr <caramel::ast::Expression> const &leftExpression,
                                             std::shared_ptr <caramel::ast::Expression> const &rightExpression) {
     CARAMEL_UNUSED(leftExpression);

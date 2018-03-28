@@ -37,7 +37,7 @@ BinaryExpression::BinaryExpression(
     mRightExpression{rightExpression},
     mBinaryOperator{binaryOperator} {}
 
-std::shared_ptr<caramel::ast::IR>
+std::shared_ptr<caramel::ir::IR>
 BinaryExpression::getIR() {
     return mBinaryOperator->buildIR(mLeftExpression, mRightExpression);
 }

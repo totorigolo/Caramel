@@ -24,7 +24,7 @@
 
 #include "MultOperator.h"
 
-std::shared_ptr<caramel::ast::IR> caramel::ast::MultOperator::buildIR(
+std::shared_ptr<caramel::ir::IR> caramel::ast::MultOperator::buildIR(
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression) {
 

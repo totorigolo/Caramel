@@ -25,12 +25,15 @@
 #pragma once
 
 #include "../../exceptions/NotImplementedException.h"
-#include "IR.h"
 #include "../../AstDotNode.h"
 #include <Token.h>
 #include <memory>
 #include <ostream>
 
+
+namespace caramel::ir {
+    class IR;
+}
 
 namespace caramel::ast {
 
@@ -74,7 +77,7 @@ public:
     size_t getLength() const;
     StatementType getType() const;
 
-    virtual std::shared_ptr<IR> getIR() { throw caramel::exceptions::NotImplementedException(__FILE__); }; // Fixme: must be abstract function at the end
+    virtual std::shared_ptr<caramel::ir::IR> getIR() { throw caramel::exceptions::NotImplementedException(__FILE__); }; // Fixme: must be abstract function at the end
 
     void acceptAstDotVisit() override;
 

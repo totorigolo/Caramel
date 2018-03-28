@@ -24,11 +24,46 @@
 
 #pragma once
 
+#include "../datastructure/statements/Statement.h"
+#include "../datastructure/symboltable/Symbol.h"
 
+namespace caramel::ir {
+
+class BasicBlock;
 
 class CFG {
+public:
+    using Ptr = std::shared_ptr<CFG>;
+    using WeakPtr = std::weak_ptr<CFG>;
 
+public:
+    explicit CFG(caramel::ast::Statement::Ptr ast);
+    virtual ~CFG() = default;
+
+public:
+    void addBasicBlock(
+            std::shared_ptr<BasicBlock> basicBlock
+    );
+
+    void generateAssembly(std::ostream &output);
+
+    std::string IRToAssembly(std::string register_) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+
+    void generateAssemblyPrologue(std::ostream &output) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+
+    void generateAssemblyEpilogue(std::ostream &output) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+
+
+protected:
+    caramel::ast::Statement::Ptr mAst;
+    std::map<std::string, caramel::ast::Symbol> mSymbols;
+    std::map<std::string, int> mSymbolIndex;
+    int nextBasicBlockNumber;
+    
+    std::vector<std::shared_ptr<BasicBlock>> mBasicBlocks;
+    
 };
 
+} // namespace caramel::ast
 
 

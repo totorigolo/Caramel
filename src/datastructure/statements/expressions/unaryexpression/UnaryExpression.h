@@ -45,7 +45,7 @@ public:
     ~UnaryExpression() override = default;
 
 public:
-    std::shared_ptr<IR> getIR() override;
+    std::shared_ptr<caramel::ir::IR> getIR() override;
 
 private:
     std::shared_ptr<caramel::ast::Expression> mInnerExpression;

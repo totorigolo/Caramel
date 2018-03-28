@@ -23,3 +23,28 @@
 */
 
 #include "CFG.h"
+#include "BasicBlock.h"
+
+namespace caramel::ir {
+
+CFG::CFG(
+        caramel::ast::Statement::Ptr ast
+) : mAst{ast},
+    mSymbols{},
+    mSymbolIndex{},
+    nextBasicBlockNumber{0},
+    mBasicBlocks{} {}
+
+void CFG::addBasicBlock(std::shared_ptr<BasicBlock> basicBlock) {
+    mBasicBlocks.push_back(basicBlock);
+}
+
+void CFG::generateAssembly(std::ostream &output) {
+    generateAssemblyPrologue(output);
+    for(const std::shared_ptr<BasicBlock> &bb : mBasicBlocks) {
+        bb->generateAssembly(output);
+    }
+    generateAssemblyEpilogue(output);
+}
+
+} // namespace caramel::ir

@@ -263,15 +263,12 @@ SymbolTable::addType(
 
     // Not declared and not defined
     if (isNotDeclared(typeAlias)) {
-        mSymbolMap[typeAlias] = std::make_shared<TypeSymbol>(typeAlias, primaryType);
-        mSymbolMap[typeAlias]->addDefinition(definition);
-    if (isNotDeclared(typeAlias)) {
         TypeSymbol::Ptr typeSymbol = std::make_shared<TypeSymbol>(typeAlias, primaryType);
         mSymbolMap[typeAlias] = typeSymbol;
         typeSymbol->addDefinition(definition);
         return typeSymbol;
     } else {
-        throw caramel::exceptions::SymbolAlreadyDeclaredError("Cannot execute typedef", antlrContext, mSymbolMap[typaAlias]->getDeclaration(), std::dynamic_pointer_cast<Declaration>(definition));
+        throw caramel::exceptions::SymbolAlreadyDeclaredError("Cannot execute typedef", antlrContext, mSymbolMap[typeAlias]->getDeclaration(), std::dynamic_pointer_cast<Declaration>(definition));
     }
 }
 
