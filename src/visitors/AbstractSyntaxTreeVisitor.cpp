@@ -176,7 +176,6 @@ AbstractSyntaxTreeVisitor::visitTypeParameter(CaramelParser::TypeParameterContex
         logger.warning() << "Default symbol " << symbolName << " is created with void_t as return type";
         return std::make_shared<TypeSymbol>( symbolName, Void_t::Create() );
     }
-
 }
 
 antlrcpp::Any
@@ -254,9 +253,9 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
     PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
     std::string name = visitValidIdentifier(innerCtx->validIdentifier());
     std::vector<Symbol::Ptr> params = visitFunctionArguments(innerCtx->functionArguments());
-    FunctionDeclaration::Ptr functionDeclaration = std::make_shared<FunctionDeclaration>(ctx->start);
+    FunctionDeclaration::Ptr functionDeclaration = std::make_shared<FunctionDeclaration>(innerCtx->start);
     FunctionSymbol::Ptr functionSymbol = currentContext()->getSymbolTable()->addFunctionDeclaration(
-            ctx, returnType, name, params, functionDeclaration);
+            innerCtx, returnType, name, params, functionDeclaration);
     functionDeclaration->setFunctionSymbol(functionSymbol);
 
     auto traceLogger = logger.trace();
@@ -285,15 +284,10 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::
     std::string name = visitValidIdentifier(innerCtx->validIdentifier());
     std::vector<Symbol::Ptr> params = visitFunctionArguments(innerCtx->functionArguments());
 
-    FunctionDefinition::Ptr functionDefinition = std::make_shared<FunctionDefinition>(functionContext, ctx->start);
-    FunctionSymbol::Ptr functionSymbol = functionContext->getSymbolTable()->addFunctionDefinition(
-            ctx, returnType, name, params, functionDefinition
+    FunctionDefinition::Ptr functionDefinition = std::make_shared<FunctionDefinition>(functionContext, innerCtx->start);
+    FunctionSymbol::Ptr functionSymbol = parentContext->getSymbolTable()->addFunctionDefinition(
+            innerCtx, returnType, name, params, functionDefinition
     );
-
-    parentContext->getSymbolTable()->addFunctionDefinition(
-            ctx, returnType, name, params, functionDefinition
-    );
-
     functionDefinition->setSymbol(functionSymbol);
 
     functionContext->addStatements(visitBlock(ctx->block()));

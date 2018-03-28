@@ -84,8 +84,8 @@ public:
         if (1) {
             //TODO: test if different type, return primary type instead of statement type
             std::cerr << bold << "Note: " << reset
-                      << "different previous type, was " << mExistingDefinition->getType() << " now "
-                      << mFaultyDeclaration->getType()
+                      << "different previous type: was " << mExistingDefinition->getType()
+                      << "and is now " << mFaultyDeclaration->getType()
                       << std::endl;
         }
     }
@@ -98,11 +98,11 @@ public:
         Symbol::Ptr previousDeclaration = symbol;
         switch (previousDeclaration->getSymbolType()) {
             case SymbolType::FunctionSymbol:
-                res << "a function with the same name is already declared at line "
+                res << "a function with the same name is already defined at line "
                     << previousDeclaration->getDefinition()->getLine();
                 break;
             case SymbolType::VariableSymbol:
-                res << "a variable with the same name is already declared at line "
+                res << "a variable with the same name is already defined at line "
                     << previousDeclaration->getDefinition()->getLine();
                 break;
             case SymbolType::TypeSymbol:
@@ -110,7 +110,6 @@ public:
                 break;
         }
         return res.str();
-
     }
 
 private:

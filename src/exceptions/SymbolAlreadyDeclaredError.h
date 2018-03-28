@@ -90,8 +90,8 @@ public:
         if (1) {
             //TODO: test if different type, return primary type instead of statement type
             std::cerr << bold << "Note: " << reset
-                      << "different previous type, was " << mExistingDeclaration->getType() << " now "
-                      << mFaultyDeclaration->getType()
+                      << "different previous type: was " << mExistingDeclaration->getType()
+                      << "and is now " << mFaultyDeclaration->getType()
                       << std::endl;
         }
     }
