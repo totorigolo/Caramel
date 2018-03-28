@@ -22,36 +22,4 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "../symboltable/SymbolTable.h"
-#include "../statements/Statement.h"
-
-#include <memory>
-#include <vector>
-
-
-namespace caramel::ast {
-
-class Context : public AstDotNode {
-public:
-    using Ptr = std::shared_ptr<Context>;
-    using WeakPtr = std::weak_ptr<Context>;
-
-    Context();
-    explicit Context(std::shared_ptr<Context> const &parent);
-
-    std::shared_ptr<caramel::ast::SymbolTable> getSymbolTable() const;
-
-    void addStatements(std::vector<std::shared_ptr<caramel::ast::Statement>> &&statements);
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-private:
-
-    std::shared_ptr<caramel::ast::SymbolTable> mSymbolTable;
-    std::vector<std::shared_ptr<caramel::ast::Statement>> mStatements;
-};
-
-} // namespace caramel::dataStructure::context
+#include "CFG.h"
