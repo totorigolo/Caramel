@@ -30,29 +30,30 @@
 #include <stdexcept>
 #include <ParserRuleContext.h>
 
+
 namespace caramel::exceptions {
 
-    class FunctionDefinitionParameterNameMismatchError : public SemanticError {
-    public:
-        FunctionDefinitionParameterNameMismatchError(std::string const &message,
-                                   antlr4::ParserRuleContext *antlrContext,
-                                   std::string const &declaredName,
-                                   std::string const &definedName)
-                : SemanticError(message),
-                  mAntlrContext{antlrContext},
-                  mDeclaredName{declaredName},
-                  mDefinedName{definedName} {
-        }
+class FunctionDefinitionParameterNameMismatchError : public SemanticError {
+public:
+    FunctionDefinitionParameterNameMismatchError(std::string const &message,
+                                                 antlr4::ParserRuleContext *antlrContext,
+                                                 std::string declaredName,
+                                                 std::string definedName)
+            : SemanticError(message),
+              mAntlrContext{antlrContext},
+              mDeclaredName{std::move(declaredName)},
+              mDefinedName{std::move(definedName)} {
+    }
 
-        void explain(SourceFileUtil sourceFileUtil) const override {
-            //todo
-            logger.fatal() << "FunctionDefinitionParameterNameMismatchError not implemented.";
-        }
+    void explain(SourceFileUtil sourceFileUtil) const override {
+        //todo
+        logger.fatal() << what();
+    }
 
-    private:
-        antlr4::ParserRuleContext *mAntlrContext;
-        std::string const &mDeclaredName;
-        std::string const &mDefinedName;
-    };
+private:
+    antlr4::ParserRuleContext *mAntlrContext;
+    std::string mDeclaredName;
+    std::string mDefinedName;
+};
 
 } // namespace caramel::exceptions

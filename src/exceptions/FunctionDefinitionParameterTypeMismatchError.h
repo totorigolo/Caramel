@@ -41,19 +41,19 @@ namespace caramel::exceptions {
                                                      std::shared_ptr<caramel::ast::PrimaryType> definedType)
                 : SemanticError(message),
                   mAntlrContext{antlrContext},
-                  mDeclaredType{declaredType},
-                  mDefinedType{definedType} {
+                  mDeclaredType{std::move(declaredType)},
+                  mDefinedType{std::move(definedType)} {
         }
 
         void explain(SourceFileUtil sourceFileUtil) const override {
             //todo
-            logger.fatal() << "FunctionDefinitionParameterTypeMismatchError not implemented.";
+            logger.fatal() << what();
         }
 
     private:
         antlr4::ParserRuleContext *mAntlrContext;
-        std::shared_ptr<caramel::ast::PrimaryType> &mDeclaredType;
-        std::shared_ptr<caramel::ast::PrimaryType> &mDefinedType;
+        std::shared_ptr<caramel::ast::PrimaryType> mDeclaredType;
+        std::shared_ptr<caramel::ast::PrimaryType> mDefinedType;
     };
 
 } // namespace caramel::exceptions

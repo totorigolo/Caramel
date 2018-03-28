@@ -48,7 +48,6 @@ public:
               mAntlrContext{antlrContext},
               mExistingDeclaration{existingDeclaration},
               mFaultyDeclaration{faultyDeclaration} {
-//        explain();
     }
 
     void explain(SourceFileUtil sourceFileUtil) const override {
@@ -62,7 +61,7 @@ public:
         auto const startLine = start->getLine();
         auto const startColumn = int(start->getCharPositionInLine());
         auto const &stop = mAntlrContext->getStop();
-        auto const stopColumn = int(stop->getCharPositionInLine());
+        auto const length = int(mAntlrContext->getText().length());
 
         // TODO: Handle multi-line statements
         if (start->getLine() != stop->getLine()) {
@@ -86,13 +85,13 @@ public:
                   << posInfo << std::setfill(' ') << std::setw(LEFT_MARGIN) << ""
                   << line << std::endl
                   << std::setfill(' ') << std::setw(LEFT_MARGIN + posInfoLength + startColumn - int(begin)) << ""
-                  << "^"
-                  << std::setfill('~') << std::setw(stopColumn - startColumn) << ""
+                  << bold << red << std::setfill('~') << std::setw(length) << "" << reset
                   << std::endl;
         if (1) {
             //TODO: test if different type, return primary type instead of statement type
             std::cerr << bold << "Note: " << reset
-                      << "different previous type, was " << mExistingDeclaration->getType() << " now " << mFaultyDeclaration->getType()
+                      << "different previous type, was " << mExistingDeclaration->getType() << " now "
+                      << mFaultyDeclaration->getType()
                       << std::endl;
         }
     }

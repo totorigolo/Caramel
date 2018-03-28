@@ -26,6 +26,7 @@
 
 #include <stdexcept>
 
+
 namespace caramel::exceptions {
 
 class UndefinedSymbolError : public SemanticError {
@@ -34,7 +35,7 @@ public:
     UndefinedSymbolError(std::string const &message,
                          antlr4::ParserRuleContext *antlrContext)
             : SemanticError(message),
-              mAntlrContext{antlrContext}{}
+              mAntlrContext{antlrContext} {}
 
 
     void explain(SourceFileUtil sourceFileUtil) const override {
@@ -48,7 +49,7 @@ public:
         auto const startLine = start->getLine();
         auto const startColumn = int(start->getCharPositionInLine());
         auto const &stop = mAntlrContext->getStop();
-        auto const stopColumn = int(stop->getCharPositionInLine());
+        auto const length = int(mAntlrContext->getText().length());
 
         // TODO: Handle multi-line statements
         if (start->getLine() != stop->getLine()) {
@@ -72,8 +73,7 @@ public:
                   << posInfo << std::setfill(' ') << std::setw(LEFT_MARGIN) << ""
                   << line << std::endl
                   << std::setfill(' ') << std::setw(LEFT_MARGIN + posInfoLength + startColumn - int(begin)) << ""
-                  << "^"
-                  << std::setfill('~') << std::setw(stopColumn - startColumn) << ""
+                  << bold << red << std::setfill('~') << std::setw(length) << "" << reset
                   << std::endl;
     }
 

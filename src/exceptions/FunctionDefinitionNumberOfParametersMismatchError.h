@@ -45,15 +45,13 @@ namespace caramel::exceptions {
 
         void explain(SourceFileUtil sourceFileUtil) const override {
             //todo
-            logger.fatal() << "FunctionDefinitionNumberOfParametersMismatchError not implemented.";
+            logger.fatal() << what();
         }
-
-
 
     private:
         antlr4::ParserRuleContext *mAntlrContext;
-        unsigned long const &mDeclaredSize;
-        unsigned long const &mDefinedSize;
+        unsigned long mDeclaredSize;
+        unsigned long mDefinedSize;
     };
 
 } // namespace caramel::exceptions
