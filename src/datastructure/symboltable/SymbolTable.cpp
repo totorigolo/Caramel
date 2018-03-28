@@ -52,7 +52,7 @@ SymbolTable::addVariableDeclaration(
                 name,
                 mSymbolMap[name],
                 antlrContext,
-                getSymbol(name)->getDefinition(),
+                getSymbol(antlrContext, name)->getDefinition(),
                 declaration
         );
     } else if (isDeclared(name)) {
@@ -60,7 +60,7 @@ SymbolTable::addVariableDeclaration(
                 name,
                 mSymbolMap[name],
                 antlrContext,
-                getSymbol(name)->getDeclaration(),
+                getSymbol(antlrContext, name)->getDeclaration(),
                 declaration
         );
     } else {
@@ -82,7 +82,7 @@ SymbolTable::addVariableDefinition(
                 name,
                 mSymbolMap[name],
                 antlrContext,
-                getSymbol(name)->getDefinition(),
+                getSymbol(antlrContext, name)->getDefinition(),
                 definition
         );
     } else if (isDeclared(name)) {
@@ -113,15 +113,13 @@ SymbolTable::addVariableUsage(
         std::string const &name,
         const std::shared_ptr<Statement> &statement
 ) {
-
     using namespace caramel::exceptions;
     if (isDefined(name)) {
         mSymbolMap[name]->addUsage(statement);
         return mSymbolMap[name];
     } else {
-        // Fixme : Try to find the variable in the parent context or throw a VariableUndefinedException
         SymbolTable::Ptr parent = getParentTable();
-        while (nullptr != parent && parent->isNotDeclared(name)) {
+        while (parent && parent->isNotDeclared(name)) {
             parent = parent->getParentTable();
         }
         if (nullptr == parent) {
@@ -130,7 +128,7 @@ SymbolTable::addVariableUsage(
                     antlrContext
             );
         } else {
-            return parent->getSymbol(name);
+            return parent->addVariableUsage(antlrContext, name, statement);
         }
     }
 }
@@ -155,7 +153,7 @@ SymbolTable::addFunctionDeclaration(
                 name,
                 mSymbolMap[name],
                 antlrContext,
-                getSymbol(name)->getDeclaration(),
+                getSymbol(antlrContext, name)->getDeclaration(),
                 declaration
         );
     }
@@ -175,7 +173,7 @@ SymbolTable::addFunctionDefinition(
                 name,
                 mSymbolMap[name],
                 antlrContext,
-                getSymbol(name)->getDefinition(),
+                getSymbol(antlrContext, name)->getDefinition(),
                 definition
         );
     } else if (!isDeclared(name)) {
@@ -186,25 +184,28 @@ SymbolTable::addFunctionDefinition(
         FunctionSymbol::Ptr declaredSymbol = std::dynamic_pointer_cast<FunctionSymbol>(mSymbolMap[name]);
 
         std::vector<std::shared_ptr<caramel::ast::Symbol>> declaredParameters = declaredSymbol->getNamedParameters();
-        if (declaredParameters.size() == namedParameters.size()){
-            for (int i = 0 ; i < declaredSymbol->getNamedParameters().size(); i++ ){
+        if (declaredParameters.size() == namedParameters.size()) {
+            for (int i = 0; i < declaredSymbol->getNamedParameters().size(); i++) {
                 std::string declaredParameterName = declaredParameters.at(i)->getName();
-                std::string const declaredParameterTypeIdentifier = declaredParameters.at(i)->getType()->getIdentifier();
+                std::string const declaredParameterTypeIdentifier =
+                        declaredParameters.at(i)->getType()->getIdentifier();
 
                 std::string parameterName = namedParameters.at(i)->getName();
                 std::string const parameterTypeIdentifier = namedParameters.at(i)->getType()->getIdentifier();
 
-                if(declaredParameterName != parameterName){
+                if (declaredParameterName != parameterName) {
                     throw FunctionDefinitionParameterNameMismatchError(
-                            buildFunctionDefinitionParameterNameMismatchErrorMessage(name,declaredParameterName,parameterName),
+                            buildFunctionDefinitionParameterNameMismatchErrorMessage(
+                                    name, declaredParameterName, parameterName),
                             antlrContext,
                             declaredParameterName,
                             parameterName
                     );
                 }
-                if(declaredParameterTypeIdentifier != parameterTypeIdentifier){
+                if (declaredParameterTypeIdentifier != parameterTypeIdentifier) {
                     throw FunctionDefinitionParameterTypeMismatchError(
-                            buildFunctionDefinitionParameterTypeMismatchErrorMessage(name,declaredParameters.at(i)->getType(),namedParameters.at(i)->getType()),
+                            buildFunctionDefinitionParameterTypeMismatchErrorMessage(
+                                    name, declaredParameters.at(i)->getType(), namedParameters.at(i)->getType()),
                             antlrContext,
                             declaredParameters.at(i)->getType(),
                             namedParameters.at(i)->getType()
@@ -251,6 +252,7 @@ SymbolTable::addPrimaryType(
     // Not declared and not defined
     if (isNotDeclared(name)) {
         mSymbolMap[name] = std::make_shared<TypeSymbol>(name, primaryType);
+        mSymbolMap[name]->addDeclaration(nullptr); // TODO: Is it safe?
         mSymbolMap[name]->addDefinition(nullptr); // TODO: Is it safe?
     } else {
         // Todo : throws SymbolAlreadyDefinedError
@@ -273,7 +275,12 @@ SymbolTable::addType(
         typeSymbol->addDefinition(definition);
         return typeSymbol;
     } else {
-        throw caramel::exceptions::SymbolAlreadyDeclaredError("Cannot execute typedef", antlrContext, mSymbolMap[typeAlias]->getDeclaration(), std::dynamic_pointer_cast<Declaration>(definition));
+        throw caramel::exceptions::SymbolAlreadyDeclaredError(
+                "Cannot execute typedef",
+                mSymbolMap[typeAlias],
+                antlrContext,
+                mSymbolMap[typeAlias]->getDeclaration(),
+                std::dynamic_pointer_cast<Declaration>(definition));
     }
 }
 
@@ -283,29 +290,30 @@ SymbolTable::hasSymbol(std::string const &name) {
 }
 
 std::shared_ptr<Symbol>
-SymbolTable::getSymbol(std::string const &name) {
-    // FIXME: Lookup in parent tables
-    auto it{mSymbolMap.find(name)};
-    if (it == mSymbolMap.end()) {
-        logger.fatal() << "Symbol " << name << " not found in the symbol table.";
-        std::terminate();
+SymbolTable::getSymbol(antlr4::ParserRuleContext *antlrContext, std::string const &name) {
+    using namespace caramel::exceptions;
+    if (isDeclared(name)) {
+        return mSymbolMap[name];
+    } else {
+        SymbolTable::Ptr parent = getParentTable();
+        if (parent) {
+            return parent->getSymbol(antlrContext, name);
+        } else {
+            throw UndefinedSymbolError(buildUnknownSymbolErrorMessage(name), antlrContext);
+        }
     }
-    return it->second;
 }
 
-bool
-SymbolTable::isDeclared(const std::string &name) {
+bool SymbolTable::isDeclared(const std::string &name) {
     return hasSymbol(name) && mSymbolMap[name]->isDeclared();
 }
 
-bool
-SymbolTable::isDefined(const std::string &name) {
+bool SymbolTable::isDefined(const std::string &name) {
     return hasSymbol(name) && mSymbolMap[name]->isDefined();
 }
 
 
-std::string
-SymbolTable::buildMismatchSymbolTypeErrorMessage(std::string const &variableName,
+std::string SymbolTable::buildMismatchSymbolTypeErrorMessage(std::string const &variableName,
                                                              SymbolType requiredSymbolType) {
     std::stringstream res;
     res << "Cannot defined a ";
@@ -327,14 +335,16 @@ SymbolTable::buildMismatchSymbolTypeErrorMessage(std::string const &variableName
 std::string
 SymbolTable::buildMismatchTypeErrorMessage(std::string const &variableName, PrimaryType::Ptr const &requiredType) {
     std::stringstream res;
-    res << "Mismatch type for " << variableName << " between the type definition " << requiredType->getIdentifier();
-    res << " and declaration type " << mSymbolMap[variableName]->getType()->getIdentifier();
+    res << "Mismatch type for " << variableName << " between the type definition " << requiredType->getIdentifier()
+        << " and declaration type " << mSymbolMap[variableName]->getType()->getIdentifier() << '.';
     return res.str();
 }
 
+std::string SymbolTable::buildUnknownSymbolErrorMessage(std::string const &name) {
+    return "Unknown symbol " + name;
+}
 
-std::string
-SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType) {
+std::string SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType) {
     std::stringstream res;
     res << "The ";
     switch (symbolType) {
@@ -351,59 +361,54 @@ SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &name, SymbolTyp
             res << "array";
             break;
     }
-    res << " '" << name << "' is not defined before";
+    res << " '" << name << "' is not defined before.";
     return res.str();
 }
 
-std::shared_ptr<SymbolTable>
-SymbolTable::getParentTable() {
+std::shared_ptr<SymbolTable> SymbolTable::getParentTable() {
     return mParentTable;
 }
 
-    std::string
-    SymbolTable::buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(const std::string &name, unsigned long declaredSize,
-                                                                                   unsigned long definedSize) {
-        std::stringstream res;
-        res << "The function: ";
-        res << name;
-        res << " was previously declared with ";
-        res << declaredSize;
-        res << " parameter(s).\n";
-        res << "Actual definition has ";
-        res << definedSize;
-        res << " parameter(s).\n";
-        return res.str();
-    }
+std::string
+SymbolTable::buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(const std::string &name,
+                                                                           unsigned long declaredSize,
+                                                                           unsigned long definedSize) {
+    std::stringstream res;
+    res << "The function: "
+        << name
+        << " was previously declared with "
+        << declaredSize
+        << " parameter(s).\n"
+        << "Actual definition has "
+        << definedSize
+        << " parameter(s).";
+    return res.str();
+}
 
-    std::string SymbolTable::buildFunctionDefinitionParameterNameMismatchErrorMessage(const std::string &name,
-                                                                                      std::string declaredName,
-                                                                                      std::string definedName) {
-        std::stringstream res;
-        res << "The function: ";
-        res << name;
-        res << " was previously declared with a parameter called ";
-        res << declaredName;
-        res << "  .\n";
-        res << "Actual parameter name is ";
-        res << definedName;
-        res << " .\n";
-        return res.str();
-    }
+std::string SymbolTable::buildFunctionDefinitionParameterNameMismatchErrorMessage(const std::string &name,
+                                                                                  std::string declaredName,
+                                                                                  std::string definedName) {
+    std::stringstream res;
+    res << name << "'s parameter name " << definedName
+        << " mismatches with the previously declared parameter " << declaredName << ".";
+    return res.str();
+}
 
-    std::string SymbolTable::buildFunctionDefinitionParameterTypeMismatchErrorMessage(const std::string &basic_string,
-                                                                               std::shared_ptr<PrimaryType> declaredType,
-                                                                               std::shared_ptr<PrimaryType> declaredName) {
-        std::stringstream res;
-        res << "The function: ";
-        res << declaredType->getIdentifier();
-        res << " was previously declared with a parameter of type ";
-        res << declaredName;
-        res << " .\n";
-        res << "Actual parameter type is ";
-        res << declaredName->getIdentifier();
-        res << " .\n";
-        return res.str();
+std::string SymbolTable::buildFunctionDefinitionParameterTypeMismatchErrorMessage(
+        const std::string &basic_string,
+        std::shared_ptr<PrimaryType> declaredType,
+        std::shared_ptr<PrimaryType> declaredName) {
+    std::stringstream res;
+    res << "The function: "
+        << declaredType->getIdentifier()
+        << " was previously declared with a parameter of type "
+        << declaredName
+        << " .\n"
+        << "Actual parameter type is "
+        << declaredName->getIdentifier()
+        << ".";
+    return res.str();
 
-    }
+}
 
 } // namespace caramel::ast

@@ -109,7 +109,7 @@ public:
 
     bool hasSymbol(std::string const &name);
 
-    std::shared_ptr<Symbol> getSymbol(std::string const &name);
+    std::shared_ptr<Symbol> getSymbol(antlr4::ParserRuleContext *antlrContext, std::string const &name);
 
     std::shared_ptr<SymbolTable> getParentTable();
 
@@ -131,6 +131,7 @@ private:
     std::string buildAlreadyDeclaredErrorMessage(std::string const &variableName);
     std::string buildMismatchSymbolTypeErrorMessage(std::string const &variableName, SymbolType requiredSymbolType);
     std::string buildMismatchTypeErrorMessage(std::string const &variableName, std::shared_ptr<PrimaryType> const &requiredType);
+    std::string buildUnknownSymbolErrorMessage(std::string const &name);
     std::string buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType);
     std::string buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(const std::string &name, unsigned long declaredSize,
                                                                                   unsigned long definedSize);

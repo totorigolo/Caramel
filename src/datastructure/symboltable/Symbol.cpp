@@ -30,7 +30,7 @@ caramel::ast::Symbol::Symbol(
         std::string mName,
         caramel::ast::PrimaryType::Ptr mType,
         caramel::ast::SymbolType symbolType
-) : mDeclaration{}, mDefinition{}, mName{mName}, mType{mType}, mSymbolType{symbolType} {}
+) : mDeclaration{}, mDefinition{}, mName{std::move(mName)}, mType{std::move(mType)}, mSymbolType{symbolType} {}
 
 std::vector<std::weak_ptr<caramel::ast::Statement>>
 caramel::ast::Symbol::getOccurrences() {
@@ -58,17 +58,13 @@ caramel::ast::Symbol::getDefinition() {
 }
 
 void
-caramel::ast::Symbol::addDeclaration(
-        const std::shared_ptr<caramel::ast::Declaration> &declaration
-) {
+caramel::ast::Symbol::addDeclaration(const std::shared_ptr<caramel::ast::Declaration> &declaration) {
     onDeclaration(declaration);
     mDeclaration = declaration;
 }
 
 void
-caramel::ast::Symbol::addDefinition(
-        const std::shared_ptr<caramel::ast::Definition> &definition
-) {
+caramel::ast::Symbol::addDefinition(const std::shared_ptr<caramel::ast::Definition> &definition) {
     if (!isDeclared()) {
         onDeclaration(definition);
         mDeclaration = definition;

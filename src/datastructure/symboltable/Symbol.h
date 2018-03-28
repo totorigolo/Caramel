@@ -52,8 +52,9 @@ public:
 
     std::vector<std::weak_ptr<Statement>> getOccurrences();
 
-    bool isDeclared();
-    bool isDefined();
+    virtual bool isDeclared();
+
+    virtual bool isDefined();
 
     std::shared_ptr<Declaration> getDeclaration();
     std::shared_ptr<Definition> getDefinition();
@@ -76,15 +77,9 @@ protected:
             SymbolType symbolType
     );
 
-    virtual void onDeclaration(
-            const std::shared_ptr<Declaration> &declaration
-    );
-    virtual void onDefinition(
-            const std::shared_ptr<Definition> &definition
-    );
-    virtual void onUsage(
-            const std::shared_ptr<Statement> &statement
-    );
+    virtual void onDeclaration(const std::shared_ptr<caramel::ast::Declaration> &declaration);
+    virtual void onDefinition(const std::shared_ptr<caramel::ast::Definition> &definition);
+    virtual void onUsage(const std::shared_ptr<caramel::ast::Statement> &statement);
 
 protected:
     std::weak_ptr<Declaration> mDeclaration;

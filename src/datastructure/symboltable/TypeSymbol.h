@@ -39,17 +39,14 @@ public:
 
     ~TypeSymbol() override = default;
 
-    void onDeclaration(
-            const std::shared_ptr<caramel::ast::Declaration> &declaration
-    ) override { Symbol::onDeclaration(declaration); }
+    bool isDeclared() override;
+    bool isDefined() override;
 
-    void onDefinition(
-            const std::shared_ptr<caramel::ast::Definition> &definition
-    ) override { Symbol::onDefinition(definition); };
+    void onDeclaration(const std::shared_ptr<caramel::ast::Declaration> &declaration) override;
+    void onDefinition(const std::shared_ptr<caramel::ast::Definition> &definition) override;
 
-    void onUsage(
-            const std::shared_ptr<caramel::ast::Statement> &statement
-    ) override { Symbol::onUsage(statement); };
+private:
+    bool mDefined;
 };
 
 } // namespace caramel::dataStructure::symbolTable

@@ -43,19 +43,6 @@ public:
 
     ~FunctionSymbol() override = default;
 
-    void onDeclaration(
-            const std::shared_ptr<Declaration> &declaration
-    ) override { Symbol::onDeclaration(declaration); };
-
-    void onDefinition(
-            const std::shared_ptr<Definition> &definition
-    ) override { Symbol::onDefinition(definition); };
-
-    void
-    onUsage(
-            const std::shared_ptr<Statement> &statement
-    ) override { Symbol::onUsage(statement); };
-
     std::vector<std::shared_ptr<Symbol>> getNamedParameters() const;
 
     void setParameters(

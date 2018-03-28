@@ -34,26 +34,13 @@ public:
     using Ptr = std::shared_ptr<ArraySymbol>;
     using WeakPtr = std::weak_ptr<ArraySymbol>;
 
-    static Ptr Create(const std::string &mName, const PrimaryType::Ptr &mType, const long &mSize) {
-        return Ptr(new ArraySymbol(mName, mType, mSize));
-    }
-
-    static Ptr Create(const std::string &mName, const TypeSymbol::Ptr &type, const long &mSize) {
-        assert(type->getSymbolType() == SymbolType::TypeSymbol);
-        return Ptr(new ArraySymbol(mName, type->getType(),mSize));
-    }
-
 public:
     ArraySymbol(const std::string &name, const PrimaryType::Ptr &primaryType);
     ArraySymbol(const std::string &name, const TypeSymbol::Ptr &aliasType);
     ArraySymbol(const std::string &mName, const PrimaryType::Ptr &mType, const long &mSize);
     ArraySymbol(const std::string &mName, const TypeSymbol::Ptr &mType, const long &mSize);
 
-    virtual ~ArraySymbol() override = default;
-
-    void onDeclaration(const caramel::ast::Declaration::Ptr &declaration) override {};
-    void onDefinition(const caramel::ast::Definition::Ptr &definition) override {};
-    void onUsage(const caramel::ast::Statement::Ptr &statement) override {};
+    ~ArraySymbol() override = default;
 
     void setSize(const long &size);
     long getSize();

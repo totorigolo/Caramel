@@ -49,6 +49,7 @@ using namespace caramel::ast;
 namespace caramel::visitors {
 
 class ParseTree;
+class ContextPusher;
 
 class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
 
@@ -148,9 +149,8 @@ public:
     antlrcpp::Any visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) override;
 
 private:
-    void pushNewContext(); //
-    void popContext(); //
     std::shared_ptr<caramel::ast::Context> currentContext(); //
+    friend class ContextPusher;
 
     antlrcpp::Any visitChildren(antlr4::tree::ParseTree *node) override;
 
@@ -161,6 +161,17 @@ private:
     const std::shared_ptr<caramel::ast::BitwiseShiftOperator> mBitwiseShiftOperator;
     const std::shared_ptr<caramel::ast::MultOperator> mMultOperator;
     const std::shared_ptr<caramel::ast::PlusOperator> mPlusOperator = std::make_shared<caramel::ast::PlusOperator>();
+};
+
+class ContextPusher {
+public:
+    explicit ContextPusher(AbstractSyntaxTreeVisitor &abstractSyntaxTreeVisitor);
+    virtual ~ContextPusher();
+
+    Context::Ptr getContext();
+
+private:
+    AbstractSyntaxTreeVisitor &mAbstractSyntaxTreeVisitor;
 };
 
 } // namespace caramel::visitors

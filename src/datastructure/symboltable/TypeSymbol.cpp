@@ -24,11 +24,28 @@
 
 #include "TypeSymbol.h"
 
+
 namespace caramel::ast {
 
 TypeSymbol::TypeSymbol(const std::string &mName,
-                                               std::shared_ptr<PrimaryType> mType)
-        : Symbol(mName, mType, SymbolType::TypeSymbol) {
+                       std::shared_ptr<PrimaryType> mType)
+        : Symbol(mName, std::move(mType), SymbolType::TypeSymbol) {
+}
+
+bool TypeSymbol::isDeclared() {
+    return mDefined;
+}
+
+bool TypeSymbol::isDefined() {
+    return mDefined;
+}
+
+void TypeSymbol::onDeclaration(const std::shared_ptr<caramel::ast::Declaration> &declaration) {
+    mDefined = true;
+}
+
+void TypeSymbol::onDefinition(const std::shared_ptr<caramel::ast::Definition> &definition) {
+    mDefined = true;
 }
 
 } // namespace caramel::dataStructure::symbolTable
