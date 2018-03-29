@@ -123,9 +123,9 @@ Symbol::Ptr SymbolTable::addVariableUsage(
         if (parent) {
             return parent->addVariableUsage(antlrContext, name, statement);
         } else {
-            throw UndefinedSymbolError(
-                    buildUndefinedSymbolErrorMessage(name, SymbolType::VariableSymbol),
-                    antlrContext
+            throw UndefinedSymbolError(name,
+                                       SymbolType::VariableSymbol,
+                                       antlrContext
             );
         }
     }
@@ -303,7 +303,7 @@ SymbolTable::getSymbol(antlr4::ParserRuleContext *antlrContext, std::string cons
         if (parent) {
             return parent->getSymbol(antlrContext, name);
         } else {
-            throw UndefinedSymbolError(buildUnknownSymbolErrorMessage(name), antlrContext);
+            throw UndefinedSymbolError(name, antlrContext);
         }
     }
 }
@@ -343,31 +343,6 @@ SymbolTable::buildMismatchTypeErrorMessage(std::string const &variableName, Prim
     std::stringstream res;
     res << "Mismatch type for " << variableName << " between the type definition " << requiredType->getIdentifier()
         << " and declaration type " << mSymbolMap[variableName]->getType()->getIdentifier() << '.';
-    return res.str();
-}
-
-std::string SymbolTable::buildUnknownSymbolErrorMessage(std::string const &name) {
-    return "Unknown symbol " + name;
-}
-
-std::string SymbolTable::buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType) {
-    std::stringstream res;
-    res << "The ";
-    switch (symbolType) {
-        case SymbolType::VariableSymbol:
-            res << "variable";
-            break;
-        case SymbolType::FunctionSymbol:
-            res << "function";
-            break;
-        case SymbolType::TypeSymbol:
-            res << "type";
-            break;
-        case SymbolType::ArraySymbol:
-            res << "array";
-            break;
-    }
-    res << " '" << name << "' is not defined before.";
     return res.str();
 }
 
