@@ -28,8 +28,16 @@
 std::stringstream caramel::AstDotNode::sNodes;
 std::stringstream caramel::AstDotNode::sEdges;
 
-void caramel::AstDotNode::addNode(size_t id, const std::string &name) {
-    AstDotNode::sNodes << "\tnode" << id << "[label=\"" << name << "\"]\n";
+void caramel::AstDotNode::addNode(size_t id, const std::string &name,
+                                  const std::string &shape, const std::string &color) {
+    AstDotNode::sNodes << "\tnode" << id << "[label=\"" << name << "\", shape=" + shape + ", fillcolor="+color+"]\n";
+}
+
+void caramel::AstDotNode::addErrorNode(size_t id, const std::string &name, const std::string &errorMessage) {
+    AstDotNode::sNodes << "\tnode" << id << "[label=\"" << name << "\", style=filled, fillcolor=red]\n";
+    auto errorId = size_t(&errorMessage[0]); // Same error messages will have the same ID
+    addEdge(id, errorId, "error");
+    addNode(errorId, errorMessage);
 }
 
 void caramel::AstDotNode::addEdge(size_t id1, size_t id2) {

@@ -40,4 +40,8 @@ VariableSymbol::VariableSymbol(
 )
         : Symbol(name, aliasType->getType(), SymbolType::VariableSymbol) {}
 
+void VariableSymbol::acceptAstDotVisit() {
+    addNode(thisId(), "VariableSymbol: " + getName() + " as " + getType()->getIdentifier(), "note", "orange");
+}
+
 } // namespace caramel::dataStructure::symbolTable

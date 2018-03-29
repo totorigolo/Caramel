@@ -21,7 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from chef import colored
+from tools import colored
 from enum import IntEnum
 import inspect
 from functools import wraps

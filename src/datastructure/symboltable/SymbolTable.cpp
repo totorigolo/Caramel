@@ -350,6 +350,18 @@ std::shared_ptr<SymbolTable> SymbolTable::getParentTable() {
     return mParentTable;
 }
 
+void SymbolTable::acceptAstDotVisit() {
+    addNode(thisId(), "SymbolTable: " + std::to_string(mSymbolMap.size()) + " symbols", "cylinder", "darkorange");
+    visitChildrenAstDot();
+}
+
+void SymbolTable::visitChildrenAstDot() {
+    for (auto const& symbol : mSymbolMap) {
+        addEdge(thisId(), symbol.second->thisId(), symbol.first);
+        symbol.second->acceptAstDotVisit();
+    }
+}
+
 std::string
 SymbolTable::buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(const std::string &name,
                                                                            unsigned long declaredSize,

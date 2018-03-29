@@ -30,11 +30,21 @@ namespace caramel::ast {
 
 ReturnStatement::ReturnStatement(
         antlr4::Token *startToken
-) : Jump(startToken, StatementType::ReturnStatement), mExpression{Constant::defaultConstant(startToken)} {}
+) : ReturnStatement(Constant::defaultConstant(startToken), startToken) {}
 
 ReturnStatement::ReturnStatement(
         std::shared_ptr<Expression> expression,
         antlr4::Token *startToken
-) : Jump(startToken, StatementType::ReturnStatement), mExpression{expression} {}
+) : Jump(startToken, StatementType::ReturnStatement), mExpression{std::move(expression)} {}
+
+void ReturnStatement::acceptAstDotVisit() {
+    addNode(thisId(), "ReturnStatement");
+    visitChildrenAstDot();
+}
+
+void ReturnStatement::visitChildrenAstDot() {
+    addEdge(thisId(), mExpression->thisId());
+    mExpression->acceptAstDotVisit();
+}
 
 } // namespace caramel::ast
