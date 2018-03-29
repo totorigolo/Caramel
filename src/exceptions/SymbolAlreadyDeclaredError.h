@@ -88,10 +88,10 @@ public:
                   << bold << red << std::setfill('~') << std::setw(length) << "" << reset
                   << std::endl;
         if (1) {
-            //TODO: test if different type, return primary type instead of statement type
+            //TODO: test if different type, return primary type (int32_t) instead of statement type (VariableDeclaration)
             std::cerr << bold << "Note: " << reset
                       << "different previous type: was " << mExistingDeclaration->getType()
-                      << "and is now " << mFaultyDeclaration->getType()
+                      << " and is now " << mFaultyDeclaration->getType()
                       << std::endl;
         }
     }
@@ -99,23 +99,23 @@ public:
     std::string buildAlreadyDeclaredErrorMessage(std::string const &variableName, Symbol::Ptr symbol) {
 
         std::stringstream res;
-        res << "Cannot use identifier: " << variableName << " because ";
+        res << "Cannot use identifier: '" << variableName << "' because ";
         Symbol::Ptr previousDeclaration = symbol;
         Symbol rawSymbol = *symbol;
         switch (previousDeclaration->getSymbolType()) {
             case SymbolType::FunctionSymbol:
-                res << "a function with the same name is already defined at line "
+                res << "a function with the same name is already declared at line "
                     << previousDeclaration->getDeclaration()->getLine();
                 break;
             case SymbolType::VariableSymbol:
-                res << "a variable with the same name is already defined at line "
+                res << "a variable with the same name is already declared at line "
                     << previousDeclaration->getDeclaration()->getLine();
                 break;
             case SymbolType::TypeSymbol:
                 res << variableName << " is a reserved type identifier";
                 break;
             case SymbolType::ArraySymbol:
-                res << "an array with the same name is already defined at line "
+                res << "an array with the same name is already declared at line "
                     << previousDeclaration->getDeclaration()->getLine();
                 break;
         }
