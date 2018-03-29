@@ -24,14 +24,16 @@
 
 #pragma once
 
-#include "../Console.h"
 #include "SemanticError.h"
+#include "../Console.h"
 
 #include <stdexcept>
-#include <ParserRuleContext.h>
 
 
 namespace caramel::exceptions {
+
+using namespace ast;
+using namespace colors;
 
 class FunctionDefinitionParameterNameMismatchError : public SemanticError {
 public:

@@ -108,17 +108,14 @@ public:
             const std::shared_ptr<Definition> &definition
     );
 
-    Symbol::Ptr addFunctionCall(
+    FunctionSymbol::Ptr addFunctionCall(
             antlr4::ParserRuleContext *antlrContext,
             std::string const &name,
-            std::vector<std::shared_ptr<caramel::ast::Symbol>> const &valueParameters,
+            std::vector<std::shared_ptr<caramel::ast::Symbol>> const &arguments,
             const std::shared_ptr<Statement> &statement
     );
 
-    void addPrimaryType(
-            std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
-            std::string const &name
-    );
+    void addPrimaryType(std::shared_ptr<caramel::ast::PrimaryType> const &primaryType, std::string const &name);
 
     TypeSymbol::Ptr addType(
             antlr4::ParserRuleContext *antlrContext,

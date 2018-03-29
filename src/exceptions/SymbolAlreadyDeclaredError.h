@@ -33,17 +33,21 @@
 #include <iomanip>
 #include <iostream>
 
+
 using namespace caramel::ast;
 
 namespace caramel::exceptions {
+
+using namespace ast;
+using namespace colors;
 
 class SymbolAlreadyDeclaredError : public SemanticError {
 public:
     SymbolAlreadyDeclaredError(std::string const &message,
                                Symbol::Ptr symbol,
                                antlr4::ParserRuleContext *antlrContext,
-                               caramel::ast::Declaration::Ptr const &existingDeclaration,
-                               caramel::ast::Declaration::Ptr const &faultyDeclaration)
+                               Declaration::Ptr const &existingDeclaration,
+                               Declaration::Ptr const &faultyDeclaration)
             : SemanticError(buildAlreadyDeclaredErrorMessage(message, symbol)),
               mAntlrContext{antlrContext},
               mExistingDeclaration{existingDeclaration},
@@ -51,8 +55,6 @@ public:
     }
 
     void explain(utils::SourceFileUtil sourceFileUtil) const override {
-        using namespace colors;
-
         // TODO: Create helper functions
         const int LEFT_MARGIN = 4;
 
@@ -97,7 +99,6 @@ public:
     }
 
     std::string buildAlreadyDeclaredErrorMessage(std::string const &variableName, Symbol::Ptr symbol) {
-
         std::stringstream res;
         res << "Cannot use identifier: " << variableName << " because ";
         Symbol::Ptr previousDeclaration = symbol;
@@ -120,7 +121,6 @@ public:
                 break;
         }
         return res.str();
-
     }
 
 private:

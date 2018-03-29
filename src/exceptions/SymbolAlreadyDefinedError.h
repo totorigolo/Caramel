@@ -24,20 +24,25 @@
 
 #pragma once
 
+#include "SemanticError.h"
 #include "../Console.h"
+#include "../ast/symboltable/Symbol.h"
 
 #include <stdexcept>
 
 
 namespace caramel::exceptions {
 
+using namespace ast;
+using namespace colors;
+
 class SymbolAlreadyDefinedError : public SemanticError {
 public:
     SymbolAlreadyDefinedError(std::string const &message,
                               Symbol::Ptr symbol,
                               antlr4::ParserRuleContext *antlrContext,
-                              caramel::ast::Definition::Ptr const &existingDefinition,
-                              caramel::ast::Declaration::Ptr const &faultyDeclaration)
+                              Definition::Ptr const &existingDefinition,
+                              Declaration::Ptr const &faultyDeclaration)
             : SemanticError(buildAlreadyDefinedErrorMessage(message, symbol)),
               mAntlrContext{antlrContext},
               mExistingDefinition{existingDefinition},
@@ -45,8 +50,6 @@ public:
     }
 
     void explain(utils::SourceFileUtil sourceFileUtil) const override {
-        using namespace caramel::colors;
-
         // TODO: Create helper functions
         const int LEFT_MARGIN = 4;
 

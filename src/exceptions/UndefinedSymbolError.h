@@ -24,10 +24,17 @@
 
 #pragma once
 
+#include "SemanticError.h"
+#include "../Console.h"
+#include "../ast/symboltable/Symbol.h"
+
 #include <stdexcept>
 
 
 namespace caramel::exceptions {
+
+using namespace ast;
+using namespace colors;
 
 class UndefinedSymbolError : public SemanticError {
 
@@ -39,8 +46,6 @@ public:
 
 
     void explain(utils::SourceFileUtil sourceFileUtil) const override {
-        using namespace caramel::colors;
-
         // TODO: Create helper functions
         const int LEFT_MARGIN = 4;
 

@@ -24,39 +24,19 @@
 
 #pragma once
 
-#include "SemanticError.h"
-#include "../Console.h"
-
 #include <stdexcept>
-
 
 namespace caramel::exceptions {
 
-using namespace ast;
-using namespace colors;
+class FunctionCallArgumentsTypeMismatchException : public std::runtime_error {
 
-class FunctionDefinitionNumberOfParametersMismatchError : public SemanticError {
 public:
-    FunctionDefinitionNumberOfParametersMismatchError(std::string const &message,
-                                                      antlr4::ParserRuleContext *antlrContext,
-                                                      unsigned long declaredSize,
-                                                      unsigned long definedSize)
-            : SemanticError(message),
-              mAntlrContext{antlrContext},
-              mDeclaredSize{declaredSize},
-              mDefinedSize{definedSize} {
-    }
+    explicit FunctionCallArgumentsTypeMismatchException(const std::string &__arg) : runtime_error(__arg) {}
 
-    void explain(utils::SourceFileUtil sourceFileUtil) const override {
-        //todo
-        CARAMEL_UNUSED(sourceFileUtil);
-        logger.fatal() << what();
-    }
+    explicit FunctionCallArgumentsTypeMismatchException(const char * c) : runtime_error(c){}
 
-private:
-    antlr4::ParserRuleContext *mAntlrContext;
-    unsigned long mDeclaredSize;
-    unsigned long mDefinedSize;
+    explicit FunctionCallArgumentsTypeMismatchException(const std::runtime_error & ex) : runtime_error(ex){}
+
 };
 
-} // namespace caramel::exceptions
+} // namespace caramel::exception
