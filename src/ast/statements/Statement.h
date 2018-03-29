@@ -64,6 +64,8 @@ enum class StatementType {
 
 };
 
+std::ostream &operator<<(std::ostream &os, const StatementType &type);
+
 class Statement : public AstDotNode {
 public:
     using Ptr = std::shared_ptr<Statement>;
@@ -89,7 +91,5 @@ private:
     size_t mLength;
     StatementType mType;
 };
-
-std::ostream &operator<<(std::ostream &os, const StatementType &type);
 
 } // namespace caramel::ast

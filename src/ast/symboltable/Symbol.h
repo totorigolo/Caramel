@@ -43,6 +43,8 @@ enum class SymbolType {
     ArraySymbol
 };
 
+std::ostream &operator<<(std::ostream &os, const SymbolType &type);
+
 class Symbol : public AstDotNode {
 public:
     using Ptr = std::shared_ptr<Symbol>;
@@ -66,7 +68,6 @@ public:
     void addUsage(const std::shared_ptr<Statement> &statement);
 
     SymbolType getSymbolType() const;
-    std::string getSymbolTypeAsString() const;
 
     std::string getName() const;
 

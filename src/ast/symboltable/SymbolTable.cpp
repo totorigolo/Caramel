@@ -444,7 +444,7 @@ std::string SymbolTable::buildMismatchSymbolTypeErrorMessage(std::string const &
             res << "type";
             break;
     }
-    res << " which has a previous occurrence as a " << mSymbolMap[variableName]->getSymbolTypeAsString();
+    res << " which has a previous occurrence as a " << mSymbolMap[variableName]->getSymbolType();
     return res.str();
 }
 

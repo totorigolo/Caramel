@@ -28,45 +28,47 @@
 #include <utility>
 
 
-caramel::ast::Symbol::Symbol(
+namespace caramel::ast {
+
+Symbol::Symbol(
         std::string mName,
-        caramel::ast::PrimaryType::Ptr mType,
-        caramel::ast::SymbolType symbolType
+        PrimaryType::Ptr mType,
+        SymbolType symbolType
 ) : mDeclaration{}, mDefinition{}, mName{std::move(mName)}, mType{std::move(mType)}, mSymbolType{symbolType} {}
 
-std::vector<std::weak_ptr<caramel::ast::Statement>>
-caramel::ast::Symbol::getOccurrences() {
+std::vector<std::weak_ptr<Statement>>
+Symbol::getOccurrences() {
     return mOccurrences;
 }
 
 bool
-caramel::ast::Symbol::isDeclared() {
+Symbol::isDeclared() {
     return mDeclaration.use_count() > 0;
 }
 
 bool
-caramel::ast::Symbol::isDefined() {
+Symbol::isDefined() {
     return mDefinition.use_count() > 0;
 }
 
-std::shared_ptr<caramel::ast::Declaration>
-caramel::ast::Symbol::getDeclaration() {
+std::shared_ptr<Declaration>
+Symbol::getDeclaration() {
     return mDeclaration.lock();
 }
 
-std::shared_ptr<caramel::ast::Definition>
-caramel::ast::Symbol::getDefinition() {
+std::shared_ptr<Definition>
+Symbol::getDefinition() {
     return mDefinition.lock();
 }
 
 void
-caramel::ast::Symbol::addDeclaration(const std::shared_ptr<caramel::ast::Declaration> &declaration) {
+Symbol::addDeclaration(const std::shared_ptr<Declaration> &declaration) {
     onDeclaration(declaration);
     mDeclaration = declaration;
 }
 
 void
-caramel::ast::Symbol::addDefinition(const std::shared_ptr<caramel::ast::Definition> &definition) {
+Symbol::addDefinition(const std::shared_ptr<Definition> &definition) {
     if (!isDeclared()) {
         onDeclaration(definition);
         mDeclaration = definition;
@@ -76,44 +78,42 @@ caramel::ast::Symbol::addDefinition(const std::shared_ptr<caramel::ast::Definiti
 }
 
 void
-caramel::ast::Symbol::addUsage(const std::shared_ptr<caramel::ast::Statement> &statement) {
+Symbol::addUsage(const std::shared_ptr<Statement> &statement) {
     onUsage(statement);
     mOccurrences.push_back(statement);
 }
-    
-caramel::ast::SymbolType
-caramel::ast::Symbol::getSymbolType() const {
+
+SymbolType
+Symbol::getSymbolType() const {
     return mSymbolType;
 }
 
-std::string caramel::ast::Symbol::getName() const {
+std::string Symbol::getName() const {
     return mName;
 }
 
-void caramel::ast::Symbol::acceptAstDotVisit() {
-    logger.warning() << "Default accept() for " << thisId() << ", which is a " << getSymbolTypeAsString() << '.';
+void Symbol::acceptAstDotVisit() {
+    logger.warning() << "Default accept() for " << thisId() << ", which is a " << mSymbolType << '.';
 }
 
-void caramel::ast::Symbol::onDeclaration(caramel_unused const std::shared_ptr<caramel::ast::Declaration> &declaration) {}
+void Symbol::onDeclaration(caramel_unused const std::shared_ptr<Declaration> &declaration) {}
 
-void caramel::ast::Symbol::onDefinition(caramel_unused const std::shared_ptr<caramel::ast::Definition> &definition) {}
+void Symbol::onDefinition(caramel_unused const std::shared_ptr<Definition> &definition) {}
 
-void caramel::ast::Symbol::onUsage(caramel_unused const std::shared_ptr<caramel::ast::Statement> &expression) {}
+void Symbol::onUsage(caramel_unused const std::shared_ptr<Statement> &expression) {}
 
-std::shared_ptr<caramel::ast::PrimaryType> caramel::ast::Symbol::getType() const {
+std::shared_ptr<PrimaryType> Symbol::getType() const {
     return mType;
 }
 
-std::string caramel::ast::Symbol::getSymbolTypeAsString() const {
-    // TODO: Change to a stream operator
-    switch (mSymbolType) {
-        case SymbolType::VariableSymbol:
-            return "VariableSymbol";
-        case SymbolType::TypeSymbol:
-            return "TypeSymbol";
-        case SymbolType::FunctionSymbol:
-            return "FunctionSymbol";
-        case SymbolType::ArraySymbol:
-            return "ArraySymbol";
+std::ostream &operator<<(std::ostream &os, const SymbolType &type) {
+    switch (type) {
+        case SymbolType::FunctionSymbol: return os << "FunctionSymbol";
+        case SymbolType::VariableSymbol: return os << "VariableSymbol";
+        case SymbolType::TypeSymbol: return os << "TypeSymbol";
+        case SymbolType::ArraySymbol: return os << "ArraySymbol";
     }
+    return os;
 }
+
+} // namespace caramel::ast
