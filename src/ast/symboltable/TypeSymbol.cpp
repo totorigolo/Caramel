@@ -23,6 +23,7 @@
 */
 
 #include "TypeSymbol.h"
+#include "Common.h"
 
 
 namespace caramel::ast {
@@ -40,11 +41,11 @@ bool TypeSymbol::isDefined() {
     return mDefined;
 }
 
-void TypeSymbol::onDeclaration(const std::shared_ptr<caramel::ast::Declaration> &declaration) {
+void TypeSymbol::onDeclaration(caramel_unused const std::shared_ptr<caramel::ast::Declaration> &declaration) {
     mDefined = true;
 }
 
-void TypeSymbol::onDefinition(const std::shared_ptr<caramel::ast::Definition> &definition) {
+void TypeSymbol::onDefinition(caramel_unused const std::shared_ptr<caramel::ast::Definition> &definition) {
     mDefined = true;
 }
 

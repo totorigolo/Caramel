@@ -54,8 +54,8 @@ private:
                                   size_t stopIndex, size_t prediction, antlr4::atn::ATNConfigSet *configs) override;
 
 private:
-    utils::SourceFileUtil sourceStream;
-    size_t lastErrorLine = static_cast<size_t>(-1);
+    utils::SourceFileUtil mSourceStream;
+    size_t mLastErrorLine = static_cast<size_t>(-1);
 };
 
 } // namespace caramel::listeners

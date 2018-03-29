@@ -23,22 +23,29 @@
 */
 
 #include "ParserErrorListener.h"
+#include "Common.h"
 #include "../../Console.h"
 
 
 namespace caramel::listeners {
 
-ParserErrorListener::ParserErrorListener(const std::string &sourceFile) : sourceStream(sourceFile) {}
+ParserErrorListener::ParserErrorListener(const std::string &sourceFile) : mSourceStream(sourceFile) {}
 
-void ParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol, size_t line,
-                                      size_t charPositionInLine, const std::string &msg, std::exception_ptr e) {
-    if (line != lastErrorLine) {
-        if (lastErrorLine == -1) {
-            lastErrorLine = 0;
+void ParserErrorListener::syntaxError(
+        caramel_unused antlr4::Recognizer *recognizer,
+        antlr4::Token *offendingSymbol,
+        size_t line,
+        size_t charPositionInLine,
+        caramel_unused const std::string &msg,
+        caramel_unused std::exception_ptr e
+) {
+    if (line != mLastErrorLine) {
+        if (mLastErrorLine == static_cast<size_t>(-1)) {
+            mLastErrorLine = 0;
         }
         using namespace caramel::colors;
         std::cerr << "Error at line " << line << ':' << charPositionInLine << std::endl;
-        std::string textLine = sourceStream.getLine(line, lastErrorLine, false);
+        std::string textLine = mSourceStream.getLine(line, mLastErrorLine, false);
         std::cerr << red << textLine << reset << std::endl;
         std::cerr.width(charPositionInLine + 2); // + 2 is for the "^ " length
         std::cerr << "^ ";
@@ -46,23 +53,50 @@ void ParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::To
         std::cerr << "Unexpected \"" << offendingSymbol->getText() << "\"" << std::endl;
     }
 
-    lastErrorLine = line;
-
+    mLastErrorLine = line;
 }
 
 void ParserErrorListener::reportAmbiguity(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa, size_t startIndex,
                                           size_t stopIndex, bool exact, const antlrcpp::BitSet &ambigAlts,
-                                          antlr4::atn::ATNConfigSet *configs) {}
+                                          antlr4::atn::ATNConfigSet *configs) {
+    CARAMEL_UNUSED(recognizer);
+    CARAMEL_UNUSED(dfa);
+    CARAMEL_UNUSED(startIndex);
+    CARAMEL_UNUSED(stopIndex);
+    CARAMEL_UNUSED(exact);
+    CARAMEL_UNUSED(ambigAlts);
+    CARAMEL_UNUSED(configs);
+
+    // TODO: Implement reportAmbiguity()
+}
 
 void ParserErrorListener::reportAttemptingFullContext(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa,
                                                       size_t startIndex, size_t stopIndex,
                                                       const antlrcpp::BitSet &conflictingAlts,
-                                                      antlr4::atn::ATNConfigSet *configs) {}
+                                                      antlr4::atn::ATNConfigSet *configs) {
+    CARAMEL_UNUSED(recognizer);
+    CARAMEL_UNUSED(dfa);
+    CARAMEL_UNUSED(startIndex);
+    CARAMEL_UNUSED(stopIndex);
+    CARAMEL_UNUSED(conflictingAlts);
+    CARAMEL_UNUSED(configs);
+
+    // TODO: Implement reportAttemptingFullContext()
+}
 
 void
 ParserErrorListener::reportContextSensitivity(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa,
                                               size_t startIndex,
                                               size_t stopIndex, size_t prediction,
-                                              antlr4::atn::ATNConfigSet *configs) {}
+                                              antlr4::atn::ATNConfigSet *configs) {
+    CARAMEL_UNUSED(recognizer);
+    CARAMEL_UNUSED(dfa);
+    CARAMEL_UNUSED(startIndex);
+    CARAMEL_UNUSED(stopIndex);
+    CARAMEL_UNUSED(prediction);
+    CARAMEL_UNUSED(configs);
+
+    // TODO: Implement reportContextSensitivity()
+}
 
 } // namespace caramel::listeners

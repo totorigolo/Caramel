@@ -51,7 +51,6 @@ private:
     std::shared_ptr<caramel::ast::Expression> mLeftExpression;
     std::shared_ptr<caramel::ast::BinaryOperator> mBinaryOperator;
     std::shared_ptr<caramel::ast::Expression> mRightExpression;
-
 };
 
 } // namespace caramel::ast

@@ -148,9 +148,7 @@ private:
                                                                                   unsigned long definedSize);
     std::string buildFunctionDefinitionParameterNameMismatchErrorMessage(const std::string &name, std::string declaredName,
                                                                          std::string definedName);
-
-    std::string buildFunctionDefinitionParameterTypeMismatchErrorMessage(const std::string &basic_string,
-                                                                         std::shared_ptr<PrimaryType> shared_ptr,
+    std::string buildFunctionDefinitionParameterTypeMismatchErrorMessage(std::shared_ptr<PrimaryType> shared_ptr,
                                                                          std::shared_ptr<PrimaryType> sharedPtr);
 
 private:

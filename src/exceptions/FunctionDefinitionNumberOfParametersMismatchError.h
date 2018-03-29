@@ -45,6 +45,7 @@ namespace caramel::exceptions {
 
         void explain(utils::SourceFileUtil sourceFileUtil) const override {
             //todo
+            CARAMEL_UNUSED(sourceFileUtil);
             logger.fatal() << what();
         }
 

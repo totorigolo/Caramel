@@ -105,6 +105,10 @@ public:
                 res << "a variable with the same name is already defined at line "
                     << previousDeclaration->getDefinition()->getLine();
                 break;
+            case SymbolType::ArraySymbol:
+                res << "an array with the same name is already defined at line "
+                    << previousDeclaration->getDefinition()->getLine();
+                break;
             case SymbolType::TypeSymbol:
                 res << variableName << " is a reserved type identifier";
                 break;

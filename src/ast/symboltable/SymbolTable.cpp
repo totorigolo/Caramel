@@ -291,7 +291,7 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
 
         std::vector<std::shared_ptr<caramel::ast::Symbol>> declaredParameters = declaredSymbol->getParameters();
         if (declaredParameters.size() == namedParameters.size()) {
-            for (int i = 0; i < declaredSymbol->getParameters().size(); i++) {
+            for (size_t i = 0; i < declaredSymbol->getParameters().size(); i++) {
                 std::string declaredParameterName = declaredParameters.at(i)->getName();
                 std::string const declaredParameterTypeIdentifier =
                         declaredParameters.at(i)->getType()->getIdentifier();
@@ -311,7 +311,7 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
                 if (declaredParameterTypeIdentifier != parameterTypeIdentifier) {
                     throw FunctionDefinitionParameterTypeMismatchError(
                             buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-                                    name, declaredParameters.at(i)->getType(), namedParameters.at(i)->getType()),
+                                    declaredParameters.at(i)->getType(), namedParameters.at(i)->getType()),
                             antlrContext,
                             declaredParameters.at(i)->getType(),
                             namedParameters.at(i)->getType()
@@ -434,6 +434,9 @@ std::string SymbolTable::buildMismatchSymbolTypeErrorMessage(std::string const &
         case SymbolType::VariableSymbol:
             res << "variable";
             break;
+        case SymbolType::ArraySymbol:
+            res << "array";
+            break;
         case SymbolType::FunctionSymbol:
             res << "function";
             break;
@@ -520,7 +523,6 @@ std::string SymbolTable::buildFunctionDefinitionParameterNameMismatchErrorMessag
 }
 
 std::string SymbolTable::buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-        const std::string &basic_string,
         std::shared_ptr<PrimaryType> declaredType,
         std::shared_ptr<PrimaryType> declaredName) {
     std::stringstream res;
@@ -533,7 +535,6 @@ std::string SymbolTable::buildFunctionDefinitionParameterTypeMismatchErrorMessag
         << declaredName->getIdentifier()
         << ".";
     return res.str();
-
 }
 
 } // namespace caramel::ast

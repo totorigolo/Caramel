@@ -38,9 +38,9 @@ using namespace caramel::visitors;
 
 AbstractSyntaxTreeVisitor::AbstractSyntaxTreeVisitor(std::string const &sourceFileName)
         : mSourceFileUtil{sourceFileName},
-          mBitwiseShiftOperator(std::make_shared<BitwiseShiftOperator>()),
-          mPlusOperator(std::make_shared<PlusOperator>()),
-          mMultOperator(std::make_shared<MultOperator>()) {
+          mBitwiseShiftOperator{std::make_shared<BitwiseShiftOperator>()},
+          mMultOperator{std::make_shared<MultOperator>()},
+          mPlusOperator{std::make_shared<PlusOperator>()} {
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {

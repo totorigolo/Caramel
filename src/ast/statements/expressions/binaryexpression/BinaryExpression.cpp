@@ -34,8 +34,8 @@ BinaryExpression::BinaryExpression(
         antlr4::Token *startToken
 ) : Expression(startToken, StatementType::BinaryExpression),
     mLeftExpression{leftExpression},
-    mRightExpression{rightExpression},
-    mBinaryOperator{binaryOperator} {}
+    mBinaryOperator{binaryOperator},
+    mRightExpression{rightExpression} {}
 
 std::shared_ptr<caramel::ir::IR>
 BinaryExpression::getIR() {

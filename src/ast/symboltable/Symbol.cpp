@@ -23,8 +23,10 @@
 */
 
 #include "Symbol.h"
+#include "Common.h"
 
 #include <utility>
+
 
 caramel::ast::Symbol::Symbol(
         std::string mName,
@@ -39,12 +41,12 @@ caramel::ast::Symbol::getOccurrences() {
 
 bool
 caramel::ast::Symbol::isDeclared() {
-    return (bool) mDeclaration.use_count() > 0;
+    return mDeclaration.use_count() > 0;
 }
 
 bool
 caramel::ast::Symbol::isDefined() {
-    return (bool) mDefinition.use_count() > 0;
+    return mDefinition.use_count() > 0;
 }
 
 std::shared_ptr<caramel::ast::Declaration>
@@ -92,11 +94,11 @@ void caramel::ast::Symbol::acceptAstDotVisit() {
     logger.warning() << "Default accept() for " << thisId() << ", which is a " << getSymbolTypeAsString() << '.';
 }
 
-void caramel::ast::Symbol::onDeclaration(const std::shared_ptr<caramel::ast::Declaration> &declaration) {}
+void caramel::ast::Symbol::onDeclaration(caramel_unused const std::shared_ptr<caramel::ast::Declaration> &declaration) {}
 
-void caramel::ast::Symbol::onDefinition(const std::shared_ptr<caramel::ast::Definition> &definition) {}
+void caramel::ast::Symbol::onDefinition(caramel_unused const std::shared_ptr<caramel::ast::Definition> &definition) {}
 
-void caramel::ast::Symbol::onUsage(const std::shared_ptr<caramel::ast::Statement> &expression) {}
+void caramel::ast::Symbol::onUsage(caramel_unused const std::shared_ptr<caramel::ast::Statement> &expression) {}
 
 std::shared_ptr<caramel::ast::PrimaryType> caramel::ast::Symbol::getType() const {
     return mType;
