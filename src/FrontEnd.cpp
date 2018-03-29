@@ -61,14 +61,16 @@ ast::Context::Ptr frontEnd(Config const &config) {
         // Generate the PDF
         // TODO: Dirty, change this.
         system("dot -T pdf -o syntaxTree.pdf syntaxTree.dot");
+
+        logger.info() << "Syntax tree generated. Exiting.";
+        exit(0);
     }
 
     // Create the visitor which will generate the AST
-    caramel::visitors::AbstractSyntaxTreeVisitor abstractSyntaxTreeVisitor(config.sourceFile);
     try {
+        caramel::visitors::AbstractSyntaxTreeVisitor abstractSyntaxTreeVisitor(config.sourceFile);
         auto visitorResult = abstractSyntaxTreeVisitor.visit(parser.r());
         if (!visitorResult.is<Context::Ptr>()) {
-            using namespace caramel::colors;
             logger.fatal() << "The visitor returned a bad root.";
             exit(1);
         }
