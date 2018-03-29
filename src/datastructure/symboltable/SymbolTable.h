@@ -28,6 +28,7 @@
 #include "Symbol.h"
 #include "TypeSymbol.h"
 #include "VariableSymbol.h"
+#include "ArraySymbol.h"
 #include "FunctionSymbol.h"
 #include "../../exceptions/NotImplementedException.h"
 #include "../statements/definition/TypeDefinition.h"
@@ -46,12 +47,7 @@ public:
     using Ptr = std::shared_ptr<SymbolTable>;
     using WeakPtr = std::weak_ptr<SymbolTable>;
 
-    static std::shared_ptr<SymbolTable> Create() {
-        return std::make_shared<SymbolTable>();
-    }
-
     SymbolTable() = default;
-
     explicit SymbolTable(SymbolTable::Ptr const &parentTable);
 
     VariableSymbol::Ptr addVariableDeclaration(
@@ -71,7 +67,29 @@ public:
     Symbol::Ptr addVariableUsage(
             antlr4::ParserRuleContext *antlrContext,
             std::string const &name,
-            const std::shared_ptr<Statement> &expression
+            const std::shared_ptr<Statement> &statement
+    );
+
+    ArraySymbol::Ptr addArrayDeclaration(
+            antlr4::ParserRuleContext *antlrContext,
+            std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
+            std::string const &name,
+            bool sized, size_t size,
+            const std::shared_ptr<Declaration> &declaration
+    );
+
+    ArraySymbol::Ptr addArrayDefinition(
+            antlr4::ParserRuleContext *antlrContext,
+            std::shared_ptr<PrimaryType> const &primaryType,
+            std::string const &name,
+            std::vector<std::shared_ptr<Expression>> &&content,
+            const std::shared_ptr<Definition> &definition
+    );
+
+    Symbol::Ptr addArrayAccess(
+            antlr4::ParserRuleContext *antlrContext,
+            std::string const &name,
+            const std::shared_ptr<Statement> &statement
     );
 
     FunctionSymbol::Ptr addFunctionDeclaration(
@@ -90,7 +108,7 @@ public:
             const std::shared_ptr<Definition> &definition
     );
 
-    void addFunctionCall(
+    Symbol::Ptr addFunctionCall(
             antlr4::ParserRuleContext *antlrContext,
             std::string const &name,
             std::vector<std::shared_ptr<caramel::ast::Symbol>> const &valueParameters,

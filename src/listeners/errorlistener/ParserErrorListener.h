@@ -33,7 +33,7 @@ class ParserErrorListener: public antlr4::BaseErrorListener {
 
 public:
     explicit ParserErrorListener(const std::string &sourceFile);
-    ~ParserErrorListener() override;
+    ~ParserErrorListener() override = default;
 
 private:
 

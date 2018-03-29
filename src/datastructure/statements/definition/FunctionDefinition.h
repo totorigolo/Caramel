@@ -53,7 +53,7 @@ public:
 
 protected:
     std::shared_ptr<caramel::ast::Context> mContext;
-    std::weak_ptr<caramel::ast::FunctionSymbol> mSymbol;
+    std::weak_ptr<FunctionSymbol> mSymbol;
 };
 
 } // namespace caramel::ast

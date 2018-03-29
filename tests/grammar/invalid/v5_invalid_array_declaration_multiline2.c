@@ -1,2 +1,2 @@
-int
+extern int
 tab[5];

@@ -25,31 +25,47 @@
 #pragma once
 
 #include "Symbol.h"
-#include "VariableSymbol.h"
+#include "TypeSymbol.h"
+#include "../../datastructure/statements/expressions/Expression.h"
+
+#include <memory>
+#include <vector>
 
 namespace caramel::ast {
 
-class ArraySymbol : public VariableSymbol {
+class Expression;
+
+class ArraySymbol : public Symbol {
 public:
     using Ptr = std::shared_ptr<ArraySymbol>;
     using WeakPtr = std::weak_ptr<ArraySymbol>;
 
 public:
-    ArraySymbol(const std::string &name, const PrimaryType::Ptr &primaryType);
-    ArraySymbol(const std::string &name, const TypeSymbol::Ptr &aliasType);
-    ArraySymbol(const std::string &mName, const PrimaryType::Ptr &mType, const long &mSize);
-    ArraySymbol(const std::string &mName, const TypeSymbol::Ptr &mType, const long &mSize);
+    ArraySymbol(const std::string &mName, const PrimaryType::Ptr &mType);
+    ArraySymbol(const std::string &mName, const TypeSymbol::Ptr &mType);
+    ArraySymbol(const std::string &mName, const PrimaryType::Ptr &mType, size_t size);
+    ArraySymbol(const std::string &mName, const TypeSymbol::Ptr &mType, size_t size);
+    ArraySymbol(const std::string &mName, const PrimaryType::Ptr &mType, std::vector<Expression::Ptr> &&content);
+    ArraySymbol(const std::string &mName, const TypeSymbol::Ptr &mType, std::vector<Expression::Ptr> &&content);
 
     ~ArraySymbol() override = default;
 
-    void setSize(const long &size);
-    long getSize();
+    bool isSizeDefined() const;
+    long getSize() const;
 
+    bool isContentDefined() const;
+    std::vector<Expression::Ptr> const &getContent() const;
+    void setContent(std::vector<Expression::Ptr> &&content);
+
+    // TODO: Make acceptAstDotVisit() and visitChildrenAstDot() const.
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
 private:
-    long mSize;
+    bool mIsSizeDefined;
+    size_t mSize;
+    bool mIsContentDefined;
+    std::vector<Expression::Ptr> mContent;
 };
 
 } // namespace caramel::ast

@@ -35,7 +35,7 @@ FunctionSymbol::FunctionSymbol(
 }
 
 std::vector<std::shared_ptr<Symbol>>
-FunctionSymbol::getNamedParameters() const {
+FunctionSymbol::getParameters() const {
     return mParameters;
 }
 

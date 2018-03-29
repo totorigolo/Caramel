@@ -43,11 +43,8 @@ public:
 
     ~FunctionSymbol() override = default;
 
-    std::vector<std::shared_ptr<Symbol>> getNamedParameters() const;
-
-    void setParameters(
-            const std::vector<std::shared_ptr<Symbol>> &namedParameters
-    );
+    std::vector<std::shared_ptr<Symbol>> getParameters() const;
+    void setParameters(const std::vector<std::shared_ptr<Symbol>> &namedParameters);
 
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;

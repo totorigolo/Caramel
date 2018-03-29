@@ -25,7 +25,9 @@
 #pragma once
 
 #include "Declaration.h"
+
 #include <memory>
+
 
 namespace caramel::ast {
 
@@ -34,23 +36,13 @@ public:
     using Ptr = std::shared_ptr<ArrayDeclaration>;
     using WeakPtr = std::weak_ptr<ArrayDeclaration>;
 
-    ArrayDeclaration(
-            std::shared_ptr<ArraySymbol> symbol,
-            antlr4::Token *startToken
-    );
-
+    explicit ArrayDeclaration(antlr4::Token *startToken);
     ~ArrayDeclaration() override = default;
 
+    std::weak_ptr<Symbol> getSymbol() override;
+    void setSymbol(std::shared_ptr<ArraySymbol> const &symbol);
+
     void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-public:
-
-    std::weak_ptr<Symbol> getSymbol() override {
-        throw std::runtime_error("Cannot get the ArraySymbol as Symbol");
-    };
-
-    std::weak_ptr<ArraySymbol> getArraySymbol();
 
 private:
     std::weak_ptr<ArraySymbol> mSymbol;

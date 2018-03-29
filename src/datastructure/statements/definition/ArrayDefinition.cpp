@@ -26,43 +26,32 @@
 
 #include "../../symboltable/ArraySymbol.h"
 #include "../expressions/atomicexpression/Constant.h"
+#include "../../../util/Common.h"
 
 
 namespace caramel::ast {
 
-ArrayDefinition::ArrayDefinition(
-        std::vector<std::shared_ptr<Expression>> initializer,
-        antlr4::Token *startToken
-)
+ArrayDefinition::ArrayDefinition(antlr4::Token *startToken)
         : Definition(startToken, StatementType::ArrayDefinition),
-          mStartToken{startToken},
-          mSymbol{} {
-    std::move(initializer.begin(), initializer.end(), std::back_inserter(mInitializer));
-}
+          mStartToken{startToken}, mSymbol{} {}
 
-std::weak_ptr<ArraySymbol> ArrayDefinition::getArraySymbol() {
+std::weak_ptr<caramel::ast::Symbol> ArrayDefinition::getSymbol() {
     return mSymbol;
 }
 
-void ArrayDefinition::setArraySymbol(std::shared_ptr<ArraySymbol> const &arraySymbol) {
-    mSymbol = arraySymbol;
-
-    long arraySize = arraySymbol->getSize();
-    long initializerSize = mInitializer.size();
-    for (int i = 0; i < initializerSize; i++) {
-        mInitializer.push_back(mInitializer.at(i));
-    }
-    for (long i = initializerSize; i < arraySize; i++) {
-        mInitializer.push_back(Constant::defaultConstant(mStartToken));
-    }
+void ArrayDefinition::setSymbol(std::shared_ptr<ArraySymbol> const &symbol) {
+    mSymbol = symbol;
 }
 
 void ArrayDefinition::acceptAstDotVisit() {
-    addNode(thisId(), "ArrayDefinition (block not shown)");
-}
-
-void ArrayDefinition::visitChildrenAstDot() {
-    // TODO: Visit the expressions in the block
+    using namespace caramel::util;
+    if (!mSymbol.lock()) {
+        addErrorNode(thisId(), "ArrayDefinition", "ArraySymbol is null.");
+        return;
+    }
+    auto arraySymbol = castTo<ArraySymbol::Ptr>(mSymbol.lock());
+    addNode(thisId(), "ArraySymbol: " + arraySymbol->getName());
+    addEdge(thisId(), arraySymbol->thisId());
 }
 
 } // namespace caramel::ast

@@ -59,27 +59,21 @@ variableDefinition
 variableDefinitionAssignment
   : validIdentifier WS_* Assignment_ InlineWS_* expression ;
 
-arrayDeclarationVoidInner
-  : typeParameter InlineWS_+ validIdentifier InlineWS_* arraySizeDeclarationVoid
+arrayUnsizedInner
+  : typeParameter InlineWS_+ validIdentifier InlineWS_* L_Bracket_ R_Bracket_
   ;
-arrayDeclarationInner
-  : typeParameter InlineWS_+ validIdentifier InlineWS_* arraySizeDeclaration
+arraySizedInner
+  : typeParameter InlineWS_+ validIdentifier InlineWS_* L_Bracket_ InlineWS_* positiveConstant InlineWS_* R_Bracket_
   ;
-
-arrayDeclaration
-  : 'extern' InlineWS_* arrayDeclarationInner
-  | 'extern' InlineWS_* arrayDeclarationVoidInner
-  ;
-
-arrayDefinition
-  : arrayDeclarationVoidInner WS_* assignmentOperator WS_* arrayBlock
-  | arrayDeclarationInner (WS_* assignmentOperator WS_* arrayBlock)?
-  ;
-arraySizeDeclaration
+arraySize
   : L_Bracket_ InlineWS_* positiveConstant InlineWS_* R_Bracket_
   ;
-arraySizeDeclarationVoid
-  : L_Bracket_ InlineWS_* R_Bracket_
+arrayDeclaration
+  : 'extern' InlineWS_* (arrayUnsizedInner | arraySizedInner)
+  ;
+arrayDefinition
+  : arrayUnsizedInner WS_* assignmentOperator WS_* arrayBlock
+  | arraySizedInner (WS_* assignmentOperator WS_* arrayBlock)?
   ;
 
 // Jump instructions

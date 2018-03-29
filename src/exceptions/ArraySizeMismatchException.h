@@ -22,33 +22,21 @@
  * SOFTWARE.
 */
 
-#include "ArrayDeclaration.h"
-#include "../../symboltable/ArraySymbol.h"
-#include "../../../util/Common.h"
+#pragma once
 
+#include <stdexcept>
 
-namespace caramel::ast {
+namespace caramel::exceptions {
 
-ArrayDeclaration::ArrayDeclaration(antlr4::Token *startToken)
-        : Declaration(startToken, StatementType::ArrayDeclaration), mSymbol{} {}
+class ArraySizeMismatchException : public std::runtime_error {
 
-std::weak_ptr<Symbol> ArrayDeclaration::getSymbol() {
-    return mSymbol;
-}
+public:
+    explicit ArraySizeMismatchException(const std::string &__arg) : runtime_error(__arg) {}
 
-void ArrayDeclaration::setSymbol(std::shared_ptr<ArraySymbol> const &symbol) {
-    mSymbol = symbol;
-}
+    explicit ArraySizeMismatchException(const char * c) : runtime_error(c){}
 
-void ArrayDeclaration::acceptAstDotVisit() {
-    using namespace caramel::util;
-    if (!mSymbol.lock()) {
-        addErrorNode(thisId(), "ArrayDeclaration", "ArraySymbol is null.");
-        return;
-    }
-    auto arraySymbol = mSymbol.lock();
-    addNode(thisId(), "ArrayDeclaration: " + arraySymbol->getName());
-    addEdge(thisId(), arraySymbol->thisId());
-}
+    explicit ArraySizeMismatchException(const std::runtime_error & ex) : runtime_error(ex){}
 
-} // caramel::ast
+};
+
+} // namespace caramel::exception

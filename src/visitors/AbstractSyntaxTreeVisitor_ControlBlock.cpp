@@ -23,28 +23,27 @@
 */
 
 #include "AbstractSyntaxTreeVisitor.h"
-#include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
-#include "../datastructure/statements/controlblocks/IfBlock.h"
-#include "../datastructure/statements/controlblocks/WhileBlock.h"
 #include "../Logger.h"
+#include "../datastructure/statements/controlblocks/IfBlock.h"
 #include "../datastructure/statements/controlblocks/ForBlock.h"
+#include "../datastructure/statements/controlblocks/WhileBlock.h"
+#include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
 
 
 using namespace caramel::ast;
+using namespace caramel::util;
 using namespace caramel::visitors;
 
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitControlBlock(CaramelParser::ControlBlockContext *ctx) {
     using namespace caramel::ast;
-    if (nullptr != ctx-> ifBlock()) {
-        return std::dynamic_pointer_cast<ControlBlock>(visitIfBlock(ctx->ifBlock()).as<IfBlock::Ptr>());
-    } else if (nullptr != ctx->whileBlock()){
-        return std::dynamic_pointer_cast<ControlBlock>(visitWhileBlock(ctx->whileBlock()).as<WhileBlock::Ptr>());
-    } else if (nullptr != ctx->forBlock()) {
-        return std::dynamic_pointer_cast<ControlBlock>(visitForBlock(ctx->forBlock()).as<ForBlock::Ptr>());
+    if (ctx->ifBlock()) {
+        return castAnyTo<IfBlock::Ptr, ControlBlock::Ptr>(visitIfBlock(ctx->ifBlock()));
+    } else if (ctx->whileBlock()) {
+        return castAnyTo<WhileBlock::Ptr, ControlBlock::Ptr>(visitWhileBlock(ctx->whileBlock()));
+    } else { // if (ctx->forBlock()) {
+        return castAnyTo<ForBlock::Ptr, ControlBlock::Ptr>(visitForBlock(ctx->forBlock()));
     }
-
-    return CaramelBaseVisitor::visitControlBlock(ctx);
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockContext *ctx) {
@@ -57,21 +56,21 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockCont
     logger.trace() << "if condition :";
     std::vector<Statement::Ptr> thenBlock = visitBlock(ctx->block(0));
 
-    if (ctx->block().size()>1) {
+    if (ctx->block().size() > 1) {
         logger.trace() << "visit else :";
         std::vector<Statement::Ptr> elseBlock = visitBlock(ctx->block(1));
-        ifBlock = std::make_shared<IfBlock>(expression,thenBlock,elseBlock,ctx->start);
+        ifBlock = std::make_shared<IfBlock>(expression, thenBlock, elseBlock, ctx->start);
     } else if (nullptr != ctx->ifBlock()) {
         logger.trace() << "visit else if :";
-        Statement::Ptr elseIfBlock = std::dynamic_pointer_cast<Statement>(visitIfBlock(ctx->ifBlock()).as<IfBlock::Ptr>());
+        Statement::Ptr elseIfBlock = std::dynamic_pointer_cast<Statement>(
+                visitIfBlock(ctx->ifBlock()).as<IfBlock::Ptr>());
         std::vector<Statement::Ptr> elseIfBlockVector;
         elseIfBlockVector.push_back(elseIfBlock);
-        ifBlock = std::make_shared<IfBlock>(expression,thenBlock,elseIfBlockVector,ctx->start);
+        ifBlock = std::make_shared<IfBlock>(expression, thenBlock, elseIfBlockVector, ctx->start);
     }
 
-    return  ifBlock;
+    return ifBlock;
 }
-
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitWhileBlock(CaramelParser::WhileBlockContext *ctx) {
     using namespace caramel::ast;
@@ -82,10 +81,9 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitWhileBlock(CaramelParser::WhileBlo
     logger.trace() << "while condition :";
     std::vector<Statement::Ptr> block = visitBlock(ctx->block());
 
-    WhileBlock::Ptr whileBlock = std::make_shared<WhileBlock>(expression,block,ctx->start);
+    WhileBlock::Ptr whileBlock = std::make_shared<WhileBlock>(expression, block, ctx->start);
     return whileBlock;
 }
-
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitForBlock(CaramelParser::ForBlockContext *ctx) {
     using namespace caramel::ast;
@@ -98,6 +96,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitForBlock(CaramelParser::ForBlockCo
     logger.trace() << "for condition :";
     std::vector<Statement::Ptr> block = visitBlock(ctx->block());
 
-    ForBlock::Ptr forblock = std::make_shared<ForBlock>(begin,end,step,block,ctx->start);
+    ForBlock::Ptr forblock = std::make_shared<ForBlock>(begin, end, step, block, ctx->start);
     return forblock;
 }

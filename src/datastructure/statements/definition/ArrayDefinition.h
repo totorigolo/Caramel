@@ -35,22 +35,17 @@ public:
     using Ptr = std::shared_ptr<ArrayDefinition>;
 
 public:
-    ArrayDefinition(std::vector<std::shared_ptr<Expression>> initializer, antlr4::Token *startToken);
+    explicit ArrayDefinition(antlr4::Token *startToken);
     ~ArrayDefinition() override = default;
 
-    std::weak_ptr<caramel::ast::Symbol> getSymbol() override {
-        throw std::runtime_error("Cannot return a valid symbol");
-    };
-    std::weak_ptr<ArraySymbol> getArraySymbol();
-    void setArraySymbol(std::shared_ptr<ArraySymbol> const &arraySymbol);
+    std::weak_ptr<caramel::ast::Symbol> getSymbol() override;
+    void setSymbol(std::shared_ptr<ArraySymbol> const &arraySymbol);
 
     void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
 
 private:
     antlr4::Token *mStartToken;
-    std::weak_ptr<caramel::ast::ArraySymbol> mSymbol;
-    std::vector<std::weak_ptr<caramel::ast::Expression>> mInitializer;
+    std::weak_ptr<ArraySymbol> mSymbol;
 };
 
 } // namespace caramel::ast

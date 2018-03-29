@@ -83,9 +83,6 @@ public:
     /// Returns vector<Statement::Ptr>
     antlrcpp::Any visitVariableDefinition(CaramelParser::VariableDefinitionContext *ctx) override;
 
-    /// Returns AtomicExpression::Ptr
-    antlrcpp::Any visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) override;
-
     antlrcpp::Any visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) override;
 
     /// Returns FunctionDefinition::Ptr
@@ -95,50 +92,6 @@ public:
 
     antlrcpp::Any visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) override;
 
-    antlrcpp::Any visitControlBlock(CaramelParser::ControlBlockContext *ctx) override;
-
-    /// Returns IfBlock::Ptr
-    antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override;
-
-    /// Returns WhileBlock::Ptr
-    antlrcpp::Any visitWhileBlock(CaramelParser::WhileBlockContext *ctx) override;
-
-    /// Returns ForBlock::Ptr
-    antlrcpp::Any visitForBlock(CaramelParser::ForBlockContext *ctx) override;
-
-    /// Returns Expression::Ptr
-    antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
-
-    /// Returns Expression::Ptr
-    antlrcpp::Any visitExpression(CaramelParser::ExpressionContext *ctx) override;
-
-    /// Returns AtomicExpression::Ptr
-    antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
-
-    /// Returns AtomicExpression::Ptr
-    antlrcpp::Any visitCharConstant(CaramelParser::CharConstantContext *ctx) override;
-
-    /// Returns Statement::Ptr
-    antlrcpp::Any visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) override;
-
-    /// Returns Symbol::Ptr
-    antlrcpp::Any visitArrayDeclarationVoidInner(CaramelParser::ArrayDeclarationVoidInnerContext *ctx) override;
-
-    /// Returns Symbol::Ptr
-    antlrcpp::Any visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) override;
-
-    /// Returns vector<Expression::Ptr>
-    antlrcpp::Any visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) override;
-
-    /// Returns AtomicExpression::Ptr
-    antlrcpp::Any visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) override;
-
-    /// Returns Expression::Ptr
-    antlrcpp::Any visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) override;
-
-    /// Returns BinaryOperator::Ptr
-    antlrcpp::Any visitAdditiveOperator(CaramelParser::AdditiveOperatorContext *ctx) override;
-
     /// Returns Statement::Ptr
     antlrcpp::Any visitInstruction(CaramelParser::InstructionContext *ctx) override;
 
@@ -146,7 +99,58 @@ public:
 
     antlrcpp::Any visitReturnJump(CaramelParser::ReturnJumpContext *ctx) override;
 
+    //--------------------------------------------------------------------------------------------------------
+    // Arrays
+
+    /// Returns Statement::Ptr
+    antlrcpp::Any visitArrayDeclaration(CaramelParser::ArrayDeclarationContext *ctx) override;
+
+    /// Returns Statement::Ptr
+    antlrcpp::Any visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) override;
+
+    /// Returns std::vector<Expression::Ptr>
+    antlrcpp::Any visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) override;
+
+    //--------------------------------------------------------------------------------------------------------
+    // Expressions
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitExpression(CaramelParser::ExpressionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) override;
+
+    /// Returns BinaryOperator::Ptr
+    antlrcpp::Any visitAdditiveOperator(CaramelParser::AdditiveOperatorContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
+
+    /// Returns AtomicExpression::Ptr
+    antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
+
+    /// Returns AtomicExpression::Ptr
+    antlrcpp::Any visitCharConstant(CaramelParser::CharConstantContext *ctx) override;
+
+    /// Returns AtomicExpression::Ptr
+    antlrcpp::Any visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) override;
+
     antlrcpp::Any visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) override;
+
+    //--------------------------------------------------------------------------------------------------------
+    // Control blocks
+
+    /// Returns ControlBlock::Ptr
+    antlrcpp::Any visitControlBlock(CaramelParser::ControlBlockContext *ctx) override;
+
+    /// Returns IfBlock::Ptr
+    antlrcpp::Any visitIfBlock(CaramelParser::IfBlockContext *ctx) override;
+
+    /// Returns ForBlock::Ptr
+    antlrcpp::Any visitForBlock(CaramelParser::ForBlockContext *ctx) override;
+
+    /// Returns WhileBlock::Ptr
+    antlrcpp::Any visitWhileBlock(CaramelParser::WhileBlockContext *ctx) override;
 
 private:
     std::shared_ptr<caramel::ast::Context> currentContext(); //

@@ -59,5 +59,3 @@ void ParserErrorListener::reportAttemptingFullContext(antlr4::Parser *recognizer
 void
 ParserErrorListener::reportContextSensitivity(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa, size_t startIndex,
                                              size_t stopIndex, size_t prediction, antlr4::atn::ATNConfigSet *configs) {}
-
-ParserErrorListener::~ParserErrorListener() {}

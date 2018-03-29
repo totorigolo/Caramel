@@ -56,6 +56,8 @@ AbstractSyntaxTreeVisitor::AbstractSyntaxTreeVisitor(std::string const &sourceFi
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
+    logger.trace() << "Visiting R: " << ctx->getText();
+
     ContextPusher contextPusher(*this);
     Context::Ptr context = contextPusher.getContext();
 
@@ -136,7 +138,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitDeclarations(CaramelParser::Declar
             declarations.push_back(r.as<Statement::Ptr>());
         } else if (r.is<std::vector<Statement::Ptr>>()) {
             auto declarationVector = r.as<std::vector<Statement::Ptr>>();
-            std::copy(declarationVector.begin(), declarationVector.end(), std::back_inserter(declarations));
+            std::move(declarationVector.begin(), declarationVector.end(), std::back_inserter(declarations));
         } else {
             logger.warning() << "Skipping unhandled declaration:\n" << declaration->getText();
         }
@@ -158,6 +160,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstructions(CaramelParser::Instru
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) {
+    logger.trace() << "identifier: " << ctx->getText();
     return ctx->getText();
 }
 
@@ -372,7 +375,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharCo
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstruction(CaramelParser::InstructionContext *ctx) {
     using namespace caramel::ast;
-    if (ctx->jump()) { // pour kévin : != nullptr
+    if (ctx->jump()) {
         return castAnyTo<Jump::Ptr, Statement::Ptr>(visitJump(ctx->jump()));
     } else if (ctx->controlBlock()) {
         return castAnyTo<ControlBlock::Ptr, Statement::Ptr>(visitControlBlock(ctx->controlBlock()));
@@ -381,103 +384,9 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstruction(CaramelParser::Instruc
     return castAnyTo<Expression::Ptr, Statement::Ptr>(visitExpression(ctx->expression()));
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) {
-
-    using namespace caramel::ast;
-
-    ArraySymbol::Ptr arraySymbol;
-    ArrayDeclaration::Ptr arrayDeclaration;
-    ArrayDefinition::Ptr arrayDefinition;
-
-    if (ctx->arrayDeclarationVoidInner()) {
-        arraySymbol = visitArrayDeclarationVoidInner(ctx->arrayDeclarationVoidInner()).as<ArraySymbol::Ptr>();
-
-        std::vector<Expression::Ptr> expressions = visitArrayBlock(ctx->arrayBlock());
-        long arraySize = expressions.size();
-        arraySymbol->setSize(arraySize);
-
-        arrayDeclaration = std::make_shared<ArrayDeclaration>(
-                arraySymbol, ctx->arrayDeclarationVoidInner()->validIdentifier()->getStart());
-
-        arrayDefinition = std::make_shared<ArrayDefinition>(expressions, ctx->start);
-        arrayDefinition->setArraySymbol(arraySymbol);
-
-    } else if (ctx->arrayDeclarationInner()) {
-        arraySymbol = visitArrayDeclarationInner(ctx->arrayDeclarationInner()).as<ArraySymbol::Ptr>();
-
-        arrayDeclaration = std::make_shared<ArrayDeclaration>(
-                arraySymbol, ctx->arrayDeclarationInner()->validIdentifier()->getStart());
-
-        if (ctx->arrayBlock()) {
-            std::vector<Expression::Ptr> expressions = visitArrayBlock(ctx->arrayBlock());
-            arrayDefinition = std::make_shared<ArrayDefinition>(expressions, ctx->start);
-        } else {
-            arrayDefinition = std::make_shared<ArrayDefinition>(std::vector<Expression::Ptr>(), ctx->start);
-        }
-        arrayDefinition->setArraySymbol(arraySymbol);
-    }
-
-    currentContext()->getSymbolTable()->addVariableDeclaration(
-            ctx, arraySymbol->getType(), arraySymbol->getName(), arrayDeclaration);
-    currentContext()->getSymbolTable()->addVariableDefinition(
-            ctx, arraySymbol->getType(), arraySymbol->getName(), arrayDefinition);
-
-    logger.trace() << "New array declared : '" << arraySymbol->getName() << "' with return type "
-                   << arraySymbol->getType()->getIdentifier()
-                   << ", size " << arraySymbol->getSize();
-
-    //TODO : Cas d'erreur
-    return castTo<Statement::Ptr>(arrayDeclaration);
-}
-
-antlrcpp::Any
-AbstractSyntaxTreeVisitor::visitArrayDeclarationVoidInner(CaramelParser::ArrayDeclarationVoidInnerContext *ctx) {
-
-    using namespace caramel::ast;
-
-    logger.trace() << "Visiting array declaration void: " << ctx->getText();
-
-    auto typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
-    std::string name = visitValidIdentifier(ctx->validIdentifier());
-    auto arraySymbol{std::make_shared<ArraySymbol>(name, typeSymbol, 0)};
-
-    return arraySymbol;
-}
-
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) {
-    using namespace caramel::ast;
-    std::vector<Expression::Ptr> expressions;
-    for (auto expression : ctx->expression()) {
-        Expression::Ptr exp = visitExpression(expression);
-        expressions.push_back(exp);
-    }
-    return expressions;
-}
-
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParser::ArrayDeclarationInnerContext *ctx) {
-    logger.trace() << "Visiting array declaration : " << ctx->getText();
-
-    using namespace caramel::ast;
-    using namespace caramel::exceptions;
-
-    auto typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
-    std::string name = visitValidIdentifier(ctx->validIdentifier());
-    antlrcpp::Any arraySizeAny = visitArraySizeDeclaration(ctx->arraySizeDeclaration());
-    Constant::Ptr arraySize = castAnyTo<AtomicExpression::Ptr, Constant::Ptr>(arraySizeAny);
-//    if (!arraySizeAny.is<Constant::Ptr>()) {
-//        throw ArraySizeNonConstantException("Non constant expression not handled for array sizes.");
-//    }
-    ArraySymbol::Ptr arraySymbol = std::make_shared<ArraySymbol>(name, typeSymbol,
-                                                                 arraySize->getValue());
-
-    return arraySymbol;
-}
-
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) {
-    return visitPositiveConstant(ctx->positiveConstant());
-}
-
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) {
+    logger.trace() << "Visiting positive constant: " << ctx->getText();
+
     using namespace caramel::ast;
 
     long long value = std::stoll(ctx->getText());
@@ -485,7 +394,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitPositiveConstant(CaramelParser::Po
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitTypeDefinition(CaramelParser::TypeDefinitionContext *ctx) {
-    logger.trace() << "Visiting type definition " << ctx->getText();
+    logger.trace() << "Visiting type definition: " << ctx->getText();
 
     using namespace caramel::ast;
 

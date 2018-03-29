@@ -28,6 +28,10 @@
 using namespace caramel::ast;
 using namespace caramel::visitors;
 
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitExpression(CaramelParser::ExpressionContext *ctx) {
+    return CaramelBaseVisitor::visitExpression(ctx);
+}
+
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) {
     return visitChildren(ctx);
     if (ctx->children.size() == 1) {
@@ -46,8 +50,4 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitAdditiveOperator(caramel_unused CaramelParser::AdditiveOperatorContext *ctx) {
     return std::dynamic_pointer_cast<BinaryOperator>(mPlusOperator);
-}
-
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitExpression(CaramelParser::ExpressionContext *ctx) {
-    return CaramelBaseVisitor::visitExpression(ctx);
 }

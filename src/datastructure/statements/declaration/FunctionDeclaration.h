@@ -37,6 +37,7 @@ public:
     explicit FunctionDeclaration(antlr4::Token *startToken);
 
     std::weak_ptr<caramel::ast::Symbol> getSymbol() override {
+        // TODO: Why?
         throw std::runtime_error("Cannot get the FunctionSymbol as Symbol");
     };
 
@@ -48,7 +49,7 @@ public:
     void visitChildrenAstDot() override;
 
 private:
-    std::weak_ptr<caramel::ast::FunctionSymbol> mSymbol;
+    std::weak_ptr<FunctionSymbol> mSymbol;
 };
 
 } // namespace caramel::ast
