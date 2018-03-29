@@ -157,7 +157,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstructions(CaramelParser::Instru
     return instructions;
 }
 
-// Return std::string
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) {
     return ctx->getText();
 }
@@ -309,7 +308,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArguments(CaramelParser::F
     return params;
 }
 
-// Return Symbol::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) {
 
     using namespace caramel::ast;
@@ -338,7 +336,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArgument(CaramelParser::Fu
     }
 }
 
-// return Expression::Ptr | Symbol::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) {
 
     using namespace caramel::ast;
@@ -373,7 +370,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharCo
     return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->start));
 }
 
-// Return Statement::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstruction(CaramelParser::InstructionContext *ctx) {
     using namespace caramel::ast;
     if (ctx->jump()) { // pour kévin : != nullptr
@@ -385,7 +381,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstruction(CaramelParser::Instruc
     return castAnyTo<Expression::Ptr, Statement::Ptr>(visitExpression(ctx->expression()));
 }
 
-// Return Statement::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) {
 
     using namespace caramel::ast;
@@ -449,7 +444,6 @@ AbstractSyntaxTreeVisitor::visitArrayDeclarationVoidInner(CaramelParser::ArrayDe
     return arraySymbol;
 }
 
-// Return std::vector<Expression::Ptr>
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) {
     using namespace caramel::ast;
     std::vector<Expression::Ptr> expressions;
@@ -479,12 +473,10 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclarationInner(CaramelParse
     return arraySymbol;
 }
 
-//
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArraySizeDeclaration(CaramelParser::ArraySizeDeclarationContext *ctx) {
     return visitPositiveConstant(ctx->positiveConstant());
 }
 
-// Return Atomic::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) {
     using namespace caramel::ast;
 
@@ -492,7 +484,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitPositiveConstant(CaramelParser::Po
     return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->getStart()));
 }
 
-// Return Statement::Ptr
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitTypeDefinition(CaramelParser::TypeDefinitionContext *ctx) {
     logger.trace() << "Visiting type definition " << ctx->getText();
 
@@ -507,7 +498,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitTypeDefinition(CaramelParser::Type
     return castTo<Statement::Ptr>(typeDefinition);
 }
 
-// Return <Jump::Ptr>
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitReturnJump(CaramelParser::ReturnJumpContext *ctx) {
     using namespace caramel::ast;
     // Fixme : return true value
