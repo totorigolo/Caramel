@@ -38,7 +38,8 @@ public:
     using WeakPtr = std::shared_ptr<BasicBlock>;
 
     BasicBlock(
-            std::shared_ptr<CFG> cfg,
+            int id,
+            CFG *cfg,
             std::string const &entryName
     );
 
@@ -47,16 +48,17 @@ public:
 public:
     void generateAssembly(std::ostream &output);
 
-    void addIRInstruction(
-            Operation op,
-            caramel::ast::SymbolType type,
-            std::vector<std::string> params
-    );
+    std::string addInstruction(std::shared_ptr<IR> const &instruction);
 
     std::shared_ptr<BasicBlock> getNextWhenTrue() const;
     std::shared_ptr<BasicBlock> getNextWhenFalse() const;
 
+    CFG * getCFG();
+
+    int getId();
+
 private:
+    int mID;
     /**
      * pointer to the next basic block, true branch. If nullptr, return from procedure
      */
@@ -66,8 +68,10 @@ private:
      */
     std::shared_ptr<BasicBlock> mExitWhenFalse;
     std::string mLabelName;
-    std::weak_ptr<CFG> mCfg;
+    CFG *mCfg;
     std::vector<std::shared_ptr<IR>> mInstructions;
+    std::map<std::string, int> mSymbolsIndex;
+
 };
 
 } // namespace caramel::ir

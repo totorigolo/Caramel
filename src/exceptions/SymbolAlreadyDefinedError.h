@@ -85,7 +85,7 @@ public:
                   << bold << red << std::setfill('~') << std::setw(length) << "" << reset
                   << std::endl;
         if (1) {
-            //TODO: test if different type, return primary type instead of statement type
+            //TODO: test if different type, return primary type (int32_t) instead of statement type (VariableDeclaration)
             std::cerr << bold << "Note: " << reset
                       << "different previous type: was " << mExistingDefinition->getType()
                       << "and is now " << mFaultyDeclaration->getType()
@@ -97,7 +97,7 @@ public:
     buildAlreadyDefinedErrorMessage(std::string const &variableName, Symbol::Ptr symbol) {
 
         std::stringstream res;
-        res << "Cannot use identifier: " << variableName << " because ";
+        res << "Cannot use identifier: '" << variableName << "' because ";
         Symbol::Ptr previousDeclaration = symbol;
         switch (previousDeclaration->getSymbolType()) {
             case SymbolType::FunctionSymbol:

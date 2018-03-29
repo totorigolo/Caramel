@@ -24,34 +24,24 @@
 
 #pragma once
 
-#include "LValue.h"
-#include "../../../symboltable/Symbol.h"
 
+#include "ast/context/Context.h"
 
-namespace caramel::ast {
+namespace caramel {
 
-class Identifier : public LValue {
+class BackEnd {
 public:
-    using Ptr = std::shared_ptr<Identifier>;
-    using WeakPtr = std::weak_ptr<Identifier>;
-
-public:
-    explicit Identifier(
-            std::shared_ptr<Symbol> symbol,
-            antlr4::Token *startToken
+    static void generateAssembly(
+            std::string const &filePath,
+            std::shared_ptr<ast::Context> context,
+            std::ostream &os
     );
 
-    ~Identifier() override = default;
-
-    std::shared_ptr<Symbol> getSymbol();
-
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
-
-    bool shouldReturnABasicBlock() const override;
-
-private:
-    std::shared_ptr<Symbol> mSymbol;
+protected:
+    static std::vector<std::string> split(std::string const &s, char delimiter = '/');
 
 };
 
-} // namespace caramel::ast
+} // namespace BackEnd
+
+

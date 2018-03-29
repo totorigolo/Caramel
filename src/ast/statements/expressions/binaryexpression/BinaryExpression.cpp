@@ -38,8 +38,14 @@ BinaryExpression::BinaryExpression(
     mRightExpression{rightExpression} {}
 
 std::shared_ptr<caramel::ir::IR>
-BinaryExpression::getIR() {
-    return mBinaryOperator->buildIR(mLeftExpression, mRightExpression);
+BinaryExpression::getIR(
+        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
+) {
+    return mBinaryOperator->buildIR(currentBasicBlock, mLeftExpression, mRightExpression);
+}
+
+bool BinaryExpression::shouldReturnAnIR() const {
+    return true;
 }
 
 }

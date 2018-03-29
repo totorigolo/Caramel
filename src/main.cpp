@@ -29,6 +29,7 @@
 #include "Logger.h"
 #include "Console.h"
 #include "FrontEnd.h"
+#include "BackEnd.h"
 
 #include "tclap.h"
 
@@ -41,7 +42,9 @@ int main(int argc, const char *argv[]) {
     Config config{parseArgs(argc, argv)};
 
     // Get the AST from the front-end
-    auto astRoot{caramel::frontEnd(config)};
+    Context::Ptr astRoot{caramel::frontEnd(config)};
+    caramel::BackEnd::generateAssembly(config.sourceFile, astRoot, std::cout);
+
 
     return EXIT_SUCCESS;
 }

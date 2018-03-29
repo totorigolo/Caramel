@@ -30,7 +30,7 @@
 
 namespace caramel::ast {
 
-class BinaryExpression : public caramel::ast::Expression {
+class BinaryExpression : public Expression {
 public:
     using Ptr = std::shared_ptr<BinaryExpression>;
     using WeakPtr = std::weak_ptr<BinaryExpression>;
@@ -45,7 +45,12 @@ public:
     ~BinaryExpression() override = default;
 
 public:
-    std::shared_ptr<caramel::ir::IR> getIR() override;
+
+    bool shouldReturnAnIR() const override;
+
+    std::shared_ptr<caramel::ir::IR> getIR(
+            std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
+    ) override;
 
 private:
     std::shared_ptr<caramel::ast::Expression> mLeftExpression;

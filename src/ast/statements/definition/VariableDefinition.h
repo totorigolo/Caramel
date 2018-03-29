@@ -26,6 +26,7 @@
 #include "Definition.h"
 #include "../expressions/Expression.h"
 
+
 namespace caramel::ast {
 
 class VariableDefinition : public Definition {
@@ -44,18 +45,23 @@ public:
 
     ~VariableDefinition() override = default;
 
-    std::weak_ptr<Symbol> getSymbol() override {
-        throw std::runtime_error("Cannot return a valid symbol");
-    };
+    std::weak_ptr<Symbol> getSymbol() override;
+
     std::weak_ptr<VariableSymbol> getVariableSymbol();
     void setVariableSymbol(std::shared_ptr<VariableSymbol> variableSymbol);
 
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
+    bool shouldReturnAnIR() const override;
+
+    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
+
+    PrimaryType::Ptr getPrimaryType() override;
+
 private:
     std::weak_ptr<VariableSymbol> mSymbol;
-    std::weak_ptr<Expression> mInitializer;
+    std::shared_ptr<Expression> mInitializer;
 };
 
 } // namespace caramel::ast

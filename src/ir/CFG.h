@@ -26,6 +26,7 @@
 
 #include "../ast/statements/Statement.h"
 #include "../ast/symboltable/Symbol.h"
+#include "../ast/context/Context.h"
 
 namespace caramel::ir {
 
@@ -37,31 +38,54 @@ public:
     using WeakPtr = std::weak_ptr<CFG>;
 
 public:
-    explicit CFG(caramel::ast::Statement::Ptr ast);
+    explicit CFG(std::string const &fileName, caramel::ast::Context::Ptr ast);
     virtual ~CFG() = default;
 
 public:
+
+    std::shared_ptr<BasicBlock> generateBasicBlock(std::string const &entryName);
+    std::shared_ptr<BasicBlock> generateFunctionBlock(std::string const &entryName);
+
     void addBasicBlock(
             std::shared_ptr<BasicBlock> basicBlock
     );
 
     void generateAssembly(std::ostream &output);
 
-    std::string IRToAssembly(std::string register_) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+    std::string IRToAssembly(std::string register_) {
+        throw caramel::exceptions::NotImplementedException(__FILE__);
+    };
 
-    void generateAssemblyPrologue(std::ostream &output) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+    bool hasSymbol(int controlBlockId, std::string const &symbolName);
 
-    void generateAssemblyEpilogue(std::ostream &output) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+    void addSymbol(int controlBlockId, std::string const &symbolName, caramel::ast::PrimaryType::Ptr type);
 
+    long getSymbolIndex(int controlBlockId, std::string const &symbolName);
+
+    void enterFunction();
+
+    void exitFunction();
 
 protected:
-    caramel::ast::Statement::Ptr mAst;
-    std::map<std::string, caramel::ast::Symbol> mSymbols;
-    std::map<std::string, int> mSymbolIndex;
+
+    void generateAssemblyPrologue(std::ostream &output);
+
+    void generateAssemblyEpilogue(std::ostream &output);
+
+protected:
+    std::string mFileName;
+    caramel::ast::Context::Ptr mTreeContext;
+
+    std::map<int, std::map<std::string, caramel::ast::PrimaryType::Ptr>> mSymbols;
+    std::map<int, std::map<std::string, long>> mSymbolIndex;
+    long stackLength;
+    long stackLengthMemory;
+
     int nextBasicBlockNumber;
-    
+
     std::vector<std::shared_ptr<BasicBlock>> mBasicBlocks;
-    
+    std::shared_ptr<CFG> mSelf;
+
 };
 
 } // namespace caramel::ast

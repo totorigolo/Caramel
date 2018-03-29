@@ -38,6 +38,14 @@ public:
     virtual size_t getMemoryLength() const = 0;
     virtual std::string getIdentifier() const = 0;
 
+    static PrimaryType::Ptr max(PrimaryType::Ptr a, PrimaryType::Ptr b) {
+        if(a->getMemoryLength() > b->getMemoryLength()) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+
     bool equals(PrimaryType::Ptr const & other) {
         return typeid(*this) == typeid(*other);
     }

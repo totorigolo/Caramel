@@ -27,22 +27,22 @@
 namespace caramel::ir {
 
 BasicBlock::BasicBlock(
-        std::shared_ptr<caramel::ir::CFG> cfg,
+        int id,
+        CFG *cfg,
         std::string const &entryName
-) : mExitWhenTrue{},
+) : mID{id},
+    mExitWhenTrue{},
     mExitWhenFalse{},
     mLabelName{entryName},
     mCfg{cfg},
     mInstructions{} {}
 
-void BasicBlock::addIRInstruction(Operation op, caramel::ast::SymbolType type, std::vector<std::string> params) {
-    IR::Ptr instruction = std::make_shared<IR>(std::shared_ptr<BasicBlock>(this), op, type, params);
-    mInstructions.push_back(instruction);
-}
-
 void BasicBlock::generateAssembly(std::ostream &output) {
-    output << mLabelName << ':' << std::endl;
-    for(IR::Ptr const &instr : mInstructions) {
+
+    if(mLabelName.size() > 0) {
+        output << mLabelName << ':' << std::endl;
+    }
+    for (IR::Ptr const &instr : mInstructions) {
         output << "  ";
         instr->generateAssembly(output);
         output << std::endl;
@@ -56,6 +56,29 @@ std::shared_ptr<BasicBlock> BasicBlock::getNextWhenTrue() const {
 
 std::shared_ptr<BasicBlock> BasicBlock::getNextWhenFalse() const {
     return mExitWhenFalse;
+}
+
+std::string BasicBlock::addInstruction(std::shared_ptr<IR> const &instruction) {
+    if (!instruction->isEmpty()) {
+        mInstructions.push_back(instruction);
+    }
+
+    std::string returnName = instruction->getReturnName();
+    if (returnName.size() != 0L && returnName[0] != '!' && returnName[0] != '%') {
+        if (!mCfg->hasSymbol(mID, returnName)) {
+            mCfg->addSymbol(mID, returnName, instruction->getType());
+        }
+    }
+
+    return instruction->getReturnName();
+}
+
+CFG *BasicBlock::getCFG() {
+    return mCfg;
+}
+
+int BasicBlock::getId() {
+    return mID;
 }
 
 } // namespace caramel::ir
