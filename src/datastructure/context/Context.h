@@ -48,6 +48,8 @@ public:
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
+    std::vector<std::shared_ptr<caramel::ast::Statement>> getStatements();
+
 private:
 
     std::shared_ptr<caramel::ast::SymbolTable> mSymbolTable;

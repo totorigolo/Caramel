@@ -26,6 +26,7 @@
 
 #include "../datastructure/statements/Statement.h"
 #include "../datastructure/symboltable/Symbol.h"
+#include "../datastructure/context/Context.h"
 
 namespace caramel::ir {
 
@@ -37,7 +38,7 @@ public:
     using WeakPtr = std::weak_ptr<CFG>;
 
 public:
-    explicit CFG(caramel::ast::Statement::Ptr ast);
+    explicit CFG(std::string const &fileName, caramel::ast::Context::Ptr ast);
     virtual ~CFG() = default;
 
 public:
@@ -49,18 +50,22 @@ public:
 
     std::string IRToAssembly(std::string register_) { throw caramel::exceptions::NotImplementedException(__FILE__); };
 
-    void generateAssemblyPrologue(std::ostream &output) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+protected:
 
-    void generateAssemblyEpilogue(std::ostream &output) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+    void generateAssemblyPrologue(std::ostream &output);
+
+    void generateAssemblyEpilogue(std::ostream &output);
 
 
 protected:
-    caramel::ast::Statement::Ptr mAst;
+    std::string mFileName;
+    caramel::ast::Context::Ptr mTreeContext;
     std::map<std::string, caramel::ast::Symbol> mSymbols;
     std::map<std::string, int> mSymbolIndex;
     int nextBasicBlockNumber;
     
     std::vector<std::shared_ptr<BasicBlock>> mBasicBlocks;
+    std::shared_ptr<CFG> mSelf;
     
 };
 

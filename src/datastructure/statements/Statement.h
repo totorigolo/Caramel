@@ -33,6 +33,8 @@
 
 namespace caramel::ir {
     class IR;
+    class BasicBlock;
+    class CFG;
 }
 
 namespace caramel::ast {
@@ -69,6 +71,10 @@ public:
     using Ptr = std::shared_ptr<Statement>;
     using WeakPtr = std::weak_ptr<Statement>;
 
+    static std::string createVarName() {
+        return "!tmp" + std::to_string(++lastTemVarNumber);
+    }
+
 public:
     ~Statement() override = default;
 
@@ -79,9 +85,27 @@ public:
     size_t getLength() const;
     StatementType getType() const;
 
-    virtual std::shared_ptr<caramel::ir::IR> getIR() { throw caramel::exceptions::NotImplementedException(__FILE__); }; // Fixme: must be abstract function at the end
+    virtual bool shouldReturnAnIR() const { return false; }
+
+    virtual std::shared_ptr<caramel::ir::IR> getIR(
+            std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock
+    ) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+
+    virtual bool shouldReturnABasicBlock() const { return false; }
+
+    virtual std::shared_ptr<caramel::ir::BasicBlock> getBasicBlock(
+            ir::CFG *controlFlow
+    ) { throw caramel::exceptions::NotImplementedException(__FILE__); };
 
     void acceptAstDotVisit() override;
+
+    template <class T>
+    bool is() {
+        return nullptr != dynamic_cast<T*>(this);
+    }
+
+protected:
+    static long long lastTemVarNumber;
 
 private:
     size_t mLine;
@@ -91,5 +115,6 @@ private:
 };
 
 std::ostream &operator<<(std::ostream &os, const StatementType &type);
+
 
 } // namespace caramel::ast

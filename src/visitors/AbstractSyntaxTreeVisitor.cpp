@@ -347,6 +347,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
     if (ctx->validIdentifier()) {
         std::string varName = visitValidIdentifier(ctx->validIdentifier());
         Symbol::Ptr symbol = currentContext()->getSymbolTable()->addVariableUsage(ctx, varName, castTo<Statement::Ptr>(result));
+        result = castTo<Expression::Ptr>(std::make_shared<Identifier>(symbol, ctx->getStart()));
     } else if (ctx->charConstant()) {
         result = castAnyTo<AtomicExpression::Ptr, Expression::Ptr>(visitCharConstant(ctx->charConstant()));
     } else if (ctx->numberConstant()) {
@@ -369,7 +370,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharCo
 
     using namespace caramel::ast;
 
-    char value = ctx->getText().at(0);
+    char value = ctx->getText().at(1); // " ' " + char.at(1) + " ' "
     return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->start));
 }
 

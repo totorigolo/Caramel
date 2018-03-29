@@ -33,12 +33,80 @@ IR::IR(
         std::shared_ptr<BasicBlock> parentBlock,
         Operation op,
         caramel::ast::SymbolType symbolType,
-       std::vector<std::string> parameters
-) : mParentBlock{parentBlock},
+        std::vector<std::string> parameters
+) : mReturnName{""},
+    mParentBlock{parentBlock},
     mOperation{op},
     mType{symbolType},
     mParameters{std::move(parameters)} {}
 
-void IR::generateAssembly(std::ostream &output) {}
+void IR::generateAssembly(std::ostream &output) {
+
+
+    switch (mOperation) {
+        case Operation::copy:
+            output << "copy";
+            break;
+        case Operation::add:
+            output << "add";
+            break;
+        case Operation::call:
+            output << "call";
+            break;
+        case Operation::cmp_eq:
+            output << "cmp_eq";
+            break;
+        case Operation::cmp_le:
+            output << "cmp_le";
+            break;
+        case Operation::cmp_lt:
+            output << "cmp_lt";
+            break;
+        case Operation::ldconst:
+            output << "ldconst";
+            break;
+        case Operation::mul:
+            output << "mul";
+            break;
+        case Operation::rmem:
+            output << "rmem";
+            break;
+        case Operation::sub:
+            output << "sub";
+            break;
+        case Operation::wmem:
+            output << "wmem";
+            break;
+        case Operation::empty:
+            logger.warning() << "empty instruction was called";
+            return;
+    }
+    output << " ";
+    for (std::string const &param : mParameters) {
+        output << param << " ";
+    }
+
+}
+
+IR::IR(
+        std::string const &returnName,
+        std::shared_ptr<BasicBlock> parentBlock,
+        Operation op,
+        caramel::ast::SymbolType symbolType,
+        std::vector<std::string> parameters
+) : mReturnName{returnName},
+    mParentBlock{parentBlock},
+    mOperation{op},
+    mType{symbolType},
+    mParameters{std::move(parameters)} {}
+
+std::string IR::getReturnName() {
+    return mReturnName;
+}
+
+bool IR::isEmpty() {
+    return mOperation == Operation::empty;
+}
+
 
 } // namespace caramel::ir

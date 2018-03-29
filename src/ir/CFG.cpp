@@ -28,23 +28,53 @@
 namespace caramel::ir {
 
 CFG::CFG(
-        caramel::ast::Statement::Ptr ast
-) : mAst{ast},
+        std::string const &fileName,
+        caramel::ast::Context::Ptr treeContext
+) : mFileName{fileName},
+    mTreeContext{treeContext},
     mSymbols{},
     mSymbolIndex{},
     nextBasicBlockNumber{0},
-    mBasicBlocks{} {}
+    mBasicBlocks{} {
+    mBasicBlocks.push_back(std::make_shared<BasicBlock>(
+            this,
+            "program"
+    ));
+}
 
 void CFG::addBasicBlock(std::shared_ptr<BasicBlock> basicBlock) {
     mBasicBlocks.push_back(basicBlock);
 }
 
 void CFG::generateAssembly(std::ostream &output) {
+
     generateAssemblyPrologue(output);
-    for(const std::shared_ptr<BasicBlock> &bb : mBasicBlocks) {
-        bb->generateAssembly(output);
+    output << std::endl;
+
+    for (const caramel::ast::Statement::Ptr stamement : mTreeContext->getStatements()) {
+
+        if (stamement->shouldReturnAnIR()) {
+            stamement->getIR(mBasicBlocks[mBasicBlocks.size() - 1])->generateAssembly(output);
+        } else if (stamement->shouldReturnABasicBlock()) {
+            stamement->getBasicBlock(this)->generateAssembly(output);
+        } else {
+           // logger.warning() << "Statement return neither IR neither BB";
+        }
     }
+
+    output << std::endl;
     generateAssemblyEpilogue(output);
+
+}
+
+void CFG::generateAssemblyPrologue(std::ostream &output) {
+    output << ".file  \"" << mFileName << "\"" << std::endl;
+    output << ".text";
+}
+
+void CFG::generateAssemblyEpilogue(std::ostream &output) {
+    output << "leave" << std::endl;
+    output << "ret" << std::endl;
 }
 
 } // namespace caramel::ir

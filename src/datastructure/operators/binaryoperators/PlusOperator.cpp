@@ -23,17 +23,30 @@
 */
 
 #include "PlusOperator.h"
-
+#include "../../../ir/BasicBlock.h"
 
 std::shared_ptr<caramel::ir::IR> caramel::ast::PlusOperator::buildIR(
+        std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression) {
+    std::string var1 = currentBasicBlock->addInstruction(leftExpression->getIR(currentBasicBlock));
+    std::string var2 = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
+    std::string tmp = Statement::createVarName();
 
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+    std::vector<std::string> params;
+    params.push_back(tmp);
+    params.push_back(var1);
+    params.push_back(var2);
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+    std::shared_ptr<ir::IR> instr = std::make_shared<caramel::ir::IR>(
+            tmp,
+            currentBasicBlock,
+            ir::Operation::add,
+            SymbolType::VariableSymbol,
+            params
+    );
+    return instr;
+
 }
 
 caramel::ast::StatementType caramel::ast::PlusOperator::expressionType() {

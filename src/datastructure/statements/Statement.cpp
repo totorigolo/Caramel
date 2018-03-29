@@ -27,6 +27,8 @@
 
 namespace caramel::ast {
 
+long long Statement::lastTemVarNumber = -1;
+
 Statement::Statement(antlr4::Token *startToken, StatementType type)
         : mLine{startToken->getLine()},
           mColumn{startToken->getCharPositionInLine()},

@@ -27,12 +27,13 @@
 
 using namespace caramel::ast;
 using namespace caramel::visitors;
+using namespace caramel::util;
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) {
-    return visitChildren(ctx);
     if (ctx->children.size() == 1) {
         // One children = No BinaryExpression at this step.
-        return visitChildren(ctx).as<Expression::Ptr>();
+        Expression::Ptr res = visitChildren(ctx);
+        return res;
     } else {
         return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
                 visitAdditiveExpression(ctx->additiveExpression(0)),

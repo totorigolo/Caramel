@@ -23,6 +23,7 @@
 */
 
 #include "Identifier.h"
+#include "../../../../ir/BasicBlock.h"
 
 namespace caramel::ast {
 
@@ -33,6 +34,14 @@ Identifier::Identifier(
 
 std::shared_ptr<caramel::ast::Symbol> Identifier::getSymbol() {
     return mSymbol;
+}
+
+std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {
+    return ir::IR::emptyInstruction(currentBasicBlock, mSymbol->getName());
+}
+
+bool Identifier::shouldReturnABasicBlock() const {
+    return Statement::shouldReturnABasicBlock();
 }
 
 } // namespace caramel::ast

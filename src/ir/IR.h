@@ -32,7 +32,9 @@ namespace caramel::ir {
 class BasicBlock;
 
 enum class Operation {
+    empty,
     ldconst,
+    copy,
     add,
     sub,
     mul,
@@ -49,8 +51,29 @@ public:
     using Ptr = std::shared_ptr<IR>;
     using WeakPt = std::weak_ptr<IR>;
 
+    static IR::Ptr emptyInstruction(
+            std::shared_ptr<BasicBlock> parentBlock,
+            std::string const &returnName) {
+        return std::make_shared<IR>(
+                returnName,
+                parentBlock,
+                Operation::empty,
+                caramel::ast::SymbolType::VariableSymbol,
+                std::vector<std::string>()
+        );
+    }
+
 public:
     explicit IR(
+            std::shared_ptr<BasicBlock> parentBlock,
+            Operation op,
+            caramel::ast::SymbolType symbolType,
+            std::vector<std::string> parameters
+    );
+
+
+    explicit IR(
+            std::string const &returnName,
             std::shared_ptr<BasicBlock> parentBlock,
             Operation op,
             caramel::ast::SymbolType symbolType,
@@ -61,7 +84,12 @@ public:
 
     void generateAssembly(std::ostream &output);
 
+    std::string getReturnName();
+
+    bool isEmpty();
+
 private:
+    std::string mReturnName;
     std::weak_ptr<BasicBlock> mParentBlock;
     Operation mOperation;
     caramel::ast::SymbolType mType;

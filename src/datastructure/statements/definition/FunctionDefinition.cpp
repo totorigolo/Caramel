@@ -23,6 +23,7 @@
 */
 
 #include "FunctionDefinition.h"
+#include "../../../ir/BasicBlock.h"
 
 
 namespace caramel::ast {
@@ -48,6 +49,26 @@ void FunctionDefinition::acceptAstDotVisit() {
 void FunctionDefinition::visitChildrenAstDot() {
     addEdge(thisId(), mContext->thisId());
     mContext->acceptAstDotVisit();
+}
+
+std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
+        ir::CFG *controlFlow
+) {
+    caramel::ir::BasicBlock::Ptr bb = std::make_shared<caramel::ir::BasicBlock>(controlFlow, mSymbol.lock()->getName());
+
+    for(caramel::ast::Statement::Ptr const &statement : mContext->getStatements()) {
+        if(statement->shouldReturnAnIR()) {
+            bb->addInstruction(statement->getIR(bb));
+        } else if (statement->shouldReturnABasicBlock()) {
+            controlFlow->addBasicBlock(statement->getBasicBlock(controlFlow));
+        }
+    }
+
+    return bb;
+}
+
+bool FunctionDefinition::shouldReturnABasicBlock() const {
+    return true;
 }
 
 } // namespace caramel::ast

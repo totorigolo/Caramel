@@ -22,36 +22,35 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "LValue.h"
-#include "../../../symboltable/Symbol.h"
+#include "BackEnd.h"
+#include "ir/CFG.h"
 
 
-namespace caramel::ast {
+namespace caramel {
 
-class Identifier : public LValue {
-public:
-    using Ptr = std::shared_ptr<Identifier>;
-    using WeakPtr = std::weak_ptr<Identifier>;
-
-public:
-    explicit Identifier(
-            std::shared_ptr<Symbol> symbol,
-            antlr4::Token *startToken
+void BackEnd::generateAssembly(
+        std::string const &filePath,
+        std::shared_ptr<ast::Context> context,
+        std::ostream &os
+) {
+    std::vector<std::string> pathParts = split(filePath);
+    std::shared_ptr<ir::CFG> cfg = std::make_shared<ir::CFG>(
+            pathParts[pathParts.size() - 1]
+            , context
     );
+    cfg->generateAssembly(os);
+}
 
-    ~Identifier() override = default;
+std::vector<std::string> BackEnd::split(std::string const &s, char delimiter) {
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(s);
+    while (std::getline(tokenStream, token, delimiter))
+    {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
 
-    std::shared_ptr<Symbol> getSymbol();
 
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
-
-    bool shouldReturnABasicBlock() const override;
-
-private:
-    std::shared_ptr<Symbol> mSymbol;
-
-};
-
-} // namespace caramel::ast
+} // namespace caramel

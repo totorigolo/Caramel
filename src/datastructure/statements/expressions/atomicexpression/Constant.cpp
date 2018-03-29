@@ -23,6 +23,7 @@
 */
 
 #include "Constant.h"
+#include "../../../../ir/IR.h"
 
 namespace caramel::ast {
 
@@ -40,5 +41,20 @@ void Constant::acceptAstDotVisit() {
 }
 
 void Constant::visitChildrenAstDot() {}
+
+bool Constant::shouldReturnAnIR() const {
+    return true;
+}
+
+std::shared_ptr<ir::IR> Constant::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {
+
+    std::string tempVar = createVarName();
+    std::string constValue = std::to_string(getValue());
+    std::vector<std::string> parameters;
+    parameters.push_back(tempVar);
+    parameters.push_back(constValue);
+    return std::make_shared<ir::IR>(tempVar, currentBasicBlock, ir::Operation::ldconst, SymbolType::VariableSymbol, parameters);
+}
+
 
 } // namespace caramel::ast

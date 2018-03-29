@@ -55,4 +55,8 @@ void Context::visitChildrenAstDot() {
     }
 }
 
+std::vector<std::shared_ptr<caramel::ast::Statement>> Context::getStatements() {
+    return mStatements;
+}
+
 } // namespace caramel::ast

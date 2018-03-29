@@ -35,7 +35,7 @@ public:
     using WeakPtr = std::weak_ptr<Constant>;
 
     static Ptr defaultConstant(antlr4::Token *startToken) {
-        return std::make_shared<Constant>(0, startToken);
+        return std::make_shared<Constant>(0L, startToken);
     }
 
 public:
@@ -46,6 +46,10 @@ public:
 
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
+
+    bool shouldReturnAnIR() const override;
+
+    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
 
 private:
     long long mValue;
