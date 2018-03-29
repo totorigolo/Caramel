@@ -82,10 +82,14 @@ std::shared_ptr<ir::IR> VariableDefinition::getIR(std::shared_ptr<caramel::ir::B
             identifier,
             currentBasicBlock,
             ir::Operation::copy,
-            mSymbol.lock()->getSymbolType(),
+            mSymbol.lock()->getType(),
             params
     );
 
+}
+
+PrimaryType::Ptr VariableDefinition::getPrimaryType() {
+    return mSymbol.lock()->getType();
 }
 
 } // caramel::ast::definition

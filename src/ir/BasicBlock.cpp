@@ -27,9 +27,11 @@
 namespace caramel::ir {
 
 BasicBlock::BasicBlock(
+        int id,
         CFG *cfg,
         std::string const &entryName
-) : mExitWhenTrue{},
+) : mID{id},
+    mExitWhenTrue{},
     mExitWhenFalse{},
     mLabelName{entryName},
     mCfg{cfg},
@@ -37,8 +39,10 @@ BasicBlock::BasicBlock(
 
 void BasicBlock::generateAssembly(std::ostream &output) {
 
-    output << mLabelName << ':' << std::endl;
-    for(IR::Ptr const &instr : mInstructions) {
+    if(mLabelName.size() > 0) {
+        output << mLabelName << ':' << std::endl;
+    }
+    for (IR::Ptr const &instr : mInstructions) {
         output << "  ";
         instr->generateAssembly(output);
         output << std::endl;
@@ -55,10 +59,26 @@ std::shared_ptr<BasicBlock> BasicBlock::getNextWhenFalse() const {
 }
 
 std::string BasicBlock::addInstruction(std::shared_ptr<IR> const &instruction) {
-    if(!instruction->isEmpty()) {
+    if (!instruction->isEmpty()) {
         mInstructions.push_back(instruction);
     }
+
+    std::string returnName = instruction->getReturnName();
+    if (returnName.size() != 0L && returnName[0] != '!' && returnName[0] != '%') {
+        if (!mCfg->hasSymbol(mID, returnName)) {
+            mCfg->addSymbol(mID, returnName, instruction->getType());
+        }
+    }
+
     return instruction->getReturnName();
+}
+
+CFG *BasicBlock::getCFG() {
+    return mCfg;
+}
+
+int BasicBlock::getId() {
+    return mID;
 }
 
 } // namespace caramel::ir

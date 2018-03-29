@@ -53,7 +53,8 @@ std::shared_ptr<ir::IR> Constant::getIR(std::shared_ptr<caramel::ir::BasicBlock>
     std::vector<std::string> parameters;
     parameters.push_back(tempVar);
     parameters.push_back(constValue);
-    return std::make_shared<ir::IR>(tempVar, currentBasicBlock, ir::Operation::ldconst, SymbolType::VariableSymbol, parameters);
+    // Todo: check if Int64_t for constant is good or not
+    return std::make_shared<ir::IR>(tempVar, currentBasicBlock, ir::Operation::ldconst, Int64_t::Create(), parameters);
 }
 
 

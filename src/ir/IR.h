@@ -43,7 +43,11 @@ enum class Operation {
     call,
     cmp_eq,
     cmp_lt,
-    cmp_le
+    cmp_le,
+    pushq,
+    movq,
+    ret,
+    leave
 };
 
 class IR {
@@ -58,17 +62,21 @@ public:
                 returnName,
                 parentBlock,
                 Operation::empty,
-                caramel::ast::SymbolType::VariableSymbol,
+                caramel::ast::Void_t::Create(),
                 std::vector<std::string>()
         );
     }
+
+    static const std::string REGISTER_BASE_POINTER;
+    static const std::string REGISTER_STACK_POINTER;
+    static const std::string ACCUMULATOR;
 
 public:
     explicit IR(
             std::shared_ptr<BasicBlock> parentBlock,
             Operation op,
-            caramel::ast::SymbolType symbolType,
-            std::vector<std::string> parameters
+            caramel::ast::PrimaryType::Ptr type,
+            std::vector<std::string> parameters = std::vector<std::string>()
     );
 
 
@@ -76,8 +84,8 @@ public:
             std::string const &returnName,
             std::shared_ptr<BasicBlock> parentBlock,
             Operation op,
-            caramel::ast::SymbolType symbolType,
-            std::vector<std::string> parameters
+            caramel::ast::PrimaryType::Ptr type,
+            std::vector<std::string> parameters = std::vector<std::string>()
     );
 
     virtual ~IR() = default;
@@ -88,11 +96,13 @@ public:
 
     bool isEmpty();
 
+    caramel::ast::PrimaryType::Ptr getType();
+
 private:
     std::string mReturnName;
     std::weak_ptr<BasicBlock> mParentBlock;
     Operation mOperation;
-    caramel::ast::SymbolType mType;
+    caramel::ast::PrimaryType::Ptr mType;
     std::vector<std::string> mParameters;
 };
 

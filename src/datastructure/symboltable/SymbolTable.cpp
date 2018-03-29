@@ -318,7 +318,6 @@ bool SymbolTable::isDefined(const std::string &name) {
            (getParentTable() && getParentTable()->isDefined(name));
 }
 
-
 std::string SymbolTable::buildMismatchSymbolTypeErrorMessage(std::string const &variableName,
                                                              SymbolType requiredSymbolType) {
     std::stringstream res;

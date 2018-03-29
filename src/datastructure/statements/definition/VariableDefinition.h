@@ -26,6 +26,7 @@
 #include "Definition.h"
 #include "../expressions/Expression.h"
 
+
 namespace caramel::ast {
 
 class VariableDefinition : public Definition {
@@ -55,6 +56,8 @@ public:
     bool shouldReturnAnIR() const override;
 
     std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
+
+    PrimaryType::Ptr getPrimaryType() override;
 
 private:
     std::weak_ptr<VariableSymbol> mSymbol;

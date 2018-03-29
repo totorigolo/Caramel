@@ -26,6 +26,7 @@
 
 #include "../../exceptions/NotImplementedException.h"
 #include "../../AstDotNode.h"
+#include "../symboltable/PrimaryType.h"
 #include <Token.h>
 #include <memory>
 #include <ostream>
@@ -97,7 +98,18 @@ public:
             ir::CFG *controlFlow
     ) { throw caramel::exceptions::NotImplementedException(__FILE__); };
 
+    virtual bool shouldReturnACFG() const { return false; }
+
+    virtual std::shared_ptr<caramel::ir::CFG> getCFG()
+    {
+        throw caramel::exceptions::NotImplementedException(__FILE__);
+    }
+
     void acceptAstDotVisit() override;
+
+    virtual PrimaryType::Ptr getPrimaryType() {
+        return Void_t::Create();
+    }
 
     template <class T>
     bool is() {

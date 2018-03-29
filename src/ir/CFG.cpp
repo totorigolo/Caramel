@@ -34,11 +34,13 @@ CFG::CFG(
     mTreeContext{treeContext},
     mSymbols{},
     mSymbolIndex{},
-    nextBasicBlockNumber{0},
-    mBasicBlocks{} {
+    stackLength{0},
+    mBasicBlocks{},
+    nextBasicBlockNumber{0} {
     mBasicBlocks.push_back(std::make_shared<BasicBlock>(
+            nextBasicBlockNumber,
             this,
-            "program"
+            ""
     ));
 }
 
@@ -48,18 +50,23 @@ void CFG::addBasicBlock(std::shared_ptr<BasicBlock> basicBlock) {
 
 void CFG::generateAssembly(std::ostream &output) {
 
+    for (const caramel::ast::Statement::Ptr statement : mTreeContext->getStatements()) {
+
+        if (statement->shouldReturnAnIR()) {
+            mBasicBlocks[0]->addInstruction(statement->getIR(mBasicBlocks[0]));
+        } else if (statement->shouldReturnABasicBlock()) {
+            mBasicBlocks.push_back(statement->getBasicBlock(this));
+        } else {
+            // logger.warning() << "Statement return neither IR neither BB";
+        }
+    }
+
     generateAssemblyPrologue(output);
     output << std::endl;
+    output.flush();
 
-    for (const caramel::ast::Statement::Ptr stamement : mTreeContext->getStatements()) {
-
-        if (stamement->shouldReturnAnIR()) {
-            stamement->getIR(mBasicBlocks[mBasicBlocks.size() - 1])->generateAssembly(output);
-        } else if (stamement->shouldReturnABasicBlock()) {
-            stamement->getBasicBlock(this)->generateAssembly(output);
-        } else {
-           // logger.warning() << "Statement return neither IR neither BB";
-        }
+    for(BasicBlock::Ptr const &bb : mBasicBlocks) {
+        bb->generateAssembly(output);
     }
 
     output << std::endl;
@@ -72,9 +79,44 @@ void CFG::generateAssemblyPrologue(std::ostream &output) {
     output << ".text";
 }
 
-void CFG::generateAssemblyEpilogue(std::ostream &output) {
-    output << "leave" << std::endl;
-    output << "ret" << std::endl;
+void CFG::generateAssemblyEpilogue(std::ostream &output) {}
+
+bool CFG::hasSymbol(int controlBlockId, std::string const &symbolName) {
+    return mSymbols[controlBlockId].find(symbolName) != mSymbols[controlBlockId].end() && mSymbols[0].find(symbolName) != mSymbols[0].end();
 }
+
+void CFG::addSymbol(int controlBlockId, std::string const &symbolName, caramel::ast::PrimaryType::Ptr type) {
+    mSymbols[controlBlockId][symbolName] = type;
+    stackLength = stackLength - type->getMemoryLength() / 8;
+    mSymbolIndex[controlBlockId][symbolName] = stackLength;
+}
+
+long CFG::getSymbolIndex(int controlBlockId, std::string const &symbolName) {
+    if(mSymbolIndex[controlBlockId].find(symbolName) != mSymbolIndex[controlBlockId].end()) {
+        return mSymbolIndex[controlBlockId][symbolName];
+    } else if (mSymbolIndex[0].find(symbolName) != mSymbolIndex[0].end()) {
+        return mSymbolIndex[0][symbolName];
+    } else {
+        return 0;
+    }
+}
+
+void CFG::enterFunction() {
+    stackLengthMemory = stackLength;
+    stackLength = 0;
+}
+
+void CFG::exitFunction() {
+    stackLength = stackLengthMemory;
+}
+
+std::shared_ptr<BasicBlock> CFG::generateBasicBlock(std::string const &entryName) {
+    return std::make_shared<BasicBlock>(nextBasicBlockNumber, this, entryName);
+}
+
+std::shared_ptr<BasicBlock> CFG::generateFunctionBlock(std::string const &entryName) {
+    return std::make_shared<BasicBlock>(++nextBasicBlockNumber, this, entryName);
+}
+
 
 } // namespace caramel::ir

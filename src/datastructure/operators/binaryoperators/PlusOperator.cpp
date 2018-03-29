@@ -42,7 +42,7 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::PlusOperator::buildIR(
             tmp,
             currentBasicBlock,
             ir::Operation::add,
-            SymbolType::VariableSymbol,
+            PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType()),
             params
     );
     return instr;

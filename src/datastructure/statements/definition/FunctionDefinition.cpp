@@ -23,7 +23,9 @@
 */
 
 #include "FunctionDefinition.h"
+#include "../../../ir/CFG.h"
 #include "../../../ir/BasicBlock.h"
+#include "../../../ir/IR.h"
 
 
 namespace caramel::ast {
@@ -54,7 +56,22 @@ void FunctionDefinition::visitChildrenAstDot() {
 std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
         ir::CFG *controlFlow
 ) {
-    caramel::ir::BasicBlock::Ptr bb = std::make_shared<caramel::ir::BasicBlock>(controlFlow, mSymbol.lock()->getName());
+    caramel::ir::BasicBlock::Ptr bb = controlFlow->generateFunctionBlock(mSymbol.lock()->getName());
+
+    controlFlow->enterFunction();
+
+    std::vector<std::string> pushQparameters;
+    pushQparameters.push_back(ir::IR::REGISTER_BASE_POINTER);
+    ir::IR::Ptr pushQInstruction = std::make_shared<ir::IR>(bb, ir::Operation::pushq, Void_t::Create(), pushQparameters);
+    bb->addInstruction(pushQInstruction);
+
+    std::vector<std::string> moveParameters;
+    moveParameters.push_back(ir::IR::REGISTER_STACK_POINTER);
+    moveParameters.push_back(ir::IR::REGISTER_BASE_POINTER);
+    ir::IR::Ptr moveInstruction = std::make_shared<ir::IR>(bb, ir::Operation::copy, Void_t::Create(), moveParameters);
+    bb->addInstruction(moveInstruction);
+
+
 
     for(caramel::ast::Statement::Ptr const &statement : mContext->getStatements()) {
         if(statement->shouldReturnAnIR()) {
@@ -63,6 +80,12 @@ std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
             controlFlow->addBasicBlock(statement->getBasicBlock(controlFlow));
         }
     }
+
+    ir::IR::Ptr leaveInstruction = std::make_shared<ir::IR>(bb, ir::Operation::leave, Void_t::Create(), pushQparameters);
+    bb->addInstruction(leaveInstruction);
+    ir::IR::Ptr retInstruction = std::make_shared<ir::IR>(bb, ir::Operation::ret, Void_t::Create(), pushQparameters);
+    bb->addInstruction(retInstruction);
+    controlFlow->exitFunction();
 
     return bb;
 }

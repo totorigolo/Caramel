@@ -38,6 +38,7 @@ public:
     using WeakPtr = std::shared_ptr<BasicBlock>;
 
     BasicBlock(
+            int id,
             CFG *cfg,
             std::string const &entryName
     );
@@ -52,7 +53,12 @@ public:
     std::shared_ptr<BasicBlock> getNextWhenTrue() const;
     std::shared_ptr<BasicBlock> getNextWhenFalse() const;
 
+    CFG * getCFG();
+
+    int getId();
+
 private:
+    int mID;
     /**
      * pointer to the next basic block, true branch. If nullptr, return from procedure
      */
@@ -64,6 +70,8 @@ private:
     std::string mLabelName;
     CFG *mCfg;
     std::vector<std::shared_ptr<IR>> mInstructions;
+    std::map<std::string, int> mSymbolsIndex;
+
 };
 
 } // namespace caramel::ir
