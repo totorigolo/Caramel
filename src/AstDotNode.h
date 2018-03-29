@@ -36,7 +36,10 @@ public:
     AstDotNode() = default;
     virtual ~AstDotNode() = default;
 
-    void addNode(size_t id, const std::string &name);
+    void addNode(size_t id, const std::string &name,
+                 const std::string &shape = "box", const std::string &color = "lightgrey");
+
+    void addErrorNode(size_t id, const std::string &name, const std::string &errorMessage);
 
     void addEdge(size_t id1, size_t id2);
 

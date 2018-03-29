@@ -46,6 +46,8 @@ public:
     );
 
     ~VariableSymbol() override = default;
+
+    void acceptAstDotVisit() override;
 };
 
 } // namespace caramel::dataStructure::symbolTable

@@ -41,23 +41,22 @@ void IfBlock::acceptAstDotVisit() {
 }
 
 void IfBlock::visitChildrenAstDot() {
-    addEdge(thisId(), mCondition->thisId(),"condition");
+    addEdge(thisId(), mCondition->thisId(), "condition");
     mCondition->acceptAstDotVisit();
 
-    addNode(thisId()+1, "Then block: ");
-    addEdge(thisId(), thisId()+1);
+    addNode(thisId() + 1, "Then block: ");
+    addEdge(thisId(), thisId() + 1);
     for (const auto &thenStatement : mThenBlock) {
-        addEdge(thisId()+1, thenStatement->thisId());
+        addEdge(thisId() + 1, thenStatement->thisId());
         thenStatement->acceptAstDotVisit();
     }
 
-    addNode(thisId()+2, "Else block: ");
-    addEdge(thisId(), thisId()+2);
+    addNode(thisId() + 2, "Else block: ");
+    addEdge(thisId(), thisId() + 2);
     for (const auto &elseStatement : mElseBlock) {
-        addEdge(thisId()+2, elseStatement->thisId());
+        addEdge(thisId() + 2, elseStatement->thisId());
         elseStatement->acceptAstDotVisit();
     }
 }
-
 
 } // namespace caramel::ast

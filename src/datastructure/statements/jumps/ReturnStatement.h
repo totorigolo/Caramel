@@ -41,9 +41,11 @@ public:
 
     ~ReturnStatement() override = default;
 
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
+
 private:
     std::shared_ptr<caramel::ast::Expression> mExpression;
-
 };
 
 } // namespace caramel::ast

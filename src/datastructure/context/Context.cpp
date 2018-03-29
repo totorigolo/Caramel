@@ -44,8 +44,11 @@ void Context::addStatements(std::vector<std::shared_ptr<caramel::ast::Statement>
 }
 
 void Context::acceptAstDotVisit() {
-    addNode(thisId(), "Context");
+    addNode(thisId(), "Context", "house");
     visitChildrenAstDot();
+
+    addEdge(thisId(), mSymbolTable->thisId());
+    mSymbolTable->acceptAstDotVisit();
 }
 
 void Context::visitChildrenAstDot() {

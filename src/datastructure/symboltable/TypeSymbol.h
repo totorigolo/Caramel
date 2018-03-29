@@ -45,6 +45,8 @@ public:
     void onDeclaration(const std::shared_ptr<caramel::ast::Declaration> &declaration) override;
     void onDefinition(const std::shared_ptr<caramel::ast::Definition> &definition) override;
 
+    void acceptAstDotVisit() override;
+
 private:
     bool mDefined;
 };
