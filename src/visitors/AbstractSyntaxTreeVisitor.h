@@ -48,7 +48,6 @@ using namespace caramel::ast;
 
 namespace caramel::visitors {
 
-class ParseTree;
 class ContextPusher;
 
 class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
@@ -77,27 +76,38 @@ public:
     /// Returns SymbolType::Ptr (in a Symbol::Ptr)
     antlrcpp::Any visitTypeParameter(CaramelParser::TypeParameterContext *ctx) override;
 
+    /// Returns Statement::Ptr
+    antlrcpp::Any visitInstruction(CaramelParser::InstructionContext *ctx) override;
+
+    /// Returns Statement::Ptr
+    antlrcpp::Any visitTypeDefinition(CaramelParser::TypeDefinitionContext *ctx) override;
+
+    /// Returns Jump::Ptr
+    antlrcpp::Any visitReturnJump(CaramelParser::ReturnJumpContext *ctx) override;
+
+    //--------------------------------------------------------------------------------------------------------
+    // Variables
+
     /// Returns vector<Statement::Ptr>
     antlrcpp::Any visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) override;
 
     /// Returns vector<Statement::Ptr>
     antlrcpp::Any visitVariableDefinition(CaramelParser::VariableDefinitionContext *ctx) override;
 
-    antlrcpp::Any visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) override;
-
-    /// Returns FunctionDefinition::Ptr
-    antlrcpp::Any visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) override;
-
-    antlrcpp::Any visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) override;
-
-    antlrcpp::Any visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) override;
+    //--------------------------------------------------------------------------------------------------------
+    // Functions
 
     /// Returns Statement::Ptr
-    antlrcpp::Any visitInstruction(CaramelParser::InstructionContext *ctx) override;
+    antlrcpp::Any visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) override;
 
-    antlrcpp::Any visitTypeDefinition(CaramelParser::TypeDefinitionContext *ctx) override;
+    /// Returns Statement::Ptr
+    antlrcpp::Any visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) override;
 
-    antlrcpp::Any visitReturnJump(CaramelParser::ReturnJumpContext *ctx) override;
+    /// Returns std::vector<Symbol::Ptr>
+    antlrcpp::Any visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) override;
+
+    /// Returns Symbol::Ptr
+    antlrcpp::Any visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) override;
 
     //--------------------------------------------------------------------------------------------------------
     // Arrays
@@ -135,6 +145,7 @@ public:
     /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) override;
 
+    // TODO: This function isn't implemented
     antlrcpp::Any visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) override;
 
     //--------------------------------------------------------------------------------------------------------

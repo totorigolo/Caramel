@@ -23,16 +23,25 @@
 */
 
 #include "AbstractSyntaxTreeVisitor.h"
+#include "../Logger.h"
+#include "../util/Common.h"
+#include "../datastructure/statements/expressions/atomicexpression/Constant.h"
 #include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
+#include "../datastructure/statements/expressions/atomicexpression/AtomicExpression.h"
+
 
 using namespace caramel::ast;
+using namespace caramel::util;
+using namespace caramel::colors;
 using namespace caramel::visitors;
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitExpression(CaramelParser::ExpressionContext *ctx) {
+    logger.trace() << "visiting expression: " << grey <<ctx->getText();
     return CaramelBaseVisitor::visitExpression(ctx);
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) {
+    logger.trace() << "visiting additive expression: " << grey <<ctx->getText();
     return visitChildren(ctx);
     if (ctx->children.size() == 1) {
         // One children = No BinaryExpression at this step.
@@ -49,5 +58,74 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::
 
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitAdditiveOperator(caramel_unused CaramelParser::AdditiveOperatorContext *ctx) {
+    logger.trace() << "visiting additive operator: " << grey <<ctx->getText();
     return std::dynamic_pointer_cast<BinaryOperator>(mPlusOperator);
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) {
+    logger.trace() << "visiting atomic expression: " << grey <<ctx->getText();
+
+    Expression::Ptr result;
+    if (ctx->validIdentifier()) {
+        std::string varName = visitValidIdentifier(ctx->validIdentifier());
+        Symbol::Ptr symbol = currentContext()->getSymbolTable()->addVariableUsage(ctx, varName, castTo<Statement::Ptr>(result));
+    } else if (ctx->charConstant()) {
+        result = castAnyTo<AtomicExpression::Ptr, Expression::Ptr>(visitCharConstant(ctx->charConstant()));
+    } else if (ctx->numberConstant()) {
+        result = castAnyTo<AtomicExpression::Ptr, Expression::Ptr>(visitNumberConstant(ctx->numberConstant()));
+    } else if (ctx->expression()) {
+        result = visitExpression(ctx->expression());
+    }
+    return castTo<Expression::Ptr>(result);
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitNumberConstant(CaramelParser::NumberConstantContext *ctx) {
+    logger.trace() << "visiting number constant: " << grey <<ctx->getText();
+
+    long long value = std::stoll(ctx->getText());
+    return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->start));
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
+    logger.trace() << "visiting char constant: " << grey <<ctx->getText();
+
+    char value = ctx->getText().at(0);
+    return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->start));
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) {
+    logger.trace() << "visiting positive constant: " << grey <<ctx->getText();
+
+    long long value = std::stoll(ctx->getText());
+    return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->getStart()));
+}
+
+antlrcpp::Any
+AbstractSyntaxTreeVisitor::visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) {
+    logger.trace() << "visiting postfix unary expression: " << grey <<ctx->getText();
+
+    antlrcpp::Any atomicExpression = visitAtomicExpression(ctx->atomicExpression());
+    if (ctx->postfixUnaryOperation().size() > 0) {
+        for (CaramelParser::PostfixUnaryOperationContext *postFixCtx : ctx->postfixUnaryOperation()) {
+            if (postFixCtx->callSufix()) {
+                if (!atomicExpression.is<FunctionSymbol::Ptr>()) {
+                    throw std::runtime_error("Cannot use function call on non function symbol");
+                }
+            } else if (postFixCtx->arrayAccess()) {
+                if (!atomicExpression.is<VariableSymbol::Ptr>()) {
+
+                }
+            } else if (postFixCtx->postfixUnaryOperator()) {
+                if (!atomicExpression.is<VariableSymbol::Ptr>()) {
+                    throw std::runtime_error("Cannot use postfix Unary Operator on non variable symbol");
+                }
+            }
+        }
+    }
+
+    if (atomicExpression.is<Symbol::Ptr>()) {
+
+    } else {
+        return atomicExpression;
+    }
 }

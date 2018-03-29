@@ -23,6 +23,8 @@
 */
 
 #include "AbstractSyntaxTreeVisitor.h"
+#include "../Logger.h"
+#include "../util/Common.h"
 #include "../datastructure/symboltable/ArraySymbol.h"
 #include "../datastructure/statements/declaration/ArrayDeclaration.h"
 #include "../datastructure/statements/definition/ArrayDefinition.h"
@@ -31,13 +33,13 @@
 
 
 using namespace caramel::ast;
+using namespace caramel::util;
+using namespace caramel::colors;
 using namespace caramel::visitors;
+using namespace caramel::exceptions;
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclaration(CaramelParser::ArrayDeclarationContext *ctx) {
-    logger.trace() << "Visiting array declaration: " << ctx->getText();
-
-    using namespace caramel::ast;
-    using namespace caramel::util;
+    logger.trace() << "visiting array declaration: " << grey <<ctx->getText();
 
     bool sized = ctx->arraySizedInner() != nullptr;
     size_t size = {};
@@ -64,11 +66,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDeclaration(CaramelParser::Ar
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::ArrayDefinitionContext *ctx) {
-    logger.trace() << "Visiting array definition: " << ctx->getText();
-
-    using namespace caramel::ast;
-    using namespace caramel::util;
-    using namespace caramel::exceptions;
+    logger.trace() << "visiting array definition: " << grey <<ctx->getText();
 
     bool sized = ctx->arraySizedInner() != nullptr;
     size_t size = {};
@@ -116,9 +114,8 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayDefinition(CaramelParser::Arr
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitArrayBlock(CaramelParser::ArrayBlockContext *ctx) {
-    logger.trace() << "Visiting array block: " << ctx->getText();
+    logger.trace() << "visiting array block: " << grey <<ctx->getText();
 
-    using namespace caramel::ast;
     std::vector<Expression::Ptr> expressions;
     for (auto expression : ctx->expression()) {
         Expression::Ptr exp = visitExpression(expression);

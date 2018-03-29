@@ -24,6 +24,7 @@
 
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
+#include "../util/Common.h"
 #include "../datastructure/statements/controlblocks/IfBlock.h"
 #include "../datastructure/statements/controlblocks/ForBlock.h"
 #include "../datastructure/statements/controlblocks/WhileBlock.h"
@@ -32,11 +33,13 @@
 
 using namespace caramel::ast;
 using namespace caramel::util;
+using namespace caramel::colors;
 using namespace caramel::visitors;
 
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitControlBlock(CaramelParser::ControlBlockContext *ctx) {
-    using namespace caramel::ast;
+    logger.trace() << "visiting array block: " << grey <<ctx->getText();
+
     if (ctx->ifBlock()) {
         return castAnyTo<IfBlock::Ptr, ControlBlock::Ptr>(visitIfBlock(ctx->ifBlock()));
     } else if (ctx->whileBlock()) {
@@ -47,9 +50,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitControlBlock(CaramelParser::Contro
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockContext *ctx) {
-    using namespace caramel::ast;
-
-    logger.trace() << "visit if block: ";
+    logger.trace() << "visiting if block: " << grey <<ctx->getText();
 
     IfBlock::Ptr ifBlock;
     Expression::Ptr expression = visitExpression(ctx->expression());
@@ -73,9 +74,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockCont
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitWhileBlock(CaramelParser::WhileBlockContext *ctx) {
-    using namespace caramel::ast;
-
-    logger.trace() << "visit while block: ";
+    logger.trace() << "visiting while block: " << grey <<ctx->getText();
 
     Expression::Ptr expression = visitExpression(ctx->expression());
     logger.trace() << "while condition :";
@@ -86,9 +85,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitWhileBlock(CaramelParser::WhileBlo
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitForBlock(CaramelParser::ForBlockContext *ctx) {
-    using namespace caramel::ast;
-
-    logger.trace() << "visit for block: ";
+    logger.trace() << "visiting for block: " << grey <<ctx->getText();
 
     Expression::Ptr begin = visitExpression(ctx->expression(0));
     Expression::Ptr end = visitExpression(ctx->expression(1));
@@ -96,6 +93,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitForBlock(CaramelParser::ForBlockCo
     logger.trace() << "for condition :";
     std::vector<Statement::Ptr> block = visitBlock(ctx->block());
 
-    ForBlock::Ptr forblock = std::make_shared<ForBlock>(begin, end, step, block, ctx->start);
-    return forblock;
+    ForBlock::Ptr forBlock = std::make_shared<ForBlock>(begin, end, step, block, ctx->start);
+    return forBlock;
 }
