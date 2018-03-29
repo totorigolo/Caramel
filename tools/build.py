@@ -21,11 +21,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from chef.logger import logger
-from chef.logger import trace
-from chef import seconds_to_string, exec_, mkdir_and_cd
-from chef import COMMANDS, PATHS, INJECTED_TOKENS_SEPARATOR
-from chef import colored
+from tools.logger import logger
+from tools.logger import trace
+from tools import seconds_to_string, exec_, mkdir_and_cd
+from tools import COMMANDS, PATHS, INJECTED_TOKENS_SEPARATOR
+from tools import colored
 from time import time
 import re
 import os
@@ -181,7 +181,7 @@ def build_caramel(args):
     # Configure the project with CMake
     initial_cwd = os.getcwd()
     mkdir_and_cd('build')
-    mkdir_and_cd('cmake-chef-{}'.format('debug' if args.debug else 'release'))
+    mkdir_and_cd('cmake-tools-{}'.format('debug' if args.debug else 'release'))
 
     start_time = time()
     logger.info('Running CMake...')

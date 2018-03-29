@@ -21,13 +21,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from chef.logger import LoggerLevel
-from chef.logger import logger
-from chef import seconds_to_string
-import chef.build
-import chef.clean
-import chef.test
-from chef import colored
+from tools.logger import LoggerLevel
+from tools.logger import logger
+from tools import seconds_to_string
+import tools.build
+import tools.clean
+import tools.test
+from tools import colored
 from time import time
 import argparse
 
@@ -50,7 +50,7 @@ def _chef():
 
     # create the parser for the "clean" command
     parser_clean = subparsers.add_parser('clean', help='Ask the Chef to clean up his workplace.')
-    parser_clean.set_defaults(func=chef.clean.clean)
+    parser_clean.set_defaults(func=tools.clean.clean)
 
     # create the parser for the "build" command
     parser_build = subparsers.add_parser('build', help='Make the Chef cook some Caramel.')
@@ -59,7 +59,7 @@ def _chef():
     parser_build.add_argument('-c', '--caramel', help='build the compiler', action='store_true')
     parser_build.add_argument('-d', '--debug', help='build as debug', action='store_true')
     parser_build.add_argument('-a', '--all', help='build everything', action='store_true')
-    parser_build.set_defaults(func=chef.build.build)
+    parser_build.set_defaults(func=tools.build.build)
 
     # create the parser for the "test" command
     parser_test = subparsers.add_parser('test', help='Test the Caramel quality.')
@@ -83,18 +83,18 @@ def _chef():
 
     # Create the parser for the "test grammar" command
     parser_test_grammar = test_subparsers.add_parser('grammar', help='Test the Caramel grammar.')
-    parser_test_grammar.set_defaults(func=chef.test.test_grammar)
+    parser_test_grammar.set_defaults(func=tools.test.test_grammar)
     test_common(parser_test_grammar)
 
     # Create the parser for the "test semantic" command
     parser_test_semantic = test_subparsers.add_parser('semantic', help='Test the Caramel semantic analysis.')
-    parser_test_semantic.set_defaults(func=chef.test.test_semantic)
+    parser_test_semantic.set_defaults(func=tools.test.test_semantic)
     test_common(parser_test_semantic)
     parser_test_semantic.add_argument('-d', '--debug', help='run Caramel as debug', action='store_true')
 
     # Create the parser for the "test all" command
     parser_test_all = test_subparsers.add_parser('all', help='Run all tests.')
-    parser_test_all.set_defaults(func=chef.test.test_all)
+    parser_test_all.set_defaults(func=tools.test.test_all)
     test_common(parser_test_all)
     parser_test_all.add_argument('-d', '--debug', help='run Caramel as debug', action='store_true')
 
