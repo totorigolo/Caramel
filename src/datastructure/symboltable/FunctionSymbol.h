@@ -49,6 +49,9 @@ public:
             const std::vector<std::shared_ptr<Symbol>> &namedParameters
     );
 
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
+
 private:
     std::vector<std::shared_ptr<Symbol>> mParameters;
 };

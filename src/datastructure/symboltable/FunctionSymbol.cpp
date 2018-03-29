@@ -48,5 +48,18 @@ void FunctionSymbol::setParameters(
     }
 }
 
+void FunctionSymbol::acceptAstDotVisit() {
+    addNode(thisId(), "FunctionSymbol: " + getName() + " as " + getType()->getIdentifier(), "note", "orange");
+    visitChildrenAstDot();
+}
+
+void FunctionSymbol::visitChildrenAstDot() {
+    size_t i = 0;
+    for (auto const& parameter : mParameters) {
+        addEdge(thisId(), parameter->thisId(), std::to_string(i++));
+        parameter->acceptAstDotVisit();
+    }
+}
+
 } // namespace caramel::ast
 

@@ -38,9 +38,16 @@ void ArraySymbol::setSize(const long &size) {
 
 long ArraySymbol::getSize() {
     return mSize;
-
 }
 
+void ArraySymbol::acceptAstDotVisit() {
+    addNode(thisId(), "ArraySymbol: " + getName() + " as " + getType()->getIdentifier(), "note", "orange");
+    visitChildrenAstDot();
+}
+
+void ArraySymbol::visitChildrenAstDot() {
+    addEdge(thisId(), thisId() + 1, "size");
+    addNode(thisId() + 1, std::to_string(mSize));
+}
 
 } // namespace caramel::dataStructure::symbolTable
-

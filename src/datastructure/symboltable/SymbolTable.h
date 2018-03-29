@@ -41,7 +41,7 @@
 
 namespace caramel::ast {
 
-class SymbolTable {
+class SymbolTable : public AstDotNode {
 public:
     using Ptr = std::shared_ptr<SymbolTable>;
     using WeakPtr = std::weak_ptr<SymbolTable>;
@@ -110,27 +110,18 @@ public:
     bool hasSymbol(std::string const &name);
     bool thisHasSymbol(std::string const &name);
     bool parentHasSymbol(std::string const &name);
-
     std::shared_ptr<Symbol> getSymbol(antlr4::ParserRuleContext *antlrContext, std::string const &name);
-
     std::shared_ptr<SymbolTable> getParentTable();
 
-private:
-    std::map<std::string, Symbol::Ptr> mSymbolMap;
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
 
 private:
-    std::shared_ptr<SymbolTable> mParentTable;
-
     bool isDeclared(std::string const &name);
-
     bool isDefined(std::string const &name);
-
     inline bool isNotDeclared(std::string const &name) { return !isDeclared(name); }
-
     inline bool isNotDefined(std::string const &name) { return !isDefined(name); }
 
-    std::string buildAlreadyDefinedErrorMessage(std::string const &variableName);
-    std::string buildAlreadyDeclaredErrorMessage(std::string const &variableName);
     std::string buildMismatchSymbolTypeErrorMessage(std::string const &variableName, SymbolType requiredSymbolType);
     std::string buildMismatchTypeErrorMessage(std::string const &variableName, std::shared_ptr<PrimaryType> const &requiredType);
     std::string buildUnknownSymbolErrorMessage(std::string const &name);
@@ -143,6 +134,10 @@ private:
     std::string buildFunctionDefinitionParameterTypeMismatchErrorMessage(const std::string &basic_string,
                                                                          std::shared_ptr<PrimaryType> shared_ptr,
                                                                          std::shared_ptr<PrimaryType> sharedPtr);
+
+private:
+    std::map<std::string, Symbol::Ptr> mSymbolMap;
+    std::shared_ptr<SymbolTable> mParentTable;
 };
 
 } // namespace caramel::dataStructure::symbolTable

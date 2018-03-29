@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "SemanticError.h"
+
 #include <stdexcept>
 
 
@@ -33,10 +35,15 @@ class UndefinedSymbolError : public SemanticError {
 
 public:
     UndefinedSymbolError(std::string const &message,
+                         SymbolType symbolType,
                          antlr4::ParserRuleContext *antlrContext)
-            : SemanticError(message),
+            : SemanticError(buildUndefinedSymbolErrorMessage(message, symbolType)),
               mAntlrContext{antlrContext} {}
 
+    UndefinedSymbolError(std::string const &message,
+                         antlr4::ParserRuleContext *antlrContext)
+            : SemanticError(buildUnknownSymbolErrorMessage(message)),
+              mAntlrContext{antlrContext} {}
 
     void explain(SourceFileUtil sourceFileUtil) const override {
         using namespace caramel::colors;
@@ -75,6 +82,31 @@ public:
                   << std::setfill(' ') << std::setw(LEFT_MARGIN + posInfoLength + startColumn - int(begin)) << ""
                   << bold << red << std::setfill('~') << std::setw(length) << "" << reset
                   << std::endl;
+    }
+
+    std::string buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType) {
+        std::stringstream res;
+        res << "The ";
+        switch (symbolType) {
+            case SymbolType::VariableSymbol:
+                res << "variable";
+                break;
+            case SymbolType::FunctionSymbol:
+                res << "function";
+                break;
+            case SymbolType::TypeSymbol:
+                res << "type";
+                break;
+            case SymbolType::ArraySymbol:
+                res << "array";
+                break;
+        }
+        res << " '" << name << "' is not defined before.";
+        return res.str();
+    }
+
+    std::string buildUnknownSymbolErrorMessage(std::string const &name) {
+        return "Unknown symbol " + name;
     }
 
 private:

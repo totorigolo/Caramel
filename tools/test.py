@@ -21,10 +21,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from chef.logger import logger
-from chef.logger import trace
-from chef import COMMANDS, PATHS, seconds_to_string, exec_
-from chef import colored
+from tools.logger import logger
+from tools.logger import trace
+from tools import COMMANDS, PATHS, seconds_to_string, exec_
+from tools import colored
 from copy import copy
 from time import time
 import subprocess
@@ -291,7 +291,7 @@ def test_grammar(args):
     logger.info('Running grammar tests...')
 
     if args.build:
-        from chef.build import build_grammar
+        from tools.build import build_grammar
         build_grammar(args)
 
     if args.interactive and len(args.test_files) > 0:
@@ -321,7 +321,7 @@ def test_semantic(args):
     logger.info('Running semantic tests...')
 
     if args.build:
-        from chef.build import build_grammar, build_caramel
+        from tools.build import build_grammar, build_caramel
         build_grammar(args)
         build_caramel(args)
 

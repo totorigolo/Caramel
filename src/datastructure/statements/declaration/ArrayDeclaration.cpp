@@ -23,6 +23,8 @@
 */
 
 #include "ArrayDeclaration.h"
+#include "../../symboltable/ArraySymbol.h"
+#include "../../../util/Common.h"
 
 
 namespace caramel::ast {
@@ -37,9 +39,17 @@ std::weak_ptr<ArraySymbol> ArrayDeclaration::getArraySymbol() {
 }
 
 void ArrayDeclaration::acceptAstDotVisit() {
-    addNode(thisId(), "ArrayDeclaration: ");
+    using namespace caramel::util;
+    if (!mSymbol.lock()) {
+        addErrorNode(thisId(), "ArrayDeclaration", "ArraySymbol is null.");
+        return;
+    }
+    auto arraySymbol = castTo<ArraySymbol::Ptr>(mSymbol.lock());
+    addNode(thisId(), "ArrayDeclaration: " + std::to_string(arraySymbol->getSize()));
 }
 
-void ArrayDeclaration::visitChildrenAstDot() {}
+void ArrayDeclaration::visitChildrenAstDot() {
+
+}
 
 } // caramel::ast

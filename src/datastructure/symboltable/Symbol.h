@@ -43,7 +43,7 @@ enum class SymbolType {
     ArraySymbol
 };
 
-class Symbol {
+class Symbol : public AstDotNode {
 public:
     using Ptr = std::shared_ptr<Symbol>;
     using WeakPtr = std::weak_ptr<Symbol>;
@@ -69,6 +69,8 @@ public:
     std::string getSymbolTypeAsString() const;
 
     std::string getName() const;
+
+    void acceptAstDotVisit() override;
 
 protected:
     Symbol(

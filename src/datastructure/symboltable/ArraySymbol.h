@@ -45,6 +45,9 @@ public:
     void setSize(const long &size);
     long getSize();
 
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
+
 private:
     long mSize;
 };

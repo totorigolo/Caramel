@@ -88,18 +88,22 @@ std::string caramel::ast::Symbol::getName() const {
     return mName;
 }
 
+void caramel::ast::Symbol::acceptAstDotVisit() {
+    logger.warning() << "Default accept() for " << thisId() << ", which is a " << getSymbolTypeAsString() << '.';
+}
+
 void caramel::ast::Symbol::onDeclaration(const std::shared_ptr<caramel::ast::Declaration> &declaration) {}
 
 void caramel::ast::Symbol::onDefinition(const std::shared_ptr<caramel::ast::Definition> &definition) {}
 
-void caramel::ast::Symbol::onUsage(
-        const std::shared_ptr<caramel::ast::Statement> &expression) {}
+void caramel::ast::Symbol::onUsage(const std::shared_ptr<caramel::ast::Statement> &expression) {}
 
 std::shared_ptr<caramel::ast::PrimaryType> caramel::ast::Symbol::getType() const {
     return mType;
 }
 
 std::string caramel::ast::Symbol::getSymbolTypeAsString() const {
+    // TODO: Change to a stream operator
     switch (mSymbolType) {
         case SymbolType::VariableSymbol:
             return "VariableSymbol";

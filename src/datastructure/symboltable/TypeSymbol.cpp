@@ -48,4 +48,8 @@ void TypeSymbol::onDefinition(const std::shared_ptr<caramel::ast::Definition> &d
     mDefined = true;
 }
 
+void TypeSymbol::acceptAstDotVisit() {
+    addNode(thisId(), "TypeSymbol: " + getName() + " as " + getType()->getIdentifier(), "note", "orange");
+}
+
 } // namespace caramel::dataStructure::symbolTable

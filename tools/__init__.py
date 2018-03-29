@@ -30,7 +30,7 @@ except ModuleNotFoundError:
     def colored(text, *args, **kwargs):
         return text
 
-from chef.logger import trace, logger
+from tools.logger import trace, logger
 import subprocess
 import datetime
 import shlex

@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# This file is a shortcut to chef/chef.py, and is the Chef entry point.
+# This file is a shortcut to tools/tools.py, and is the Chef entry point.
 
-from chef import chef
+from tools import chef
 chef.main()
