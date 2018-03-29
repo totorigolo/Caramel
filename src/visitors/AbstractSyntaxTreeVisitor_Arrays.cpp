@@ -24,7 +24,7 @@
 
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
-#include "../util/Common.h"
+#include "../utils/Common.h"
 #include "../datastructure/symboltable/ArraySymbol.h"
 #include "../datastructure/statements/declaration/ArrayDeclaration.h"
 #include "../datastructure/statements/definition/ArrayDefinition.h"
@@ -33,7 +33,7 @@
 
 
 using namespace caramel::ast;
-using namespace caramel::util;
+using namespace caramel::utils;
 using namespace caramel::colors;
 using namespace caramel::visitors;
 using namespace caramel::exceptions;

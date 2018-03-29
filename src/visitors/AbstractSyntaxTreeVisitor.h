@@ -24,10 +24,10 @@
 
 #pragma once
 
-#include "../util/Common.h"
+#include "../utils/Common.h"
 #include "../Console.h"
 #include "../datastructure/context/Context.h"
-#include "../util/SourceFileUtil.h"
+#include "../utils/SourceFileUtil.h"
 #include "../datastructure/operators/binaryoperators/PlusOperator.h"
 #include "../datastructure/operators/binaryoperators/MultOperator.h"
 #include "../datastructure/operators/binaryoperators/BitwiseShiftOperator.h"
@@ -171,7 +171,7 @@ private:
 
 private:
     std::stack<std::shared_ptr<caramel::ast::Context>> mContextStack;
-    SourceFileUtil mSourceFileUtil;
+    utils::SourceFileUtil mSourceFileUtil;
 
     const std::shared_ptr<caramel::ast::BitwiseShiftOperator> mBitwiseShiftOperator;
     const std::shared_ptr<caramel::ast::MultOperator> mMultOperator;

@@ -24,14 +24,14 @@
 
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
-#include "../util/Common.h"
+#include "../utils/Common.h"
 #include "../datastructure/statements/expressions/atomicexpression/Constant.h"
 #include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
 #include "../datastructure/statements/expressions/atomicexpression/AtomicExpression.h"
 
 
 using namespace caramel::ast;
-using namespace caramel::util;
+using namespace caramel::utils;
 using namespace caramel::colors;
 using namespace caramel::visitors;
 

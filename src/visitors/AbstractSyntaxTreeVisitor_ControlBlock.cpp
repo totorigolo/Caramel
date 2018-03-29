@@ -24,7 +24,7 @@
 
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
-#include "../util/Common.h"
+#include "../utils/Common.h"
 #include "../datastructure/statements/controlblocks/IfBlock.h"
 #include "../datastructure/statements/controlblocks/ForBlock.h"
 #include "../datastructure/statements/controlblocks/WhileBlock.h"
@@ -32,7 +32,7 @@
 
 
 using namespace caramel::ast;
-using namespace caramel::util;
+using namespace caramel::utils;
 using namespace caramel::colors;
 using namespace caramel::visitors;
 

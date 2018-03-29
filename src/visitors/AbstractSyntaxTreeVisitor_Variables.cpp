@@ -24,13 +24,13 @@
 
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
-#include "../util/Common.h"
+#include "../utils/Common.h"
 #include "../datastructure/statements/declaration/VariableDeclaration.h"
 #include "../datastructure/statements/definition/VariableDefinition.h"
 
 
 using namespace caramel::ast;
-using namespace caramel::util;
+using namespace caramel::utils;
 using namespace caramel::colors;
 using namespace caramel::visitors;
 

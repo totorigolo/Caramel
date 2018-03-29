@@ -24,29 +24,21 @@
 
 #pragma once
 
+#include <CaramelParser.h>
+#include <memory>
 
-#include <fstream>
+namespace caramel::utils {
 
-/**
- * SourceFileUtil is used to work with the source code
- */
-class SourceFileUtil {
+template<typename To, typename ToInner = typename To::element_type, class In>
+To castTo(In const &r) {
+    return std::dynamic_pointer_cast<ToInner>(r);
+}
 
-public:
-    explicit SourceFileUtil(const std::string &fileName);
-    virtual ~SourceFileUtil() = default;
+template<class In, typename To, typename ToInner = typename To::element_type>
+To castAnyTo(antlrcpp::Any r) {
+    return std::dynamic_pointer_cast<ToInner>(r.as<In>());
+}
 
-    /**
-     * Return the line at `line` line of the source code
-     * Pre : 0 <= currentCursorLine <= line < number of lines in the cursor
-     * @param line The line number
-     * @param currentCursorLine Indicate the cursor line position in the source code (default to 0)
-     * @param resetToHead Indicates if the cursor must be moved to the beginning of the source code
-     * @return the line of the source code
-     */
-    std::string getLine(size_t line, size_t currentCursorLine = 0, bool resetToHead = true);
+} // namespace caramel::utils
 
-private:
-    std::string mFileName;
-    std::ifstream mInputStream;
-};
+

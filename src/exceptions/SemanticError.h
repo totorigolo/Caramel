@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "../util/SourceFileUtil.h"
+#include "../utils/SourceFileUtil.h"
 #include "../datastructure/symboltable/Symbol.h"
 #include "../datastructure/context/Context.h"
 #include "../datastructure/statements/Statement.h"
@@ -38,7 +38,7 @@ class SemanticError : public std::runtime_error {
 public:
     explicit SemanticError(std::string const &message) : std::runtime_error(message) {}
 
-    virtual void explain(SourceFileUtil sourceFileUtil) const = 0;
+    virtual void explain(utils::SourceFileUtil sourceFileUtil) const = 0;
 };
 
 } // namespace caramel::exceptions

@@ -22,23 +22,28 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "SourceFileUtil.h"
+#include "../Logger.h"
 
-#include <CaramelParser.h>
-#include <memory>
+namespace caramel::utils {
 
-namespace caramel::util {
-
-template<typename To, typename ToInner = typename To::element_type, class In>
-To castTo(In const &r) {
-    return std::dynamic_pointer_cast<ToInner>(r);
+SourceFileUtil::SourceFileUtil(const std::string &fileName)
+        : mFileName(fileName), mInputStream(fileName) {
+    logger.trace() << "New SourceFileUtil(" << fileName << ")";
 }
 
-template<class In, typename To, typename ToInner = typename To::element_type>
-To castAnyTo(antlrcpp::Any r) {
-    return std::dynamic_pointer_cast<ToInner>(r.as<In>());
+std::string SourceFileUtil::getLine(size_t line, size_t currentCursorLine, bool resetToHead) {
+    std::string buffer;
+    size_t i = currentCursorLine;
+    while (i < line - 1) { // Moves the cursor to the right line
+        mInputStream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        i++;
+    }
+    std::getline(mInputStream, buffer);
+    if (resetToHead) {
+        mInputStream.seekg(0);
+    }
+    return buffer;
 }
 
-} // namespace caramel::util
-
-
+} // namespace caramel::utils

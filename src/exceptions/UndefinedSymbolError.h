@@ -38,7 +38,7 @@ public:
               mAntlrContext{antlrContext} {}
 
 
-    void explain(SourceFileUtil sourceFileUtil) const override {
+    void explain(utils::SourceFileUtil sourceFileUtil) const override {
         using namespace caramel::colors;
 
         // TODO: Create helper functions

@@ -45,7 +45,7 @@ public:
               mDefinedName{std::move(definedName)} {
     }
 
-    void explain(SourceFileUtil sourceFileUtil) const override {
+    void explain(utils::SourceFileUtil sourceFileUtil) const override {
         //todo
         logger.fatal() << what();
     }

@@ -24,15 +24,17 @@
 
 #pragma once
 
-#include "../../util/SourceFileUtil.h"
+#include "../../utils/SourceFileUtil.h"
 
 #include <antlr4-runtime.h>
 
+namespace caramel::listeners {
 
-class ParserErrorListener: public antlr4::BaseErrorListener {
+class ParserErrorListener : public antlr4::BaseErrorListener {
 
 public:
     explicit ParserErrorListener(const std::string &sourceFile);
+
     ~ParserErrorListener() override = default;
 
 private:
@@ -52,10 +54,8 @@ private:
                                   size_t stopIndex, size_t prediction, antlr4::atn::ATNConfigSet *configs) override;
 
 private:
-    SourceFileUtil sourceStream;
+    utils::SourceFileUtil sourceStream;
     size_t lastErrorLine = static_cast<size_t>(-1);
-
 };
 
-
-
+} // namespace caramel::listeners

@@ -25,12 +25,15 @@
 #include "ParserErrorListener.h"
 #include "../../Console.h"
 
+
+namespace caramel::listeners {
+
 ParserErrorListener::ParserErrorListener(const std::string &sourceFile) : sourceStream(sourceFile) {}
 
 void ParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol, size_t line,
-                                     size_t charPositionInLine, const std::string &msg, std::exception_ptr e) {
-    if(line != lastErrorLine) {
-        if(lastErrorLine == -1) {
+                                      size_t charPositionInLine, const std::string &msg, std::exception_ptr e) {
+    if (line != lastErrorLine) {
+        if (lastErrorLine == -1) {
             lastErrorLine = 0;
         }
         using namespace caramel::colors;
@@ -48,14 +51,18 @@ void ParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::To
 }
 
 void ParserErrorListener::reportAmbiguity(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa, size_t startIndex,
-                                         size_t stopIndex, bool exact, const antlrcpp::BitSet &ambigAlts,
-                                         antlr4::atn::ATNConfigSet *configs) {}
+                                          size_t stopIndex, bool exact, const antlrcpp::BitSet &ambigAlts,
+                                          antlr4::atn::ATNConfigSet *configs) {}
 
 void ParserErrorListener::reportAttemptingFullContext(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa,
-                                                     size_t startIndex, size_t stopIndex,
-                                                     const antlrcpp::BitSet &conflictingAlts,
-                                                     antlr4::atn::ATNConfigSet *configs) {}
+                                                      size_t startIndex, size_t stopIndex,
+                                                      const antlrcpp::BitSet &conflictingAlts,
+                                                      antlr4::atn::ATNConfigSet *configs) {}
 
 void
-ParserErrorListener::reportContextSensitivity(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa, size_t startIndex,
-                                             size_t stopIndex, size_t prediction, antlr4::atn::ATNConfigSet *configs) {}
+ParserErrorListener::reportContextSensitivity(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa,
+                                              size_t startIndex,
+                                              size_t stopIndex, size_t prediction,
+                                              antlr4::atn::ATNConfigSet *configs) {}
+
+} // namespace caramel::listeners

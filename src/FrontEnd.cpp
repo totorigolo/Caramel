@@ -25,8 +25,9 @@
 #include "FrontEnd.h"
 
 #include "Logger.h"
-#include "listeners/errorlistener/ParserErrorListener.h"
+#include "utils/SourceFileUtil.h"
 #include "exceptions/SemanticError.h"
+#include "listeners/errorlistener/ParserErrorListener.h"
 
 
 namespace caramel {
@@ -43,7 +44,7 @@ ast::Context::Ptr frontEnd(Config const &config) {
     CommonTokenStream tokens(&lexer);
     CaramelParser parser(&tokens);
 
-    ParserErrorListener errorListener(config.sourceFile);
+    listeners::ParserErrorListener errorListener(config.sourceFile);
     parser.removeErrorListeners();
     parser.addErrorListener(&errorListener);
 
@@ -94,7 +95,7 @@ ast::Context::Ptr frontEnd(Config const &config) {
         return context;
 
     } catch (caramel::exceptions::SemanticError &semanticError) {
-        semanticError.explain(SourceFileUtil(config.sourceFile));
+        semanticError.explain(utils::SourceFileUtil(config.sourceFile));
         exit(1);
     }
 }

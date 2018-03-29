@@ -43,7 +43,7 @@ namespace caramel::exceptions {
                   mDefinedSize{definedSize} {
         }
 
-        void explain(SourceFileUtil sourceFileUtil) const override {
+        void explain(utils::SourceFileUtil sourceFileUtil) const override {
             //todo
             logger.fatal() << what();
         }

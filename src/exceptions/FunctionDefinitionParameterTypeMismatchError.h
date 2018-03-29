@@ -45,7 +45,7 @@ namespace caramel::exceptions {
                   mDefinedType{std::move(definedType)} {
         }
 
-        void explain(SourceFileUtil sourceFileUtil) const override {
+        void explain(utils::SourceFileUtil sourceFileUtil) const override {
             //todo
             logger.fatal() << what();
         }

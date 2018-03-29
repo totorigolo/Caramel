@@ -27,14 +27,14 @@
 #include "SemanticError.h"
 
 #include "../Console.h"
-#include "../util/SourceFileUtil.h"
+#include "../utils/SourceFileUtil.h"
 #include "../Logger.h"
-
 
 #include <iomanip>
 #include <iostream>
 
 using namespace caramel::ast;
+
 namespace caramel::exceptions {
 
 class SymbolAlreadyDeclaredError : public SemanticError {
@@ -50,7 +50,7 @@ public:
               mFaultyDeclaration{faultyDeclaration} {
     }
 
-    void explain(SourceFileUtil sourceFileUtil) const override {
+    void explain(utils::SourceFileUtil sourceFileUtil) const override {
         using namespace colors;
 
         // TODO: Create helper functions

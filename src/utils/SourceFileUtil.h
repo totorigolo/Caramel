@@ -22,24 +22,35 @@
  * SOFTWARE.
 */
 
-#include "SourceFileUtil.h"
-#include "../Logger.h"
+#pragma once
 
-SourceFileUtil::SourceFileUtil(const std::string &fileName)
-        : mFileName(fileName), mInputStream(fileName) {
-    logger.trace() << "New SourceFileUtil(" << fileName << ")";
-}
+#include <fstream>
 
-std::string SourceFileUtil::getLine(size_t line, size_t currentCursorLine, bool resetToHead) {
-    std::string buffer;
-    size_t i = currentCursorLine;
-    while (i < line - 1) { // Moves the cursor to the right line
-        mInputStream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        i++;
-    }
-    std::getline(mInputStream, buffer);
-    if (resetToHead) {
-        mInputStream.seekg(0);
-    }
-    return buffer;
-}
+namespace caramel::utils {
+
+/**
+ * SourceFileUtil is used to work with the source code
+ */
+class SourceFileUtil {
+
+public:
+    explicit SourceFileUtil(const std::string &fileName);
+
+    virtual ~SourceFileUtil() = default;
+
+    /**
+     * Return the line at `line` line of the source code
+     * Pre : 0 <= currentCursorLine <= line < number of lines in the cursor
+     * @param line The line number
+     * @param currentCursorLine Indicate the cursor line position in the source code (default to 0)
+     * @param resetToHead Indicates if the cursor must be moved to the beginning of the source code
+     * @return the line of the source code
+     */
+    std::string getLine(size_t line, size_t currentCursorLine = 0, bool resetToHead = true);
+
+private:
+    std::string mFileName;
+    std::ifstream mInputStream;
+};
+
+} // namespace caramel::utils

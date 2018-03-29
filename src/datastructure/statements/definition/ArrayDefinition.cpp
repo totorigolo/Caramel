@@ -26,7 +26,7 @@
 
 #include "../../symboltable/ArraySymbol.h"
 #include "../expressions/atomicexpression/Constant.h"
-#include "../../../util/Common.h"
+#include "../../../utils/Common.h"
 
 
 namespace caramel::ast {
@@ -44,7 +44,7 @@ void ArrayDefinition::setSymbol(std::shared_ptr<ArraySymbol> const &symbol) {
 }
 
 void ArrayDefinition::acceptAstDotVisit() {
-    using namespace caramel::util;
+    using namespace caramel::utils;
     if (!mSymbol.lock()) {
         addErrorNode(thisId(), "ArrayDefinition", "ArraySymbol is null.");
         return;

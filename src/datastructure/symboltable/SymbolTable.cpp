@@ -33,7 +33,7 @@
 #include "../../exceptions/FunctionDefinitionNumberOfParametersMismatchError.h"
 #include "../../exceptions/FunctionDefinitionParameterNameMismatchError.h"
 #include "../../exceptions/FunctionDefinitionParameterTypeMismatchError.h"
-#include "../../util/Common.h"
+#include "../../utils/Common.h"
 
 
 namespace caramel::ast {
@@ -181,7 +181,7 @@ ArraySymbol::Ptr SymbolTable::addArrayDefinition(
         std::vector<std::shared_ptr<Expression>> &&content,
         const std::shared_ptr<Definition> &definition
 ) {
-    using namespace caramel::util;
+    using namespace caramel::utils;
     using namespace caramel::exceptions;
 
     if (isDefined(name)) {
