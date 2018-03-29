@@ -25,10 +25,10 @@
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
 #include "../utils/Common.h"
-#include "../datastructure/statements/controlblocks/IfBlock.h"
-#include "../datastructure/statements/controlblocks/ForBlock.h"
-#include "../datastructure/statements/controlblocks/WhileBlock.h"
-#include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
+#include "../ast/statements/controlblocks/IfBlock.h"
+#include "../ast/statements/controlblocks/ForBlock.h"
+#include "../ast/statements/controlblocks/WhileBlock.h"
+#include "../ast/statements/expressions/binaryexpression/BinaryExpression.h"
 
 
 using namespace caramel::ast;

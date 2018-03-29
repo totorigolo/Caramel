@@ -25,10 +25,10 @@
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
 #include "../utils/Common.h"
-#include "../datastructure/symboltable/ArraySymbol.h"
-#include "../datastructure/statements/declaration/ArrayDeclaration.h"
-#include "../datastructure/statements/definition/ArrayDefinition.h"
-#include "../datastructure/statements/expressions/atomicexpression/Constant.h"
+#include "../ast/symboltable/ArraySymbol.h"
+#include "../ast/statements/declaration/ArrayDeclaration.h"
+#include "../ast/statements/definition/ArrayDefinition.h"
+#include "../ast/statements/expressions/atomicexpression/Constant.h"
 #include "../exceptions/ArrayBlockSizeExceedsDeclarationException.h"
 
 

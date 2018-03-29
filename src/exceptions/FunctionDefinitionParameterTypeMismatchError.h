@@ -26,7 +26,7 @@
 
 #include "../Console.h"
 #include "SemanticError.h"
-#include "../datastructure/symboltable/PrimaryType.h"
+#include "../ast/symboltable/PrimaryType.h"
 
 #include <stdexcept>
 #include <ParserRuleContext.h>

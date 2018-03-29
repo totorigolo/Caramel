@@ -25,9 +25,9 @@
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
 #include "../utils/Common.h"
-#include "../datastructure/statements/expressions/atomicexpression/Constant.h"
-#include "../datastructure/statements/expressions/binaryexpression/BinaryExpression.h"
-#include "../datastructure/statements/expressions/atomicexpression/AtomicExpression.h"
+#include "../ast/statements/expressions/atomicexpression/Constant.h"
+#include "../ast/statements/expressions/binaryexpression/BinaryExpression.h"
+#include "../ast/statements/expressions/atomicexpression/AtomicExpression.h"
 
 
 using namespace caramel::ast;

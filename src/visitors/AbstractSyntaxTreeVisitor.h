@@ -26,11 +26,11 @@
 
 #include "../utils/Common.h"
 #include "../Console.h"
-#include "../datastructure/context/Context.h"
 #include "../utils/SourceFileUtil.h"
-#include "../datastructure/operators/binaryoperators/PlusOperator.h"
-#include "../datastructure/operators/binaryoperators/MultOperator.h"
-#include "../datastructure/operators/binaryoperators/BitwiseShiftOperator.h"
+#include "../ast/context/Context.h"
+#include "../ast/operators/binaryoperators/PlusOperator.h"
+#include "../ast/operators/binaryoperators/MultOperator.h"
+#include "../ast/operators/binaryoperators/BitwiseShiftOperator.h"
 
 
 #pragma GCC diagnostic push

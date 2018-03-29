@@ -25,10 +25,10 @@
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
 #include "../utils/Common.h"
-#include "../datastructure/statements/jumps/Jump.h"
-#include "../datastructure/statements/jumps/ReturnStatement.h"
-#include "../datastructure/statements/controlblocks/ControlBlock.h"
-#include "../datastructure/statements/expressions/atomicexpression/Constant.h"
+#include "../ast/statements/jumps/Jump.h"
+#include "../ast/statements/jumps/ReturnStatement.h"
+#include "../ast/statements/controlblocks/ControlBlock.h"
+#include "../ast/statements/expressions/atomicexpression/Constant.h"
 
 
 using namespace caramel::ast;

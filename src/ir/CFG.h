@@ -24,8 +24,8 @@
 
 #pragma once
 
-#include "../datastructure/statements/Statement.h"
-#include "../datastructure/symboltable/Symbol.h"
+#include "../ast/statements/Statement.h"
+#include "../ast/symboltable/Symbol.h"
 
 namespace caramel::ir {
 

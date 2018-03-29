@@ -26,7 +26,7 @@
 
 #include "IR.h"
 #include "CFG.h"
-#include "../datastructure/symboltable/Symbol.h"
+#include "../ast/symboltable/Symbol.h"
 #include <ostream>
 #include <vector>
 

@@ -25,8 +25,8 @@
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../Logger.h"
 #include "../utils/Common.h"
-#include "../datastructure/statements/declaration/FunctionDeclaration.h"
-#include "../datastructure/statements/definition/FunctionDefinition.h"
+#include "../ast/statements/declaration/FunctionDeclaration.h"
+#include "../ast/statements/definition/FunctionDefinition.h"
 
 
 using namespace caramel::ast;

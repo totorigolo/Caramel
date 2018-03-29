@@ -26,7 +26,7 @@
 
 #include "Symbol.h"
 #include "TypeSymbol.h"
-#include "../../datastructure/statements/expressions/Expression.h"
+#include "../../ast/statements/expressions/Expression.h"
 
 #include <memory>
 #include <vector>

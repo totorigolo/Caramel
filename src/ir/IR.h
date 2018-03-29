@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "../datastructure/symboltable/Symbol.h"
+#include "../ast/symboltable/Symbol.h"
 #include <memory>
 
 namespace caramel::ir {
