@@ -54,7 +54,10 @@ void X86_64CFGVisitor::generateAssemblyPrologue(
 void X86_64CFGVisitor::generateAssemblyEpilogue(
         std::shared_ptr<ir::CFG> const &controlFlowGraph,
         std::ostream &os
-) {}
+) {
+    CARAMEL_UNUSED(controlFlowGraph);
+    CARAMEL_UNUSED(os);
+}
 
 
 } // namespace caramel::ir::x86_64

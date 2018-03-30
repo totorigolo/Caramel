@@ -84,7 +84,9 @@ void X86_64IRVisitor::visitEpilog(caramel::ir::EpilogInstruction *instruction, s
 }
 
 void X86_64IRVisitor::visitAddition(caramel::ir::AdditionInstruction *instruction, std::ostream &os) {
-
+    // Todo: create visitAddition
+    CARAMEL_UNUSED(instruction);
+    CARAMEL_UNUSED(os);
 }
 
 void X86_64IRVisitor::visitLdConst(caramel::ir::LDConstInstruction *instruction, std::ostream &os) {

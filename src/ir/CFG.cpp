@@ -35,8 +35,8 @@ CFG::CFG(
     mSymbols{},
     mSymbolIndex{},
     stackLength{0},
-    mBasicBlocks{},
-    nextBasicBlockNumber{0} {
+    nextBasicBlockNumber{0},
+    mBasicBlocks{} {
     mBasicBlocks.push_back(std::make_shared<BasicBlock>(
             nextBasicBlockNumber,
             this,
