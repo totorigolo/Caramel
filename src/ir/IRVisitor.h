@@ -24,60 +24,65 @@
 
 #pragma once
 
+
+#include "instructions.h"
 #include "IR.h"
-#include "CFG.h"
-#include "../ast/symboltable/Symbol.h"
-#include <ostream>
-#include <vector>
+#include "instructions/CopyInstruction.h"
+#include "instructions/EmptyInstruction.h"
+#include "instructions/PrologInstruction.h"
+#include "instructions/EpilogInstruction.h"
+#include "instructions/LDConstInstruction.h"
 
 namespace caramel::ir {
 
-class BasicBlock {
+class CopyInstruction;
+
+class EmptyInstruction;
+
+class PrologInstruction;
+
+class EpilogInstruction;
+
+class AdditionInstruction;
+
+class LDConstInstruction;
+
+class IRVisitor {
 public:
-    using Ptr = std::shared_ptr<BasicBlock>;
-    using WeakPtr = std::shared_ptr<BasicBlock>;
 
-    BasicBlock(
-            int id,
-            CFG *cfg,
-            std::string const &entryName
-    );
+    virtual void visitCopy(
+            caramel::ir::CopyInstruction *instruction,
+            std::ostream &os
+    ) = 0;
 
-    virtual ~BasicBlock() = default;
+    virtual void visitEmpty(
+            caramel::ir::EmptyInstruction *instruction,
+            std::ostream &os
+    ) = 0;
 
-public:
+    virtual void visitProlog(
+            caramel::ir::PrologInstruction *instruction,
+            std::ostream &os
+    ) = 0;
 
-    std::string addInstruction(std::shared_ptr<IR> const &instruction);
+    virtual void visitEpilog(
+            caramel::ir::EpilogInstruction *instruction,
+            std::ostream &os
+    ) = 0;
 
-    std::vector<std::shared_ptr<IR>> & getInstructions();
-    std::string & getLabelName();
+    virtual void visitAddition(
+            caramel::ir::AdditionInstruction *instruction,
+            std::ostream &os
+    ) = 0;
 
-    std::shared_ptr<BasicBlock> getNextWhenTrue() const;
-    std::shared_ptr<BasicBlock> getNextWhenFalse() const;
-
-    long getSymbolIndex(std::string const &symbolName);
-
-    CFG * getCFG();
-
-    int getId();
-
-private:
-    int mID;
-    /**
-     * pointer to the next basic block, true branch. If nullptr, return from procedure
-     */
-    std::shared_ptr<BasicBlock> mExitWhenTrue;
-    /**
-     * pointer to the next basic block, false branch. If nullptr, the basic block ends with an unconditional jump
-     */
-    std::shared_ptr<BasicBlock> mExitWhenFalse;
-    std::string mLabelName;
-    CFG *mCfg;
-    std::vector<std::shared_ptr<IR>> mInstructions;
-    std::map<std::string, int> mSymbolsIndex;
+    virtual void visitLdConst(
+            caramel::ir::LDConstInstruction *instruction,
+            std::ostream &os
+    ) = 0;
 
 };
 
 } // namespace caramel::ir
+
 
 

@@ -22,30 +22,23 @@
  * SOFTWARE.
 */
 
-#include "UnaryExpression.h"
+#include "AdditionInstruction.h"
+#include "../IRVisitor.h"
 
+namespace caramel::ir {
 
-namespace caramel::ast {
+AdditionInstruction::AdditionInstruction(
+        std::string const &returnName,
+        std::shared_ptr<caramel::ir::BasicBlock> const &parentBlock,
+        caramel::ast::PrimaryType::Ptr const &type,
+        std::vector<std::string> const &parameters
+) : IR(returnName,
+       parentBlock, Operation::add,
+       type,
+       parameters) {}
 
-UnaryExpression::UnaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &innerExpression,
-        std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
-        antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
-    mInnerExpression{innerExpression},
-    mUnaryOperator{unaryOperator} {}
-
-std::shared_ptr<caramel::ir::IR>
-UnaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
-
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    return mUnaryOperator->buildIR(mInnerExpression);
+void AdditionInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitAddition(this, os);
 }
 
-} // namespace caramel::ast
-
-
-
-
+} // namespace caramel::ir

@@ -22,30 +22,17 @@
  * SOFTWARE.
 */
 
-#include "UnaryExpression.h"
+#include "EpilogInstruction.h"
+#include "../IRVisitor.h"
 
+namespace caramel::ir {
 
-namespace caramel::ast {
+EpilogInstruction::EpilogInstruction(
+        std::shared_ptr<BasicBlock> parentBlock
+) : IR("", parentBlock, Operation::leave, caramel::ast::Void_t::Create(), std::vector<std::string>()) {}
 
-UnaryExpression::UnaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &innerExpression,
-        std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
-        antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
-    mInnerExpression{innerExpression},
-    mUnaryOperator{unaryOperator} {}
-
-std::shared_ptr<caramel::ir::IR>
-UnaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
-
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    return mUnaryOperator->buildIR(mInnerExpression);
+void EpilogInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitEpilog(this, os);
 }
 
-} // namespace caramel::ast
-
-
-
-
+} // namespace caramel::ir

@@ -22,30 +22,44 @@
  * SOFTWARE.
 */
 
-#include "UnaryExpression.h"
+#pragma once
 
+#include "../CFG.h"
+#include "../CFGVisitor.h"
+#include <memory>
+#include <ostream>
 
-namespace caramel::ast {
+namespace caramel::ir::x86_64 {
 
-UnaryExpression::UnaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &innerExpression,
-        std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
-        antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
-    mInnerExpression{innerExpression},
-    mUnaryOperator{unaryOperator} {}
+class X86_64BasicBlockVisitor;
 
-std::shared_ptr<caramel::ir::IR>
-UnaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
+class X86_64CFGVisitor : public CFGVisitor {
+public:
+    using Ptr = std::shared_ptr<X86_64CFGVisitor>;
+    using WeakPtr = std::weak_ptr<X86_64CFGVisitor>;
 
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    return mUnaryOperator->buildIR(mInnerExpression);
-}
+public:
+    explicit X86_64CFGVisitor();
 
-} // namespace caramel::ast
+    virtual ~X86_64CFGVisitor() = default;
 
+    void generateAssembly(std::shared_ptr<ir::CFG> const &controlFlowGraph, std::ostream &os);
+
+    void generateAssemblyPrologue(
+            std::shared_ptr<ir::CFG> const &controlFlowGraph,
+            std::ostream &os
+    );
+
+    void generateAssemblyEpilogue(
+            std::shared_ptr<ir::CFG> const &controlFlowGraph,
+            std::ostream &os
+    );
+
+private:
+    std::shared_ptr<X86_64BasicBlockVisitor> mBasicBlockVisitor;
+};
+
+} // namespace caramel::ir::x86_64
 
 
 

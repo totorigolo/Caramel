@@ -124,7 +124,7 @@ AbstractSyntaxTreeVisitor::visitPostfixUnaryExpression(CaramelParser::PostfixUna
     }
 
     if (atomicExpression.is<Symbol::Ptr>()) {
-
+        return castAnyTo<Symbol::Ptr, AtomicExpression::Ptr>(atomicExpression);
     } else {
         return atomicExpression;
     }

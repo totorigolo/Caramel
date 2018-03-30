@@ -30,6 +30,7 @@
 #include <Token.h>
 #include <memory>
 #include <ostream>
+#include <Common.h>
 
 
 namespace caramel::ir {
@@ -92,13 +93,17 @@ public:
 
     virtual std::shared_ptr<caramel::ir::IR> getIR(
             std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock
-    ) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+    ) {
+        CARAMEL_UNUSED(currentBasicBlock);
+        throw caramel::exceptions::NotImplementedException(__FILE__); };
 
     virtual bool shouldReturnABasicBlock() const { return false; }
 
     virtual std::shared_ptr<caramel::ir::BasicBlock> getBasicBlock(
             ir::CFG *controlFlow
-    ) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+    ) {
+        CARAMEL_UNUSED(controlFlow);
+        throw caramel::exceptions::NotImplementedException(__FILE__); };
 
     virtual bool shouldReturnACFG() const { return false; }
 

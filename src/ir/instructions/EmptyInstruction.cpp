@@ -22,30 +22,17 @@
  * SOFTWARE.
 */
 
-#include "UnaryExpression.h"
+#include "EmptyInstruction.h"
+#include "../IRVisitor.h"
 
+namespace caramel::ir {
 
-namespace caramel::ast {
-
-UnaryExpression::UnaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &innerExpression,
-        std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
-        antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
-    mInnerExpression{innerExpression},
-    mUnaryOperator{unaryOperator} {}
-
-std::shared_ptr<caramel::ir::IR>
-UnaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
-
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    return mUnaryOperator->buildIR(mInnerExpression);
+void EmptyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitEmpty(this, os);
 }
 
-} // namespace caramel::ast
-
-
-
-
+EmptyInstruction::EmptyInstruction(
+        std::shared_ptr<BasicBlock> parentBlock,
+        std::string const &returnName
+) : IR(returnName, parentBlock, Operation::empty, caramel::ast::Void_t::Create(), std::vector<std::string>()) {}
+} // namespace caramel::ir

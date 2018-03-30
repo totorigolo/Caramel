@@ -22,30 +22,34 @@
  * SOFTWARE.
 */
 
-#include "UnaryExpression.h"
+#pragma once
+
+#include "../IR.h"
+
+namespace caramel::ir {
+
+class AdditionInstruction : public IR {
+public:
+    using Ptr = std::shared_ptr<AdditionInstruction>;
+    using WeakPtr = std::shared_ptr<AdditionInstruction>;
+
+public:
+    explicit AdditionInstruction(
+            std::string const &returnName,
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            caramel::ast::PrimaryType::Ptr const &type,
+            std::vector<std::string> const &parameters
+    );
+
+    ~AdditionInstruction() override = default;
+
+private:
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 
-namespace caramel::ast {
+};
 
-UnaryExpression::UnaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &innerExpression,
-        std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
-        antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
-    mInnerExpression{innerExpression},
-    mUnaryOperator{unaryOperator} {}
-
-std::shared_ptr<caramel::ir::IR>
-UnaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
-
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    return mUnaryOperator->buildIR(mInnerExpression);
-}
-
-} // namespace caramel::ast
-
+} // namespace caramel::ir
 
 
 

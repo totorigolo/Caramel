@@ -22,30 +22,46 @@
  * SOFTWARE.
 */
 
-#include "UnaryExpression.h"
+#pragma once
 
+#include "../IR.h"
 
-namespace caramel::ast {
+namespace caramel::ir {
 
-UnaryExpression::UnaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &innerExpression,
-        std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
-        antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
-    mInnerExpression{innerExpression},
-    mUnaryOperator{unaryOperator} {}
+class CopyInstruction : public IR {
+public:
+    using Ptr = std::shared_ptr<CopyInstruction>;
+    using WeakPtr = std::shared_ptr<CopyInstruction>;
 
-std::shared_ptr<caramel::ir::IR>
-UnaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
+    CopyInstruction(
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            caramel::ast::PrimaryType::Ptr const &type,
+            std::string const &dest,
+            std::string const &source
+    );
 
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    return mUnaryOperator->buildIR(mInnerExpression);
-}
+    CopyInstruction(
+            std::string const &returnName,
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            caramel::ast::PrimaryType::Ptr const &type,
+            std::string const &dest,
+            std::string const &source
+    );
 
-} // namespace caramel::ast
+    ~CopyInstruction() override = default;
 
+    std::string getDestination();
+
+    std::string getSource();
+
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+
+private:
+    std::string mDest;
+    std::string mSource;
+};
+
+} // namespace caramel::ir
 
 
 

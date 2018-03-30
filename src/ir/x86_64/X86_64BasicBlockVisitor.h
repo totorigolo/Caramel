@@ -22,30 +22,30 @@
  * SOFTWARE.
 */
 
-#include "UnaryExpression.h"
+#pragma once
 
+#include "../BasicBlock.h"
+#include <memory>
 
-namespace caramel::ast {
+namespace caramel::ir::x86_64 {
 
-UnaryExpression::UnaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &innerExpression,
-        std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
-        antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
-    mInnerExpression{innerExpression},
-    mUnaryOperator{unaryOperator} {}
+class X86_64IRVisitor;
 
-std::shared_ptr<caramel::ir::IR>
-UnaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
+class X86_64BasicBlockVisitor {
+public:
+    using Ptr = std::shared_ptr<X86_64BasicBlockVisitor>;
+    using WeakPtr = std::shared_ptr<X86_64BasicBlockVisitor>;
 
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    return mUnaryOperator->buildIR(mInnerExpression);
-}
+    explicit X86_64BasicBlockVisitor();
+    virtual ~X86_64BasicBlockVisitor() = default;
 
-} // namespace caramel::ast
+    void generateAssembly(std::shared_ptr<ir::BasicBlock> const &basicBlock, std::ostream &os);
 
+private:
+    std::shared_ptr<X86_64IRVisitor> mIRVisitor;
 
+};
+
+} // namespace caramel::ir::x86_64
 
 

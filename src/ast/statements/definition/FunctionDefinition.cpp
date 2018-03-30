@@ -26,6 +26,8 @@
 #include "../../../ir/CFG.h"
 #include "../../../ir/BasicBlock.h"
 #include "../../../ir/IR.h"
+#include "../../../ir/instructions/PrologInstruction.h"
+#include "../../../ir/instructions/EpilogInstruction.h"
 
 
 namespace caramel::ast {
@@ -60,18 +62,8 @@ std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
 
     controlFlow->enterFunction();
 
-    std::vector<std::string> pushQparameters;
-    pushQparameters.push_back(ir::IR::REGISTER_BASE_POINTER);
-    ir::IR::Ptr pushQInstruction = std::make_shared<ir::IR>(bb, ir::Operation::pushq, Void_t::Create(), pushQparameters);
+    ir::IR::Ptr pushQInstruction = std::make_shared<ir::PrologInstruction>(bb);
     bb->addInstruction(pushQInstruction);
-
-    std::vector<std::string> moveParameters;
-    moveParameters.push_back(ir::IR::REGISTER_STACK_POINTER);
-    moveParameters.push_back(ir::IR::REGISTER_BASE_POINTER);
-    ir::IR::Ptr moveInstruction = std::make_shared<ir::IR>(bb, ir::Operation::copy, Void_t::Create(), moveParameters);
-    bb->addInstruction(moveInstruction);
-
-
 
     for(caramel::ast::Statement::Ptr const &statement : mContext->getStatements()) {
         if(statement->shouldReturnAnIR()) {
@@ -81,11 +73,8 @@ std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
         }
     }
 
-    ir::IR::Ptr leaveInstruction = std::make_shared<ir::IR>(bb, ir::Operation::leave, Void_t::Create(), pushQparameters);
-    bb->addInstruction(leaveInstruction);
-    ir::IR::Ptr retInstruction = std::make_shared<ir::IR>(bb, ir::Operation::ret, Void_t::Create(), pushQparameters);
-    bb->addInstruction(retInstruction);
-    controlFlow->exitFunction();
+    ir::IR::Ptr epilogInstruction = std::make_shared<ir::EpilogInstruction>(bb);
+    bb->addInstruction(epilogInstruction);
 
     return bb;
 }

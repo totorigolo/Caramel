@@ -37,19 +37,6 @@ BasicBlock::BasicBlock(
     mCfg{cfg},
     mInstructions{} {}
 
-void BasicBlock::generateAssembly(std::ostream &output) {
-
-    if(mLabelName.size() > 0) {
-        output << mLabelName << ':' << std::endl;
-    }
-    for (IR::Ptr const &instr : mInstructions) {
-        output << "  ";
-        instr->generateAssembly(output);
-        output << std::endl;
-    }
-    output << std::endl;
-}
-
 std::shared_ptr<BasicBlock> BasicBlock::getNextWhenTrue() const {
     return mExitWhenTrue;
 }
@@ -64,7 +51,7 @@ std::string BasicBlock::addInstruction(std::shared_ptr<IR> const &instruction) {
     }
 
     std::string returnName = instruction->getReturnName();
-    if (returnName.size() != 0L && returnName[0] != '!' && returnName[0] != '%') {
+    if (!returnName.empty() && returnName[0] != '!' && returnName[0] != '%') {
         if (!mCfg->hasSymbol(mID, returnName)) {
             mCfg->addSymbol(mID, returnName, instruction->getType());
         }
@@ -79,6 +66,18 @@ CFG *BasicBlock::getCFG() {
 
 int BasicBlock::getId() {
     return mID;
+}
+
+std::vector<std::shared_ptr<IR>> &BasicBlock::getInstructions() {
+    return mInstructions;
+}
+
+std::string &BasicBlock::getLabelName() {
+    return mLabelName;
+}
+
+long BasicBlock::getSymbolIndex(std::string const &symbolName) {
+    return mCfg->getSymbolIndex(mID, symbolName);
 }
 
 } // namespace caramel::ir

@@ -22,30 +22,35 @@
  * SOFTWARE.
 */
 
-#include "UnaryExpression.h"
+#include "../IRVisitor.h"
+#include "CopyInstruction.h"
 
+namespace caramel::ir {
 
-namespace caramel::ast {
+CopyInstruction::CopyInstruction(
+        std::shared_ptr<BasicBlock> const &parentBlock,
+        caramel::ast::PrimaryType::Ptr const &type, std::string const &dest,
+        std::string const &source
+) : IR(parentBlock, Operation::copy, type, std::vector{dest, source}), mDest{dest}, mSource{source} {}
 
-UnaryExpression::UnaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &innerExpression,
-        std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
-        antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
-    mInnerExpression{innerExpression},
-    mUnaryOperator{unaryOperator} {}
+CopyInstruction::CopyInstruction(
+        std::string const &returnName,
+        std::shared_ptr<BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string const &dest,
+        std::string const &source
+) : IR(returnName, parentBlock, Operation::copy, type, std::vector{dest, source}), mDest{dest}, mSource{source} {}
 
-std::shared_ptr<caramel::ir::IR>
-UnaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
-
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    return mUnaryOperator->buildIR(mInnerExpression);
+std::string CopyInstruction::getDestination() {
+    return mDest;
 }
 
-} // namespace caramel::ast
+std::string CopyInstruction::getSource() {
+    return mSource;
+}
 
+void CopyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitCopy(this, os);
+}
 
-
-
+} // namespace caramel::ir

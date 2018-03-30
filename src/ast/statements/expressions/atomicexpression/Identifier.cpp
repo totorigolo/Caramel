@@ -24,6 +24,7 @@
 
 #include "Identifier.h"
 #include "../../../../ir/BasicBlock.h"
+#include "../../../../ir/instructions/EmptyInstruction.h"
 
 namespace caramel::ast {
 
@@ -36,8 +37,8 @@ std::shared_ptr<caramel::ast::Symbol> Identifier::getSymbol() {
     return mSymbol;
 }
 
-std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {
-    return ir::IR::emptyInstruction(currentBasicBlock, mSymbol->getName());
+std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<ir::BasicBlock> const &currentBasicBlock) {
+    return std::make_shared<ir::EmptyInstruction>(currentBasicBlock, mSymbol->getName());
 }
 
 bool Identifier::shouldReturnABasicBlock() const {
