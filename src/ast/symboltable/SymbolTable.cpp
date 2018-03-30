@@ -239,7 +239,8 @@ Symbol::Ptr SymbolTable::addArrayAccess(
             return parent->addArrayAccess(antlrContext, name, statement);
         } else {
             throw UndefinedSymbolError(
-                    name, SymbolType::ArraySymbol,
+                    name,
+                    SymbolType::ArraySymbol,
                     antlrContext
             );
         }
@@ -316,11 +317,10 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
                             declaredParameterName,
                             parameterName
                     );
+
                 }
                 if (declaredParameterTypeIdentifier != parameterTypeIdentifier) {
                     throw FunctionDefinitionParameterTypeMismatchError(
-                            buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-                                    declaredParameters.at(i)->getType(), namedParameters.at(i)->getType()),
                             antlrContext,
                             declaredParameters.at(i)->getType(),
                             namedParameters.at(i)->getType()
@@ -399,7 +399,7 @@ void SymbolTable::addPrimaryType(std::shared_ptr<caramel::ast::PrimaryType> cons
         mSymbolMap.at(name)->addDefinition(nullptr);
     } else {
         logger.fatal() << "Can't add " << name << " as a primary type, because a symbol named " << name
-                << " already exists.";
+                       << " already exists.";
         exit(1);
     }
 }
@@ -467,7 +467,7 @@ void SymbolTable::acceptAstDotVisit() {
 }
 
 void SymbolTable::visitChildrenAstDot() {
-    for (auto const& symbol : mSymbolMap) {
+    for (auto const &symbol : mSymbolMap) {
         addEdge(thisId(), symbol.second->thisId(), symbol.first);
         symbol.second->acceptAstDotVisit();
     }
@@ -538,19 +538,5 @@ std::string SymbolTable::buildFunctionDefinitionParameterNameMismatchErrorMessag
     return res.str();
 }
 
-std::string SymbolTable::buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-        std::shared_ptr<PrimaryType> declaredType,
-        std::shared_ptr<PrimaryType> declaredName) {
-    std::stringstream res;
-    res << "The function: "
-        << declaredType->getIdentifier()
-        << " was previously declared with a parameter of type "
-        << declaredName
-        << " .\n"
-        << "Actual parameter type is "
-        << declaredName->getIdentifier()
-        << ".";
-    return res.str();
-}
 
 } // namespace caramel::ast

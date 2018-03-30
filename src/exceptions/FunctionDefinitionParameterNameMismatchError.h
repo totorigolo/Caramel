@@ -26,6 +26,7 @@
 
 #include "SemanticError.h"
 #include "../Console.h"
+#include "Common.h"
 
 #include <stdexcept>
 
@@ -41,8 +42,7 @@ public:
                                                  antlr4::ParserRuleContext *antlrContext,
                                                  std::string declaredName,
                                                  std::string definedName)
-            : SemanticError(message),
-              mAntlrContext{antlrContext},
+            : SemanticError(message, antlrContext),
               mDeclaredName{std::move(declaredName)},
               mDefinedName{std::move(definedName)} {
     }
@@ -54,7 +54,6 @@ public:
     }
 
 private:
-    antlr4::ParserRuleContext *mAntlrContext;
     std::string mDeclaredName;
     std::string mDefinedName;
 };
