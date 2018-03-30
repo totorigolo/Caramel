@@ -42,13 +42,6 @@ CFG::CFG(
             this,
             ""
     ));
-}
-
-void CFG::addBasicBlock(std::shared_ptr<BasicBlock> basicBlock) {
-    mBasicBlocks.push_back(basicBlock);
-}
-
-void CFG::generateAssembly(std::ostream &output) {
 
     for (const caramel::ast::Statement::Ptr statement : mTreeContext->getStatements()) {
 
@@ -61,25 +54,11 @@ void CFG::generateAssembly(std::ostream &output) {
         }
     }
 
-    generateAssemblyPrologue(output);
-    output << std::endl;
-    output.flush();
-
-    for(BasicBlock::Ptr const &bb : mBasicBlocks) {
-        bb->generateAssembly(output);
-    }
-
-    output << std::endl;
-    generateAssemblyEpilogue(output);
-
 }
 
-void CFG::generateAssemblyPrologue(std::ostream &output) {
-    output << ".file  \"" << mFileName << "\"" << std::endl;
-    output << ".text";
+void CFG::addBasicBlock(std::shared_ptr<BasicBlock> basicBlock) {
+    mBasicBlocks.push_back(basicBlock);
 }
-
-void CFG::generateAssemblyEpilogue(std::ostream &output) {}
 
 bool CFG::hasSymbol(int controlBlockId, std::string const &symbolName) {
     return mSymbols[controlBlockId].find(symbolName) != mSymbols[controlBlockId].end() && mSymbols[0].find(symbolName) != mSymbols[0].end();
@@ -116,6 +95,14 @@ std::shared_ptr<BasicBlock> CFG::generateBasicBlock(std::string const &entryName
 
 std::shared_ptr<BasicBlock> CFG::generateFunctionBlock(std::string const &entryName) {
     return std::make_shared<BasicBlock>(++nextBasicBlockNumber, this, entryName);
+}
+
+std::vector<std::shared_ptr<BasicBlock>> &CFG::getBasicBlocks() {
+    return mBasicBlocks;
+}
+
+std::string &CFG::getFileName() {
+    return mFileName;
 }
 
 

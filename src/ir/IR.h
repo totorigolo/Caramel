@@ -30,6 +30,7 @@
 namespace caramel::ir {
 
 class BasicBlock;
+class IRVisitor;
 
 enum class Operation {
     empty,
@@ -47,6 +48,7 @@ enum class Operation {
     pushq,
     movq,
     ret,
+    prolog,
     leave
 };
 
@@ -54,18 +56,6 @@ class IR {
 public:
     using Ptr = std::shared_ptr<IR>;
     using WeakPt = std::weak_ptr<IR>;
-
-    static IR::Ptr emptyInstruction(
-            std::shared_ptr<BasicBlock> parentBlock,
-            std::string const &returnName) {
-        return std::make_shared<IR>(
-                returnName,
-                parentBlock,
-                Operation::empty,
-                caramel::ast::Void_t::Create(),
-                std::vector<std::string>()
-        );
-    }
 
     static const std::string REGISTER_BASE_POINTER;
     static const std::string REGISTER_STACK_POINTER;
@@ -79,7 +69,6 @@ public:
             std::vector<std::string> parameters = std::vector<std::string>()
     );
 
-
     explicit IR(
             std::string const &returnName,
             std::shared_ptr<BasicBlock> parentBlock,
@@ -90,13 +79,19 @@ public:
 
     virtual ~IR() = default;
 
-    void generateAssembly(std::ostream &output);
-
     std::string getReturnName();
 
-    bool isEmpty();
+    bool isEmpty() const;
 
-    caramel::ast::PrimaryType::Ptr getType();
+    Operation getOperation() const;
+
+    caramel::ast::PrimaryType::Ptr getType() const;
+
+    std::shared_ptr<BasicBlock> getParentBlock();
+
+    std::vector<std::string> getParameters();
+
+    virtual void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) = 0;
 
 private:
     std::string mReturnName;

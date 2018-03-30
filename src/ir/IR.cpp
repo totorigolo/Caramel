@@ -56,81 +56,28 @@ IR::IR(
     mType{type},
     mParameters{std::move(parameters)} {}
 
-void IR::generateAssembly(std::ostream &output) {
-
-    switch (mOperation) {
-        case Operation::copy:
-            output << "copy";
-            break;
-        case Operation::add:
-            output << "add";
-            break;
-        case Operation::call:
-            output << "call";
-            break;
-        case Operation::cmp_eq:
-            output << "cmp_eq";
-            break;
-        case Operation::cmp_le:
-            output << "cmp_le";
-            break;
-        case Operation::cmp_lt:
-            output << "cmp_lt";
-            break;
-        case Operation::ldconst:
-            output << "ldconst";
-            break;
-        case Operation::mul:
-            output << "mul";
-            break;
-        case Operation::rmem:
-            output << "rmem";
-            break;
-        case Operation::sub:
-            output << "sub";
-            break;
-        case Operation::wmem:
-            output << "wmem";
-            break;
-        case Operation::pushq:
-            output << "pushq";
-            break;
-        case Operation::movq:
-            output << "movq";
-            break;
-        case Operation::ret:
-            output << "ret";
-            break;
-        case Operation::leave:
-            output << "leave";
-            break;
-        case Operation::empty:
-            logger.warning() << "empty instruction was called";
-            return;
-    }
-    output << " ";
-    BasicBlock::Ptr parentBlock = mParentBlock.lock();
-    if (mParameters.size() > 0) {
-        for (int i = 0; i < mParameters.size() - 1; i++) {
-            output << mParameters[i] << "("
-                   << parentBlock->getCFG()->getSymbolIndex(parentBlock->getId(), mParameters[i]) << "), ";
-        }
-        output << mParameters[mParameters.size() - 1] << "("
-               << parentBlock->getCFG()->getSymbolIndex(parentBlock->getId(), mParameters[mParameters.size() - 1]) << ")";
-    }
-
-}
-
 std::string IR::getReturnName() {
     return mReturnName;
 }
 
-bool IR::isEmpty() {
+bool IR::isEmpty() const {
     return mOperation == Operation::empty;
 }
 
-caramel::ast::PrimaryType::Ptr IR::getType() {
+caramel::ast::PrimaryType::Ptr IR::getType() const {
     return mType;
+}
+
+Operation IR::getOperation() const {
+    return mOperation;
+}
+
+std::shared_ptr<BasicBlock> IR::getParentBlock() {
+    return mParentBlock.lock();
+}
+
+std::vector<std::string> IR::getParameters() {
+    return mParameters;
 }
 
 

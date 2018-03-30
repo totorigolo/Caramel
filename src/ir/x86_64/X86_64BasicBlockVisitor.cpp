@@ -22,30 +22,25 @@
  * SOFTWARE.
 */
 
-#include "UnaryExpression.h"
+#include "X86_64BasicBlockVisitor.h"
+#include "X86_64IRVisitor.h"
 
+namespace caramel::ir::x86_64 {
+X86_64BasicBlockVisitor::X86_64BasicBlockVisitor() : mIRVisitor{new X86_64IRVisitor} {}
 
-namespace caramel::ast {
+void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> const &basicBlock, std::ostream &os) {
 
-UnaryExpression::UnaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &innerExpression,
-        std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
-        antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
-    mInnerExpression{innerExpression},
-    mUnaryOperator{unaryOperator} {}
+    std::string mLabelName = basicBlock->getLabelName();
 
-std::shared_ptr<caramel::ir::IR>
-UnaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
+    if(!mLabelName.empty()) {
+        os << mLabelName << ':' << std::endl;
+    }
+    for (IR::Ptr const &instr : basicBlock->getInstructions()) {
+        instr->accept(mIRVisitor, os);
+        os << std::endl;
+    }
 
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    return mUnaryOperator->buildIR(mInnerExpression);
+    os << std::endl;
+
 }
-
-} // namespace caramel::ast
-
-
-
-
+} // namespace caramel::ir::x86_64

@@ -22,30 +22,28 @@
  * SOFTWARE.
 */
 
-#include "UnaryExpression.h"
+#include "LDConstInstruction.h"
+#include "../IRVisitor.h"
 
+namespace caramel::ir {
 
-namespace caramel::ast {
+LDConstInstruction::LDConstInstruction(
+        std::string const &returnName,
+        std::shared_ptr<BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string dest,
+        std::string val
+) : IR(returnName, parentBlock, Operation::ldconst, type, std::vector<std::string>{dest, val}), mDestination{dest}, mValue{val} {}
 
-UnaryExpression::UnaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &innerExpression,
-        std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
-        antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
-    mInnerExpression{innerExpression},
-    mUnaryOperator{unaryOperator} {}
-
-std::shared_ptr<caramel::ir::IR>
-UnaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
-
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    return mUnaryOperator->buildIR(mInnerExpression);
+std::string LDConstInstruction::getDestination() const {
+    return mDestination;
 }
 
-} // namespace caramel::ast
+std::string LDConstInstruction::getValue() const {
+    return mValue;
+}
 
-
-
-
+void LDConstInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitLdConst(this, os);
+}
+} // namespace caramel::ir

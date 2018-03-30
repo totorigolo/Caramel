@@ -27,6 +27,7 @@
 #include "../expressions/atomicexpression/Constant.h"
 #include "../../symboltable/VariableSymbol.h"
 #include "../../../ir/BasicBlock.h"
+#include "../../../ir/instructions/CopyInstruction.h"
 #include <utility>
 
 
@@ -71,19 +72,16 @@ bool VariableDefinition::shouldReturnAnIR() const {
 }
 
 std::shared_ptr<ir::IR> VariableDefinition::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {
+
     std::string opName = currentBasicBlock->addInstruction(mInitializer->getIR(currentBasicBlock));
     std::string identifier = mSymbol.lock()->getName();
 
-    std::vector<std::string> params;
-    params.push_back(identifier);
-    params.push_back(opName);
-
-    return std::make_shared<ir::IR>(
+    return std::make_shared<ir::CopyInstruction>(
             identifier,
             currentBasicBlock,
-            ir::Operation::copy,
             mSymbol.lock()->getType(),
-            params
+            identifier,
+            opName
     );
 
 }

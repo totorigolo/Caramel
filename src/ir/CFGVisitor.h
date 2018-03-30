@@ -22,30 +22,29 @@
  * SOFTWARE.
 */
 
-#include "UnaryExpression.h"
+#pragma once
 
+#include "CFG.h"
 
-namespace caramel::ast {
+namespace caramel::ir {
 
-UnaryExpression::UnaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &innerExpression,
-        std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
-        antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
-    mInnerExpression{innerExpression},
-    mUnaryOperator{unaryOperator} {}
+class CFGVisitor {
+public:
+    using Ptr = std::shared_ptr<CFGVisitor>;
+    using WeakPtr = std::weak_ptr<CFGVisitor>;
 
-std::shared_ptr<caramel::ir::IR>
-UnaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
+    virtual void generateAssembly(std::shared_ptr<ir::CFG> const &controlFlowGraph, std::ostream &os) = 0;
 
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    return mUnaryOperator->buildIR(mInnerExpression);
+    virtual void generateAssemblyPrologue(
+            std::shared_ptr<ir::CFG> const &controlFlowGraph,
+            std::ostream &os
+    ) = 0;
+
+    virtual void generateAssemblyEpilogue(
+            std::shared_ptr<ir::CFG> const &controlFlowGraph,
+            std::ostream &os
+    ) = 0;
+
+};
+
 }
-
-} // namespace caramel::ast
-
-
-
-

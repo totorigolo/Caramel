@@ -32,6 +32,7 @@
 #include "BackEnd.h"
 
 #include "tclap.h"
+#include "ir/x86_64/X86_64CFGVisitor.h"
 
 #include <iostream>
 
@@ -43,7 +44,12 @@ int main(int argc, const char *argv[]) {
 
     // Get the AST from the front-end
     Context::Ptr astRoot{caramel::frontEnd(config)};
-    caramel::BackEnd::generateAssembly(config.sourceFile, astRoot, std::cout);
+
+    caramel::ir::CFGVisitor::Ptr arch = std::shared_ptr<caramel::ir::CFGVisitor>(new caramel::ir::x86_64::X86_64CFGVisitor);
+    caramel::BackEnd::generateAssembly(config.sourceFile, astRoot, std::cout, arch);
+
+
+
 
 
     return EXIT_SUCCESS;
