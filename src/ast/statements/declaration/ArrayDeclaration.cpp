@@ -41,11 +41,6 @@ void ArrayDeclaration::setSymbol(std::shared_ptr<ArraySymbol> const &symbol) {
 }
 
 void ArrayDeclaration::acceptAstDotVisit() {
-    using namespace caramel::utils;
-    if (!mSymbol.lock()) {
-        addErrorNode(thisId(), "ArrayDeclaration", "ArraySymbol is null.");
-        return;
-    }
     auto arraySymbol = mSymbol.lock();
     addNode(thisId(), "ArrayDeclaration: " + arraySymbol->getName());
     addEdge(thisId(), arraySymbol->thisId());

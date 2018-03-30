@@ -51,11 +51,8 @@ public:
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
-    std::shared_ptr<ir::BasicBlock> getBasicBlock(
-            ir::CFG *controlFlow
-    ) override;
-
-    bool shouldReturnABasicBlock() const override; // return true
+    bool shouldReturnABasicBlock() const override { return true; }
+    std::shared_ptr<ir::BasicBlock> getBasicBlock(ir::CFG *controlFlow) override;
 
 protected:
     std::shared_ptr<caramel::ast::Context> mContext;

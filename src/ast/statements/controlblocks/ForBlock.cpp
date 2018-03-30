@@ -32,34 +32,32 @@ ForBlock::ForBlock(
         std::shared_ptr<caramel::ast::Expression> end,
         std::shared_ptr<caramel::ast::Expression> step,
         std::vector<std::shared_ptr<caramel::ast::Statement>> block,
-        antlr4::Token
-*token
-) :
-
-ControlBlock (token), mBegin(std::move(begin)), mEnd(std::move(end)), mStep(std::move(step)), mBlock(std::move(block)) {}
+        antlr4::Token *token
+) : ControlBlock(token), mBegin{std::move(begin)}, mEnd{std::move(end)}, mStep{std::move(step)},
+    mBlock{std::move(block)} {}
 
 void ForBlock::acceptAstDotVisit() {
-    addNode(thisId(), "For: ");
+    addNode(thisId(), "For");
     visitChildrenAstDot();
 }
 
 void ForBlock::visitChildrenAstDot() {
-    addNode(thisId()+1, "Condition: ");
-    addEdge(thisId(), thisId()+1);
+    addNode(thisId() + 1, "Condition");
+    addEdge(thisId(), thisId() + 1);
 
-    addEdge(thisId()+1, mBegin->thisId(),"begin");
+    addEdge(thisId() + 1, mBegin->thisId(), "begin");
     mBegin->acceptAstDotVisit();
 
-    addEdge(thisId()+1, mEnd->thisId(),"end");
+    addEdge(thisId() + 1, mEnd->thisId(), "end");
     mEnd->acceptAstDotVisit();
 
-    addEdge(thisId()+1, mStep->thisId(),"step");
+    addEdge(thisId() + 1, mStep->thisId(), "step");
     mStep->acceptAstDotVisit();
 
-    addNode(thisId()+2, "Block: ");
-    addEdge(thisId(), thisId()+2);
+    addNode(thisId() + 2, "Block");
+    addEdge(thisId(), thisId() + 2);
     for (const auto &blockStatement : mBlock) {
-        addEdge(thisId()+2, blockStatement->thisId());
+        addEdge(thisId() + 2, blockStatement->thisId());
         blockStatement->acceptAstDotVisit();
     }
 }

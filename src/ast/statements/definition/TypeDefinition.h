@@ -48,10 +48,11 @@ public:
     std::weak_ptr<TypeSymbol> getTypeSymbol();
     void setSymbol(std::shared_ptr<TypeSymbol> typeSymbol);
 
+    void acceptAstDotVisit() override;
+
 protected:
     std::string mName;
     std::weak_ptr<TypeSymbol> mSymbol;
-
 };
 
 } // namespace caramel::ast

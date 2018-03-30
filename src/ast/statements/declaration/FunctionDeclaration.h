@@ -46,7 +46,6 @@ public:
     void setFunctionSymbol(std::shared_ptr<caramel::ast::FunctionSymbol> const& functionSymbol);
 
     void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
 
 private:
     std::weak_ptr<FunctionSymbol> mSymbol;

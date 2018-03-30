@@ -28,31 +28,26 @@
 namespace caramel::ast {
 
 WhileBlock::WhileBlock(
-        std::shared_ptr<caramel::ast::Expression>
-condition,
-std::vector<std::shared_ptr<caramel::ast::Statement>> block,
-        antlr4::Token
-*token
-) :
-
-ControlBlock (token), mCondition(std::move(condition)), mBlock(std::move(block)) {}
+        std::shared_ptr<caramel::ast::Expression> condition,
+        std::vector<std::shared_ptr<caramel::ast::Statement>> block,
+        antlr4::Token *token
+) : ControlBlock(token), mCondition{std::move(condition)}, mBlock{std::move(block)} {}
 
 void WhileBlock::acceptAstDotVisit() {
-    addNode(thisId(), "While: ");
+    addNode(thisId(), "While");
     visitChildrenAstDot();
 }
 
 void WhileBlock::visitChildrenAstDot() {
-    addEdge(thisId(), mCondition->thisId(),"condition");
+    addEdge(thisId(), mCondition->thisId(), "condition");
     mCondition->acceptAstDotVisit();
 
-    addNode(thisId()+1, "Block: ");
-    addEdge(thisId(), thisId()+1);
+    addNode(thisId() + 1, "Block");
+    addEdge(thisId(), thisId() + 1);
     for (const auto &blockStatement : mBlock) {
-        addEdge(thisId()+1, blockStatement->thisId());
+        addEdge(thisId() + 1, blockStatement->thisId());
         blockStatement->acceptAstDotVisit();
     }
 }
-
 
 } // namespace caramel::ast

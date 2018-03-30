@@ -51,6 +51,7 @@ void FunctionDefinition::acceptAstDotVisit() {
 void FunctionDefinition::visitChildrenAstDot() {
     addEdge(thisId(), mContext->thisId());
     mContext->acceptAstDotVisit();
+    addEdge(thisId(), mSymbol.lock()->thisId());
 }
 
 std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
@@ -88,10 +89,6 @@ std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
     controlFlow->exitFunction();
 
     return bb;
-}
-
-bool FunctionDefinition::shouldReturnABasicBlock() const {
-    return true;
 }
 
 } // namespace caramel::ast

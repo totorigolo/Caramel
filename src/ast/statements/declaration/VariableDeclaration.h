@@ -45,7 +45,6 @@ public:
     VariableSymbol::WeakPtr getVariableSymbol();
 
     void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
 
 private:
     std::weak_ptr<VariableSymbol> mSymbol;

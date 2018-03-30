@@ -40,4 +40,9 @@ void TypeDefinition::setSymbol(std::shared_ptr<TypeSymbol> typeSymbol) {
     mSymbol = typeSymbol;
 }
 
+void TypeDefinition::acceptAstDotVisit() {
+    addNode(thisId(), "TypeDefinition: " + mSymbol.lock()->getName());
+    addEdge(thisId(), mSymbol.lock()->thisId());
+}
+
 } // namespace caramel::ast

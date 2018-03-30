@@ -56,18 +56,13 @@ void VariableDefinition::setVariableSymbol(std::shared_ptr<VariableSymbol> varia
 
 void VariableDefinition::acceptAstDotVisit() {
     addNode(thisId(), "VariableDefinition: " + mSymbol.lock()->getName());
-}
-
-void VariableDefinition::visitChildrenAstDot() {
-    logger.warning() << "VariableDefinition children not shown.";
+    addEdge(thisId(), mSymbol.lock()->thisId());
+    addEdge(thisId(), mInitializer->thisId(), "initializer");
+    mInitializer->acceptAstDotVisit();
 }
 
 std::weak_ptr<Symbol> VariableDefinition::getSymbol() {
     return std::dynamic_pointer_cast<Symbol>(mSymbol.lock());
-}
-
-bool VariableDefinition::shouldReturnAnIR() const {
-    return true;
 }
 
 std::shared_ptr<ir::IR> VariableDefinition::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {

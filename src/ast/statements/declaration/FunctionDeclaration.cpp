@@ -42,8 +42,7 @@ void FunctionDeclaration::setFunctionSymbol(std::shared_ptr<caramel::ast::Functi
 
 void FunctionDeclaration::acceptAstDotVisit() {
     addNode(thisId(), "FunctionDeclaration: " + mSymbol.lock()->getName());
+    addEdge(thisId(), mSymbol.lock()->thisId());
 }
-
-void FunctionDeclaration::visitChildrenAstDot() {}
 
 } // namespace caramel::ast

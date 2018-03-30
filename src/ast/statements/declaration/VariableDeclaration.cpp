@@ -35,15 +35,13 @@ VariableDeclaration::VariableDeclaration(
           mSymbol(std::move(symbol)) {
 }
 
-caramel::ast::VariableSymbol::WeakPtr
-VariableDeclaration::getVariableSymbol() {
+caramel::ast::VariableSymbol::WeakPtr VariableDeclaration::getVariableSymbol() {
     return mSymbol;
 }
 
 void VariableDeclaration::acceptAstDotVisit() {
     addNode(thisId(), "VariableDeclaration: " + mSymbol.lock()->getName());
+    addEdge(thisId(), mSymbol.lock()->thisId());
 }
-
-void VariableDeclaration::visitChildrenAstDot() {}
 
 } // namespace caramel::ast

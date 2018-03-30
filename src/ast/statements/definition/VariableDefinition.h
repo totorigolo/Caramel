@@ -51,10 +51,8 @@ public:
     void setVariableSymbol(std::shared_ptr<VariableSymbol> variableSymbol);
 
     void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
 
-    bool shouldReturnAnIR() const override;
-
+    bool shouldReturnAnIR() const override { return true; }
     std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
 
     PrimaryType::Ptr getPrimaryType() override;
