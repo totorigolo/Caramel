@@ -30,8 +30,11 @@
 #include "../ast/operators/binaryoperators/BitwiseXorOperator.h"
 #include "../ast/operators/binaryoperators/DisjunctionOperator.h"
 #include "../ast/operators/binaryoperators/ConjunctionOperator.h"
+#include "../ast/statements/expressions/unaryexpression/UnaryExpression.h"
 
 #define FIND_BINARY_OP(ctx) mBinaryOperatorIndex.getOpForToken((ctx)->getText())
+#define FIND_PREFIX_OP(ctx) mPrefixOperatorIndex.getOpForToken((ctx)->getText())
+#define FIND_POSTFIX_OP(ctx) mPostfixOperatorIndex.getOpForToken((ctx)->getText())
 
 using namespace caramel::ast;
 using namespace caramel::utils;
@@ -52,7 +55,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();
     } else {
-        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+        return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
                 visitAdditiveExpression(ctx->additiveExpression(0)),
                 visitAdditiveOperator(ctx->additiveOperator()),
                 visitAdditiveExpression(ctx->additiveExpression(1)),
@@ -68,7 +71,7 @@ AbstractSyntaxTreeVisitor::visitBitwiseShiftExpression(CaramelParser::BitwiseShi
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();
     } else {
-        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+        return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
                 visitBitwiseShiftExpression(ctx->bitwiseShiftExpression(0)),
                 visitBitwiseShiftOperator(ctx->bitwiseShiftOperator()),
                 visitBitwiseShiftExpression(ctx->bitwiseShiftExpression(1)),
@@ -84,7 +87,7 @@ AbstractSyntaxTreeVisitor::visitComparison(CaramelParser::ComparisonContext *ctx
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();
     } else {
-        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+        return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
                 visitComparison(ctx->comparison(0)),
                 visitComparativeOperator(ctx->comparativeOperator()),
                 visitComparison(ctx->comparison(1)),
@@ -99,7 +102,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitEqualityComparison(CaramelParser::
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();
     } else {
-        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+        return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
                 visitEqualityComparison(ctx->equalityComparison(0)),
                 visitEqualityOperator(ctx->equalityOperator()),
                 visitEqualityComparison(ctx->equalityComparison(1)),
@@ -115,7 +118,7 @@ AbstractSyntaxTreeVisitor::visitMultiplicativeExpression(CaramelParser::Multipli
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();
     } else {
-        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+        return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
                 visitMultiplicativeExpression(ctx->multiplicativeExpression(0)),
                 visitMultiplicativeOperator(ctx->multiplicativeOperator()),
                 visitMultiplicativeExpression(ctx->multiplicativeExpression(1)),
@@ -147,7 +150,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAndBitwiseExpression(CaramelParser
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();
     } else {
-        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+        return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
                 visitAndBitwiseExpression(ctx->andBitwiseExpression(0)),
                 mBinaryOperatorIndex.getOpForToken(BitwiseAndOperator::SYMBOL),
                 visitAndBitwiseExpression(ctx->andBitwiseExpression(1)),
@@ -162,7 +165,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitOrBitwiseExpression(CaramelParser:
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();
     } else {
-        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+        return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
                 visitOrBitwiseExpression(ctx->orBitwiseExpression(0)),
                 mBinaryOperatorIndex.getOpForToken(BitwiseOrOperator::SYMBOL),
                 visitOrBitwiseExpression(ctx->orBitwiseExpression(1)),
@@ -177,7 +180,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitXorBitwiseExpression(CaramelParser
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();
     } else {
-        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+        return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
                 visitXorBitwiseExpression(ctx->xorBitwiseExpression(0)),
                 mBinaryOperatorIndex.getOpForToken(BitwiseXorOperator::SYMBOL),
                 visitXorBitwiseExpression(ctx->xorBitwiseExpression(1)),
@@ -192,7 +195,8 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitConjunction(CaramelParser::Conjunc
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();
     } else {
-        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+        
+        return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
                 visitConjunction(ctx->conjunction(0)),
                 mBinaryOperatorIndex.getOpForToken(ConjunctionOperator::SYMBOL),
                 visitConjunction(ctx->conjunction(1)),
@@ -207,7 +211,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitDisjunction(CaramelParser::Disjunc
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();
     } else {
-        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+        return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
                 visitDisjunction(ctx->disjunction(0)),
                 mBinaryOperatorIndex.getOpForToken(DisjunctionOperator::SYMBOL),
                 visitDisjunction(ctx->disjunction(1)),
@@ -220,33 +224,57 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitDisjunction(CaramelParser::Disjunc
 //--------------------------------------------------------------------------------------------------------
 // Unary Expressions
 
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitPrefixUnaryExpression(CaramelParser::PrefixUnaryExpressionContext *ctx) {
+    logger.trace() << "visiting prefix unary expression: " << grey <<ctx->getText();
+
+    antlrcpp::Any expression = visitPostfixUnaryExpression(ctx->postfixUnaryExpression());
+
+    if (ctx->prefixUnaryOperator()) {
+        return castTo<Expression::Ptr>(std::make_shared<UnaryExpression>(
+                visitPostfixUnaryExpression(ctx->postfixUnaryExpression()),
+                visitPrefixUnaryOperator(ctx->prefixUnaryOperator()),
+                ctx->getStart()
+        ));
+    } else {
+        return visitChildren(ctx).as<Expression::Ptr>();
+    }
+}
+
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) {
     logger.trace() << "visiting postfix unary expression: " << grey <<ctx->getText();
 
     antlrcpp::Any atomicExpression = visitAtomicExpression(ctx->atomicExpression());
-    if (ctx->postfixUnaryOperation().size() > 0) {
-        for (CaramelParser::PostfixUnaryOperationContext *postFixCtx : ctx->postfixUnaryOperation()) {
-            if (postFixCtx->callSufix()) {
-                if (!atomicExpression.is<FunctionSymbol::Ptr>()) {
-                    throw std::runtime_error("Cannot use function call on non function symbol");
-                }
-            } else if (postFixCtx->arrayAccess()) {
-                if (!atomicExpression.is<VariableSymbol::Ptr>()) {
-
-                }
-            } else if (postFixCtx->postfixUnaryOperator()) {
-                if (!atomicExpression.is<VariableSymbol::Ptr>()) {
-                    throw std::runtime_error("Cannot use postfix Unary Operator on non variable symbol");
-                }
+    CaramelParser::PostfixUnaryOperationContext *postFixCtx = ctx->postfixUnaryOperation();
+    if (postFixCtx) {
+        if (postFixCtx->callSufix()) {
+            if (!atomicExpression.is<FunctionSymbol::Ptr>()) {
+                throw std::runtime_error("Cannot use function call on non function symbol");
             }
+        } else if (!postFixCtx->arrayAccess().empty()) {
+            // TODO : Handle Array access (knowing that an array can be n-dimensioned)
+            if (!atomicExpression.is<VariableSymbol::Ptr>()) {
+
+            }
+        } else if (postFixCtx->postfixUnaryOperator()) {
+            if (!atomicExpression.is<VariableSymbol::Ptr>()) {
+                throw std::runtime_error("Cannot use postfix Unary Operator on non variable symbol");
+            }
+
+            // Return an unary expression with the corresponding operator
+            return castTo<Expression::Ptr>(std::make_shared<UnaryExpression>(
+                    visitAtomicExpression(ctx->atomicExpression()),
+                    visitPostfixUnaryOperator(postFixCtx->postfixUnaryOperator()),
+                    ctx->getStart()
+            ));
+
         }
     }
 
     if (atomicExpression.is<Symbol::Ptr>()) {
         return castAnyTo<Symbol::Ptr, AtomicExpression::Ptr>(atomicExpression);
     } else {
-        return atomicExpression;
+        return atomicExpression.as<Expression::Ptr>();
     }
 }
 
@@ -282,6 +310,16 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitEqualityOperator(CaramelParser::Eq
 
 //--------------------------------------------------------------------------------------------------------
 // Unary Operators
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitPrefixUnaryOperator(CaramelParser::PrefixUnaryOperatorContext *ctx) {
+    logger.trace() << "visiting unary prefix operator: " << grey << ctx->getText();
+    return FIND_PREFIX_OP(ctx);
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitPostfixUnaryOperator(CaramelParser::PostfixUnaryOperatorContext *ctx) {
+    logger.trace() << "visiting unary postfix operator: " << grey << ctx->getText();
+    return FIND_POSTFIX_OP(ctx);
+}
 
 //--------------------------------------------------------------------------------------------------------
 // LValue

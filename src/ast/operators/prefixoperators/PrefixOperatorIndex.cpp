@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +22,24 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "PrefixOperatorIndex.h"
+#include "PreIncrOperator.h"
+#include "PreDecrOperator.h"
 
-#include "Operator.h"
-#include "../statements/expressions/Expression.h"
+#define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<UnaryOperator>(make_shared<op>())))
 
-namespace caramel::ast {
+using namespace std;
 
-class UnaryOperator : public Operator {
-public:
-    using Ptr = std::shared_ptr<UnaryOperator>;
-    using WeakPtr = std::weak_ptr<UnaryOperator>;
+caramel::ast::PrefixOperatorIndex::PrefixOperatorIndex() {
 
-protected:
-    explicit UnaryOperator() = default;
+}
 
-public:
-    ~UnaryOperator() override = default;
+caramel::ast::UnaryOperator::Ptr caramel::ast::PrefixOperatorIndex::getOpForToken(std::string token) {
+    auto it = index.find(token);
 
-public:
-    virtual std::shared_ptr<caramel::ir::IR> buildIR(
-            std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-            std::shared_ptr<caramel::ast::Expression> const &innerExpression
-    ) = 0;
-};
+    if (it == index.end()) {
+        return nullptr;
+    }
 
-} // namespace caramel::ast
+    return it->second;
+}

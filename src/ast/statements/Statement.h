@@ -56,7 +56,6 @@ enum class StatementType {
     Jump,
     ReturnStatement,
     Expression,
-    UnaryExpression,
     AtomicExpression,
     Constant,
 
@@ -70,6 +69,12 @@ enum class StatementType {
     BitwiseExpression,
     ConjunctionExpression,
     DisjunctionExpression,
+
+    // UnaryExpression w/ sub-types
+    UnaryExpression,
+    UnaryAdditiveExpression,
+    NegativeExpression
+
 
 };
 

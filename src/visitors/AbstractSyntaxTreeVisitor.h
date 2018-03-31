@@ -29,6 +29,8 @@
 #include "../utils/SourceFileUtil.h"
 #include "../ast/context/Context.h"
 #include "../ast/operators/binaryoperators/BinaryOperatorIndex.h"
+#include "../ast/operators/prefixoperators/PrefixOperatorIndex.h"
+#include "../ast/operators/postfixoperators/PostfixOperatorIndex.h"
 
 
 #pragma GCC diagnostic push
@@ -146,6 +148,8 @@ public:
     /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) override;
 
+    antlrcpp::Any visitPrefixUnaryExpression(CaramelParser::PrefixUnaryExpressionContext *ctx) override;
+
     // TODO: This function isn't implemented
     antlrcpp::Any visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) override;
 
@@ -164,8 +168,10 @@ public:
     /// Returns Expression::Ptr
     antlrcpp::Any visitXorBitwiseExpression(CaramelParser::XorBitwiseExpressionContext *ctx) override;
 
+    /// Returns Expression::Ptr
     antlrcpp::Any visitConjunction(CaramelParser::ConjunctionContext *ctx) override;
 
+    /// Returns Expression::Ptr
     antlrcpp::Any visitDisjunction(CaramelParser::DisjunctionContext *ctx) override;
 
     //--------------------------------------------------------------------------------------------------------
@@ -185,6 +191,12 @@ public:
 
     /// Returns BinaryOperator::Ptr
     antlrcpp::Any visitEqualityOperator(CaramelParser::EqualityOperatorContext *ctx) override;
+
+    /// Returns UnaryOperator::Ptr
+    antlrcpp::Any visitPostfixUnaryOperator(CaramelParser::PostfixUnaryOperatorContext *ctx) override;
+
+    /// Returns UnaryOperator::Ptr
+    antlrcpp::Any visitPrefixUnaryOperator(CaramelParser::PrefixUnaryOperatorContext *ctx) override;
 
     //--------------------------------------------------------------------------------------------------------
     // Control blocks
@@ -212,6 +224,8 @@ private:
     utils::SourceFileUtil mSourceFileUtil;
 
     BinaryOperatorIndex mBinaryOperatorIndex;
+    PrefixOperatorIndex mPrefixOperatorIndex;
+    PostfixOperatorIndex mPostfixOperatorIndex;
 };
 
 class ContextPusher {

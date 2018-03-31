@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,27 +24,23 @@
 
 #pragma once
 
-#include "Operator.h"
-#include "../statements/expressions/Expression.h"
+#include "../UnaryOperator.h"
 
 namespace caramel::ast {
 
-class UnaryOperator : public Operator {
-public:
-    using Ptr = std::shared_ptr<UnaryOperator>;
-    using WeakPtr = std::weak_ptr<UnaryOperator>;
-
-protected:
-    explicit UnaryOperator() = default;
+class PostfixOperatorIndex {
 
 public:
-    ~UnaryOperator() override = default;
+    PostfixOperatorIndex();
 
-public:
-    virtual std::shared_ptr<caramel::ir::IR> buildIR(
-            std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-            std::shared_ptr<caramel::ast::Expression> const &innerExpression
-    ) = 0;
+    UnaryOperator::Ptr getOpForToken(std::string token);
+
+private:
+    typedef std::map<std::string, UnaryOperator::Ptr> IndexMap;
+
+    IndexMap index;
+
 };
 
-} // namespace caramel::ast
+}
+

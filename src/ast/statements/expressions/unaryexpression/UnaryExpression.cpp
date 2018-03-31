@@ -41,7 +41,7 @@ UnaryExpression::getIR(
 
 ) {
     CARAMEL_UNUSED(currentBasicBlock);
-    return mUnaryOperator->buildIR(mInnerExpression);
+    return mUnaryOperator->buildIR(currentBasicBlock, mInnerExpression);
 }
 
 void UnaryExpression::visitChildrenAstDot() {
