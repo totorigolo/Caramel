@@ -27,5 +27,8 @@
 int32_t main(int32_t, char argv) {
     int32_t i = 0;
     ++i;
+    --i;
+    !i;
+
     return 0;
 }
