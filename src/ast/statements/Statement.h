@@ -83,10 +83,6 @@ public:
 
     void acceptAstDotVisit() override;
 
-    virtual PrimaryType::Ptr getPrimaryType() {
-        return Void_t::Create();
-    }
-
     template <class T>
     bool is() {
         return nullptr != dynamic_cast<T*>(this);

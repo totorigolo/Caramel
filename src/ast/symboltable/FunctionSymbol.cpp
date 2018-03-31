@@ -64,9 +64,10 @@ void FunctionSymbol::acceptAstDotVisit() {
 void FunctionSymbol::visitChildrenAstDot() {
     size_t i = 0;
     for (auto const &[paramName, paramType, paramSymbolType] : mParameters) {
-        addEdge(thisId(), thisId() + i, std::to_string(i++));
+        addEdge(thisId(), thisId() + i, std::to_string(i));
         addNode(thisId() + i, paramName + ": " + paramType->getIdentifier()
                               + (paramSymbolType == SymbolType::ArraySymbol ? "[]" : ""));
+        i++;
     }
 }
 

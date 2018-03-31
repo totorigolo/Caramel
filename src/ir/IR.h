@@ -62,20 +62,20 @@ public:
                 returnName,
                 parentBlock,
                 Operation::empty,
-                caramel::ast::Void_t::Create(),
+                ast::Void_t::Create(),
                 std::vector<std::string>()
         );
     }
 
-    static const std::string REGISTER_BASE_POINTER;
-    static const std::string REGISTER_STACK_POINTER;
-    static const std::string ACCUMULATOR;
+    static constexpr const char* REGISTER_BASE_POINTER = "%rbp";
+    static constexpr const char* REGISTER_STACK_POINTER = "%rsp";
+    static constexpr const char* ACCUMULATOR = "%eax";
 
 public:
     explicit IR(
             std::shared_ptr<BasicBlock> parentBlock,
             Operation op,
-            caramel::ast::PrimaryType::Ptr type,
+            ast::PrimaryType::Ptr type,
             std::vector<std::string> parameters = std::vector<std::string>()
     );
 
@@ -84,7 +84,7 @@ public:
             std::string const &returnName,
             std::shared_ptr<BasicBlock> parentBlock,
             Operation op,
-            caramel::ast::PrimaryType::Ptr type,
+            ast::PrimaryType::Ptr type,
             std::vector<std::string> parameters = std::vector<std::string>()
     );
 
@@ -96,17 +96,14 @@ public:
 
     bool isEmpty();
 
-    caramel::ast::PrimaryType::Ptr getType();
+    ast::PrimaryType::Ptr getType();
 
 private:
     std::string mReturnName;
     std::weak_ptr<BasicBlock> mParentBlock;
     Operation mOperation;
-    caramel::ast::PrimaryType::Ptr mType;
+    ast::PrimaryType::Ptr mType;
     std::vector<std::string> mParameters;
 };
 
-} // namespace caramel::dataStructure
-
-
-
+} // namespace caramel::ir

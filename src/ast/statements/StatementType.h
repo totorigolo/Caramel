@@ -75,6 +75,7 @@ inline std::ostream & operator<<(std::ostream &os, const StatementType &type) {
         case StatementType::UnaryExpression: return os << "UnaryExpression";
         case StatementType::AtomicExpression: return os << "AtomicExpression";
         case StatementType::Constant: return os << "Constant";
+        case StatementType::ConstString: return os << "ConstString";
             // BinaryExpression w/ sub-types
         case StatementType::BinaryExpression: return os << "BinaryExpression";
         case StatementType::BitwiseShiftExpression: return os << "BitwiseShiftExpression";

@@ -33,20 +33,18 @@ void BackEnd::generateAssembly(
         std::shared_ptr<ast::Context> context,
         std::ostream &os
 ) {
-    std::vector<std::string> pathParts = split(filePath);
+    std::vector<std::string> pathParts = splitPath(filePath);
     std::shared_ptr<ir::CFG> cfg = std::make_shared<ir::CFG>(
-            pathParts[pathParts.size() - 1]
-            , context
+            pathParts.back(), context
     );
     cfg->generateAssembly(os);
 }
 
-std::vector<std::string> BackEnd::split(std::string const &s, char delimiter) {
+std::vector<std::string> BackEnd::splitPath(std::string const &s, char delimiter) {
     std::vector<std::string> tokens;
     std::string token;
     std::istringstream tokenStream(s);
-    while (std::getline(tokenStream, token, delimiter))
-    {
+    while (std::getline(tokenStream, token, delimiter)) {
         tokens.push_back(token);
     }
     return tokens;

@@ -40,6 +40,10 @@ void FunctionDeclaration::setFunctionSymbol(FunctionSymbol::Ptr const &functionS
     mSymbol = functionSymbol;
 }
 
+PrimaryType::Ptr FunctionDeclaration::getPrimaryType() const {
+    return mSymbol->getType();
+}
+
 void FunctionDeclaration::acceptAstDotVisit() {
     addNode(thisId(), "FunctionDeclaration: " + mSymbol->getName());
     addEdge(thisId(), mSymbol->thisId());

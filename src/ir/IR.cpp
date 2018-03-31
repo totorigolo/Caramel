@@ -29,10 +29,6 @@
 
 namespace caramel::ir {
 
-const std::string IR::REGISTER_BASE_POINTER = "%rbp";
-const std::string IR::REGISTER_STACK_POINTER = "%rsp";
-const std::string IR::ACCUMULATOR = "%eax";
-
 IR::IR(
         std::shared_ptr<BasicBlock> parentBlock,
         Operation op,
@@ -58,67 +54,41 @@ IR::IR(
 
 void IR::generateAssembly(std::ostream &output) {
 
+#define OUTPUT_ENUM_CASE(enum, option)      \
+    case enum::option:                      \
+        output << #option;                  \
+    break;
+
     switch (mOperation) {
-        case Operation::copy:
-            output << "copy";
-            break;
-        case Operation::add:
-            output << "add";
-            break;
-        case Operation::call:
-            output << "call";
-            break;
-        case Operation::cmp_eq:
-            output << "cmp_eq";
-            break;
-        case Operation::cmp_le:
-            output << "cmp_le";
-            break;
-        case Operation::cmp_lt:
-            output << "cmp_lt";
-            break;
-        case Operation::ldconst:
-            output << "ldconst";
-            break;
-        case Operation::mul:
-            output << "mul";
-            break;
-        case Operation::rmem:
-            output << "rmem";
-            break;
-        case Operation::sub:
-            output << "sub";
-            break;
-        case Operation::wmem:
-            output << "wmem";
-            break;
-        case Operation::pushq:
-            output << "pushq";
-            break;
-        case Operation::movq:
-            output << "movq";
-            break;
-        case Operation::ret:
-            output << "ret";
-            break;
-        case Operation::leave:
-            output << "leave";
-            break;
+        OUTPUT_ENUM_CASE(Operation, copy)
+        OUTPUT_ENUM_CASE(Operation, add)
+        OUTPUT_ENUM_CASE(Operation, call)
+        OUTPUT_ENUM_CASE(Operation, cmp_eq)
+        OUTPUT_ENUM_CASE(Operation, cmp_le)
+        OUTPUT_ENUM_CASE(Operation, cmp_lt)
+        OUTPUT_ENUM_CASE(Operation, ldconst)
+        OUTPUT_ENUM_CASE(Operation, mul)
+        OUTPUT_ENUM_CASE(Operation, rmem)
+        OUTPUT_ENUM_CASE(Operation, sub)
+        OUTPUT_ENUM_CASE(Operation, wmem)
+        OUTPUT_ENUM_CASE(Operation, pushq)
+        OUTPUT_ENUM_CASE(Operation, movq)
+        OUTPUT_ENUM_CASE(Operation, ret)
+        OUTPUT_ENUM_CASE(Operation, leave)
         case Operation::empty:
             logger.warning() << "empty instruction was called";
             return;
     }
     output << " ";
     BasicBlock::Ptr parentBlock = mParentBlock.lock();
-    if (mParameters.size() > 0) {
-        for (int i = 0; i < mParameters.size() - 1; i++) {
+    if (!mParameters.empty()) {
+        for (size_t i = 0; i < mParameters.size() - 1; i++) {
             output << mParameters[i] << "("
                    << parentBlock->getCFG()->getSymbolIndex(parentBlock->getId(), mParameters[i]) << "), ";
         }
         output << mParameters[mParameters.size() - 1] << "("
                << parentBlock->getCFG()->getSymbolIndex(parentBlock->getId(), mParameters[mParameters.size() - 1]) << ")";
     }
-
 }
 
 std::string IR::getReturnName() {

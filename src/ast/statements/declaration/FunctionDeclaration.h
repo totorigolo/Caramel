@@ -41,6 +41,8 @@ public:
     std::weak_ptr<Symbol> getSymbol() override;
     void setFunctionSymbol(std::shared_ptr<FunctionSymbol> const& functionSymbol);
 
+    virtual PrimaryType::Ptr getPrimaryType() const;
+
     void acceptAstDotVisit() override;
 
 private:

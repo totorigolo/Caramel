@@ -38,7 +38,7 @@ public:
     using WeakPtr = std::weak_ptr<CFG>;
 
 public:
-    explicit CFG(std::string const &fileName, caramel::ast::Context::Ptr ast);
+    explicit CFG(std::string const &fileName, ast::Context::Ptr ast);
     virtual ~CFG() = default;
 
 public:
@@ -52,13 +52,13 @@ public:
 
     void generateAssembly(std::ostream &output);
 
-    std::string IRToAssembly(std::string register_) {
+    std::string IRToAssembly(caramel_unused std::string register_) {
         throw caramel::exceptions::NotImplementedException(__FILE__);
     };
 
     bool hasSymbol(int controlBlockId, std::string const &symbolName);
 
-    void addSymbol(int controlBlockId, std::string const &symbolName, caramel::ast::PrimaryType::Ptr type);
+    void addSymbol(int controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type);
 
     long getSymbolIndex(int controlBlockId, std::string const &symbolName);
 
@@ -67,16 +67,15 @@ public:
     void exitFunction();
 
 protected:
-
     void generateAssemblyPrologue(std::ostream &output);
 
     void generateAssemblyEpilogue(std::ostream &output);
 
 protected:
     std::string mFileName;
-    caramel::ast::Context::Ptr mTreeContext;
+    ast::Context::Ptr mRootContext;
 
-    std::map<int, std::map<std::string, caramel::ast::PrimaryType::Ptr>> mSymbols;
+    std::map<int, std::map<std::string, ast::PrimaryType::Ptr>> mSymbols;
     std::map<int, std::map<std::string, long>> mSymbolIndex;
     long stackLength;
     long stackLengthMemory;
@@ -84,8 +83,6 @@ protected:
     int nextBasicBlockNumber;
 
     std::vector<std::shared_ptr<BasicBlock>> mBasicBlocks;
-    std::shared_ptr<CFG> mSelf;
-
 };
 
 } // namespace caramel::ast

@@ -38,8 +38,7 @@ public:
     );
 
 protected:
-    static std::vector<std::string> split(std::string const &s, char delimiter = '/');
-
+    static std::vector<std::string> splitPath(std::string const &s, char delimiter = '/');
 };
 
 } // namespace caramel

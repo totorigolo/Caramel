@@ -55,8 +55,6 @@ public:
     bool shouldReturnAnIR() const override { return true; }
     std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
 
-    PrimaryType::Ptr getPrimaryType() override;
-
 private:
     std::weak_ptr<VariableSymbol> mSymbol;
     std::shared_ptr<Expression> mInitializer;
