@@ -49,7 +49,8 @@ enum class Operation {
     movq,
     ret,
     prolog,
-    leave
+    leave,
+    nope
 };
 
 class IR {

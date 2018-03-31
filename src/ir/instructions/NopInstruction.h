@@ -24,32 +24,24 @@
 
 #pragma once
 
-#include "Jump.h"
-#include "../expressions/Expression.h"
+#include "../IR.h"
 
+namespace caramel::ir {
 
-namespace caramel::ast {
-
-class ReturnStatement : public Jump {
+class NopInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<ReturnStatement>;
-    using WeakPtr = std::weak_ptr<ReturnStatement>;
+    using Ptr = std::shared_ptr<NopInstruction>;
+    using WeakPtr = std::weak_ptr<NopInstruction>;
 
 public:
-    explicit ReturnStatement(antlr4::Token *startToken);
-    explicit ReturnStatement(std::shared_ptr<Expression> expression, antlr4::Token *startToken);
+    explicit NopInstruction(std::shared_ptr<BasicBlock> const &parentBlock);
+    ~NopInstruction() override = default;
 
-    ~ReturnStatement() override = default;
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnAnIR() const override;
-
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
-
-private:
-    std::shared_ptr<caramel::ast::Expression> mExpression;
 };
 
-} // namespace caramel::ast
+} // namespace caramel::ir
+
+
+

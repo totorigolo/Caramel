@@ -22,34 +22,16 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "NopInstruction.h"
+#include "../IRVisitor.h"
 
-#include "Jump.h"
-#include "../expressions/Expression.h"
+namespace caramel::ir {
+    
+NopInstruction::NopInstruction(std::shared_ptr<caramel::ir::BasicBlock> const &parentBlock)
+: IR(parentBlock, Operation::nope, caramel::ast::Void_t::Create(), std::vector<std::string>()){}
 
+void NopInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitNope(this, os);
+}
 
-namespace caramel::ast {
-
-class ReturnStatement : public Jump {
-public:
-    using Ptr = std::shared_ptr<ReturnStatement>;
-    using WeakPtr = std::weak_ptr<ReturnStatement>;
-
-public:
-    explicit ReturnStatement(antlr4::Token *startToken);
-    explicit ReturnStatement(std::shared_ptr<Expression> expression, antlr4::Token *startToken);
-
-    ~ReturnStatement() override = default;
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnAnIR() const override;
-
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
-
-private:
-    std::shared_ptr<caramel::ast::Expression> mExpression;
-};
-
-} // namespace caramel::ast
+} // namespace caramel::ir

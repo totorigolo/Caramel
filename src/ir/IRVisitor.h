@@ -32,6 +32,7 @@
 #include "instructions/PrologInstruction.h"
 #include "instructions/EpilogInstruction.h"
 #include "instructions/LDConstInstruction.h"
+#include "instructions/NopInstruction.h"
 
 namespace caramel::ir {
 
@@ -77,6 +78,11 @@ public:
 
     virtual void visitLdConst(
             caramel::ir::LDConstInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitNope(
+            caramel::ir::NopInstruction *instruction,
             std::ostream &os
     ) = 0;
 

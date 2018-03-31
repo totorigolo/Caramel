@@ -186,16 +186,12 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitReturnJump(CaramelParser::ReturnJu
     logger.trace() << "visiting return jump: " << grey <<ctx->getText();
 
     // Fixme : return true value
-
-    ReturnStatement::Ptr returnStatement;
-    Expression::Ptr returnedExpression;
     if (ctx->expression()) {
-        returnedExpression = visitExpression(ctx->expression());
+        Expression::Ptr returnedExpression = visitExpression(ctx->expression());
+        return castTo<Jump::Ptr>(std::make_shared<ReturnStatement>(returnedExpression, ctx->getStart()));
     } else {
-        returnedExpression = castTo<Expression::Ptr>(Constant::defaultConstant(ctx->getStart()));
+        return castTo<Jump::Ptr>(std::make_shared<ReturnStatement>(ctx->getStart()));
     }
-
-    return castTo<Jump::Ptr>(std::make_shared<ReturnStatement>(returnedExpression, ctx->getStart()));
 }
 
 std::shared_ptr<Context> AbstractSyntaxTreeVisitor::currentContext() {

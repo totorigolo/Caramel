@@ -92,4 +92,9 @@ void X86_64IRVisitor::visitAddition(caramel::ir::AdditionInstruction *instructio
 void X86_64IRVisitor::visitLdConst(caramel::ir::LDConstInstruction *instruction, std::ostream &os) {
     os << "  movl    " << toAssembly(instruction, instruction->getValue()) << ", " << toAssembly(instruction, instruction->getDestination());
 }
+
+void X86_64IRVisitor::visitNope(caramel::ir::NopInstruction *instruction, std::ostream &os) {
+    CARAMEL_UNUSED(instruction);
+    os << "  nop";
+}
 } // namespace caramel::ir::x86_64
