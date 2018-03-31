@@ -31,6 +31,7 @@
 #include "../ast/operators/binaryoperators/DisjunctionOperator.h"
 #include "../ast/operators/binaryoperators/ConjunctionOperator.h"
 #include "../ast/statements/expressions/unaryexpression/UnaryExpression.h"
+#include "../ast/statements/expressions/atomicexpression/Identifier.h"
 
 #define FIND_BINARY_OP(ctx) mBinaryOperatorIndex.getOpForToken((ctx)->getText())
 #define FIND_PREFIX_OP(ctx) mPrefixOperatorIndex.getOpForToken((ctx)->getText())
@@ -134,6 +135,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
     if (ctx->validIdentifier()) {
         std::string varName = visitValidIdentifier(ctx->validIdentifier());
         Symbol::Ptr symbol = currentContext()->getSymbolTable()->addVariableUsage(ctx, varName, castTo<Statement::Ptr>(result));
+        result = castTo<Expression::Ptr>(std::make_shared<Identifier>(symbol, ctx->getStart()));
     } else if (ctx->charConstant()) {
         result = castAnyTo<AtomicExpression::Ptr, Expression::Ptr>(visitCharConstant(ctx->charConstant()));
     } else if (ctx->numberConstant()) {
