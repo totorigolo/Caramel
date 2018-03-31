@@ -26,107 +26,34 @@
 
 #include "SemanticError.h"
 
-#include "../Console.h"
-#include "../utils/SourceFileUtil.h"
-#include "../Logger.h"
-
-#include <iomanip>
-#include <iostream>
+#include <stdexcept>
+#include <memory>
 
 
-using namespace caramel::ast;
+namespace caramel::ast {
+class Declaration;
+
+class Symbol;
+}
 
 namespace caramel::exceptions {
-
-using namespace ast;
-using namespace colors;
 
 class SymbolAlreadyDeclaredError : public SemanticError {
 public:
     SymbolAlreadyDeclaredError(std::string const &message,
-                               Symbol::Ptr symbol,
+                               std::shared_ptr<ast::Symbol> symbol,
                                antlr4::ParserRuleContext *antlrContext,
-                               Declaration::Ptr const &existingDeclaration,
-                               Declaration::Ptr const &faultyDeclaration)
-            : SemanticError(buildAlreadyDeclaredErrorMessage(message, symbol)),
-              mAntlrContext{antlrContext},
-              mExistingDeclaration{existingDeclaration},
-              mFaultyDeclaration{faultyDeclaration} {
-    }
+                               std::shared_ptr<ast::Declaration> const &existingDeclaration,
+                               std::shared_ptr<ast::Declaration> const &faultyDeclaration);
 
-    void explain(utils::SourceFileUtil sourceFileUtil) const override {
-        // TODO: Create helper functions
-        const int LEFT_MARGIN = 4;
+    void note() const override;
 
-        // Get shorter names for these
-        auto const &start = mAntlrContext->getStart();
-        auto const startLine = start->getLine();
-        auto const startColumn = int(start->getCharPositionInLine());
-        auto const &stop = mAntlrContext->getStop();
-        auto const length = int(mAntlrContext->getText().length());
-
-        // TODO: Handle multi-line statements
-        if (start->getLine() != stop->getLine()) {
-            logger.warning() << "Errors are buggy for multi-line statements.";
-        }
-
-        // Strip the left and right spaces
-        std::string line(sourceFileUtil.getLine(startLine));
-        size_t begin = line.find_first_not_of(' ');
-        size_t end = line.find_last_not_of(' ') + 1;
-        line = line.substr(begin, end - begin);
-
-        std::stringstream posInfoSS;
-        posInfoSS << startLine << ':' << startColumn;
-        std::string posInfo(posInfoSS.str());
-        auto posInfoLength = int(posInfo.length());
-
-        // Print the error
-        std::cerr << red << bold << "semantic error at " << posInfo << ": " << reset
-                  << what() << std::endl
-                  << posInfo << std::setfill(' ') << std::setw(LEFT_MARGIN) << ""
-                  << line << std::endl
-                  << std::setfill(' ') << std::setw(LEFT_MARGIN + posInfoLength + startColumn - int(begin)) << ""
-                  << bold << red << std::setfill('~') << std::setw(length) << "" << reset
-                  << std::endl;
-        if (1) {
-            //TODO: test if different type, return primary type (int32_t) instead of statement type (VariableDeclaration)
-            std::cerr << bold << "Note: " << reset
-                      << "different previous type: was " << mExistingDeclaration->getType()
-                      << " and is now " << mFaultyDeclaration->getType()
-                      << std::endl;
-        }
-    }
-
-    std::string buildAlreadyDeclaredErrorMessage(std::string const &variableName, Symbol::Ptr symbol) {
-        std::stringstream res;
-        res << "Cannot use identifier: '" << variableName << "' because ";
-        Symbol::Ptr previousDeclaration = symbol;
-        Symbol rawSymbol = *symbol;
-        switch (previousDeclaration->getSymbolType()) {
-            case SymbolType::FunctionSymbol:
-                res << "a function with the same name is already declared at line "
-                    << previousDeclaration->getDeclaration()->getLine();
-                break;
-            case SymbolType::VariableSymbol:
-                res << "a variable with the same name is already declared at line "
-                    << previousDeclaration->getDeclaration()->getLine();
-                break;
-            case SymbolType::TypeSymbol:
-                res << variableName << " is a reserved type identifier";
-                break;
-            case SymbolType::ArraySymbol:
-                res << "an array with the same name is already declared at line "
-                    << previousDeclaration->getDeclaration()->getLine();
-                break;
-        }
-        return res.str();
-    }
+    std::string
+    buildAlreadyDeclaredErrorMessage(std::string const &variableName, std::shared_ptr<ast::Symbol> symbol);
 
 private:
-    antlr4::ParserRuleContext *mAntlrContext;
-    Declaration::Ptr mExistingDeclaration;
-    Declaration::Ptr mFaultyDeclaration;
+    std::shared_ptr<ast::Declaration> mExistingDeclaration;
+    std::shared_ptr<ast::Declaration> mFaultyDeclaration;
 };
 
 } // namespace caramel::exceptions

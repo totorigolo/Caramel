@@ -22,18 +22,12 @@
  * SOFTWARE.
 */
 
-#pragma once
-
 #include "SemanticError.h"
+#include "FunctionDefinitionParameterTypeMismatchError.h"
+#include "Common.h"
+#include "../ast/symboltable/PrimaryType.h"
 
 #include <ParserRuleContext.h>
-
-#include <stdexcept>
-
-
-namespace caramel::ast {
-class PrimaryType;
-}
 
 
 namespace caramel::exceptions {
@@ -41,19 +35,33 @@ namespace caramel::exceptions {
 using namespace ast;
 using namespace colors;
 
-class FunctionDefinitionParameterTypeMismatchError : public SemanticError {
-public:
-    FunctionDefinitionParameterTypeMismatchError(antlr4::ParserRuleContext *antlrContext,
+FunctionDefinitionParameterTypeMismatchError::FunctionDefinitionParameterTypeMismatchError(antlr4::ParserRuleContext *antlrContext,
                                                  std::shared_ptr<PrimaryType> declaredType,
-                                                 std::shared_ptr<PrimaryType> definedType);
+                                                 std::shared_ptr<PrimaryType> definedType)
+            : SemanticError(buildFunctionDefinitionParameterTypeMismatchErrorMessage(declaredType, definedType),
+                            antlrContext) {
+    }
 
-    //void explain(utils::SourceFileUtil sourceFileUtil) const override;
+    //explain différent du commun dans Semantic Error
+    /*void FunctionDefinitionParameterTypeMismatchError::explain(utils::SourceFileUtil sourceFileUtil) const {
+        //todo
+        CARAMEL_UNUSED(sourceFileUtil);
+        logger.fatal() << what();
+    }*/
 
-protected:
-    std::string buildFunctionDefinitionParameterTypeMismatchErrorMessage(
+    std::string FunctionDefinitionParameterTypeMismatchError::buildFunctionDefinitionParameterTypeMismatchErrorMessage(
             std::shared_ptr<PrimaryType> declaredType,
-            std::shared_ptr<PrimaryType> declaredName);
-
-};
+            std::shared_ptr<PrimaryType> declaredName) {
+        std::stringstream res;
+        res << "The function: "
+            << declaredType->getIdentifier()
+            << " was previously declared with a parameter of type "
+            << declaredName
+            << " .\n"
+            << "Actual parameter type is "
+            << declaredName->getIdentifier()
+            << ".";
+        return res.str();
+    }
 
 } // namespace caramel::exceptions
