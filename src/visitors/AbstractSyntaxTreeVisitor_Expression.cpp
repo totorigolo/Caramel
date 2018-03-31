@@ -88,6 +88,23 @@ AbstractSyntaxTreeVisitor::visitComparison(CaramelParser::ComparisonContext *ctx
     }
 }
 
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitEqualityComparison(CaramelParser::EqualityComparisonContext *ctx) {
+    logger.trace() << "visiting equality comparison: " << grey <<ctx->getText();
+    if (ctx->children.size() == 1) {
+        // One children = No BinaryExpression at this step.
+        return visitChildren(ctx).as<Expression::Ptr>();
+    } else {
+        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+                visitEqualityComparison(ctx->equalityComparison(0)),
+                visitEqualityOperator(ctx->equalityOperator()),
+                visitEqualityComparison(ctx->equalityComparison(1)),
+                ctx->getStart()
+        ));
+    }
+}
+
+
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitMultiplicativeExpression(CaramelParser::MultiplicativeExpressionContext *ctx) {
     logger.trace() << "visiting multiplicative expression: " << grey <<ctx->getText();
@@ -170,10 +187,17 @@ AbstractSyntaxTreeVisitor::visitMultiplicativeOperator(CaramelParser::Multiplica
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitBitwiseShiftOperator(CaramelParser::BitwiseShiftOperatorContext *ctx) {
+    logger.trace() << "visiting bitwise shift operator: " << grey << ctx->getText();
     return FIND_BINARY_OP(ctx);
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitComparativeOperator(CaramelParser::ComparativeOperatorContext *ctx) {
+    logger.trace() << "visiting comparative operator: " << grey << ctx->getText();
+    return FIND_BINARY_OP(ctx);
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitEqualityOperator(CaramelParser::EqualityOperatorContext *ctx) {
+    logger.trace() << "visiting equality operator: " << grey << ctx->getText();
     return FIND_BINARY_OP(ctx);
 }
 

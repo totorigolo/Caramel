@@ -56,8 +56,6 @@ public:
 public:
     antlrcpp::Any visitR(CaramelParser::RContext *ctx) override;
 
-
-
     /// Returns vector<Statement::Ptr>
     antlrcpp::Any visitStatements(CaramelParser::StatementsContext *ctx) override;
 
@@ -130,14 +128,14 @@ public:
     /// Returns Expression::Ptr
     antlrcpp::Any visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) override;
 
-    /// Returns BinaryOperator::Ptr
-    antlrcpp::Any visitAdditiveOperator(CaramelParser::AdditiveOperatorContext *ctx) override;
-
     /// Returns Expression::Ptr
     antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
 
     /// Returns Expression::Ptr
     antlrcpp::Any visitComparison(CaramelParser::ComparisonContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitEqualityComparison(CaramelParser::EqualityComparisonContext *ctx) override;
 
     /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
@@ -150,6 +148,30 @@ public:
 
     // TODO: This function isn't implemented
     antlrcpp::Any visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitBitwiseShiftExpression(CaramelParser::BitwiseShiftExpressionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitMultiplicativeExpression(CaramelParser::MultiplicativeExpressionContext *ctx) override;
+
+    //--------------------------------------------------------------------------------------------------------
+    // Operators
+
+    /// Returns BinaryOperator::Ptr
+    antlrcpp::Any visitMultiplicativeOperator(CaramelParser::MultiplicativeOperatorContext *ctx) override;
+
+    /// Returns BinaryOperator::Ptr
+    antlrcpp::Any visitBitwiseShiftOperator(CaramelParser::BitwiseShiftOperatorContext *ctx) override;
+
+    /// Returns BinaryOperator::Ptr
+    antlrcpp::Any visitComparativeOperator(CaramelParser::ComparativeOperatorContext *ctx) override;
+
+    /// Returns BinaryOperator::Ptr
+    antlrcpp::Any visitAdditiveOperator(CaramelParser::AdditiveOperatorContext *ctx) override;
+
+    /// Returns BinaryOperator::Ptr
+    antlrcpp::Any visitEqualityOperator(CaramelParser::EqualityOperatorContext *ctx) override;
 
     //--------------------------------------------------------------------------------------------------------
     // Control blocks
@@ -165,16 +187,6 @@ public:
 
     /// Returns WhileBlock::Ptr
     antlrcpp::Any visitWhileBlock(CaramelParser::WhileBlockContext *ctx) override;
-
-    antlrcpp::Any visitBitwiseShiftExpression(CaramelParser::BitwiseShiftExpressionContext *ctx) override;
-
-    antlrcpp::Any visitMultiplicativeExpression(CaramelParser::MultiplicativeExpressionContext *ctx) override;
-
-    antlrcpp::Any visitMultiplicativeOperator(CaramelParser::MultiplicativeOperatorContext *ctx) override;
-
-    antlrcpp::Any visitBitwiseShiftOperator(CaramelParser::BitwiseShiftOperatorContext *ctx) override;
-
-    antlrcpp::Any visitComparativeOperator(CaramelParser::ComparativeOperatorContext *ctx) override;
 
 private:
     std::shared_ptr<caramel::ast::Context> currentContext(); //

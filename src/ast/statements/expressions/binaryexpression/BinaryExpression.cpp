@@ -54,8 +54,8 @@ void BinaryExpression::acceptAstDotVisit() {
 }
 
 void BinaryExpression::visitChildrenAstDot() {
-    addEdge(thisId(), mLeftExpression->thisId());
-    addEdge(thisId(), mRightExpression->thisId());
+    addEdge(thisId(), mLeftExpression->thisId(), "left");
+    addEdge(thisId(), mRightExpression->thisId(), "right");
     mLeftExpression->acceptAstDotVisit();
     mRightExpression->acceptAstDotVisit();
 }
