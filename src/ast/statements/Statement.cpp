@@ -79,6 +79,7 @@ std::ostream & operator<<(std::ostream &os, const StatementType &type) {
         case StatementType::MultiplicativeExpression: return os << "MultiplicativeExpression";
         case StatementType::ComparativeExpression: return os << "ComparativeExpression";
         case StatementType::EqualityExpression: return os << "EqualityExpression";
+        case StatementType::BitwiseExpression: return os << "BitwiseExpression";
     }
     return os;
 }

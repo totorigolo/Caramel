@@ -155,6 +155,15 @@ public:
     /// Returns Expression::Ptr
     antlrcpp::Any visitMultiplicativeExpression(CaramelParser::MultiplicativeExpressionContext *ctx) override;
 
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitAndBitwiseExpression(CaramelParser::AndBitwiseExpressionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitOrBitwiseExpression(CaramelParser::OrBitwiseExpressionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitXorBitwiseExpression(CaramelParser::XorBitwiseExpressionContext *ctx) override;
+
     //--------------------------------------------------------------------------------------------------------
     // Operators
 
@@ -198,7 +207,7 @@ private:
     std::stack<std::shared_ptr<caramel::ast::Context>> mContextStack;
     utils::SourceFileUtil mSourceFileUtil;
 
-    BinaryOperatorIndex binaryOperatorIndex;
+    BinaryOperatorIndex mBinaryOperatorIndex;
 };
 
 class ContextPusher {

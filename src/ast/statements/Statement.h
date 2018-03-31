@@ -67,6 +67,7 @@ enum class StatementType {
     MultiplicativeExpression,
     ComparativeExpression,
     EqualityExpression,
+    BitwiseExpression,
 
 };
 

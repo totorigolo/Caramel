@@ -35,6 +35,9 @@
 #include "GreaterEqThanOperator.h"
 #include "EqualityOperator.h"
 #include "DiffOperator.h"
+#include "BitwiseAndOperator.h"
+#include "BitwiseOrOperator.h"
+#include "BitwiseXorOperator.h"
 
 #define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<BinaryOperator>(make_shared<op>())))
 
@@ -63,6 +66,11 @@ caramel::ast::BinaryOperatorIndex::BinaryOperatorIndex() {
     // Equality operators
     BIND(EqualityOperator);
     BIND(DiffOperator);
+
+    // Bitwise Operators
+    BIND(BitwiseAndOperator);
+    BIND(BitwiseXorOperator);
+    BIND(BitwiseOrOperator);
 
 }
 

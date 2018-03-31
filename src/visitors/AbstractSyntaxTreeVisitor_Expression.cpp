@@ -25,8 +25,11 @@
 #include "AbstractSyntaxTreeVisitor.h"
 #include "../ast/statements/expressions/atomicexpression/Constant.h"
 #include "../ast/statements/expressions/binaryexpression/BinaryExpression.h"
+#include "../ast/operators/binaryoperators/BitwiseAndOperator.h"
+#include "../ast/operators/binaryoperators/BitwiseOrOperator.h"
+#include "../ast/operators/binaryoperators/BitwiseXorOperator.h"
 
-#define FIND_BINARY_OP(ctx) binaryOperatorIndex.getOpForToken((ctx)->getText())
+#define FIND_BINARY_OP(ctx) mBinaryOperatorIndex.getOpForToken((ctx)->getText())
 
 using namespace caramel::ast;
 using namespace caramel::utils;
@@ -88,7 +91,6 @@ AbstractSyntaxTreeVisitor::visitComparison(CaramelParser::ComparisonContext *ctx
     }
 }
 
-
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitEqualityComparison(CaramelParser::EqualityComparisonContext *ctx) {
     logger.trace() << "visiting equality comparison: " << grey <<ctx->getText();
     if (ctx->children.size() == 1) {
@@ -103,7 +105,6 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitEqualityComparison(CaramelParser::
         ));
     }
 }
-
 
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitMultiplicativeExpression(CaramelParser::MultiplicativeExpressionContext *ctx) {
@@ -136,6 +137,51 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::At
         result = visitExpression(ctx->expression());
     }
     return castTo<Expression::Ptr>(result);
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitAndBitwiseExpression(CaramelParser::AndBitwiseExpressionContext *ctx) {
+    logger.trace() << "visiting bitwise AND expression: " << grey <<ctx->getText();
+    if (ctx->children.size() == 1) {
+        // One children = No BinaryExpression at this step.
+        return visitChildren(ctx).as<Expression::Ptr>();
+    } else {
+        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+                visitAndBitwiseExpression(ctx->andBitwiseExpression(0)),
+                mBinaryOperatorIndex.getOpForToken(BitwiseAndOperator::SYMBOL),
+                visitAndBitwiseExpression(ctx->andBitwiseExpression(1)),
+                ctx->getStart()
+        ));
+    }
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitOrBitwiseExpression(CaramelParser::OrBitwiseExpressionContext *ctx) {
+    logger.trace() << "visiting bitwise OR expression: " << grey <<ctx->getText();
+    if (ctx->children.size() == 1) {
+        // One children = No BinaryExpression at this step.
+        return visitChildren(ctx).as<Expression::Ptr>();
+    } else {
+        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+                visitOrBitwiseExpression(ctx->orBitwiseExpression(0)),
+                mBinaryOperatorIndex.getOpForToken(BitwiseOrOperator::SYMBOL),
+                visitOrBitwiseExpression(ctx->orBitwiseExpression(1)),
+                ctx->getStart()
+        ));
+    }
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitXorBitwiseExpression(CaramelParser::XorBitwiseExpressionContext *ctx) {
+    logger.trace() << "visiting bitwise XOR expression: " << grey <<ctx->getText();
+    if (ctx->children.size() == 1) {
+        // One children = No BinaryExpression at this step.
+        return visitChildren(ctx).as<Expression::Ptr>();
+    } else {
+        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+                visitXorBitwiseExpression(ctx->xorBitwiseExpression(0)),
+                mBinaryOperatorIndex.getOpForToken(BitwiseXorOperator::SYMBOL),
+                visitXorBitwiseExpression(ctx->xorBitwiseExpression(1)),
+                ctx->getStart()
+        ));
+    }
 }
 
 //--------------------------------------------------------------------------------------------------------
