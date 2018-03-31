@@ -42,6 +42,9 @@ Config parseArgs(int argc, const char *argv[]);
 int main(int argc, const char *argv[]) {
     Config config{parseArgs(argc, argv)};
 
+    // Set the logger verbosity
+    logger.setLevel(config.verbosity);
+
     // Get the AST from the front-end
     Context::Ptr astRoot{caramel::frontEnd(config)};
 
@@ -97,14 +100,18 @@ Config parseArgs(int argc, const char *argv[]) {
         TCLAP::SwitchArg compileArg("c", "compile", "Generate assembly code");
         cmd.add(compileArg);
 
-//        // Verbosity flag TODO: A logger
-//        TCLAP::MultiSwitchArg verboseArg("v", "verbose", "Set the verbosity level");
-//        cmd.add(verboseArg);
-
         // Source file
         TCLAP::UnlabeledValueArg<string> sourceFileArg("source-file", "The source file", true,
                                                        {}, "string");
         cmd.add(sourceFileArg);
+
+        // Verbosity flag
+        TCLAP::MultiSwitchArg verboseArg("v", "verbose", "Set the verbosity level");
+        cmd.add(verboseArg);
+
+        // Quiet flag
+        TCLAP::MultiSwitchArg quietArg("q", "quiet", "Set the verbosity level (reverse)");
+        cmd.add(quietArg);
 
         // Parse the args
         cmd.parse(argc, argv);
@@ -117,6 +124,7 @@ Config parseArgs(int argc, const char *argv[]) {
         config.syntaxTreeDot = syntaxTreeDotArg.getValue();
         config.astDot = astDotArg.getValue();
         config.sourceFile = sourceFileArg.getValue();
+        config.verbosity = LoggerLevel(INFO + verboseArg.getValue() - quietArg.getValue());
 
         if (goodDefaultsArg.getValue()) {
             if (!staticAnalysisArg.isSet()) config.staticAnalysis = true;

@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "Logger.h"
+
 #include <string>
 
 
@@ -34,4 +36,5 @@ struct Config {
     bool syntaxTreeDot = false;
     bool astDot = false;
     std::string sourceFile;
+    LoggerLevel verbosity = INFO;
 };

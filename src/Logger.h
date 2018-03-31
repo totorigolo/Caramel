@@ -38,7 +38,6 @@ enum LoggerLevel : unsigned int {
     TRACE = 6,
 };
 
-
 class Logger : public std::ostream {
 public:
 #define INNER_LOGGER(name, level)                                       \
@@ -69,6 +68,8 @@ public:
     explicit Logger(LoggerLevel level = LoggerLevel::TRACE);
 
     LoggerLevel getLevel() const;
+
+    void setLevel(LoggerLevel level);
 
     Fatal fatal();
     Warning warning();

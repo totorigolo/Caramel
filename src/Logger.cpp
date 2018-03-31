@@ -39,6 +39,10 @@ LoggerLevel Logger::getLevel() const {
     return mLevel;
 }
 
+void Logger::setLevel(LoggerLevel level) {
+    mLevel = level;
+}
+
 Logger::Fatal Logger::Logger::fatal() {
     return Logger::Fatal(*this);
 }

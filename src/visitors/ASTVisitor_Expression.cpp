@@ -272,7 +272,7 @@ antlrcpp::Any ASTVisitor::visitPrefixUnaryExpression(CaramelParser::PrefixUnaryE
 
 antlrcpp::Any
 ASTVisitor::visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) {
-    logger.fatal() << "visiting postfix unary expression: " << grey << ctx->getText();
+    logger.trace() << "visiting postfix unary expression: " << grey << ctx->getText();
 
     antlrcpp::Any atomicExpression = visitAtomicExpression(ctx->atomicExpression());
     auto *postfixCtx = ctx->postfixUnaryOperation();
