@@ -22,30 +22,24 @@
  * SOFTWARE.
 */
 
-#include "PrefixOperatorIndex.h"
-#include "PreIncrOperator.h"
 #include "PreDecrOperator.h"
-#include "LogicalNotOperator.h"
 
-#define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<UnaryOperator>(make_shared<op>())))
+std::shared_ptr<caramel::ir::IR> caramel::ast::PreDecrOperator::buildIR(
+        std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
+        std::shared_ptr<caramel::ast::Expression> const &expression
+) {
 
-using namespace std;
+    CARAMEL_UNUSED(currentBasicBlock);
+    CARAMEL_UNUSED(expression);
 
-caramel::ast::PrefixOperatorIndex::PrefixOperatorIndex() {
-
-    BIND(PreIncrOperator);
-    BIND(PreDecrOperator);
-
-    BIND(LogicalNotOperator);
-
+    // TODO : Implement the IR generation which happens right here.
+    throw caramel::exceptions::NotImplementedException(__FILE__);
 }
 
-caramel::ast::UnaryOperator::Ptr caramel::ast::PrefixOperatorIndex::getOpForToken(std::string token) {
-    auto it = index.find(token);
+caramel::ast::StatementType caramel::ast::PreDecrOperator::getExpressionType() const {
+    return StatementType::UnaryAdditiveExpression;
+}
 
-    if (it == index.end()) {
-        return nullptr;
-    }
-
-    return it->second;
+std::string caramel::ast::PreDecrOperator::getToken() const {
+    return SYMBOL;
 }

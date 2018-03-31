@@ -22,30 +22,37 @@
  * SOFTWARE.
 */
 
-#include "PrefixOperatorIndex.h"
-#include "PreIncrOperator.h"
-#include "PreDecrOperator.h"
-#include "LogicalNotOperator.h"
+#pragma once
 
-#define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<UnaryOperator>(make_shared<op>())))
+#include "../UnaryOperator.h"
 
-using namespace std;
+namespace caramel::ast {
 
-caramel::ast::PrefixOperatorIndex::PrefixOperatorIndex() {
+class PreDecrOperator : public UnaryOperator {
+public:
+    using Ptr = std::shared_ptr<PreDecrOperator>;
+    using WeakPtr = std::weak_ptr<PreDecrOperator>;
 
-    BIND(PreIncrOperator);
-    BIND(PreDecrOperator);
+    static constexpr const char* SYMBOL = "--";
 
-    BIND(LogicalNotOperator);
+public:
+    PreDecrOperator() = default;
 
-}
+public:
+    ~PreDecrOperator() override = default;
 
-caramel::ast::UnaryOperator::Ptr caramel::ast::PrefixOperatorIndex::getOpForToken(std::string token) {
-    auto it = index.find(token);
+public:
+    std::shared_ptr<caramel::ir::IR>
+    buildIR(
+            std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
+            std::shared_ptr<caramel::ast::Expression> const &expression
+    ) override;
 
-    if (it == index.end()) {
-        return nullptr;
-    }
+    StatementType getExpressionType() const override;
 
-    return it->second;
-}
+    std::string getToken() const override;
+};
+
+} // namespace caramel::ast
+
+
