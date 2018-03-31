@@ -25,27 +25,48 @@
 #include "AstDotNode.h"
 
 
-std::stringstream caramel::AstDotNode::sNodes;
-std::stringstream caramel::AstDotNode::sEdges;
+namespace caramel {
+
+std::stringstream AstDotNode::sNodes;
+std::stringstream AstDotNode::sEdges;
+std::set<size_t> AstDotNode::sAddedNodes;
+std::map<size_t, std::set<size_t>> AstDotNode::sAddedEdges;
 
 void caramel::AstDotNode::addNode(size_t id, const std::string &name,
                                   const std::string &shape, const std::string &color) {
-    AstDotNode::sNodes << "\tnode" << id << "[label=\"" << name << "\", shape=" + shape + ", fillcolor="+color+"]\n";
+    if (sAddedNodes.find(id) != sAddedNodes.end()) return;
+
+    AstDotNode::sNodes << "\tnode" << id << "[label=\"" << name
+                       << "\", shape=" + shape + ", fillcolor=" + color + "]\n";
+
+    sAddedNodes.insert(id);
 }
 
 void caramel::AstDotNode::addErrorNode(size_t id, const std::string &name, const std::string &errorMessage) {
+    if (sAddedNodes.find(id) != sAddedNodes.end()) return;
+
     AstDotNode::sNodes << "\tnode" << id << "[label=\"" << name << "\", style=filled, fillcolor=red]\n";
     auto errorId = size_t(&errorMessage[0]); // Same error messages will have the same ID
     addEdge(id, errorId, "error");
     addNode(errorId, errorMessage);
+
+    sAddedNodes.insert(id);
 }
 
 void caramel::AstDotNode::addEdge(size_t id1, size_t id2) {
+    if (sAddedEdges[id1].find(id2) != sAddedEdges[id1].end()) return;
+
     AstDotNode::sEdges << "\tnode" << id1 << " -> " << "node" << id2 << ";\n";
+
+    sAddedEdges[id1].insert(id2);
 }
 
 void caramel::AstDotNode::addEdge(size_t id1, size_t id2, const std::string &label) {
-    AstDotNode::sEdges << "\tnode" << id1 << " -> " << "node" << id2 << " [label="+label+"];\n";
+    if (sAddedEdges[id1].find(id2) != sAddedEdges[id1].end()) return;
+
+    AstDotNode::sEdges << "\tnode" << id1 << " -> " << "node" << id2 << " [label=" + label + "];\n";
+
+    sAddedEdges[id1].insert(id2);
 }
 
 std::string caramel::AstDotNode::getDotFile() {
@@ -61,3 +82,5 @@ std::string caramel::AstDotNode::getDotFile() {
 size_t caramel::AstDotNode::thisId() const {
     return size_t(this);
 }
+
+} // namespace caramel

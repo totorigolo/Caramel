@@ -26,6 +26,8 @@
 
 #include "Logger.h"
 
+#include <set>
+#include <map>
 #include <string>
 #include <sstream>
 
@@ -38,11 +40,9 @@ public:
 
     void addNode(size_t id, const std::string &name,
                  const std::string &shape = "box", const std::string &color = "lightgrey");
-
     void addErrorNode(size_t id, const std::string &name, const std::string &errorMessage);
 
     void addEdge(size_t id1, size_t id2);
-
     void addEdge(size_t id1, size_t id2, const std::string &label);
 
     virtual void acceptAstDotVisit() {
@@ -60,6 +60,9 @@ public:
 private:
     static std::stringstream sNodes;
     static std::stringstream sEdges;
+
+    static std::set<size_t> sAddedNodes;
+    static std::map<size_t, std::set<size_t>> sAddedEdges;
 };
 
 } // namespace caramel
