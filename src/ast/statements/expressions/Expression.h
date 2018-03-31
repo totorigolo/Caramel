@@ -25,24 +25,25 @@
 #pragma once
 
 #include "../Statement.h"
+#include "../../symboltable/SymbolType.h"
 #include "../../../exceptions/NotImplementedException.h"
 
-#include <support/Any.h>
+#include <memory>
 
 
 namespace caramel::ast {
 
-class Expression : public caramel::ast::Statement {
+class Expression : public Statement {
 public:
     using Ptr = std::shared_ptr<Expression>;
     using WeakPtr = std::weak_ptr<Expression>;
 
-protected:
-    explicit Expression(antlr4::Token *startToken, StatementType type = StatementType::Expression);
-
-
 public:
+    explicit Expression(antlr4::Token *startToken, StatementType type = StatementType::Expression);
     ~Expression() override  = default;
+
+    virtual SymbolType getSymbolType() const = 0;
+    virtual PrimaryType::Ptr getPrimaryType() const = 0;
 };
 
 } // namespace caramel::ast

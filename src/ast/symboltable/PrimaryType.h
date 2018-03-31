@@ -24,13 +24,15 @@
 
 #pragma once
 
+#include "Common.h"
+
 #include <cstddef>
 #include <memory>
+#include <limits>
 
 namespace caramel::ast {
 
 class PrimaryType {
-
 public:
     using Ptr = std::shared_ptr<PrimaryType>;
     using WeakPtr = std::weak_ptr<PrimaryType>;
@@ -50,6 +52,9 @@ public:
         return typeid(*this) == typeid(*other);
     }
 
+    bool greaterThan(PrimaryType::Ptr const &other) {
+        return getMemoryLength() >= other->getMemoryLength();
+    }
 };
 
 class Void_t : public PrimaryType {
@@ -66,6 +71,9 @@ public:
         return "void";
     }
 
+    static bool fits(caramel_unused long long value) {
+        return false;
+    }
 };
 
 class Int8_t : public PrimaryType {
@@ -82,6 +90,9 @@ public:
         return "int8_t";
     }
 
+    static bool fits(long long value) {
+        return std::numeric_limits<int8_t>::min() <= value && value <= std::numeric_limits<int8_t>::max();
+    }
 };
 
 class Char : public Int8_t {
@@ -93,7 +104,6 @@ public:
     std::string getIdentifier() const override {
         return "char";
     }
-
 };
 
 class Int16_t : public PrimaryType {
@@ -110,6 +120,9 @@ public:
         return "int16_t";
     }
 
+    static bool fits(long long value) {
+        return std::numeric_limits<int16_t>::min() <= value && value <= std::numeric_limits<int16_t>::max();
+    }
 };
 
 class Int32_t : public PrimaryType {
@@ -126,6 +139,9 @@ public:
         return "int32_t";
     }
 
+    static bool fits(long long value) {
+        return std::numeric_limits<int32_t>::min() <= value && value <= std::numeric_limits<int32_t>::max();
+    }
 };
 
 class Int64_t : public PrimaryType {
@@ -140,6 +156,10 @@ public:
 
     std::string getIdentifier() const override {
         return "int64_t";
+    }
+
+    static bool fits(long long value) {
+        return std::numeric_limits<int64_t>::min() <= value && value <= std::numeric_limits<int64_t>::max();
     }
 };
 

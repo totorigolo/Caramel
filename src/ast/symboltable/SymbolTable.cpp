@@ -25,6 +25,7 @@
 #include "SymbolTable.h"
 #include "../../Logger.h"
 #include "../../utils/Common.h"
+#include "../context/Context.h"
 #include "../statements/definition/TypeDefinition.h"
 #include "../../exceptions/UndefinedSymbolError.h"
 #include "../../exceptions/SymbolAlreadyDefinedError.h"
@@ -46,11 +47,11 @@ SymbolTable::SymbolTable(SymbolTable::Ptr const &parentTable) : mParentTable(par
 
 VariableSymbol::Ptr SymbolTable::addVariableDeclaration(
         antlr4::ParserRuleContext *antlrContext,
-        std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
+        PrimaryType::Ptr const &primaryType,
         std::string const &name,
-        const std::shared_ptr<Declaration> &declaration
+        const Declaration::Ptr &declaration
 ) {
-    logger.trace() << "SymbolTable::addVariableDeclaration()";
+    logger.trace() << "SymbolTable::addVariableDeclaration(" << name << ", " << primaryType->getIdentifier() << ")";
 
     if (isDefined(name)) {
         auto const &symbol = getSymbol(antlrContext, name);
@@ -80,11 +81,11 @@ VariableSymbol::Ptr SymbolTable::addVariableDeclaration(
 
 VariableSymbol::Ptr SymbolTable::addVariableDefinition(
         antlr4::ParserRuleContext *antlrContext,
-        std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
+        PrimaryType::Ptr const &primaryType,
         std::string const &name,
-        const std::shared_ptr<Definition> &definition
+        const Definition::Ptr &definition
 ) {
-    logger.trace() << "SymbolTable::addVariableDefinition()";
+    logger.trace() << "SymbolTable::addVariableDefinition(" << name << ", " << primaryType->getIdentifier() << ")";
 
     if (isDefined(name)) {
         auto const &symbol = getSymbol(antlrContext, name);
@@ -117,17 +118,24 @@ VariableSymbol::Ptr SymbolTable::addVariableDefinition(
     }
 }
 
-Symbol::Ptr SymbolTable::addVariableUsage(
+VariableSymbol::Ptr SymbolTable::addVariableUsage(
         antlr4::ParserRuleContext *antlrContext,
         std::string const &name,
-        const std::shared_ptr<Statement> &statement
+        const Statement::Ptr &statement
 ) {
-    logger.trace() << "SymbolTable::addVariableUsage()";
+    logger.trace() << "SymbolTable::addVariableUsage(" << name << ")";
 
     if (isDefined(name)) {
         auto const &symbol = getSymbol(antlrContext, name);
-        symbol->addUsage(statement);
-        return symbol;
+        if (symbol->getSymbolType() != SymbolType::VariableSymbol) {
+            // TODO: Create the right error
+            throw DeclarationMismatchException(
+                    buildMismatchSymbolTypeErrorMessage(name, SymbolType::VariableSymbol)
+            );
+        }
+        auto const &variableSymbol = castTo<VariableSymbol::Ptr>(symbol);
+        variableSymbol->addUsage(statement);
+        return variableSymbol;
     } else {
         SymbolTable::Ptr parent = getParentTable();
         if (parent) {
@@ -144,12 +152,12 @@ Symbol::Ptr SymbolTable::addVariableUsage(
 
 ArraySymbol::Ptr SymbolTable::addArrayDeclaration(
         antlr4::ParserRuleContext *antlrContext,
-        std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
+        PrimaryType::Ptr const &primaryType,
         std::string const &name,
         bool sized, size_t size,
-        const std::shared_ptr<Declaration> &declaration
+        const Declaration::Ptr &declaration
 ) {
-    logger.trace() << "SymbolTable::addArrayDeclaration()";
+    logger.trace() << "SymbolTable::addArrayDeclaration(" << name << ", " << primaryType->getIdentifier() << ")";
 
     if (isDefined(name)) {
         auto const &symbol = getSymbol(antlrContext, name);
@@ -184,12 +192,12 @@ ArraySymbol::Ptr SymbolTable::addArrayDeclaration(
 
 ArraySymbol::Ptr SymbolTable::addArrayDefinition(
         antlr4::ParserRuleContext *antlrContext,
-        std::shared_ptr<PrimaryType> const &primaryType,
+        PrimaryType::Ptr const &primaryType,
         std::string const &name,
-        std::vector<std::shared_ptr<Expression>> &&content,
-        const std::shared_ptr<Definition> &definition
+        std::vector<Expression::Ptr> &&content,
+        const Definition::Ptr &definition
 ) {
-    logger.trace() << "SymbolTable::addArrayDefinition()";
+    logger.trace() << "SymbolTable::addArrayDefinition(" << name << ", " << primaryType->getIdentifier() << ")";
 
     if (isDefined(name)) {
         auto const &symbol = getSymbol(antlrContext, name);
@@ -222,17 +230,24 @@ ArraySymbol::Ptr SymbolTable::addArrayDefinition(
     }
 }
 
-Symbol::Ptr SymbolTable::addArrayAccess(
+ArraySymbol::Ptr SymbolTable::addArrayAccess(
         antlr4::ParserRuleContext *antlrContext,
         std::string const &name,
-        const std::shared_ptr<Statement> &statement
+        const Statement::Ptr &statement
 ) {
-    logger.trace() << "SymbolTable::addArrayAccess()";
+    logger.trace() << "SymbolTable::addArrayAccess(" << name << ")";
 
     if (isDefined(name)) {
         auto const &symbol = getSymbol(antlrContext, name);
-        symbol->addUsage(statement);
-        return symbol;
+        if (symbol->getSymbolType() != SymbolType::ArraySymbol) {
+            // TODO: Create the right error
+            throw DeclarationMismatchException(
+                    buildMismatchSymbolTypeErrorMessage(name, SymbolType::ArraySymbol)
+            );
+        }
+        auto const &arraySymbol = castTo<ArraySymbol::Ptr>(symbol);
+        arraySymbol->addUsage(statement);
+        return arraySymbol;
     } else {
         SymbolTable::Ptr parent = getParentTable();
         if (parent) {
@@ -248,65 +263,34 @@ Symbol::Ptr SymbolTable::addArrayAccess(
 
 FunctionSymbol::Ptr SymbolTable::addFunctionDeclaration(
         antlr4::ParserRuleContext *antlrContext,
-        std::shared_ptr<caramel::ast::PrimaryType> const &returnType,
+        PrimaryType::Ptr const &returnType,
         std::string const &name,
-        std::vector<std::shared_ptr<caramel::ast::Symbol>> namedParameters,
-        const std::shared_ptr<Declaration> &declaration
+        std::vector<Symbol::Ptr> parameters,
+        const Declaration::Ptr &declaration
 ) {
-    logger.trace() << "SymbolTable::addFunctionDeclaration()";
+    logger.trace() << "SymbolTable::addFunctionDeclaration(" << name << ", " << returnType->getIdentifier() << ")";
 
-    if (isNotDeclared(name)) {
-        FunctionSymbol::Ptr functionSymbol = std::make_shared<FunctionSymbol>(name, returnType);
-        mSymbolMap[name] = functionSymbol;
-        functionSymbol->addDeclaration(declaration);
-        functionSymbol->setParameters(namedParameters);
-        return functionSymbol;
-    } else {
+    if (isDeclared(name)) { // or defined
+
+        // TODO: Duplicated code in addFunctionDefinition() -> move to a helper function
+
         auto const &symbol = getSymbol(antlrContext, name);
-        throw SymbolAlreadyDeclaredError(
-                name,
-                symbol,
-                antlrContext,
-                symbol->getDeclaration(),
-                declaration
-        );
-    }
-}
+        if (symbol->getSymbolType() != SymbolType::FunctionSymbol) {
+            // TODO: Create true error
+            throw std::runtime_error(
+                    name + " previously declared as a XXX, so it's impossible to redeclare it as a function.");
+        }
+        FunctionSymbol::Ptr const &functionSymbol = castTo<FunctionSymbol::Ptr>(symbol);
 
-FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
-        antlr4::ParserRuleContext *antlrContext,
-        std::shared_ptr<caramel::ast::PrimaryType> const &returnType,
-        std::string const &name,
-        std::vector<std::shared_ptr<caramel::ast::Symbol>> namedParameters,
-        const std::shared_ptr<Definition> &definition
-) {
-    logger.trace() << "SymbolTable::addFunctionDefinition()";
-
-    if (isDefined(name)) {
-        auto const &symbol = getSymbol(antlrContext, name);
-        throw SymbolAlreadyDefinedError(
-                name,
-                symbol,
-                antlrContext,
-                symbol->getDefinition(),
-                definition
-        );
-    } else if (!isDeclared(name)) {
-        FunctionSymbol::Ptr functionSymbol = std::make_shared<FunctionSymbol>(name, returnType);
-        functionSymbol->setParameters(namedParameters);
-        mSymbolMap[name] = functionSymbol;
-    } else {
-        FunctionSymbol::Ptr declaredSymbol = std::dynamic_pointer_cast<FunctionSymbol>(getSymbol(antlrContext, name));
-
-        std::vector<std::shared_ptr<caramel::ast::Symbol>> declaredParameters = declaredSymbol->getParameters();
-        if (declaredParameters.size() == namedParameters.size()) {
-            for (size_t i = 0; i < declaredSymbol->getParameters().size(); i++) {
-                std::string declaredParameterName = declaredParameters.at(i)->getName();
+        std::vector<Symbol::Ptr> declaredParameters = functionSymbol->getParameters();
+        if (declaredParameters.size() == parameters.size()) {
+            for (size_t i = 0; i < declaredParameters.size(); i++) {
+                std::string const declaredParameterName = declaredParameters[i]->getName();
                 std::string const declaredParameterTypeIdentifier =
-                        declaredParameters.at(i)->getType()->getIdentifier();
+                        declaredParameters[i]->getType()->getIdentifier();
 
-                std::string parameterName = namedParameters.at(i)->getName();
-                std::string const parameterTypeIdentifier = namedParameters.at(i)->getType()->getIdentifier();
+                std::string const parameterName = parameters[i]->getName();
+                std::string const parameterTypeIdentifier = parameters[i]->getType()->getIdentifier();
 
                 if (declaredParameterName != parameterName) {
                     throw FunctionDefinitionParameterNameMismatchError(
@@ -320,35 +304,154 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
                 if (declaredParameterTypeIdentifier != parameterTypeIdentifier) {
                     throw FunctionDefinitionParameterTypeMismatchError(
                             buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-                                    declaredParameters.at(i)->getType(), namedParameters.at(i)->getType()),
+                                    declaredParameters[i]->getType(), parameters[i]->getType()),
                             antlrContext,
-                            declaredParameters.at(i)->getType(),
-                            namedParameters.at(i)->getType()
+                            declaredParameters[i]->getType(),
+                            parameters[i]->getType()
                     );
                 }
             }
         } else {
             throw FunctionDefinitionNumberOfParametersMismatchError(
                     buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(name, declaredParameters.size(),
-                                                                                  namedParameters.size()),
+                                                                                  parameters.size()),
                     antlrContext,
                     declaredParameters.size(),
-                    namedParameters.size()
+                    parameters.size()
             );
         }
+
+        functionSymbol->addDeclaration(declaration);
+        return functionSymbol;
+    } else {
+        FunctionSymbol::Ptr functionSymbol = std::make_shared<FunctionSymbol>(name, returnType);
+        mSymbolMap[name] = functionSymbol;
+        functionSymbol->setParameters(std::move(parameters));
+        functionSymbol->addDeclaration(declaration);
+        return functionSymbol;
     }
-    FunctionSymbol::Ptr symbol = std::dynamic_pointer_cast<FunctionSymbol>(getSymbol(antlrContext, name));
-    symbol->addDefinition(definition);
-    return symbol;
+}
+
+FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
+        antlr4::ParserRuleContext *antlrContext,
+        Context::Ptr functionContext,
+        PrimaryType::Ptr const &returnType,
+        std::string const &name,
+        std::vector<Symbol::Ptr> parameters,
+        const Definition::Ptr &definition
+) {
+    logger.trace() << "SymbolTable::addFunctionDefinition(" << name << ", " << returnType->getIdentifier() << ")";
+
+    if (isDefined(name)) {
+        auto const &symbol = getSymbol(antlrContext, name);
+        throw SymbolAlreadyDefinedError(
+                name,
+                symbol,
+                antlrContext,
+                symbol->getDefinition(),
+                definition
+        );
+    } else if (isDeclared(name)) {
+        auto const &symbol = getSymbol(antlrContext, name);
+        if (symbol->getSymbolType() != SymbolType::FunctionSymbol) {
+            // TODO: Create true error
+            throw std::runtime_error(
+                    name + " previously declared as a XXX, so it's impossible to redeclare it as a function.");
+        }
+        FunctionSymbol::Ptr const &functionSymbol = castTo<FunctionSymbol::Ptr>(symbol);
+
+        if (functionSymbol->getContext()) {
+            logger.fatal() << "The function is only declared, but the function context isn't null:\n"
+                           << "  - existing declaration: " << *functionSymbol->getContext() << '\n'
+                           << "  - current definition: " << *functionContext;
+            exit(1);
+        }
+
+        std::vector<Symbol::Ptr> declaredParameters = functionSymbol->getParameters();
+        if (declaredParameters.size() == parameters.size()) {
+            for (size_t i = 0; i < declaredParameters.size(); i++) {
+                std::string const declaredParameterName = declaredParameters[i]->getName();
+                std::string const declaredParameterTypeIdentifier =
+                        declaredParameters[i]->getType()->getIdentifier();
+
+                std::string const parameterName = parameters[i]->getName();
+                std::string const parameterTypeIdentifier = parameters[i]->getType()->getIdentifier();
+
+                if (declaredParameterName != parameterName) {
+                    throw FunctionDefinitionParameterNameMismatchError(
+                            buildFunctionDefinitionParameterNameMismatchErrorMessage(
+                                    name, declaredParameterName, parameterName),
+                            antlrContext,
+                            declaredParameterName,
+                            parameterName
+                    );
+                }
+                if (declaredParameterTypeIdentifier != parameterTypeIdentifier) {
+                    throw FunctionDefinitionParameterTypeMismatchError(
+                            buildFunctionDefinitionParameterTypeMismatchErrorMessage(
+                                    declaredParameters[i]->getType(), parameters[i]->getType()),
+                            antlrContext,
+                            declaredParameters[i]->getType(),
+                            parameters[i]->getType()
+                    );
+                }
+            }
+        } else {
+            throw FunctionDefinitionNumberOfParametersMismatchError(
+                    buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(name, declaredParameters.size(),
+                                                                                  parameters.size()),
+                    antlrContext,
+                    declaredParameters.size(),
+                    parameters.size()
+            );
+        }
+
+        functionSymbol->setContext(functionContext);
+        functionSymbol->addDefinition(definition);
+        return functionSymbol;
+    } else {
+        FunctionSymbol::Ptr functionSymbol = std::make_shared<FunctionSymbol>(name, returnType);
+        mSymbolMap[name] = functionSymbol;
+        functionSymbol->setContext(functionContext);
+        functionSymbol->setParameters(std::move(parameters));
+        functionSymbol->addDefinition(definition);
+        return functionSymbol;
+    }
+}
+
+Symbol::Ptr SymbolTable::addFunctionParameter(
+        antlr4::ParserRuleContext *antlrContext,
+        std::string const &name,
+        PrimaryType::Ptr const &primaryType,
+        SymbolType parameterType
+) {
+    logger.trace() << "SymbolTable::addFunctionParameter(" << name << ", " << primaryType->getIdentifier() << ")";
+
+    if (isDefined(name)) {
+        auto const &symbol = getSymbol(antlrContext, name);
+        // TODO: A proper error
+        throw std::runtime_error("Two different parameters can't have the same name.");
+    } else { // If it's defined, we just shadow it
+        if (parameterType == SymbolType::ArraySymbol) {
+            ArraySymbol::Ptr arraySymbol = std::make_shared<ArraySymbol>(name, primaryType);
+            mSymbolMap[name] = arraySymbol;
+            return castTo<Symbol::Ptr>(arraySymbol);
+        } else if (parameterType == SymbolType::VariableSymbol) {
+            VariableSymbol::Ptr variableSymbol = std::make_shared<VariableSymbol>(name, primaryType);
+            mSymbolMap[name] = variableSymbol;
+            return castTo<Symbol::Ptr>(variableSymbol);
+        } else {
+            throw std::runtime_error("This can't be. And it is. Have a cookie!");
+        }
+    }
 }
 
 FunctionSymbol::Ptr SymbolTable::addFunctionCall(
         antlr4::ParserRuleContext *antlrContext,
         std::string const &name,
-        std::vector<std::shared_ptr<caramel::ast::Symbol>> const &arguments,
-        const std::shared_ptr<Statement> &statement
+        const FunctionCall::Ptr &functionCall
 ) {
-    logger.trace() << "SymbolTable::addFunctionCall()";
+    logger.trace() << "SymbolTable::addFunctionCall(" << name << ")";
 
     if (isDeclared(name)) {
         Symbol::Ptr symbol = getSymbol(antlrContext, name);
@@ -360,24 +463,26 @@ FunctionSymbol::Ptr SymbolTable::addFunctionCall(
         auto functionSymbol = castTo<FunctionSymbol::Ptr>(symbol);
 
         // Check if the arguments match with the function parameters types
-        std::vector<std::shared_ptr<Symbol>> const &parameters = functionSymbol->getParameters();
-        if (arguments.size() != parameters.size()) {
+        std::vector<PrimaryType::Ptr> const &argumentsTypes = functionCall->getArgumentsPrimaryTypes();
+        std::vector<Symbol::Ptr> const &parameters = functionSymbol->getParameters();
+        if (argumentsTypes.size() != parameters.size()) {
             throw FunctionCallArgumentsNumberMismatchException(
                     "The function " + name + " takes " + std::to_string(parameters.size()) + " arguments, "
-                    + "but only " + std::to_string(arguments.size()) + " were given."
+                    + "but only " + std::to_string(argumentsTypes.size()) + " were given."
             );
         }
-        for (size_t i = 0; i < arguments.size(); ++i) {
-            if (!arguments[i]->getType()->equals(parameters[i]->getType())) {
+        for (size_t i = 0; i < argumentsTypes.size(); ++i) {
+            if (!parameters[i]->getType()->greaterThan(argumentsTypes[i])) {
                 std::stringstream errorMessage;
                 errorMessage
-                        << "The function " << name << " " << i << " parameter is of type " << parameters[i]->getType()
-                        << ", but got a " << arguments[i]->getType();
+                        << "The function " << name << " " << i << " parameter is of type " <<
+                        parameters[i]->getType()->getIdentifier()
+                        << ", but got a " << argumentsTypes[i]->getIdentifier() << ".";
                 throw FunctionCallArgumentsTypeMismatchException(errorMessage.str());
             }
         }
 
-        functionSymbol->addUsage(statement);
+        functionSymbol->addUsage(functionCall);
         return functionSymbol;
     } else {
         throw UndefinedSymbolError(
@@ -388,9 +493,11 @@ FunctionSymbol::Ptr SymbolTable::addFunctionCall(
     }
 }
 
-void SymbolTable::addPrimaryType(std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
-                                 std::string const &name) {
-    logger.trace() << "SymbolTable::addPrimaryType()";
+void SymbolTable::addPrimaryType(
+        PrimaryType::Ptr const &primaryType,
+        std::string const &name
+) {
+    logger.trace() << "SymbolTable::addPrimaryType(" << name << ", " << primaryType->getIdentifier() << ")";
 
     // Not declared and not defined
     if (isNotDeclared(name) && isNotDefined(name)) {
@@ -399,19 +506,21 @@ void SymbolTable::addPrimaryType(std::shared_ptr<caramel::ast::PrimaryType> cons
         mSymbolMap.at(name)->addDefinition(nullptr);
     } else {
         logger.fatal() << "Can't add " << name << " as a primary type, because a symbol named " << name
-                << " already exists.";
+                       << " already exists.";
         exit(1);
     }
 }
 
 TypeSymbol::Ptr SymbolTable::addType(
         antlr4::ParserRuleContext *antlrContext,
-        std::shared_ptr<TypeDefinition> definition
+        TypeDefinition::Ptr definition
 ) {
-    logger.trace() << "SymbolTable::addType()";
+    auto definitionSymbol = definition->getSymbol().lock();
+    logger.trace() << "SymbolTable::addType(" << definitionSymbol->getName() << ", "
+                   << definitionSymbol->getType()->getIdentifier() << ")";
 
-    std::string typeAlias = definition->getTypeSymbol().lock()->getName();
-    PrimaryType::Ptr primaryType = definition->getTypeSymbol().lock()->getType();
+    std::string typeAlias = definitionSymbol->getName();
+    PrimaryType::Ptr primaryType = definitionSymbol->getType();
 
     // Not declared and not defined
     if (isNotDeclared(typeAlias)) {
@@ -441,9 +550,9 @@ bool SymbolTable::parentHasSymbol(std::string const &name) {
     return getParentTable() && getParentTable()->hasSymbol(name);
 }
 
-std::shared_ptr<Symbol>
+Symbol::Ptr
 SymbolTable::getSymbol(antlr4::ParserRuleContext *antlrContext, std::string const &name) {
-    logger.trace() << "SymbolTable::getSymbol()";
+    logger.trace() << "SymbolTable::getSymbol(): " << grey << name;
 
     if (thisHasSymbol(name)) {
         return mSymbolMap.at(name);
@@ -457,8 +566,16 @@ SymbolTable::getSymbol(antlr4::ParserRuleContext *antlrContext, std::string cons
     }
 }
 
-std::shared_ptr<SymbolTable> SymbolTable::getParentTable() {
+SymbolTable::Ptr SymbolTable::getParentTable() {
     return mParentTable;
+}
+
+size_t SymbolTable::getNumberOfSymbols() const {
+    return mSymbolMap.size();
+}
+
+std::map<std::string, Symbol::Ptr> const &SymbolTable::getSymbols() const {
+    return mSymbolMap;
 }
 
 void SymbolTable::acceptAstDotVisit() {
@@ -467,7 +584,7 @@ void SymbolTable::acceptAstDotVisit() {
 }
 
 void SymbolTable::visitChildrenAstDot() {
-    for (auto const& symbol : mSymbolMap) {
+    for (auto const &symbol : mSymbolMap) {
         addEdge(thisId(), symbol.second->thisId(), symbol.first);
         symbol.second->acceptAstDotVisit();
     }
@@ -539,8 +656,8 @@ std::string SymbolTable::buildFunctionDefinitionParameterNameMismatchErrorMessag
 }
 
 std::string SymbolTable::buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-        std::shared_ptr<PrimaryType> declaredType,
-        std::shared_ptr<PrimaryType> declaredName) {
+        PrimaryType::Ptr declaredType,
+        PrimaryType::Ptr declaredName) {
     std::stringstream res;
     res << "The function: "
         << declaredType->getIdentifier()

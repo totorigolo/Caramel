@@ -29,21 +29,13 @@
 #include "../statements/declaration/Declaration.h"
 #include "../statements/expressions/Expression.h"
 #include "../statements/definition/Definition.h"
+
 #include <iostream>
 #include <vector>
 #include <memory>
 
 
 namespace caramel::ast {
-
-enum class SymbolType {
-    FunctionSymbol,
-    VariableSymbol,
-    TypeSymbol,
-    ArraySymbol
-};
-
-std::ostream &operator<<(std::ostream &os, const SymbolType &type);
 
 class Symbol : public AstDotNode {
 public:
@@ -75,8 +67,8 @@ public:
 
 protected:
     Symbol(
-            std::string mName,
-            std::shared_ptr<PrimaryType> mType,
+            std::string name,
+            std::shared_ptr<PrimaryType> type,
             SymbolType symbolType
     );
 

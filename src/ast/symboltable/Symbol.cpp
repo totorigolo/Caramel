@@ -31,10 +31,10 @@
 namespace caramel::ast {
 
 Symbol::Symbol(
-        std::string mName,
-        PrimaryType::Ptr mType,
+        std::string name,
+        PrimaryType::Ptr type,
         SymbolType symbolType
-) : mDeclaration{}, mDefinition{}, mName{std::move(mName)}, mType{std::move(mType)}, mSymbolType{symbolType} {}
+) : mDeclaration{}, mDefinition{}, mName{std::move(name)}, mType{std::move(type)}, mSymbolType{symbolType} {}
 
 std::vector<std::weak_ptr<Statement>>
 Symbol::getOccurrences() {
@@ -104,16 +104,6 @@ void Symbol::onUsage(caramel_unused const std::shared_ptr<Statement> &expression
 
 std::shared_ptr<PrimaryType> Symbol::getType() const {
     return mType;
-}
-
-std::ostream &operator<<(std::ostream &os, const SymbolType &type) {
-    switch (type) {
-        case SymbolType::FunctionSymbol: return os << "FunctionSymbol";
-        case SymbolType::VariableSymbol: return os << "VariableSymbol";
-        case SymbolType::TypeSymbol: return os << "TypeSymbol";
-        case SymbolType::ArraySymbol: return os << "ArraySymbol";
-    }
-    return os;
 }
 
 } // namespace caramel::ast

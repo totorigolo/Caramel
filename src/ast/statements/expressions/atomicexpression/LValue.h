@@ -25,6 +25,7 @@
 #pragma once
 
 #include "AtomicExpression.h"
+#include "../../../symboltable/Symbol.h"
 
 
 namespace caramel::ast {
@@ -34,11 +35,11 @@ public:
     using Ptr = std::shared_ptr<LValue>;
     using WeakPtr = std::shared_ptr<LValue>;
 
-protected:
-    explicit LValue(antlr4::Token *startToken);
-
 public:
+    explicit LValue(antlr4::Token *startToken, StatementType type = StatementType::LValue);
     ~LValue() override = default;
+
+    virtual Symbol::Ptr getSymbol() const = 0;
 };
 
 } // namespace caramel::ast

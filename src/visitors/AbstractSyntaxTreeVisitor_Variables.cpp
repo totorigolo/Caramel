@@ -77,7 +77,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::
         std::string name = visitValidIdentifier(varWithValue->validIdentifier());
 
         Expression::Ptr expression = visitExpression(varWithValue->expression());
-        logger.trace() << "New variable declared: '" << name << "' with value "
+        logger.trace() << "New variable declared: '" << grey << name << " = "
                        << varWithValue->expression()->getText();
 
         VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(

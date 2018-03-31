@@ -22,37 +22,52 @@
  * SOFTWARE.
 */
 
-#include "Identifier.h"
-#include "../../../../ir/BasicBlock.h"
+#include "FunctionCall.h"
+#include "../../../symboltable/Symbol.h"
+
 
 namespace caramel::ast {
 
-Identifier::Identifier(antlr4::Token *startToken) :
-        LValue(startToken, StatementType::Identifier), mSymbol{} {}
+FunctionCall::FunctionCall(std::vector<Expression::Ptr> &&arguments, antlr4::Token *startToken)
+        : AtomicExpression(startToken, StatementType::FunctionCall), mArguments{arguments} {
+}
 
-Symbol::Ptr Identifier::getSymbol() const {
+Symbol::Ptr FunctionCall::getSymbol() const {
     return mSymbol;
 }
 
-SymbolType Identifier::getSymbolType() const {
+SymbolType FunctionCall::getSymbolType() const {
     return mSymbol->getSymbolType();
 }
 
-void Identifier::setSymbol(VariableSymbol::Ptr symbol) {
+void FunctionCall::setSymbol(FunctionSymbol::Ptr symbol) {
     mSymbol = std::move(symbol);
 }
 
-PrimaryType::Ptr Identifier::getPrimaryType() const {
+PrimaryType::Ptr FunctionCall::getPrimaryType() const {
     return mSymbol->getType();
 }
 
-std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {
-    return ir::IR::emptyInstruction(currentBasicBlock, mSymbol->getName());
+std::vector<PrimaryType::Ptr> FunctionCall::getArgumentsPrimaryTypes() const {
+    std::vector<PrimaryType::Ptr> argumentsTypes;
+    for (auto const& argument : mArguments) {
+        argumentsTypes.push_back(argument->getPrimaryType());
+    }
+    return argumentsTypes;
 }
 
-void Identifier::acceptAstDotVisit() {
-    addNode(thisId(), "Identifier: " + mSymbol->getName());
+void FunctionCall::acceptAstDotVisit() {
+    addNode(thisId(), "functionCall: " + mSymbol->getName());
     addEdge(thisId(), mSymbol->thisId());
+    mSymbol->acceptAstDotVisit();
+    visitChildrenAstDot();
+}
+
+void FunctionCall::visitChildrenAstDot() {
+    for (auto const& argument : mArguments) {
+        addEdge(thisId(), argument->thisId());
+        argument->acceptAstDotVisit();
+    }
 }
 
 } // namespace caramel::ast

@@ -176,7 +176,8 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitTypeDefinition(CaramelParser::Type
     TypeSymbol::Ptr primaryTypeSymbol = visitTypeParameter(ctx->typeParameter()[0]);
     TypeSymbol::Ptr typeAliasDefault = visitTypeParameter(ctx->typeParameter()[1]);
 
-    TypeDefinition::Ptr typeDefinition = std::make_shared<TypeDefinition>( ctx->getStart(), typeAliasDefault->getName(), primaryTypeSymbol );
+    TypeDefinition::Ptr typeDefinition = std::make_shared<TypeDefinition>(
+            ctx->getStart(), typeAliasDefault->getName(), primaryTypeSymbol);
     currentContext()->getSymbolTable()->addType(ctx, typeDefinition);
 
     return castTo<Statement::Ptr>(typeDefinition);
@@ -232,7 +233,7 @@ ContextPusher::ContextPusher(AbstractSyntaxTreeVisitor &abstractSyntaxTreeVisito
 }
 
 ContextPusher::~ContextPusher() {
-    logger.debug() << "Pop context.";
+    logger.debug() << "Pop context: " << *mAbstractSyntaxTreeVisitor.mContextStack.top();
     mAbstractSyntaxTreeVisitor.mContextStack.pop();
 }
 

@@ -45,7 +45,7 @@ public:
 
 public:
 
-    std::weak_ptr<TypeSymbol> getTypeSymbol();
+    std::weak_ptr<Symbol> getSymbol();
     void setSymbol(std::shared_ptr<TypeSymbol> typeSymbol);
 
     void acceptAstDotVisit() override;

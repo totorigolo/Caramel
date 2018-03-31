@@ -22,12 +22,35 @@
  * SOFTWARE.
 */
 
-#include "FunctionCall.h"
+#pragma once
 
-namespace caramel::ast::functionCall {
+#include <ostream>
 
-FunctionCall::FunctionCall(antlr4::Token *startToken)
-        : Expression(startToken) {
+
+namespace caramel::ast {
+
+enum class SymbolType {
+    FunctionSymbol,
+    VariableSymbol,
+    TypeSymbol,
+    ArraySymbol,
+    Constant,
+    NotASymbol
+};
+
+inline std::ostream &operator<<(std::ostream &os, const SymbolType &type) {
+    switch (type) {
+        case SymbolType::FunctionSymbol: return os << "FunctionSymbol";
+        case SymbolType::VariableSymbol: return os << "VariableSymbol";
+        case SymbolType::TypeSymbol: return os << "TypeSymbol";
+        case SymbolType::ArraySymbol: return os << "ArraySymbol";
+        case SymbolType::Constant: return os << "Constant";
+        case SymbolType::NotASymbol: return os << "NotASymbol";
+    }
+    return os;
 }
 
-} // namespace caramel::ast
+} // namespace caramel::dataStructure::symbolTable
+
+
+

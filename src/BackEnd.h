@@ -24,8 +24,8 @@
 
 #pragma once
 
-
 #include "ast/context/Context.h"
+
 
 namespace caramel {
 
@@ -42,6 +42,4 @@ protected:
 
 };
 
-} // namespace BackEnd
-
-
+} // namespace caramel

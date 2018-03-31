@@ -23,29 +23,30 @@
 */
 
 #include "FunctionSymbol.h"
+#include "../context/Context.h"
+#include "../symboltable/PrimaryType.h"
 
 
 namespace caramel::ast {
 
-FunctionSymbol::FunctionSymbol(
-        const std::string &mName,
-        const std::shared_ptr<caramel::ast::PrimaryType> &mType
-) : Symbol(mName, mType, SymbolType::FunctionSymbol),
-    mParameters() {
+FunctionSymbol::FunctionSymbol(const std::string &name, const PrimaryType::Ptr &type)
+        : Symbol(name, type, SymbolType::FunctionSymbol), mContext{}, mParameters() {}
+
+std::shared_ptr<Context> FunctionSymbol::getContext() {
+    return mContext;
 }
 
-std::vector<std::shared_ptr<Symbol>>
-FunctionSymbol::getParameters() const {
+void FunctionSymbol::setContext(std::shared_ptr<Context> context) {
+    mContext = std::move(context);
+}
+
+std::vector<Symbol::Ptr> FunctionSymbol::getParameters() const {
     return mParameters;
 }
 
-void FunctionSymbol::setParameters(
-        const std::vector<std::shared_ptr<caramel::ast::Symbol>> &namedParameters
-) {
+void FunctionSymbol::setParameters(std::vector<Symbol::Ptr> &&parameters) {
     mParameters.clear();
-    for (const auto &parameter : namedParameters) {
-        mParameters.push_back(parameter);
-    }
+    std::move(parameters.begin(), parameters.end(), std::back_inserter(mParameters));
 }
 
 void FunctionSymbol::acceptAstDotVisit() {
@@ -55,7 +56,7 @@ void FunctionSymbol::acceptAstDotVisit() {
 
 void FunctionSymbol::visitChildrenAstDot() {
     size_t i = 0;
-    for (auto const& parameter : mParameters) {
+    for (auto const &parameter : mParameters) {
         addEdge(thisId(), parameter->thisId(), std::to_string(i++));
         parameter->acceptAstDotVisit();
     }

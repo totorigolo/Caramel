@@ -66,7 +66,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::
 
     Context::Ptr functionContext = currentContext();
 
-    CaramelParser::FunctionDeclarationInnerContext *innerCtx = ctx->functionDeclarationInner();
+    auto innerCtx = ctx->functionDeclarationInner();
 
     PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
     std::string name = visitValidIdentifier(innerCtx->validIdentifier());
@@ -74,9 +74,13 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::
 
     FunctionDefinition::Ptr functionDefinition = std::make_shared<FunctionDefinition>(functionContext, innerCtx->start);
     FunctionSymbol::Ptr functionSymbol = parentContext->getSymbolTable()->addFunctionDefinition(
-            innerCtx, returnType, name, params, functionDefinition
+            innerCtx, functionContext, returnType, name, params, functionDefinition
     );
     functionDefinition->setSymbol(functionSymbol);
+
+    for (auto &param : params) {
+        param->addDefinition(functionDefinition);
+    }
 
     functionContext->addStatements(visitBlock(ctx->block()));
 
@@ -95,7 +99,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArguments(CaramelParser::F
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) {
-    logger.trace() << "Visiting function argument: " << ctx->getText();
+    logger.trace() << "Visiting function argument: " << grey << ctx->getText();
 
     // Get the optional name, or generate a unique one
     std::string name;
@@ -113,8 +117,11 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArgument(CaramelParser::Fu
 
     // The argument is an array
     if (ctx->functionArgumentArraySuffix()) {
-        return castTo<Symbol::Ptr>(std::make_shared<ArraySymbol>(name, type));
+        logger.warning() << "Array function parameters aren't handled yet.";
+        return currentContext()->getSymbolTable()->addFunctionParameter(
+                ctx, name, type->getType(), SymbolType::ArraySymbol);
     } else {
-        return castTo<Symbol::Ptr>(std::make_shared<VariableSymbol>(name, type));
+        return currentContext()->getSymbolTable()->addFunctionParameter(
+                ctx, name, type->getType(), SymbolType::VariableSymbol);
     }
 }

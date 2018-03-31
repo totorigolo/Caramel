@@ -35,7 +35,7 @@ FunctionDefinition::FunctionDefinition(
         antlr4::Token *startToken
 ) : Definition(startToken, StatementType::FunctionDefinition), mContext{std::move(context)}, mSymbol{} {}
 
-std::weak_ptr<FunctionSymbol> FunctionDefinition::getFunctionSymbol() {
+std::weak_ptr<Symbol> FunctionDefinition::getSymbol() {
     return mSymbol;
 }
 
@@ -44,20 +44,20 @@ void FunctionDefinition::setSymbol(FunctionSymbol::Ptr functionSymbol) {
 }
 
 void FunctionDefinition::acceptAstDotVisit() {
-    addNode(thisId(), "FunctionDefinition: " + mSymbol.lock()->getName());
+    addNode(thisId(), "FunctionDefinition: " + mSymbol->getName());
     visitChildrenAstDot();
 }
 
 void FunctionDefinition::visitChildrenAstDot() {
     addEdge(thisId(), mContext->thisId());
     mContext->acceptAstDotVisit();
-    addEdge(thisId(), mSymbol.lock()->thisId());
+    addEdge(thisId(), mSymbol->thisId());
 }
 
 std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
         ir::CFG *controlFlow
 ) {
-    caramel::ir::BasicBlock::Ptr bb = controlFlow->generateFunctionBlock(mSymbol.lock()->getName());
+    caramel::ir::BasicBlock::Ptr bb = controlFlow->generateFunctionBlock(mSymbol->getName());
 
     controlFlow->enterFunction();
 
@@ -71,8 +71,6 @@ std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
     moveParameters.push_back(ir::IR::REGISTER_BASE_POINTER);
     ir::IR::Ptr moveInstruction = std::make_shared<ir::IR>(bb, ir::Operation::copy, Void_t::Create(), moveParameters);
     bb->addInstruction(moveInstruction);
-
-
 
     for(caramel::ast::Statement::Ptr const &statement : mContext->getStatements()) {
         if(statement->shouldReturnAnIR()) {

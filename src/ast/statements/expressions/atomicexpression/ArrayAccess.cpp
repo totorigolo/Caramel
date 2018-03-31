@@ -24,14 +24,28 @@
 
 #include "ArrayAccess.h"
 
-namespace caramel::ast::atomicExpression {
-
+namespace caramel::ast {
 
 ArrayAccess::ArrayAccess(
-        caramel::ast::Symbol::Ptr symbol,
         caramel::ast::Expression::Ptr index,
         antlr4::Token *startToken
-) : LValue(startToken), mSymbol(std::move(symbol)), mIndex(std::move(index)) {}
+) : LValue(startToken, StatementType::ArrayAccess), mIndex{std::move(index)} {}
+
+Symbol::Ptr ArrayAccess::getSymbol() const {
+    return mSymbol;
+}
+
+SymbolType ArrayAccess::getSymbolType() const {
+    return mSymbol->getSymbolType();
+}
+
+void ArrayAccess::setSymbol(ArraySymbol::Ptr symbol) {
+    mSymbol = std::move(symbol);
+}
+
+PrimaryType::Ptr ArrayAccess::getPrimaryType() const {
+    return mSymbol->getType();
+}
 
 void ArrayAccess::acceptAstDotVisit() {
     addNode(thisId(), "Array Access: " + mSymbol->getName());
@@ -41,6 +55,5 @@ void ArrayAccess::visitChildrenAstDot() {
     addEdge(thisId(), mIndex->thisId());
     mIndex->acceptAstDotVisit();
 }
-
 
 } // namespace caramel::ast

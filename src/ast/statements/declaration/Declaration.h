@@ -32,10 +32,6 @@ namespace caramel::ast {
     class FunctionSymbol;
     class VariableSymbol;
     class ArraySymbol;
-    class UndefinedSymbol;
-}
-
-namespace caramel::ast {
 
 class Declaration : public Statement {
 public:
@@ -50,7 +46,7 @@ protected:
 
 public:
     // Public methods
-    virtual std::weak_ptr<caramel::ast::Symbol> getSymbol() { throw caramel::exceptions::NotImplementedException(__FILE__); };
+    virtual std::weak_ptr<Symbol> getSymbol() = 0;
 };
 
 

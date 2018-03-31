@@ -41,16 +41,16 @@ public:
             std::shared_ptr<caramel::ast::Expression> const &rightExpression,
             antlr4::Token *startToken
     );
-
     ~BinaryExpression() override = default;
-
-public:
 
     bool shouldReturnAnIR() const override;
 
     std::shared_ptr<caramel::ir::IR> getIR(
             std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
     ) override;
+
+    SymbolType getSymbolType() const override;
+    PrimaryType::Ptr getPrimaryType() const override;
 
 private:
     std::shared_ptr<caramel::ast::Expression> mLeftExpression;

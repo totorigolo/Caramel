@@ -28,18 +28,16 @@
 namespace caramel::ast {
 
 Context::Context()
-        : mSymbolTable(std::make_shared<caramel::ast::SymbolTable>()) {
-}
+        : mSymbolTable(std::make_shared<SymbolTable>()) {}
 
 Context::Context(const std::shared_ptr<Context> &parent)
-        : mSymbolTable(std::make_shared<caramel::ast::SymbolTable>(parent->getSymbolTable())) {}
+        : mSymbolTable(std::make_shared<SymbolTable>(parent->getSymbolTable())) {}
 
-std::shared_ptr<caramel::ast::SymbolTable>
-Context::getSymbolTable() const {
+SymbolTable::Ptr Context::getSymbolTable() const {
     return mSymbolTable;
 }
 
-void Context::addStatements(std::vector<std::shared_ptr<caramel::ast::Statement>> &&statements) {
+void Context::addStatements(std::vector<Statement::Ptr> &&statements) {
     std::move(statements.begin(), statements.end(), std::back_inserter(mStatements));
 }
 
@@ -52,14 +50,23 @@ void Context::acceptAstDotVisit() {
 }
 
 void Context::visitChildrenAstDot() {
-    for (auto const& statement : mStatements) {
+    for (auto const &statement : mStatements) {
         addEdge(thisId(), statement->thisId());
         statement->acceptAstDotVisit();
     }
 }
 
-std::vector<std::shared_ptr<caramel::ast::Statement>> Context::getStatements() {
+std::vector<Statement::Ptr> Context::getStatements() {
     return mStatements;
+}
+
+std::ostream &operator<<(std::ostream &os, Context const &context) {
+    os << "Context: " << context.mStatements.size() << " statements, and "
+       << context.mSymbolTable->getNumberOfSymbols() << " symbols:";
+    for (auto const&[name, symbol] : context.mSymbolTable->getSymbols()) {
+        os << "\n  - " << name << ", " << symbol->getSymbolType();
+    }
+    return os;
 }
 
 } // namespace caramel::ast

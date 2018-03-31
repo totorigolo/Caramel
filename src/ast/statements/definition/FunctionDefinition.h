@@ -31,8 +31,7 @@
 
 namespace caramel::ast {
 
-class
-FunctionDefinition : public Definition {
+class FunctionDefinition : public Definition {
 public:
     using Ptr = std::shared_ptr<FunctionDefinition>;
     using WeakPtr = std::weak_ptr<FunctionDefinition>;
@@ -41,11 +40,10 @@ public:
             std::shared_ptr<caramel::ast::Context> context,
             antlr4::Token *startToken
     );
-
     ~FunctionDefinition() override = default;
 
 public:
-    FunctionSymbol::WeakPtr getFunctionSymbol();
+    Symbol::WeakPtr getSymbol();
     void setSymbol(FunctionSymbol::Ptr functionSymbol);
 
     void acceptAstDotVisit() override;
@@ -55,8 +53,8 @@ public:
     std::shared_ptr<ir::BasicBlock> getBasicBlock(ir::CFG *controlFlow) override;
 
 protected:
-    std::shared_ptr<caramel::ast::Context> mContext;
-    std::weak_ptr<FunctionSymbol> mSymbol;
+    std::shared_ptr<Context> mContext;
+    std::shared_ptr<FunctionSymbol> mSymbol;
 };
 
 } // namespace caramel::ast

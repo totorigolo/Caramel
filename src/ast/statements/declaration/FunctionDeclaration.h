@@ -25,6 +25,8 @@
 #pragma once
 
 #include "Declaration.h"
+
+#include <vector>
 #include <memory>
 
 namespace caramel::ast {
@@ -36,19 +38,13 @@ public:
 
     explicit FunctionDeclaration(antlr4::Token *startToken);
 
-    std::weak_ptr<caramel::ast::Symbol> getSymbol() override {
-        // TODO: Why?
-        throw std::runtime_error("Cannot get the FunctionSymbol as Symbol");
-    };
-
-    std::weak_ptr<caramel::ast::FunctionSymbol> getFunctionSymbol();
-
-    void setFunctionSymbol(std::shared_ptr<caramel::ast::FunctionSymbol> const& functionSymbol);
+    std::weak_ptr<Symbol> getSymbol() override;
+    void setFunctionSymbol(std::shared_ptr<FunctionSymbol> const& functionSymbol);
 
     void acceptAstDotVisit() override;
 
 private:
-    std::weak_ptr<FunctionSymbol> mSymbol;
+    std::shared_ptr<FunctionSymbol> mSymbol;
 };
 
 } // namespace caramel::ast

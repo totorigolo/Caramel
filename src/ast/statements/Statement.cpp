@@ -55,30 +55,4 @@ void Statement::acceptAstDotVisit() {
     logger.warning() << "Default accept() for " << thisId() << ", which is a " << mType << '.';
 }
 
-std::ostream & operator<<(std::ostream &os, const StatementType &type) {
-    switch (type) {
-        case StatementType::Unknown: return os << "Unknown";
-        case StatementType::Declaration: return os << "Declaration";
-        case StatementType::VariableDeclaration: return os << "VariableDeclaration";
-        case StatementType::FunctionDeclaration: return os << "FunctionDeclaration";
-        case StatementType::ArrayDeclaration: return os << "ArrayDeclaration";
-        case StatementType::Definition: return os << "Definition";
-        case StatementType::VariableDefinition: return os << "VariableDefinition";
-        case StatementType::FunctionDefinition: return os << "FunctionDefinition";
-        case StatementType::ArrayDefinition: return os << "ArrayDefinition";
-        case StatementType::Jump:return os << "Jump";
-        case StatementType::ReturnStatement:return os << "ReturnStatement";
-        case StatementType::Expression: return os << "Expression";
-        case StatementType::UnaryExpression: return os << "UnaryExpression";
-        case StatementType::AtomicExpression: return os << "AtomicExpression";
-        case StatementType::Constant: return os << "Constant";
-            // BinaryExpression w/ sub-types
-        case StatementType::BinaryExpression: return os << "BinaryExpression";
-        case StatementType::BitwiseShiftExpression: return os << "BitwiseShiftExpression";
-        case StatementType::AdditiveExpression: return os << "AdditiveExpression";
-        case StatementType::MultiplicativeExpression: return os << "MultiplicativeExpression";
-    }
-    return os;
-}
-
 }

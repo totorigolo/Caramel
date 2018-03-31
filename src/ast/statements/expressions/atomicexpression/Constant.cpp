@@ -25,6 +25,7 @@
 #include "Constant.h"
 #include "../../../../ir/IR.h"
 
+
 namespace caramel::ast {
 
 Constant::Constant(long long mValue, antlr4::Token *startToken, StatementType type)
@@ -34,6 +35,22 @@ Constant::Constant(long long mValue, antlr4::Token *startToken, StatementType ty
 
 long long Constant::getValue() {
     return mValue;
+}
+
+SymbolType Constant::getSymbolType() const {
+    return SymbolType::Constant;
+}
+
+PrimaryType::Ptr Constant::getPrimaryType() const {
+    if (Int8_t::fits(mValue)) {
+        return std::make_shared<Int8_t>();
+    } else if (Int16_t::fits(mValue)) {
+        return std::make_shared<Int16_t>();
+    } else if (Int32_t::fits(mValue)) {
+        return std::make_shared<Int32_t>();
+    } else { // if (Int64_t::fits(mValue)) {
+        return std::make_shared<Int64_t>();
+    }
 }
 
 void Constant::acceptAstDotVisit() {
@@ -56,6 +73,5 @@ std::shared_ptr<ir::IR> Constant::getIR(std::shared_ptr<caramel::ir::BasicBlock>
     // Todo: check if Int64_t for constant is good or not
     return std::make_shared<ir::IR>(tempVar, currentBasicBlock, ir::Operation::ldconst, Int64_t::Create(), parameters);
 }
-
 
 } // namespace caramel::ast

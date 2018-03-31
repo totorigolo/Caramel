@@ -27,11 +27,12 @@
 #include "Common.h"
 #include "Symbol.h"
 #include "TypeSymbol.h"
-#include "VariableSymbol.h"
 #include "ArraySymbol.h"
+#include "VariableSymbol.h"
 #include "FunctionSymbol.h"
-#include "../../exceptions/NotImplementedException.h"
 #include "../statements/definition/TypeDefinition.h"
+#include "../statements/expressions/atomicexpression/FunctionCall.h"
+#include "../../exceptions/NotImplementedException.h"
 
 #include <CaramelBaseVisitor.h>
 
@@ -42,6 +43,8 @@
 
 namespace caramel::ast {
 
+class Context;
+
 class SymbolTable : public AstDotNode {
 public:
     using Ptr = std::shared_ptr<SymbolTable>;
@@ -50,9 +53,12 @@ public:
     SymbolTable() = default;
     explicit SymbolTable(SymbolTable::Ptr const &parentTable);
 
+    //------------------------------------------------------------------------------------------------------------------
+    // Variables
+
     VariableSymbol::Ptr addVariableDeclaration(
             antlr4::ParserRuleContext *antlrContext,
-            std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
+            std::shared_ptr<PrimaryType> const &primaryType,
             std::string const &name,
             const std::shared_ptr<Declaration> &declaration
     );
@@ -64,15 +70,18 @@ public:
             const std::shared_ptr<Definition> &definition
     );
 
-    Symbol::Ptr addVariableUsage(
+    VariableSymbol::Ptr addVariableUsage(
             antlr4::ParserRuleContext *antlrContext,
             std::string const &name,
             const std::shared_ptr<Statement> &statement
     );
 
+    //------------------------------------------------------------------------------------------------------------------
+    // Arrays
+
     ArraySymbol::Ptr addArrayDeclaration(
             antlr4::ParserRuleContext *antlrContext,
-            std::shared_ptr<caramel::ast::PrimaryType> const &primaryType,
+            std::shared_ptr<PrimaryType> const &primaryType,
             std::string const &name,
             bool sized, size_t size,
             const std::shared_ptr<Declaration> &declaration
@@ -86,47 +95,66 @@ public:
             const std::shared_ptr<Definition> &definition
     );
 
-    Symbol::Ptr addArrayAccess(
+    ArraySymbol::Ptr addArrayAccess(
             antlr4::ParserRuleContext *antlrContext,
             std::string const &name,
             const std::shared_ptr<Statement> &statement
     );
 
+    //------------------------------------------------------------------------------------------------------------------
+    // Functions
+
     FunctionSymbol::Ptr addFunctionDeclaration(
             antlr4::ParserRuleContext *antlrContext,
-            std::shared_ptr<caramel::ast::PrimaryType> const &returnType,
+            std::shared_ptr<PrimaryType> const &returnType,
             std::string const &name,
-            std::vector<std::shared_ptr<caramel::ast::Symbol>> namedParameters,
+            std::vector<std::shared_ptr<Symbol>> parameters,
             const std::shared_ptr<Declaration> &declaration
     );
 
     FunctionSymbol::Ptr addFunctionDefinition(
             antlr4::ParserRuleContext *antlrContext,
-            std::shared_ptr<caramel::ast::PrimaryType> const &returnType,
+            std::shared_ptr<Context> functionContext,
+            std::shared_ptr<PrimaryType> const &returnType,
             std::string const &name,
-            std::vector<std::shared_ptr<caramel::ast::Symbol>> namedParameters,
+            std::vector<std::shared_ptr<Symbol>> parameters,
             const std::shared_ptr<Definition> &definition
+    );
+
+    Symbol::Ptr addFunctionParameter(
+            antlr4::ParserRuleContext *antlrContext,
+            std::string const &name,
+            std::shared_ptr<PrimaryType> const &primaryType,
+            SymbolType parameterType
     );
 
     FunctionSymbol::Ptr addFunctionCall(
             antlr4::ParserRuleContext *antlrContext,
             std::string const &name,
-            std::vector<std::shared_ptr<caramel::ast::Symbol>> const &arguments,
-            const std::shared_ptr<Statement> &statement
+            FunctionCall::Ptr const &functionCall
     );
 
-    void addPrimaryType(std::shared_ptr<caramel::ast::PrimaryType> const &primaryType, std::string const &name);
+    //------------------------------------------------------------------------------------------------------------------
+    // Types
+
+    void addPrimaryType(std::shared_ptr<PrimaryType> const &primaryType, std::string const &name);
 
     TypeSymbol::Ptr addType(
             antlr4::ParserRuleContext *antlrContext,
             std::shared_ptr<TypeDefinition> definition
     );
 
+    //------------------------------------------------------------------------------------------------------------------
+    // Misc.
+
     bool hasSymbol(std::string const &name);
     bool thisHasSymbol(std::string const &name);
     bool parentHasSymbol(std::string const &name);
     std::shared_ptr<Symbol> getSymbol(antlr4::ParserRuleContext *antlrContext, std::string const &name);
     std::shared_ptr<SymbolTable> getParentTable();
+
+    size_t getNumberOfSymbols() const;
+    std::map<std::string, Symbol::Ptr> const &getSymbols() const;
 
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;

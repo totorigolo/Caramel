@@ -34,12 +34,9 @@ public:
     using Ptr = std::shared_ptr<AtomicExpression>;
     using WeakPtr = std::weak_ptr<AtomicExpression>;
 
-protected:
-    explicit AtomicExpression(antlr4::Token *startToken, StatementType type = StatementType::AtomicExpression);
-
 public:
+    explicit AtomicExpression(antlr4::Token *startToken, StatementType type = StatementType::AtomicExpression);
     ~AtomicExpression() override = default;
-
 };
 
 } // namespace caramel::ast

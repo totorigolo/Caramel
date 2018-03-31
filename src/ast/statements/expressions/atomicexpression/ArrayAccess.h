@@ -26,10 +26,10 @@
 #pragma once
 
 #include "LValue.h"
-#include "../../../symboltable/Symbol.h"
+#include "../../../symboltable/ArraySymbol.h"
 
 
-namespace caramel::ast::atomicExpression {
+namespace caramel::ast {
 
 class ArrayAccess : public LValue {
 public:
@@ -38,20 +38,25 @@ public:
 
 public:
     ArrayAccess(
-            caramel::ast::Symbol::Ptr symbol,
             caramel::ast::Expression::Ptr index,
             antlr4::Token *startToken
     );
-
     ~ArrayAccess() override = default;
+
+    Symbol::Ptr getSymbol() const override;
+
+    SymbolType getSymbolType() const override;
+
+    void setSymbol(ArraySymbol::Ptr symbol);
+
+    PrimaryType::Ptr getPrimaryType() const override;
 
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
 private:
-    caramel::ast::Symbol::Ptr mSymbol;
-    caramel::ast::Expression::Ptr mIndex;
-
+    Symbol::Ptr mSymbol;
+    Expression::Ptr mIndex;
 };
 
 } // namespace caramel::ast

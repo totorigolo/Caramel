@@ -60,7 +60,6 @@ public:
 private:
     static std::stringstream sNodes;
     static std::stringstream sEdges;
-
 };
 
 } // namespace caramel

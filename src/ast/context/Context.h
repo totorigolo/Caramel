@@ -29,6 +29,7 @@
 
 #include <memory>
 #include <vector>
+#include <ostream>
 
 
 namespace caramel::ast {
@@ -50,10 +51,11 @@ public:
 
     std::vector<std::shared_ptr<caramel::ast::Statement>> getStatements();
 
-private:
+    friend std::ostream &operator<<(std::ostream &os, Context const &context);
 
+private:
     std::shared_ptr<caramel::ast::SymbolTable> mSymbolTable;
     std::vector<std::shared_ptr<caramel::ast::Statement>> mStatements;
 };
 
-} // namespace caramel::dataStructure::context
+} // namespace caramel::dataStructure

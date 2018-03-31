@@ -24,20 +24,35 @@
 
 #pragma once
 
-#include "../Expression.h"
+#include "AtomicExpression.h"
+#include "../../../symboltable/Symbol.h"
+#include "../../../symboltable/FunctionSymbol.h"
 
 
-namespace caramel::ast::functionCall {
+namespace caramel::ast {
 
-class FunctionCall : public Expression {
+class FunctionCall : public AtomicExpression {
 public:
     using Ptr = std::shared_ptr<FunctionCall>;
     using WeakPtr = std::shared_ptr<FunctionCall>;
 
-public:
-    explicit FunctionCall(antlr4::Token *startToken);
+    explicit FunctionCall(std::vector<Expression::Ptr> &&arguments, antlr4::Token *startToken);
     ~FunctionCall() override = default;
 
+    Symbol::Ptr getSymbol() const;
+    SymbolType getSymbolType() const override;
+    void setSymbol(FunctionSymbol::Ptr symbol);
+
+    PrimaryType::Ptr getPrimaryType() const override;
+
+    std::vector<PrimaryType::Ptr> getArgumentsPrimaryTypes() const;
+
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
+
+private:
+    Symbol::Ptr mSymbol;
+    std::vector<Expression::Ptr> mArguments;
 };
 
 } // namespace caramel::ast

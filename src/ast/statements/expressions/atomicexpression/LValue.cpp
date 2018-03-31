@@ -27,8 +27,8 @@
 
 namespace caramel::ast {
 
-LValue::LValue(antlr4::Token *startToken)
-        : AtomicExpression(startToken) {
+LValue::LValue(antlr4::Token *startToken, StatementType type)
+        : AtomicExpression(startToken, type) {
 }
 
 } // namespace caramel::ast

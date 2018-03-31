@@ -31,18 +31,19 @@ namespace caramel::ast {
 FunctionDeclaration::FunctionDeclaration(antlr4::Token *startToken)
         : Declaration(startToken, StatementType::FunctionDeclaration), mSymbol{} {}
 
-caramel::ast::FunctionSymbol::WeakPtr
-FunctionDeclaration::getFunctionSymbol() {
-    return mSymbol;
+Symbol::WeakPtr FunctionDeclaration::getSymbol() {
+    logger.fatal() << "A function declaration doesn't have a symbol. (TODO: get it from the SymbolTable?)";
+    exit(1);
 }
 
-void FunctionDeclaration::setFunctionSymbol(std::shared_ptr<caramel::ast::FunctionSymbol> const &functionSymbol) {
+void FunctionDeclaration::setFunctionSymbol(FunctionSymbol::Ptr const &functionSymbol) {
     mSymbol = functionSymbol;
 }
 
 void FunctionDeclaration::acceptAstDotVisit() {
-    addNode(thisId(), "FunctionDeclaration: " + mSymbol.lock()->getName());
-    addEdge(thisId(), mSymbol.lock()->thisId());
+    addNode(thisId(), "FunctionDeclaration: " + mSymbol->getName());
+    addEdge(thisId(), mSymbol->thisId());
+    mSymbol->acceptAstDotVisit();
 }
 
 } // namespace caramel::ast

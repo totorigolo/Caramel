@@ -25,7 +25,7 @@
 #pragma once
 
 #include "LValue.h"
-#include "../../../symboltable/Symbol.h"
+#include "../../../symboltable/VariableSymbol.h"
 
 
 namespace caramel::ast {
@@ -36,22 +36,21 @@ public:
     using WeakPtr = std::weak_ptr<Identifier>;
 
 public:
-    explicit Identifier(
-            std::shared_ptr<Symbol> symbol,
-            antlr4::Token *startToken
-    );
-
+    explicit Identifier(antlr4::Token *startToken);
     ~Identifier() override = default;
 
-    std::shared_ptr<Symbol> getSymbol();
+    Symbol::Ptr getSymbol() const override;
+    SymbolType getSymbolType() const override;
+    void setSymbol(VariableSymbol::Ptr symbol);
+
+    PrimaryType::Ptr getPrimaryType() const override;
 
     std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
 
-    bool shouldReturnABasicBlock() const override;
+    void acceptAstDotVisit() override;
 
 private:
-    std::shared_ptr<Symbol> mSymbol;
-
+    std::shared_ptr<VariableSymbol> mSymbol;
 };
 
 } // namespace caramel::ast

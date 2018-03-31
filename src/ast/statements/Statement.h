@@ -24,10 +24,13 @@
 
 #pragma once
 
-#include "../../exceptions/NotImplementedException.h"
+#include "StatementType.h"
 #include "../../AstDotNode.h"
 #include "../symboltable/PrimaryType.h"
+#include "../../exceptions/NotImplementedException.h"
+
 #include <Token.h>
+
 #include <memory>
 #include <ostream>
 
@@ -39,35 +42,6 @@ namespace caramel::ir {
 }
 
 namespace caramel::ast {
-
-// TODO: Remove this unneeded enum
-// TODO: Split into distinct StatementType cpp files.
-enum class StatementType {
-    Unknown,
-    Declaration,
-    VariableDeclaration,
-    FunctionDeclaration,
-    ArrayDeclaration,
-    Definition,
-    VariableDefinition,
-    FunctionDefinition,
-    ArrayDefinition,
-    Jump,
-    ReturnStatement,
-    Expression,
-    UnaryExpression,
-    AtomicExpression,
-    Constant,
-
-    // BinaryExpression w/ sub-types
-    BinaryExpression,
-    BitwiseShiftExpression,
-    AdditiveExpression,
-    MultiplicativeExpression
-
-};
-
-std::ostream &operator<<(std::ostream &os, const StatementType &type);
 
 class Statement : public AstDotNode {
 public:

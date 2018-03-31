@@ -25,10 +25,14 @@
 #pragma once
 
 #include "Symbol.h"
+
 #include <vector>
+#include <memory>
 
 
 namespace caramel::ast {
+
+class Context;
 
 class FunctionSymbol : public Symbol {
 public:
@@ -37,20 +41,23 @@ public:
 
 public:
     FunctionSymbol(
-            const std::string &mName,
-            const std::shared_ptr<PrimaryType> &mType
+            const std::string &name,
+            const std::shared_ptr<PrimaryType> &type
     );
-
     ~FunctionSymbol() override = default;
 
-    std::vector<std::shared_ptr<Symbol>> getParameters() const;
-    void setParameters(const std::vector<std::shared_ptr<Symbol>> &namedParameters);
+    std::shared_ptr<Context> getContext();
+    void setContext(std::shared_ptr<Context> context);
+
+    std::vector<Symbol::Ptr> getParameters() const;
+    void setParameters(std::vector<Symbol::Ptr> &&parameters);
 
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
 private:
-    std::vector<std::shared_ptr<Symbol>> mParameters;
+    std::shared_ptr<Context> mContext;
+    std::vector<Symbol::Ptr> mParameters;
 };
 
 } // namespace caramel::dataStructure::symbolTable

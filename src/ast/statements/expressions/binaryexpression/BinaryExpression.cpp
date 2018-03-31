@@ -48,5 +48,12 @@ bool BinaryExpression::shouldReturnAnIR() const {
     return true;
 }
 
+SymbolType BinaryExpression::getSymbolType() const {
+    return SymbolType::NotASymbol;
 }
 
+PrimaryType::Ptr BinaryExpression::getPrimaryType() const {
+    return PrimaryType::max(mLeftExpression->getPrimaryType(), mRightExpression->getPrimaryType());
+}
+
+} // namespace caramel::ast

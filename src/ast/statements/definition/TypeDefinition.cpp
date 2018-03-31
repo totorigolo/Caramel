@@ -32,7 +32,7 @@ TypeDefinition::TypeDefinition(
         std::shared_ptr<caramel::ast::TypeSymbol> typeSymbol
 ) : Definition(startToken, StatementType::Definition), mName{name}, mSymbol{typeSymbol} {}
 
-std::weak_ptr<TypeSymbol> TypeDefinition::getTypeSymbol() {
+std::weak_ptr<Symbol> TypeDefinition::getSymbol() {
     return mSymbol;
 }
 
