@@ -82,6 +82,8 @@ std::ostream & operator<<(std::ostream &os, const StatementType &type) {
         case StatementType::BitwiseExpression: return os << "BitwiseExpression";
         case StatementType::ConjunctionExpression: return os << "ConjunctionExpression";
         case StatementType::DisjunctionExpression: return os << "DisjunctionExpression";
+        case StatementType::UnaryAdditiveExpression: return os << "UnaryAdditiveExpression";
+        case StatementType::LogicalNotExpression: return os << "LogicalNotExpression";
     }
     return os;
 }

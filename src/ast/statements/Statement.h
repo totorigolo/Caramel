@@ -73,7 +73,7 @@ enum class StatementType {
     // UnaryExpression w/ sub-types
     UnaryExpression,
     UnaryAdditiveExpression,
-    NegativeExpression
+    LogicalNotExpression
 
 
 };

@@ -37,7 +37,7 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::LogicalNotOperator::buildIR(
 }
 
 caramel::ast::StatementType caramel::ast::LogicalNotOperator::getExpressionType() const {
-    return StatementType::NegativeExpression;
+    return StatementType::LogicalNotExpression;
 }
 
 std::string caramel::ast::LogicalNotOperator::getToken() const {
