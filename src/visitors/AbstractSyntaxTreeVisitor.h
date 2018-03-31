@@ -164,6 +164,10 @@ public:
     /// Returns Expression::Ptr
     antlrcpp::Any visitXorBitwiseExpression(CaramelParser::XorBitwiseExpressionContext *ctx) override;
 
+    antlrcpp::Any visitConjunction(CaramelParser::ConjunctionContext *ctx) override;
+
+    antlrcpp::Any visitDisjunction(CaramelParser::DisjunctionContext *ctx) override;
+
     //--------------------------------------------------------------------------------------------------------
     // Operators
 

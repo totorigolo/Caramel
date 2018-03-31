@@ -38,6 +38,8 @@
 #include "BitwiseAndOperator.h"
 #include "BitwiseOrOperator.h"
 #include "BitwiseXorOperator.h"
+#include "DisjunctionOperator.h"
+#include "ConjunctionOperator.h"
 
 #define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<BinaryOperator>(make_shared<op>())))
 
@@ -67,10 +69,14 @@ caramel::ast::BinaryOperatorIndex::BinaryOperatorIndex() {
     BIND(EqualityOperator);
     BIND(DiffOperator);
 
-    // Bitwise Operators
+    // Bitwise operators
     BIND(BitwiseAndOperator);
     BIND(BitwiseXorOperator);
     BIND(BitwiseOrOperator);
+
+    // Conjunction & Disjunction operators
+    BIND(ConjunctionOperator);
+    BIND(DisjunctionOperator);
 
 }
 

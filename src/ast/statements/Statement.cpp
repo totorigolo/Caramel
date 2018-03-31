@@ -80,6 +80,8 @@ std::ostream & operator<<(std::ostream &os, const StatementType &type) {
         case StatementType::ComparativeExpression: return os << "ComparativeExpression";
         case StatementType::EqualityExpression: return os << "EqualityExpression";
         case StatementType::BitwiseExpression: return os << "BitwiseExpression";
+        case StatementType::ConjunctionExpression: return os << "ConjunctionExpression";
+        case StatementType::DisjunctionExpression: return os << "DisjunctionExpression";
     }
     return os;
 }

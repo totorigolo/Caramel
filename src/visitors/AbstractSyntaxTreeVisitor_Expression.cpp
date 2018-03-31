@@ -28,6 +28,8 @@
 #include "../ast/operators/binaryoperators/BitwiseAndOperator.h"
 #include "../ast/operators/binaryoperators/BitwiseOrOperator.h"
 #include "../ast/operators/binaryoperators/BitwiseXorOperator.h"
+#include "../ast/operators/binaryoperators/DisjunctionOperator.h"
+#include "../ast/operators/binaryoperators/ConjunctionOperator.h"
 
 #define FIND_BINARY_OP(ctx) mBinaryOperatorIndex.getOpForToken((ctx)->getText())
 
@@ -183,6 +185,37 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitXorBitwiseExpression(CaramelParser
         ));
     }
 }
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitConjunction(CaramelParser::ConjunctionContext *ctx) {
+    logger.trace() << "visiting conjuction: " << grey <<ctx->getText();
+    if (ctx->children.size() == 1) {
+        // One children = No BinaryExpression at this step.
+        return visitChildren(ctx).as<Expression::Ptr>();
+    } else {
+        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+                visitConjunction(ctx->conjunction(0)),
+                mBinaryOperatorIndex.getOpForToken(ConjunctionOperator::SYMBOL),
+                visitConjunction(ctx->conjunction(1)),
+                ctx->getStart()
+        ));
+    }
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitDisjunction(CaramelParser::DisjunctionContext *ctx) {
+    logger.trace() << "visiting disjunction: " << grey <<ctx->getText();
+    if (ctx->children.size() == 1) {
+        // One children = No BinaryExpression at this step.
+        return visitChildren(ctx).as<Expression::Ptr>();
+    } else {
+        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+                visitDisjunction(ctx->disjunction(0)),
+                mBinaryOperatorIndex.getOpForToken(DisjunctionOperator::SYMBOL),
+                visitDisjunction(ctx->disjunction(1)),
+                ctx->getStart()
+        ));
+    }
+}
+
 
 //--------------------------------------------------------------------------------------------------------
 // Unary Expressions
