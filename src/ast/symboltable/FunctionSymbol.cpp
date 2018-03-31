@@ -40,11 +40,18 @@ void FunctionSymbol::setContext(std::shared_ptr<Context> context) {
     mContext = std::move(context);
 }
 
-std::vector<Symbol::Ptr> FunctionSymbol::getParameters() const {
+std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> FunctionSymbol::getParameters() const {
     return mParameters;
 }
 
-void FunctionSymbol::setParameters(std::vector<Symbol::Ptr> &&parameters) {
+void FunctionSymbol::setParameters(std::vector<Symbol::Ptr> const &parameters) {
+    mParameters.clear();
+    for (auto const &parameter : parameters) {
+        mParameters.emplace_back(parameter->getName(), parameter->getType(), parameter->getSymbolType());
+    }
+}
+
+void FunctionSymbol::setParameters(std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> &&parameters) {
     mParameters.clear();
     std::move(parameters.begin(), parameters.end(), std::back_inserter(mParameters));
 }
@@ -56,9 +63,10 @@ void FunctionSymbol::acceptAstDotVisit() {
 
 void FunctionSymbol::visitChildrenAstDot() {
     size_t i = 0;
-    for (auto const &parameter : mParameters) {
-        addEdge(thisId(), parameter->thisId(), std::to_string(i++));
-        parameter->acceptAstDotVisit();
+    for (auto const &[paramName, paramType, paramSymbolType] : mParameters) {
+        addEdge(thisId(), thisId() + i, std::to_string(i++));
+        addNode(thisId() + i, paramName + ": " + paramType->getIdentifier()
+                              + (paramSymbolType == SymbolType::ArraySymbol ? "[]" : ""));
     }
 }
 

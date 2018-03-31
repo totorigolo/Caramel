@@ -49,15 +49,16 @@ public:
     std::shared_ptr<Context> getContext();
     void setContext(std::shared_ptr<Context> context);
 
-    std::vector<Symbol::Ptr> getParameters() const;
-    void setParameters(std::vector<Symbol::Ptr> &&parameters);
+    std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> getParameters() const;
+    void setParameters(std::vector<Symbol::Ptr> const &parameters);
+    void setParameters(std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> &&parameters);
 
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
 private:
     std::shared_ptr<Context> mContext;
-    std::vector<Symbol::Ptr> mParameters;
+    std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> mParameters;
 };
 
 } // namespace caramel::dataStructure::symbolTable

@@ -42,7 +42,8 @@ ASTVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *
 
     PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
     std::string name = visitValidIdentifier(innerCtx->validIdentifier());
-    std::vector<Symbol::Ptr> params = visitFunctionArguments(innerCtx->functionArguments());
+    std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> params =
+            visitFunctionArguments(innerCtx->functionArguments());
     FunctionDeclaration::Ptr functionDeclaration = std::make_shared<FunctionDeclaration>(innerCtx->start);
     FunctionSymbol::Ptr functionSymbol = currentContext()->getSymbolTable()->addFunctionDeclaration(
             innerCtx, returnType, name, params, functionDeclaration);
@@ -50,8 +51,8 @@ ASTVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *
 
     auto traceLogger = logger.trace();
     traceLogger << "New function declared " << name << " with return type " << returnType->getIdentifier();
-    for (Symbol::Ptr const &param : params) {
-        traceLogger << "\n\t- param: " << param->getName() << " as " << param->getType()->getIdentifier();
+    for (auto const &[paramName, paramType, paramSymbolType] : params) {
+        traceLogger << "\n\t- param: " << paramName << " as " << paramType->getIdentifier();
     }
     traceLogger.show();
 
@@ -70,15 +71,22 @@ antlrcpp::Any ASTVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinit
 
     PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
     std::string name = visitValidIdentifier(innerCtx->validIdentifier());
-    std::vector<Symbol::Ptr> params = visitFunctionArguments(innerCtx->functionArguments());
+    std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> params =
+            visitFunctionArguments(innerCtx->functionArguments());
+
+    std::vector<Symbol::Ptr> paramsSymbols;
+    for (auto const &[paramName, paramType, paramSymbolType] : params) {
+        paramsSymbols.push_back(currentContext()->getSymbolTable()->addFunctionParameter(
+                ctx, paramName, paramType, paramSymbolType));
+    }
 
     FunctionDefinition::Ptr functionDefinition = std::make_shared<FunctionDefinition>(functionContext, innerCtx->start);
     FunctionSymbol::Ptr functionSymbol = parentContext->getSymbolTable()->addFunctionDefinition(
-            innerCtx, functionContext, returnType, name, params, functionDefinition
+            innerCtx, functionContext, returnType, name, paramsSymbols, functionDefinition
     );
     functionDefinition->setSymbol(functionSymbol);
 
-    for (auto &param : params) {
+    for (auto &param : paramsSymbols) {
         param->addDefinition(functionDefinition);
     }
 
@@ -90,9 +98,9 @@ antlrcpp::Any ASTVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinit
 antlrcpp::Any ASTVisitor::visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) {
     logger.trace() << "Visiting named arguments: " << grey << ctx->getText();
 
-    std::vector<Symbol::Ptr> params;
+    std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> params;
     for (auto argument : ctx->functionArgument()) {
-        Symbol::Ptr symbol = visitFunctionArgument(argument);
+        std::tuple<std::string, PrimaryType::Ptr, SymbolType> symbol = visitFunctionArgument(argument);
         params.push_back(symbol);
     }
     return params;
@@ -118,10 +126,8 @@ antlrcpp::Any ASTVisitor::visitFunctionArgument(CaramelParser::FunctionArgumentC
     // The argument is an array
     if (ctx->functionArgumentArraySuffix()) {
         logger.warning() << "Array function parameters aren't handled yet.";
-        return currentContext()->getSymbolTable()->addFunctionParameter(
-                ctx, name, type->getType(), SymbolType::ArraySymbol);
+        return std::make_tuple(name, type->getType(), SymbolType::ArraySymbol);
     } else {
-        return currentContext()->getSymbolTable()->addFunctionParameter(
-                ctx, name, type->getType(), SymbolType::VariableSymbol);
+        return std::make_tuple(name, type->getType(), SymbolType::VariableSymbol);
     }
 }

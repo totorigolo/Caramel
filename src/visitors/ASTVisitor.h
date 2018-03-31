@@ -95,10 +95,10 @@ public:
     /// Returns Statement::Ptr
     antlrcpp::Any visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) override;
 
-    /// Returns std::vector<Symbol::Ptr>
+    /// Returns std::vector< visitFunctionArgument()::returnType >
     antlrcpp::Any visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) override;
 
-    /// Returns Symbol::Ptr
+    /// Returns std::tuple<std::string, PrimaryType::Ptr, SymbolType>
     antlrcpp::Any visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) override;
 
     //--------------------------------------------------------------------------------------------------------

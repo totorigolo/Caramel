@@ -265,7 +265,7 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDeclaration(
         antlr4::ParserRuleContext *antlrContext,
         PrimaryType::Ptr const &returnType,
         std::string const &name,
-        std::vector<Symbol::Ptr> parameters,
+        std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> parameters,
         const Declaration::Ptr &declaration
 ) {
     logger.trace() << "SymbolTable::addFunctionDeclaration(" << name << ", " << returnType->getIdentifier() << ")";
@@ -282,15 +282,15 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDeclaration(
         }
         FunctionSymbol::Ptr const &functionSymbol = castTo<FunctionSymbol::Ptr>(symbol);
 
-        std::vector<Symbol::Ptr> declaredParameters = functionSymbol->getParameters();
+        auto declaredParameters = functionSymbol->getParameters();
         if (declaredParameters.size() == parameters.size()) {
             for (size_t i = 0; i < declaredParameters.size(); i++) {
-                std::string const declaredParameterName = declaredParameters[i]->getName();
+                std::string const declaredParameterName = std::get<0>(declaredParameters[i]);
                 std::string const declaredParameterTypeIdentifier =
-                        declaredParameters[i]->getType()->getIdentifier();
+                        std::get<1>(declaredParameters[i])->getIdentifier();
 
-                std::string const parameterName = parameters[i]->getName();
-                std::string const parameterTypeIdentifier = parameters[i]->getType()->getIdentifier();
+                std::string const parameterName = std::get<0>(parameters[i]);
+                std::string const parameterTypeIdentifier = std::get<1>(parameters[i])->getIdentifier();
 
                 if (declaredParameterName != parameterName) {
                     throw FunctionDefinitionParameterNameMismatchError(
@@ -304,10 +304,10 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDeclaration(
                 if (declaredParameterTypeIdentifier != parameterTypeIdentifier) {
                     throw FunctionDefinitionParameterTypeMismatchError(
                             buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-                                    declaredParameters[i]->getType(), parameters[i]->getType()),
+                                    std::get<1>(declaredParameters[i]), std::get<1>(parameters[i])),
                             antlrContext,
-                            declaredParameters[i]->getType(),
-                            parameters[i]->getType()
+                            std::get<1>(declaredParameters[i]),
+                            std::get<1>(parameters[i])
                     );
                 }
             }
@@ -367,12 +367,12 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
             exit(1);
         }
 
-        std::vector<Symbol::Ptr> declaredParameters = functionSymbol->getParameters();
+        auto declaredParameters = functionSymbol->getParameters();
         if (declaredParameters.size() == parameters.size()) {
             for (size_t i = 0; i < declaredParameters.size(); i++) {
-                std::string const declaredParameterName = declaredParameters[i]->getName();
+                std::string const declaredParameterName = std::get<0>(declaredParameters[i]);
                 std::string const declaredParameterTypeIdentifier =
-                        declaredParameters[i]->getType()->getIdentifier();
+                        std::get<1>(declaredParameters[i])->getIdentifier();
 
                 std::string const parameterName = parameters[i]->getName();
                 std::string const parameterTypeIdentifier = parameters[i]->getType()->getIdentifier();
@@ -389,9 +389,9 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
                 if (declaredParameterTypeIdentifier != parameterTypeIdentifier) {
                     throw FunctionDefinitionParameterTypeMismatchError(
                             buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-                                    declaredParameters[i]->getType(), parameters[i]->getType()),
+                                    std::get<1>(declaredParameters[i]), parameters[i]->getType()),
                             antlrContext,
-                            declaredParameters[i]->getType(),
+                            std::get<1>(declaredParameters[i]),
                             parameters[i]->getType()
                     );
                 }
@@ -464,7 +464,7 @@ FunctionSymbol::Ptr SymbolTable::addFunctionCall(
 
         // Check if the arguments match with the function parameters types
         std::vector<PrimaryType::Ptr> const &argumentsTypes = functionCall->getArgumentsPrimaryTypes();
-        std::vector<Symbol::Ptr> const &parameters = functionSymbol->getParameters();
+        auto const &parameters = functionSymbol->getParameters();
         if (argumentsTypes.size() != parameters.size()) {
             throw FunctionCallArgumentsNumberMismatchException(
                     "The function " + name + " takes " + std::to_string(parameters.size()) + " arguments, "
@@ -472,11 +472,11 @@ FunctionSymbol::Ptr SymbolTable::addFunctionCall(
             );
         }
         for (size_t i = 0; i < argumentsTypes.size(); ++i) {
-            if (!parameters[i]->getType()->greaterThan(argumentsTypes[i])) {
+            if (!std::get<1>(parameters[i])->greaterThan(argumentsTypes[i])) {
                 std::stringstream errorMessage;
                 errorMessage
-                        << "The function " << name << " " << i << " parameter is of type " <<
-                        parameters[i]->getType()->getIdentifier()
+                        << "The function " << name << " " << i << " parameter is of type "
+                        << std::get<1>(parameters[i])->getIdentifier()
                         << ", but got a " << argumentsTypes[i]->getIdentifier() << ".";
                 throw FunctionCallArgumentsTypeMismatchException(errorMessage.str());
             }

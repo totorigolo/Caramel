@@ -28,6 +28,8 @@
 #include "../ast/statements/jumps/Jump.h"
 #include "../ast/statements/jumps/ReturnStatement.h"
 #include "../ast/statements/controlblocks/ControlBlock.h"
+#include "../ast/statements/definition/FunctionDefinition.h"
+#include "../ast/statements/declaration/FunctionDeclaration.h"
 #include "../ast/statements/expressions/atomicexpression/Constant.h"
 
 
@@ -51,6 +53,8 @@ antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
 
     SymbolTable::Ptr symbolTable = context->getSymbolTable();
 
+    // Add types
+    logger.debug() << "Adding primary types.";
     PrimaryType::Ptr void_t = Void_t::Create();
     PrimaryType::Ptr char_t = Char::Create();
     PrimaryType::Ptr int8_t = Int8_t::Create();
@@ -64,6 +68,15 @@ antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
     symbolTable->addPrimaryType(int16_t, int16_t->getIdentifier());
     symbolTable->addPrimaryType(int32_t, int32_t->getIdentifier());
     symbolTable->addPrimaryType(int64_t, int64_t->getIdentifier());
+
+    // Add prelude functions
+    logger.debug() << "Adding prelude functions.";
+    auto putsDecl = std::make_shared<FunctionDeclaration>(ctx->getStart());
+    std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> putsParams = {
+            {"c", char_t, SymbolType::VariableSymbol}
+    };
+    auto putsSymbol = symbolTable->addFunctionDeclaration(ctx, void_t, "puts", putsParams, putsDecl);
+    putsDecl->setFunctionSymbol(putsSymbol);
 
     context->addStatements(visitStatements(ctx->statements()));
     return context;
@@ -140,7 +153,7 @@ antlrcpp::Any ASTVisitor::visitInstructions(CaramelParser::InstructionsContext *
 }
 
 antlrcpp::Any ASTVisitor::visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) {
-    logger.trace() << "visiting identifier: " << grey << ctx->getText();
+    logger.trace() << "visiting valid identifier: " << grey << ctx->getText();
     return ctx->getText();
 }
 
