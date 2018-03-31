@@ -33,7 +33,7 @@ Constant::Constant(long long mValue, antlr4::Token *startToken, StatementType ty
         mValue(mValue) {
 }
 
-long long Constant::getValue() {
+long long Constant::getValue() const {
     return mValue;
 }
 

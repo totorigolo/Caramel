@@ -22,7 +22,7 @@
  * SOFTWARE.
 */
 
-#include "AbstractSyntaxTreeVisitor.h"
+#include "ASTVisitor.h"
 #include "../Logger.h"
 #include "../utils/Common.h"
 #include "../ast/statements/controlblocks/IfBlock.h"
@@ -37,7 +37,7 @@ using namespace caramel::colors;
 using namespace caramel::visitors;
 
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitControlBlock(CaramelParser::ControlBlockContext *ctx) {
+antlrcpp::Any ASTVisitor::visitControlBlock(CaramelParser::ControlBlockContext *ctx) {
     logger.trace() << "visiting array block: " << grey <<ctx->getText();
 
     if (ctx->ifBlock()) {
@@ -49,7 +49,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitControlBlock(CaramelParser::Contro
     }
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockContext *ctx) {
+antlrcpp::Any ASTVisitor::visitIfBlock(CaramelParser::IfBlockContext *ctx) {
     logger.trace() << "visiting if block: " << grey <<ctx->getText();
 
     IfBlock::Ptr ifBlock;
@@ -73,7 +73,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitIfBlock(CaramelParser::IfBlockCont
     return ifBlock;
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitWhileBlock(CaramelParser::WhileBlockContext *ctx) {
+antlrcpp::Any ASTVisitor::visitWhileBlock(CaramelParser::WhileBlockContext *ctx) {
     logger.trace() << "visiting while block: " << grey <<ctx->getText();
 
     Expression::Ptr expression = visitExpression(ctx->expression());
@@ -84,7 +84,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitWhileBlock(CaramelParser::WhileBlo
     return whileBlock;
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitForBlock(CaramelParser::ForBlockContext *ctx) {
+antlrcpp::Any ASTVisitor::visitForBlock(CaramelParser::ForBlockContext *ctx) {
     logger.trace() << "visiting for block: " << grey <<ctx->getText();
 
     Expression::Ptr begin = visitExpression(ctx->expression(0));

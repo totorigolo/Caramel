@@ -44,6 +44,7 @@ enum class StatementType {
     UnaryExpression,
     AtomicExpression,
     Constant,
+    ConstString,
     LValue,
     Identifier,
     FunctionCall,
@@ -68,7 +69,7 @@ inline std::ostream & operator<<(std::ostream &os, const StatementType &type) {
         case StatementType::VariableDefinition: return os << "VariableDefinition";
         case StatementType::FunctionDefinition: return os << "FunctionDefinition";
         case StatementType::ArrayDefinition: return os << "ArrayDefinition";
-        case StatementType::Jump:return os << "Jump";
+        case StatementType::Jump: return os << "Jump";
         case StatementType::ReturnStatement:return os << "ReturnStatement";
         case StatementType::Expression: return os << "Expression";
         case StatementType::UnaryExpression: return os << "UnaryExpression";

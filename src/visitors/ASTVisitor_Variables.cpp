@@ -22,7 +22,7 @@
  * SOFTWARE.
 */
 
-#include "AbstractSyntaxTreeVisitor.h"
+#include "ASTVisitor.h"
 #include "../Logger.h"
 #include "../utils/Common.h"
 #include "../ast/statements/declaration/VariableDeclaration.h"
@@ -35,7 +35,7 @@ using namespace caramel::colors;
 using namespace caramel::visitors;
 
 antlrcpp::Any
-AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) {
+ASTVisitor::visitVariableDeclaration(CaramelParser::VariableDeclarationContext *ctx) {
     logger.trace() << "visiting variable declaration: " << grey <<ctx->getText();
 
     TypeSymbol::Ptr typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();
@@ -57,7 +57,7 @@ AbstractSyntaxTreeVisitor::visitVariableDeclaration(CaramelParser::VariableDecla
     return variables;
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitVariableDefinition(CaramelParser::VariableDefinitionContext *ctx) {
+antlrcpp::Any ASTVisitor::visitVariableDefinition(CaramelParser::VariableDefinitionContext *ctx) {
     logger.trace() << "visiting variable definition: " << grey <<ctx->getText();
 
     TypeSymbol::Ptr typeSymbol = visitTypeParameter(ctx->typeParameter()).as<TypeSymbol::Ptr>();

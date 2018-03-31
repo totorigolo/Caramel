@@ -22,7 +22,7 @@
  * SOFTWARE.
 */
 
-#include "AbstractSyntaxTreeVisitor.h"
+#include "ASTVisitor.h"
 #include "../Logger.h"
 #include "../utils/Common.h"
 #include "../ast/statements/jumps/Jump.h"
@@ -36,14 +36,14 @@ using namespace caramel::utils;
 using namespace caramel::colors;
 using namespace caramel::visitors;
 
-AbstractSyntaxTreeVisitor::AbstractSyntaxTreeVisitor(std::string const &sourceFileName)
+ASTVisitor::ASTVisitor(std::string const &sourceFileName)
         : mSourceFileUtil{sourceFileName},
           mBitwiseShiftOperator{std::make_shared<BitwiseShiftOperator>()},
           mMultOperator{std::make_shared<MultOperator>()},
           mPlusOperator{std::make_shared<PlusOperator>()} {
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
+antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
     logger.trace() << "Visiting R: " << grey << ctx->getText();
 
     ContextPusher contextPusher(*this);
@@ -69,7 +69,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitR(CaramelParser::RContext *ctx) {
     return context;
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::StatementsContext *ctx) {
+antlrcpp::Any ASTVisitor::visitStatements(CaramelParser::StatementsContext *ctx) {
     logger.trace() << "visiting statements: " << grey <<ctx->getText();
 
     std::vector<Statement::Ptr> statements;
@@ -91,7 +91,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitStatements(CaramelParser::Statemen
     return statements;
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitBlock(CaramelParser::BlockContext *ctx) {
+antlrcpp::Any ASTVisitor::visitBlock(CaramelParser::BlockContext *ctx) {
     logger.trace() << "visiting block: " << grey <<ctx->getText();
 
     std::vector<Statement::Ptr> returnStatements;
@@ -110,7 +110,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitBlock(CaramelParser::BlockContext 
     return returnStatements;
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitDeclarations(CaramelParser::DeclarationsContext *ctx) {
+antlrcpp::Any ASTVisitor::visitDeclarations(CaramelParser::DeclarationsContext *ctx) {
     logger.trace() << "visiting declarations: " << grey <<ctx->getText();
 
     std::vector<Statement::Ptr> declarations;
@@ -128,7 +128,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitDeclarations(CaramelParser::Declar
     return declarations;
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstructions(CaramelParser::InstructionsContext *ctx) {
+antlrcpp::Any ASTVisitor::visitInstructions(CaramelParser::InstructionsContext *ctx) {
     logger.trace() << "visiting instructions: " << grey <<ctx->getText();
 
     std::vector<Statement::Ptr> instructions;
@@ -139,13 +139,13 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstructions(CaramelParser::Instru
     return instructions;
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) {
+antlrcpp::Any ASTVisitor::visitValidIdentifier(CaramelParser::ValidIdentifierContext *ctx) {
     logger.trace() << "visiting identifier: " << grey << ctx->getText();
     return ctx->getText();
 }
 
 antlrcpp::Any
-AbstractSyntaxTreeVisitor::visitTypeParameter(CaramelParser::TypeParameterContext *ctx) {
+ASTVisitor::visitTypeParameter(CaramelParser::TypeParameterContext *ctx) {
     logger.trace() << "visiting type parameter: " << grey << ctx->getText();
 
     std::string symbolName = ctx->getText();
@@ -158,7 +158,7 @@ AbstractSyntaxTreeVisitor::visitTypeParameter(CaramelParser::TypeParameterContex
     }
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstruction(CaramelParser::InstructionContext *ctx) {
+antlrcpp::Any ASTVisitor::visitInstruction(CaramelParser::InstructionContext *ctx) {
     logger.trace() << "visiting instruction: " << grey <<ctx->getText();
 
     if (ctx->jump()) {
@@ -170,7 +170,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitInstruction(CaramelParser::Instruc
     return castAnyTo<Expression::Ptr, Statement::Ptr>(visitExpression(ctx->expression()));
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitTypeDefinition(CaramelParser::TypeDefinitionContext *ctx) {
+antlrcpp::Any ASTVisitor::visitTypeDefinition(CaramelParser::TypeDefinitionContext *ctx) {
     logger.trace() << "visiting type definition: " << grey <<ctx->getText();
 
     TypeSymbol::Ptr primaryTypeSymbol = visitTypeParameter(ctx->typeParameter()[0]);
@@ -183,7 +183,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitTypeDefinition(CaramelParser::Type
     return castTo<Statement::Ptr>(typeDefinition);
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitReturnJump(CaramelParser::ReturnJumpContext *ctx) {
+antlrcpp::Any ASTVisitor::visitReturnJump(CaramelParser::ReturnJumpContext *ctx) {
     logger.trace() << "visiting return jump: " << grey <<ctx->getText();
 
     // Fixme : return true value
@@ -199,11 +199,11 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitReturnJump(CaramelParser::ReturnJu
     return castTo<Jump::Ptr>(std::make_shared<ReturnStatement>(returnedExpression, ctx->getStart()));
 }
 
-std::shared_ptr<Context> AbstractSyntaxTreeVisitor::currentContext() {
+std::shared_ptr<Context> ASTVisitor::currentContext() {
     return mContextStack.top();
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitChildren(antlr4::tree::ParseTree *node) {
+antlrcpp::Any ASTVisitor::visitChildren(antlr4::tree::ParseTree *node) {
     size_t n = node->children.size();
     size_t i = 0;
     while (i < n && nullptr == node->children[i]) { i++; }
@@ -216,11 +216,11 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitChildren(antlr4::tree::ParseTree *
     return childResult;
 }
 
-ContextPusher::ContextPusher(AbstractSyntaxTreeVisitor &abstractSyntaxTreeVisitor)
-        : mAbstractSyntaxTreeVisitor(abstractSyntaxTreeVisitor) {
+ContextPusher::ContextPusher(ASTVisitor &ASTVisitor)
+        : mASTVisitor(ASTVisitor) {
     logger.trace() << "ContextPusher: Trying to push a new context.";
 
-    auto &contextStack = mAbstractSyntaxTreeVisitor.mContextStack;
+    auto &contextStack = mASTVisitor.mContextStack;
     SymbolTable::Ptr parentTable;
     if (not contextStack.empty()) {
         Context::Ptr parent = contextStack.top();
@@ -233,10 +233,10 @@ ContextPusher::ContextPusher(AbstractSyntaxTreeVisitor &abstractSyntaxTreeVisito
 }
 
 ContextPusher::~ContextPusher() {
-    logger.debug() << "Pop context: " << *mAbstractSyntaxTreeVisitor.mContextStack.top();
-    mAbstractSyntaxTreeVisitor.mContextStack.pop();
+    logger.debug() << "Pop context: " << *mASTVisitor.mContextStack.top();
+    mASTVisitor.mContextStack.pop();
 }
 
 Context::Ptr ContextPusher::getContext() {
-    return mAbstractSyntaxTreeVisitor.currentContext();
+    return mASTVisitor.currentContext();
 }

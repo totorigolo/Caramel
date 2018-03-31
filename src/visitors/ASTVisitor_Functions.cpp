@@ -22,7 +22,7 @@
  * SOFTWARE.
 */
 
-#include "AbstractSyntaxTreeVisitor.h"
+#include "ASTVisitor.h"
 #include "../Logger.h"
 #include "../utils/Common.h"
 #include "../ast/statements/declaration/FunctionDeclaration.h"
@@ -35,7 +35,7 @@ using namespace caramel::colors;
 using namespace caramel::visitors;
 
 antlrcpp::Any
-AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) {
+ASTVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *ctx) {
     logger.trace() << "Visiting function declaration: " << grey << ctx->getText();
 
     auto innerCtx = ctx->functionDeclarationInner();
@@ -58,7 +58,7 @@ AbstractSyntaxTreeVisitor::visitFunctionDeclaration(CaramelParser::FunctionDecla
     return castTo<Statement::Ptr>(functionDeclaration);
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) {
+antlrcpp::Any ASTVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinitionContext *ctx) {
     logger.trace() << "Visiting function definition: " << grey << ctx->getText();
 
     Context::Ptr parentContext = currentContext();
@@ -87,7 +87,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionDefinition(CaramelParser::
     return castTo<Statement::Ptr>(functionDefinition);
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) {
+antlrcpp::Any ASTVisitor::visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) {
     logger.trace() << "Visiting named arguments: " << grey << ctx->getText();
 
     std::vector<Symbol::Ptr> params;
@@ -98,7 +98,7 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArguments(CaramelParser::F
     return params;
 }
 
-antlrcpp::Any AbstractSyntaxTreeVisitor::visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) {
+antlrcpp::Any ASTVisitor::visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) {
     logger.trace() << "Visiting function argument: " << grey << ctx->getText();
 
     // Get the optional name, or generate a unique one

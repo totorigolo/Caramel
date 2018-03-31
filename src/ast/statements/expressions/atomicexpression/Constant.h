@@ -42,7 +42,7 @@ public:
     ~Constant() override = default;
     explicit Constant(long long mValue, antlr4::Token *startToken, StatementType type = StatementType::Constant);
 
-    long long getValue();
+    long long getValue() const;
     SymbolType getSymbolType() const override;
 
     PrimaryType::Ptr getPrimaryType() const override;

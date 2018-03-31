@@ -27,7 +27,7 @@
 #include "Config.h"
 
 #include "listeners/DotExportListener.h"
-#include "visitors/AbstractSyntaxTreeVisitor.h"
+#include "visitors/ASTVisitor.h"
 
 #include "ast/context/Context.h"
 

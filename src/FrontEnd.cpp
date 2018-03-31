@@ -69,7 +69,7 @@ ast::Context::Ptr frontEnd(Config const &config) {
 
     // Create the visitor which will generate the AST
     try {
-        caramel::visitors::AbstractSyntaxTreeVisitor abstractSyntaxTreeVisitor(config.sourceFile);
+        caramel::visitors::ASTVisitor abstractSyntaxTreeVisitor(config.sourceFile);
         auto visitorResult = abstractSyntaxTreeVisitor.visit(parser.r());
         if (!visitorResult.is<Context::Ptr>()) {
             logger.fatal() << "The visitor returned a bad root.";

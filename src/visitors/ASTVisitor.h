@@ -32,14 +32,7 @@
 #include "../ast/operators/binaryoperators/MultOperator.h"
 #include "../ast/operators/binaryoperators/BitwiseShiftOperator.h"
 
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Woverloaded-virtual"
-#pragma GCC diagnostic ignored "-Wattributes"
-
 #include <CaramelBaseVisitor.h>
-
-#pragma GCC diagnostic pop
 
 #include <stdexcept>
 #include <iostream>
@@ -50,12 +43,11 @@ namespace caramel::visitors {
 
 class ContextPusher;
 
-class AbstractSyntaxTreeVisitor : public CaramelBaseVisitor {
+class ASTVisitor : public CaramelBaseVisitor {
 
 public:
-    explicit AbstractSyntaxTreeVisitor(std::string const &sourceFileName);
+    explicit ASTVisitor(std::string const &sourceFileName);
 
-public:
     antlrcpp::Any visitR(CaramelParser::RContext *ctx) override;
 
     /// Returns vector<Statement::Ptr>
@@ -180,13 +172,13 @@ private:
 
 class ContextPusher {
 public:
-    explicit ContextPusher(AbstractSyntaxTreeVisitor &abstractSyntaxTreeVisitor);
+    explicit ContextPusher(ASTVisitor &abstractSyntaxTreeVisitor);
     virtual ~ContextPusher();
 
     Context::Ptr getContext();
 
 private:
-    AbstractSyntaxTreeVisitor &mAbstractSyntaxTreeVisitor;
+    ASTVisitor &mASTVisitor;
 };
 
 } // namespace caramel::visitors
