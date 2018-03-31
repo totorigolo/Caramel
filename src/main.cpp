@@ -45,12 +45,25 @@ int main(int argc, const char *argv[]) {
     // Get the AST from the front-end
     Context::Ptr astRoot{caramel::frontEnd(config)};
 
+    // Get the x86_64 assembly from the back-end
+    std::stringstream assemblySS;
     caramel::ir::CFGVisitor::Ptr arch = std::shared_ptr<caramel::ir::CFGVisitor>(new caramel::ir::x86_64::X86_64CFGVisitor);
-    caramel::BackEnd::generateAssembly(config.sourceFile, astRoot, std::cout, arch);
+    caramel::BackEnd::generateAssembly(config.sourceFile, astRoot, assemblySS, arch);
+    std::string assembly = assemblySS.str();
 
+    // Print the assembly on the standard output
+    std::cout << assembly;
 
-
-
+    // Compile the assembly on Linux
+    // TODO: Dirty, change this.
+#ifdef __linux__
+    std::ofstream assemblyOutputFile("assembly.s");
+    assemblyOutputFile << assembly;
+    assemblyOutputFile.close();
+    system("gcc assembly.s -o caramel.out");
+#else
+    logger.info() << "No assembly compilation on Windows.";
+#endif
 
     return EXIT_SUCCESS;
 }

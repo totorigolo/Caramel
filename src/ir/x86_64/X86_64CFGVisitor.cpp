@@ -47,8 +47,12 @@ void X86_64CFGVisitor::generateAssemblyPrologue(
         std::shared_ptr<ir::CFG> const &controlFlowGraph,
         std::ostream &os
 ) {
-    os << ".file  \"" << controlFlowGraph->getFileName() << "\"" << std::endl;
-    os << ".text";
+    os << ".file  \"" << controlFlowGraph->getFileName() << "\"" << '\n'
+       << ".text" << '\n'
+       << '\n'
+       << ".Ltext0:" << '\n'
+       << "  .globl main" << '\n'
+       << "  .type main, @function";
 }
 
 void X86_64CFGVisitor::generateAssemblyEpilogue(
