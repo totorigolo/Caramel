@@ -22,40 +22,26 @@
  * SOFTWARE.
 */
 
-#include "BinaryOperatorIndex.h"
-#include "PlusOperator.h"
-#include "MultOperator.h"
-#include "RightShiftOperator.h"
-#include "MinusOperator.h"
 #include "DivOperator.h"
-#include "LeftShiftOperator.h"
 
-#define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<BinaryOperator>(make_shared<op>())))
+std::shared_ptr<caramel::ir::IR> caramel::ast::DivOperator::buildIR(
+        std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
+        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+        std::shared_ptr<caramel::ast::Expression> const &rightExpression
+) {
 
-using namespace std;
+    CARAMEL_UNUSED(currentBasicBlock);
+    CARAMEL_UNUSED(leftExpression);
+    CARAMEL_UNUSED(rightExpression);
 
-caramel::ast::BinaryOperatorIndex::BinaryOperatorIndex() {
-
-    // Additive operators
-    BIND(PlusOperator);
-    BIND(MinusOperator);
-
-    // Multiplicative operators
-    BIND(MultOperator);
-    BIND(DivOperator);
-
-    // Bitwise shift operators
-    BIND(RightShiftOperator);
-    BIND(LeftShiftOperator);
-
+    // TODO : Implement the IR generation which happens right here.
+    throw caramel::exceptions::NotImplementedException(__FILE__);
 }
 
-caramel::ast::BinaryOperator::Ptr caramel::ast::BinaryOperatorIndex::getOpForToken(std::string token) {
-    auto it = index.find(token);
+caramel::ast::StatementType caramel::ast::DivOperator::getExpressionType() const {
+    return StatementType::MultiplicativeExpression;
+}
 
-    if (it == index.end()) {
-        return nullptr;
-    }
-
-    return it->second;
+std::string caramel::ast::DivOperator::getToken() const {
+    return SYMBOL;
 }

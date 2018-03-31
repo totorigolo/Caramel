@@ -22,40 +22,38 @@
  * SOFTWARE.
 */
 
-#include "BinaryOperatorIndex.h"
-#include "PlusOperator.h"
-#include "MultOperator.h"
-#include "RightShiftOperator.h"
-#include "MinusOperator.h"
-#include "DivOperator.h"
-#include "LeftShiftOperator.h"
+#pragma once
 
-#define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<BinaryOperator>(make_shared<op>())))
+#include "../BinaryOperator.h"
 
-using namespace std;
+namespace caramel::ast {
 
-caramel::ast::BinaryOperatorIndex::BinaryOperatorIndex() {
+class MinusOperator : public BinaryOperator {
+public:
+    using Ptr = std::shared_ptr<MinusOperator>;
+    using WeakPtr = std::weak_ptr<MinusOperator>;
 
-    // Additive operators
-    BIND(PlusOperator);
-    BIND(MinusOperator);
+    static constexpr const char* SYMBOL = "-";
 
-    // Multiplicative operators
-    BIND(MultOperator);
-    BIND(DivOperator);
+public:
+    MinusOperator() = default;
 
-    // Bitwise shift operators
-    BIND(RightShiftOperator);
-    BIND(LeftShiftOperator);
+public:
+    ~MinusOperator() override = default;
 
-}
+public:
+    std::shared_ptr<caramel::ir::IR>
+    buildIR(
+            std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
+            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+            std::shared_ptr<caramel::ast::Expression> const &rightExpression
+    ) override;
 
-caramel::ast::BinaryOperator::Ptr caramel::ast::BinaryOperatorIndex::getOpForToken(std::string token) {
-    auto it = index.find(token);
+    StatementType getExpressionType() const override;
 
-    if (it == index.end()) {
-        return nullptr;
-    }
+    std::string getToken() const override;
+};
 
-    return it->second;
-}
+} // namespace caramel::ast
+
+
