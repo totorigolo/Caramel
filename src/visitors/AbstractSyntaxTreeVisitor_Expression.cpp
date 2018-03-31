@@ -58,12 +58,34 @@ antlrcpp::Any AbstractSyntaxTreeVisitor::visitAdditiveExpression(CaramelParser::
 
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitBitwiseShiftExpression(CaramelParser::BitwiseShiftExpressionContext *ctx) {
-    return CaramelBaseVisitor::visitBitwiseShiftExpression(ctx);
+    logger.trace() << "visiting bitwise shift expression: " << grey <<ctx->getText();
+    if (ctx->children.size() == 1) {
+        // One children = No BinaryExpression at this step.
+        return visitChildren(ctx).as<Expression::Ptr>();
+    } else {
+        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+                visitBitwiseShiftExpression(ctx->bitwiseShiftExpression(0)),
+                visitBitwiseShiftOperator(ctx->bitwiseShiftOperator()),
+                visitBitwiseShiftExpression(ctx->bitwiseShiftExpression(1)),
+                ctx->getStart()
+        ));
+    }
 }
 
 antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitMultiplicativeExpression(CaramelParser::MultiplicativeExpressionContext *ctx) {
-    return CaramelBaseVisitor::visitMultiplicativeExpression(ctx);
+    logger.trace() << "visiting multiplicative expression: " << grey <<ctx->getText();
+    if (ctx->children.size() == 1) {
+        // One children = No BinaryExpression at this step.
+        return visitChildren(ctx).as<Expression::Ptr>();
+    } else {
+        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+                visitMultiplicativeExpression(ctx->multiplicativeExpression(0)),
+                visitMultiplicativeOperator(ctx->multiplicativeOperator()),
+                visitMultiplicativeExpression(ctx->multiplicativeExpression(1)),
+                ctx->getStart()
+        ));
+    }
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) {
