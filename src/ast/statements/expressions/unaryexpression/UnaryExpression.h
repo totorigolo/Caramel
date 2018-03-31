@@ -49,6 +49,10 @@ public:
             std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
     ) override;
 
+    void visitChildrenAstDot() override;
+
+    void acceptAstDotVisit() override;
+
 private:
     std::shared_ptr<caramel::ast::Expression> mInnerExpression;
     std::shared_ptr<caramel::ast::UnaryOperator> mUnaryOperator;

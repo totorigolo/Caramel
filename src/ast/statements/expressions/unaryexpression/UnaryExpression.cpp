@@ -44,6 +44,16 @@ UnaryExpression::getIR(
     return mUnaryOperator->buildIR(mInnerExpression);
 }
 
+void UnaryExpression::visitChildrenAstDot() {
+    addNode(thisId(), "UnaryExpression: " + mUnaryOperator->getToken());
+    acceptAstDotVisit();
+}
+
+void UnaryExpression::acceptAstDotVisit() {
+    addEdge(thisId(), mInnerExpression->thisId());
+    mInnerExpression->acceptAstDotVisit();
+}
+
 } // namespace caramel::ast
 
 

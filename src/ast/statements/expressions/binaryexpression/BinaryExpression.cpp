@@ -50,12 +50,15 @@ bool BinaryExpression::shouldReturnAnIR() const {
 
 void BinaryExpression::acceptAstDotVisit() {
     addNode(thisId(), "BinaryExpression: " + std::string(mBinaryOperator->getToken()));
+    visitChildrenAstDot();
 }
 
 void BinaryExpression::visitChildrenAstDot() {
-    // TODO :: implement child visit
-    AstDotNode::visitChildrenAstDot();
+    addEdge(thisId(), mLeftExpression->thisId());
+    addEdge(thisId(), mRightExpression->thisId());
+    mLeftExpression->acceptAstDotVisit();
+    mRightExpression->acceptAstDotVisit();
 }
 
-}
+} // namespace caramel::ast
 
