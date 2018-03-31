@@ -48,12 +48,20 @@ bool BinaryExpression::shouldReturnAnIR() const {
     return true;
 }
 
-SymbolType BinaryExpression::getSymbolType() const {
-    return SymbolType::NotASymbol;
-}
-
 PrimaryType::Ptr BinaryExpression::getPrimaryType() const {
     return PrimaryType::max(mLeftExpression->getPrimaryType(), mRightExpression->getPrimaryType());
+}
+
+void BinaryExpression::acceptAstDotVisit() {
+    addNode(thisId(), "BinaryExpression: " + std::string(mBinaryOperator->getToken()));
+    visitChildrenAstDot();
+}
+
+void BinaryExpression::visitChildrenAstDot() {
+    addEdge(thisId(), mLeftExpression->thisId(), "left");
+    addEdge(thisId(), mRightExpression->thisId(), "right");
+    mLeftExpression->acceptAstDotVisit();
+    mRightExpression->acceptAstDotVisit();
 }
 
 } // namespace caramel::ast

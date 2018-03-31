@@ -40,7 +40,6 @@ public:
     ~FunctionCall() override = default;
 
     Symbol::Ptr getSymbol() const;
-    SymbolType getSymbolType() const override;
     void setSymbol(FunctionSymbol::Ptr symbol);
 
     PrimaryType::Ptr getPrimaryType() const override;

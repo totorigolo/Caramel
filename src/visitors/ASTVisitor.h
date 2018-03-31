@@ -28,9 +28,9 @@
 #include "../Console.h"
 #include "../utils/SourceFileUtil.h"
 #include "../ast/context/Context.h"
-#include "../ast/operators/binaryoperators/PlusOperator.h"
-#include "../ast/operators/binaryoperators/MultOperator.h"
-#include "../ast/operators/binaryoperators/BitwiseShiftOperator.h"
+#include "../ast/operators/binaryoperators/BinaryOperatorIndex.h"
+#include "../ast/operators/prefixoperators/PrefixOperatorIndex.h"
+#include "../ast/operators/postfixoperators/PostfixOperatorIndex.h"
 
 #include <CaramelBaseVisitor.h>
 
@@ -122,11 +122,14 @@ public:
     /// Returns Expression::Ptr
     antlrcpp::Any visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) override;
 
-    /// Returns BinaryOperator::Ptr
-    antlrcpp::Any visitAdditiveOperator(CaramelParser::AdditiveOperatorContext *ctx) override;
-
     /// Returns Expression::Ptr
     antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitComparison(CaramelParser::ComparisonContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitEqualityComparison(CaramelParser::EqualityComparisonContext *ctx) override;
 
     /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
@@ -137,8 +140,55 @@ public:
     /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) override;
 
+    antlrcpp::Any visitPrefixUnaryExpression(CaramelParser::PrefixUnaryExpressionContext *ctx) override;
+
     // TODO: This function isn't implemented
     antlrcpp::Any visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitBitwiseShiftExpression(CaramelParser::BitwiseShiftExpressionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitMultiplicativeExpression(CaramelParser::MultiplicativeExpressionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitAndBitwiseExpression(CaramelParser::AndBitwiseExpressionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitOrBitwiseExpression(CaramelParser::OrBitwiseExpressionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitXorBitwiseExpression(CaramelParser::XorBitwiseExpressionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitConjunction(CaramelParser::ConjunctionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitDisjunction(CaramelParser::DisjunctionContext *ctx) override;
+
+    //--------------------------------------------------------------------------------------------------------
+    // Operators
+
+    /// Returns BinaryOperator::Ptr
+    antlrcpp::Any visitMultiplicativeOperator(CaramelParser::MultiplicativeOperatorContext *ctx) override;
+
+    /// Returns BinaryOperator::Ptr
+    antlrcpp::Any visitBitwiseShiftOperator(CaramelParser::BitwiseShiftOperatorContext *ctx) override;
+
+    /// Returns BinaryOperator::Ptr
+    antlrcpp::Any visitComparativeOperator(CaramelParser::ComparativeOperatorContext *ctx) override;
+
+    /// Returns BinaryOperator::Ptr
+    antlrcpp::Any visitAdditiveOperator(CaramelParser::AdditiveOperatorContext *ctx) override;
+
+    /// Returns BinaryOperator::Ptr
+    antlrcpp::Any visitEqualityOperator(CaramelParser::EqualityOperatorContext *ctx) override;
+
+    /// Returns UnaryOperator::Ptr
+    antlrcpp::Any visitPostfixUnaryOperator(CaramelParser::PostfixUnaryOperatorContext *ctx) override;
+
+    /// Returns UnaryOperator::Ptr
+    antlrcpp::Any visitPrefixUnaryOperator(CaramelParser::PrefixUnaryOperatorContext *ctx) override;
 
     //--------------------------------------------------------------------------------------------------------
     // Control blocks
@@ -165,9 +215,9 @@ private:
     std::stack<std::shared_ptr<caramel::ast::Context>> mContextStack;
     utils::SourceFileUtil mSourceFileUtil;
 
-    const std::shared_ptr<caramel::ast::BitwiseShiftOperator> mBitwiseShiftOperator;
-    const std::shared_ptr<caramel::ast::MultOperator> mMultOperator;
-    const std::shared_ptr<caramel::ast::PlusOperator> mPlusOperator = std::make_shared<caramel::ast::PlusOperator>();
+    BinaryOperatorIndex mBinaryOperatorIndex;
+    PrefixOperatorIndex mPrefixOperatorIndex;
+    PostfixOperatorIndex mPostfixOperatorIndex;
 };
 
 class ContextPusher {

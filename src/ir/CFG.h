@@ -50,11 +50,7 @@ public:
             std::shared_ptr<BasicBlock> basicBlock
     );
 
-    void generateAssembly(std::ostream &output);
-
-    std::string IRToAssembly(caramel_unused std::string register_) {
-        throw caramel::exceptions::NotImplementedException(__FILE__);
-    };
+    std::vector<std::shared_ptr<BasicBlock>> & getBasicBlocks();
 
     bool hasSymbol(int controlBlockId, std::string const &symbolName);
 
@@ -65,6 +61,8 @@ public:
     void enterFunction();
 
     void exitFunction();
+
+    std::string & getFileName();
 
 protected:
     void generateAssemblyPrologue(std::ostream &output);

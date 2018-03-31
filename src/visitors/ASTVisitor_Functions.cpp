@@ -52,7 +52,8 @@ ASTVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *
     auto traceLogger = logger.trace();
     traceLogger << "New function declared " << name << " with return type " << returnType->getIdentifier();
     for (auto const &[paramName, paramType, paramSymbolType] : params) {
-        traceLogger << "\n\t- param: " << paramName << " as " << paramType->getIdentifier();
+        traceLogger << "\n\t- param: " << paramName << " as " << paramType->getIdentifier()
+                    << " (" << paramSymbolType << ")";
     }
     traceLogger.show();
 

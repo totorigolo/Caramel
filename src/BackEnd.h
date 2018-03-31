@@ -25,6 +25,7 @@
 #pragma once
 
 #include "ast/context/Context.h"
+#include "ir/CFGVisitor.h"
 
 
 namespace caramel {
@@ -34,7 +35,8 @@ public:
     static void generateAssembly(
             std::string const &filePath,
             std::shared_ptr<ast::Context> context,
-            std::ostream &os
+            std::ostream &os,
+            std::shared_ptr<ir::CFGVisitor> const &cfgVisitor
     );
 
 protected:

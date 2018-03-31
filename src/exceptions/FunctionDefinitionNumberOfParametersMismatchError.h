@@ -41,8 +41,7 @@ public:
                                                       antlr4::ParserRuleContext *antlrContext,
                                                       unsigned long declaredSize,
                                                       unsigned long definedSize)
-            : SemanticError(message),
-              mAntlrContext{antlrContext},
+            : SemanticError(message, antlrContext),
               mDeclaredSize{declaredSize},
               mDefinedSize{definedSize} {
     }
@@ -54,7 +53,6 @@ public:
     }
 
 private:
-    antlr4::ParserRuleContext *mAntlrContext;
     unsigned long mDeclaredSize;
     unsigned long mDefinedSize;
 };

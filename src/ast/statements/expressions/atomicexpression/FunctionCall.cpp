@@ -36,10 +36,6 @@ Symbol::Ptr FunctionCall::getSymbol() const {
     return mSymbol;
 }
 
-SymbolType FunctionCall::getSymbolType() const {
-    return mSymbol->getSymbolType();
-}
-
 void FunctionCall::setSymbol(FunctionSymbol::Ptr symbol) {
     mSymbol = std::move(symbol);
 }
@@ -57,7 +53,7 @@ std::vector<PrimaryType::Ptr> FunctionCall::getArgumentsPrimaryTypes() const {
 }
 
 void FunctionCall::acceptAstDotVisit() {
-    addNode(thisId(), "functionCall: " + mSymbol->getName());
+    addNode(thisId(), "FunctionCall: " + mSymbol->getName());
     addEdge(thisId(), mSymbol->thisId());
     mSymbol->acceptAstDotVisit();
     visitChildrenAstDot();

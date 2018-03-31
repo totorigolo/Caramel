@@ -49,8 +49,10 @@ public:
             std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
     ) override;
 
-    SymbolType getSymbolType() const override;
     PrimaryType::Ptr getPrimaryType() const override;
+
+    void visitChildrenAstDot() override;
+    void acceptAstDotVisit() override;
 
 private:
     std::shared_ptr<caramel::ast::Expression> mLeftExpression;

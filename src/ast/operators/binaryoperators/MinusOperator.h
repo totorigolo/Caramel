@@ -22,22 +22,38 @@
  * SOFTWARE.
 */
 
-#include "BitwiseShiftOperator.h"
+#pragma once
 
-std::shared_ptr<caramel::ir::IR>
-caramel::ast::BitwiseShiftOperator::buildIR(
-        std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-        std::shared_ptr<caramel::ast::Expression> const &rightExpression
-) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+#include "../BinaryOperator.h"
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
-}
+namespace caramel::ast {
 
-caramel::ast::StatementType caramel::ast::BitwiseShiftOperator::expressionType() {
-    return StatementType::BitwiseShiftExpression;
-}
+class MinusOperator : public BinaryOperator {
+public:
+    using Ptr = std::shared_ptr<MinusOperator>;
+    using WeakPtr = std::weak_ptr<MinusOperator>;
+
+    static constexpr const char* SYMBOL = "-";
+
+public:
+    MinusOperator() = default;
+
+public:
+    ~MinusOperator() override = default;
+
+public:
+    std::shared_ptr<caramel::ir::IR>
+    buildIR(
+            std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
+            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+            std::shared_ptr<caramel::ast::Expression> const &rightExpression
+    ) override;
+
+    StatementType getExpressionType() const override;
+
+    std::string getToken() const override;
+};
+
+} // namespace caramel::ast
+
+

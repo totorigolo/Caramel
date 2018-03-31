@@ -25,9 +25,10 @@
 #pragma once
 
 #include "../utils/SourceFileUtil.h"
-#include "../ast/symboltable/Symbol.h"
-#include "../ast/context/Context.h"
-#include "../ast/statements/Statement.h"
+#include "../Console.h"
+#include "../Logger.h"
+
+#include <ParserRuleContext.h>
 
 #include <stdexcept>
 
@@ -36,9 +37,15 @@ namespace caramel::exceptions {
 
 class SemanticError : public std::runtime_error {
 public:
-    explicit SemanticError(std::string const &message) : std::runtime_error(message) {}
+    SemanticError(std::string const &message, antlr4::ParserRuleContext *antlrContext);
 
-    virtual void explain(utils::SourceFileUtil sourceFileUtil) const = 0;
+    virtual void explain(utils::SourceFileUtil sourceFileUtil) const;
+
+protected:
+    virtual void note() const {}
+
+private:
+    antlr4::ParserRuleContext *mAntlrContext;
 };
 
 } // namespace caramel::exceptions

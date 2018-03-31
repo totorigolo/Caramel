@@ -41,7 +41,6 @@ enum class StatementType {
     Jump,
     ReturnStatement,
     Expression,
-    UnaryExpression,
     AtomicExpression,
     Constant,
     ConstString,
@@ -51,11 +50,20 @@ enum class StatementType {
     ArrayAccess,
 
     // BinaryExpression w/ sub-types
-            BinaryExpression,
+    BinaryExpression,
     BitwiseShiftExpression,
     AdditiveExpression,
-    MultiplicativeExpression
+    MultiplicativeExpression,
+    ComparativeExpression,
+    EqualityExpression,
+    BitwiseExpression,
+    ConjunctionExpression,
+    DisjunctionExpression,
 
+    // UnaryExpression w/ sub-types
+    UnaryExpression,
+    UnaryAdditiveExpression,
+    LogicalNotExpression
 };
 
 inline std::ostream & operator<<(std::ostream &os, const StatementType &type) {
@@ -70,21 +78,27 @@ inline std::ostream & operator<<(std::ostream &os, const StatementType &type) {
         case StatementType::FunctionDefinition: return os << "FunctionDefinition";
         case StatementType::ArrayDefinition: return os << "ArrayDefinition";
         case StatementType::Jump: return os << "Jump";
-        case StatementType::ReturnStatement:return os << "ReturnStatement";
+        case StatementType::ReturnStatement: return os << "ReturnStatement";
         case StatementType::Expression: return os << "Expression";
-        case StatementType::UnaryExpression: return os << "UnaryExpression";
         case StatementType::AtomicExpression: return os << "AtomicExpression";
         case StatementType::Constant: return os << "Constant";
         case StatementType::ConstString: return os << "ConstString";
-            // BinaryExpression w/ sub-types
-        case StatementType::BinaryExpression: return os << "BinaryExpression";
-        case StatementType::BitwiseShiftExpression: return os << "BitwiseShiftExpression";
-        case StatementType::AdditiveExpression: return os << "AdditiveExpression";
-        case StatementType::MultiplicativeExpression: return os << "MultiplicativeExpression";
         case StatementType::LValue: return os << "LValue";
         case StatementType::Identifier: return os << "Identifier";
         case StatementType::FunctionCall: return os << "FunctionCall";
         case StatementType::ArrayAccess: return os << "ArrayAccess";
+        case StatementType::BinaryExpression: return os << "BinaryExpression";
+        case StatementType::BitwiseShiftExpression: return os << "BitwiseShiftExpression";
+        case StatementType::AdditiveExpression: return os << "AdditiveExpression";
+        case StatementType::MultiplicativeExpression: return os << "MultiplicativeExpression";
+        case StatementType::ComparativeExpression: return os << "ComparativeExpression";
+        case StatementType::EqualityExpression: return os << "EqualityExpression";
+        case StatementType::BitwiseExpression: return os << "BitwiseExpression";
+        case StatementType::ConjunctionExpression: return os << "ConjunctionExpression";
+        case StatementType::DisjunctionExpression: return os << "DisjunctionExpression";
+        case StatementType::UnaryExpression: return os << "UnaryExpression";
+        case StatementType::UnaryAdditiveExpression: return os << "UnaryAdditiveExpression";
+        case StatementType::LogicalNotExpression: return os << "LogicalNotExpression";
     }
     return os;
 }

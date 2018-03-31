@@ -24,6 +24,10 @@
 
 #include "PlusOperator.h"
 #include "../../../ir/BasicBlock.h"
+#include "../../../ir/instructions/AdditionInstruction.h"
+#include "../../../utils/Common.h"
+
+using namespace caramel::utils;
 
 std::shared_ptr<caramel::ir::IR> caramel::ast::PlusOperator::buildIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
@@ -33,22 +37,20 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::PlusOperator::buildIR(
     std::string var2 = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
     std::string tmp = Statement::createVarName();
 
-    std::vector<std::string> params;
-    params.push_back(tmp);
-    params.push_back(var1);
-    params.push_back(var2);
-
-    std::shared_ptr<ir::IR> instr = std::make_shared<caramel::ir::IR>(
+    std::shared_ptr<ir::AdditionInstruction> instr = std::make_shared<ir::AdditionInstruction>(
             tmp,
             currentBasicBlock,
-            ir::Operation::add,
             PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType()),
-            params
+            std::vector<std::string>{var1, var2}
     );
-    return instr;
+    return castTo<ir::IR::Ptr>(instr);
 
 }
 
-caramel::ast::StatementType caramel::ast::PlusOperator::expressionType() {
+caramel::ast::StatementType caramel::ast::PlusOperator::getExpressionType() const {
     return StatementType::AdditiveExpression;
+}
+
+std::string caramel::ast::PlusOperator::getToken() const {
+    return SYMBOL;
 }

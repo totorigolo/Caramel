@@ -154,7 +154,7 @@ expression : assignment | disjunction ;
 
 disjunction
   : conjunction
-  | disjunction WS_* OrOp_ WS_* conjunction
+  | disjunction WS_* OrOp_ WS_* disjunction
   ;
 conjunction
   : orBitwiseExpression

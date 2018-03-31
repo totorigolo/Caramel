@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+ * Copyright (c) 2018 insa.4if.hexanome_kalate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,36 +22,42 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "X86_64CFGVisitor.h"
+#include "X86_64BasicBlockVisitor.h"
 
-#include <memory>
-#include <Common.h>
-#include "../BinaryOperator.h"
+namespace caramel::ir::x86_64 {
+X86_64CFGVisitor::X86_64CFGVisitor():
+    mBasicBlockVisitor{new X86_64BasicBlockVisitor} {}
 
-namespace caramel::ast {
+void X86_64CFGVisitor::generateAssembly(std::shared_ptr<ir::CFG> const &controlFlowGraph, std::ostream &os) {
 
-class BitwiseShiftOperator : public BinaryOperator {
-public:
-    using Ptr = std::shared_ptr<BitwiseShiftOperator>;
-    using WeakPtr = std::weak_ptr<BitwiseShiftOperator>;
+    generateAssemblyPrologue(controlFlowGraph, os);
+    os << std::endl;
 
-public:
-    BitwiseShiftOperator() = default;
+    for(BasicBlock::Ptr const &bb : controlFlowGraph->getBasicBlocks()) {
+        mBasicBlockVisitor->generateAssembly(bb, os);
+    }
 
-public:
-    ~BitwiseShiftOperator() override = default;
-
-public:
-    std::shared_ptr<caramel::ir::IR>
-    buildIR(
-            std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-            std::shared_ptr<caramel::ast::Expression> const &rightExpression
-    ) override;
-
-    StatementType expressionType() override;
-};
+    os << std::endl;
+    generateAssemblyEpilogue(controlFlowGraph, os);
 
 }
 
+void X86_64CFGVisitor::generateAssemblyPrologue(
+        std::shared_ptr<ir::CFG> const &controlFlowGraph,
+        std::ostream &os
+) {
+    os << ".file  \"" << controlFlowGraph->getFileName() << "\"" << std::endl;
+    os << ".text";
+}
 
+void X86_64CFGVisitor::generateAssemblyEpilogue(
+        std::shared_ptr<ir::CFG> const &controlFlowGraph,
+        std::ostream &os
+) {
+    CARAMEL_UNUSED(controlFlowGraph);
+    CARAMEL_UNUSED(os);
+}
+
+
+} // namespace caramel::ir::x86_64

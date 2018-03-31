@@ -25,6 +25,7 @@
 #pragma once
 
 #include "StatementType.h"
+#include "Common.h"
 #include "../../AstDotNode.h"
 #include "../symboltable/PrimaryType.h"
 #include "../../exceptions/NotImplementedException.h"
@@ -66,13 +67,17 @@ public:
 
     virtual std::shared_ptr<caramel::ir::IR> getIR(
             std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock
-    ) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+    ) {
+        CARAMEL_UNUSED(currentBasicBlock);
+        throw caramel::exceptions::NotImplementedException(__FILE__); };
 
     virtual bool shouldReturnABasicBlock() const { return false; }
 
     virtual std::shared_ptr<caramel::ir::BasicBlock> getBasicBlock(
             ir::CFG *controlFlow
-    ) { throw caramel::exceptions::NotImplementedException(__FILE__); };
+    ) {
+        CARAMEL_UNUSED(controlFlow);
+        throw caramel::exceptions::NotImplementedException(__FILE__); };
 
     virtual bool shouldReturnACFG() const { return false; }
 

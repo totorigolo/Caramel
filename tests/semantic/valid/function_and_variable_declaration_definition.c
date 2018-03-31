@@ -16,4 +16,5 @@ int32_t main(int32_t, char argv) {
 void foo(int8_t a, int8_t b, int8_t c)
 {
     char a2, b2, c2;
+    return;
 }

@@ -24,6 +24,7 @@
 
 #include "Constant.h"
 #include "../../../../ir/IR.h"
+#include "../../../../ir/instructions/LDConstInstruction.h"
 
 
 namespace caramel::ast {
@@ -35,10 +36,6 @@ Constant::Constant(long long mValue, antlr4::Token *startToken, StatementType ty
 
 long long Constant::getValue() const {
     return mValue;
-}
-
-SymbolType Constant::getSymbolType() const {
-    return SymbolType::Constant;
 }
 
 PrimaryType::Ptr Constant::getPrimaryType() const {
@@ -67,11 +64,8 @@ std::shared_ptr<ir::IR> Constant::getIR(std::shared_ptr<caramel::ir::BasicBlock>
 
     std::string tempVar = createVarName();
     std::string constValue = std::to_string(getValue());
-    std::vector<std::string> parameters;
-    parameters.push_back(tempVar);
-    parameters.push_back(constValue);
     // Todo: check if Int64_t for constant is good or not
-    return std::make_shared<ir::IR>(tempVar, currentBasicBlock, ir::Operation::ldconst, Int64_t::Create(), parameters);
+    return std::make_shared<ir::LDConstInstruction>(tempVar, currentBasicBlock, Int64_t::Create(), tempVar, constValue);
 }
 
 } // namespace caramel::ast

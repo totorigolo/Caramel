@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+ * Copyright (c) 2018 insa.4if.hexanome_kalate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,5 +22,23 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "AdditionInstruction.h"
+#include "../IRVisitor.h"
 
+namespace caramel::ir {
+
+AdditionInstruction::AdditionInstruction(
+        std::string const &returnName,
+        std::shared_ptr<caramel::ir::BasicBlock> const &parentBlock,
+        caramel::ast::PrimaryType::Ptr const &type,
+        std::vector<std::string> const &parameters
+) : IR(returnName,
+       parentBlock, Operation::add,
+       type,
+       parameters) {}
+
+void AdditionInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitAddition(this, os);
+}
+
+} // namespace caramel::ir

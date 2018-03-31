@@ -33,9 +33,7 @@ enum class SymbolType {
     FunctionSymbol,
     VariableSymbol,
     TypeSymbol,
-    ArraySymbol,
-    Constant,
-    NotASymbol
+    ArraySymbol
 };
 
 inline std::ostream &operator<<(std::ostream &os, const SymbolType &type) {
@@ -44,8 +42,6 @@ inline std::ostream &operator<<(std::ostream &os, const SymbolType &type) {
         case SymbolType::VariableSymbol: return os << "VariableSymbol";
         case SymbolType::TypeSymbol: return os << "TypeSymbol";
         case SymbolType::ArraySymbol: return os << "ArraySymbol";
-        case SymbolType::Constant: return os << "Constant";
-        case SymbolType::NotASymbol: return os << "NotASymbol";
     }
     return os;
 }

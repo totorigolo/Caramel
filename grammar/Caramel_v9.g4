@@ -167,7 +167,7 @@ expression
 
 disjunction
   : conjunction
-  | disjunction WS_* OrOp_ WS_* conjunction
+  | disjunction WS_* OrOp_ WS_* disjunction
   ;
 conjunction
   : orBitwiseExpression
@@ -226,7 +226,7 @@ additiveOperator : ( Plus_ | Minus_ ) ;
 comparativeOperator : ( LowerThan_ | LowerEqThan_ | GreaterThan_ | GreaterEqThan_ ) ;
 equalityOperator : ( EqualityOp_ | DiffOp_ ) ;
 postfixUnaryOperator : ( IncOp_ | DecOp_ ) ;
-prefixUnaryOperator : ( Minus_ | IncOp_ | DecOp_ | InvOp_ ' '* | BitwiseNot_ ' '* | cast InlineWS_*) ;
+prefixUnaryOperator : ( Minus_ | IncOp_ | DecOp_ | LogicalNot_ ' '* | BitwiseNot_ ' '* | cast InlineWS_*) ;
 bitwiseShiftOperator : ( RightShiftOp_ | LeftShiftOp_ ) ;
 assignmentOperator : ( Assignment_ | PlusAssign_ | MinusAssign_ | TimesAssign_ | DivAssign_ | ModAssign_ | BitwiseAndAssign_ | BitwiseOrAssign_ | BitwiseXorAssign_ | BitwiseNotAssign_ ) ;
 
@@ -327,7 +327,7 @@ EscapedSimpeQuote_ : '\'\\\\\'\'';
 EscapedDoubleQuote_ : '\'\\\\"\'';
 EscapedAntibackslash_ : '\'\\\\\\\\\'';
 Semilicon_ : ';' ;
-InvOp_ : '!' ;
+LogicalNot_ : '!' ;
 AndOp_ : '&&' ;
 OrOp_ : '||' ;
 IfKeyword_ : 'if' ;

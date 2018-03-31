@@ -42,7 +42,6 @@ public:
     explicit Expression(antlr4::Token *startToken, StatementType type = StatementType::Expression);
     ~Expression() override  = default;
 
-    virtual SymbolType getSymbolType() const = 0;
     virtual PrimaryType::Ptr getPrimaryType() const = 0;
 };
 

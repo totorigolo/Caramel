@@ -30,29 +30,31 @@
 
 namespace caramel::ast {
 
-class UnaryExpression : public caramel::ast::Expression {
+class UnaryExpression : public Expression {
 public:
     using Ptr = std::shared_ptr<UnaryExpression>;
     using WeakPtr = std::shared_ptr<UnaryExpression>;
 
 public:
     UnaryExpression(
-            std::shared_ptr<caramel::ast::Expression> const &innerExpression,
-            std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
+            std::shared_ptr<Expression> const &innerExpression,
+            std::shared_ptr<UnaryOperator> const &unaryOperator,
             antlr4::Token *startToken
     );
-
     ~UnaryExpression() override = default;
 
-public:
-    std::shared_ptr<caramel::ir::IR> getIR(
+    PrimaryType::Ptr getPrimaryType() const override;
+
+    std::shared_ptr<ir::IR> getIR(
             std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
     ) override;
 
-private:
-    std::shared_ptr<caramel::ast::Expression> mInnerExpression;
-    std::shared_ptr<caramel::ast::UnaryOperator> mUnaryOperator;
+    void visitChildrenAstDot() override;
+    void acceptAstDotVisit() override;
 
+private:
+    std::shared_ptr<Expression> mInnerExpression;
+    std::shared_ptr<UnaryOperator> mUnaryOperator;
 };
 
 } // namespace caramel::ast

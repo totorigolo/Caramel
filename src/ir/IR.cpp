@@ -52,55 +52,28 @@ IR::IR(
     mType{type},
     mParameters{std::move(parameters)} {}
 
-void IR::generateAssembly(std::ostream &output) {
-
-#define OUTPUT_ENUM_CASE(enum, option)      \
-    case enum::option:                      \
-        output << #option;                  \
-    break;
-
-    switch (mOperation) {
-        OUTPUT_ENUM_CASE(Operation, copy)
-        OUTPUT_ENUM_CASE(Operation, add)
-        OUTPUT_ENUM_CASE(Operation, call)
-        OUTPUT_ENUM_CASE(Operation, cmp_eq)
-        OUTPUT_ENUM_CASE(Operation, cmp_le)
-        OUTPUT_ENUM_CASE(Operation, cmp_lt)
-        OUTPUT_ENUM_CASE(Operation, ldconst)
-        OUTPUT_ENUM_CASE(Operation, mul)
-        OUTPUT_ENUM_CASE(Operation, rmem)
-        OUTPUT_ENUM_CASE(Operation, sub)
-        OUTPUT_ENUM_CASE(Operation, wmem)
-        OUTPUT_ENUM_CASE(Operation, pushq)
-        OUTPUT_ENUM_CASE(Operation, movq)
-        OUTPUT_ENUM_CASE(Operation, ret)
-        OUTPUT_ENUM_CASE(Operation, leave)
-        case Operation::empty:
-            logger.warning() << "empty instruction was called";
-            return;
-    }
-    output << " ";
-    BasicBlock::Ptr parentBlock = mParentBlock.lock();
-    if (!mParameters.empty()) {
-        for (size_t i = 0; i < mParameters.size() - 1; i++) {
-            output << mParameters[i] << "("
-                   << parentBlock->getCFG()->getSymbolIndex(parentBlock->getId(), mParameters[i]) << "), ";
-        }
-        output << mParameters[mParameters.size() - 1] << "("
-               << parentBlock->getCFG()->getSymbolIndex(parentBlock->getId(), mParameters[mParameters.size() - 1]) << ")";
-    }
-}
-
 std::string IR::getReturnName() {
     return mReturnName;
 }
 
-bool IR::isEmpty() {
+bool IR::isEmpty() const {
     return mOperation == Operation::empty;
 }
 
-caramel::ast::PrimaryType::Ptr IR::getType() {
+caramel::ast::PrimaryType::Ptr IR::getType() const {
     return mType;
+}
+
+Operation IR::getOperation() const {
+    return mOperation;
+}
+
+std::shared_ptr<BasicBlock> IR::getParentBlock() {
+    return mParentBlock.lock();
+}
+
+std::vector<std::string> IR::getParameters() {
+    return mParameters;
 }
 
 

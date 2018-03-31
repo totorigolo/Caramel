@@ -24,6 +24,7 @@
 
 #include "BackEnd.h"
 #include "ir/CFG.h"
+#include "ir/CFGVisitor.h"
 
 
 namespace caramel {
@@ -31,13 +32,16 @@ namespace caramel {
 void BackEnd::generateAssembly(
         std::string const &filePath,
         std::shared_ptr<ast::Context> context,
-        std::ostream &os
+        std::ostream &os,
+        caramel::ir::CFGVisitor::Ptr const &cfgVisitor
 ) {
     std::vector<std::string> pathParts = splitPath(filePath);
     std::shared_ptr<ir::CFG> cfg = std::make_shared<ir::CFG>(
             pathParts.back(), context
     );
-    cfg->generateAssembly(os);
+
+    cfgVisitor->generateAssembly(cfg, os);
+
 }
 
 std::vector<std::string> BackEnd::splitPath(std::string const &s, char delimiter) {

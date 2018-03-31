@@ -35,6 +35,8 @@ public:
     using Ptr = std::shared_ptr<MultOperator>;
     using WeakPtr = std::weak_ptr<MultOperator>;
 
+    static constexpr const char* SYMBOL = "*";
+
 public:
     MultOperator() = default;
 
@@ -49,7 +51,9 @@ public:
             std::shared_ptr<caramel::ast::Expression> const &rightExpression
     ) override;
 
-    StatementType expressionType() override;
+    StatementType getExpressionType() const override;
+
+    std::string getToken() const override;
 };
 
 }

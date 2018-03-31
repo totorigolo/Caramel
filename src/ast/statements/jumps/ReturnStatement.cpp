@@ -24,13 +24,14 @@
 
 #include "ReturnStatement.h"
 #include "../expressions/atomicexpression/Constant.h"
+#include "../../../ir/instructions/NopInstruction.h"
 
 
 namespace caramel::ast {
 
 ReturnStatement::ReturnStatement(
         antlr4::Token *startToken
-) : ReturnStatement(Constant::defaultConstant(startToken), startToken) {}
+) : ReturnStatement(nullptr, startToken) {}
 
 ReturnStatement::ReturnStatement(
         std::shared_ptr<Expression> expression,
@@ -46,5 +47,19 @@ void ReturnStatement::visitChildrenAstDot() {
     addEdge(thisId(), mExpression->thisId());
     mExpression->acceptAstDotVisit();
 }
+
+bool ReturnStatement::shouldReturnAnIR() const {
+    return true;
+}
+
+std::shared_ptr<ir::IR> ReturnStatement::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {
+    if(nullptr != mExpression) {
+        // Fixme: create valid return for expression
+        return mExpression->getIR(currentBasicBlock);
+    } else {
+        return std::make_shared<ir::NopInstruction>(currentBasicBlock);
+    }
+}
+
 
 } // namespace caramel::ast

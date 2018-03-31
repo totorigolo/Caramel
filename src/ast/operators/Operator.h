@@ -39,7 +39,8 @@ protected:
 
 public:
     virtual ~Operator() = default;
-    virtual StatementType expressionType() = 0;
+    virtual StatementType getExpressionType() const = 0;
+    virtual std::string getToken() const = 0;
 };
 
 } // namespace caramel::ast

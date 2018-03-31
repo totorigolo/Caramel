@@ -44,9 +44,6 @@ public:
     ~ArrayAccess() override = default;
 
     Symbol::Ptr getSymbol() const override;
-
-    SymbolType getSymbolType() const override;
-
     void setSymbol(ArraySymbol::Ptr symbol);
 
     PrimaryType::Ptr getPrimaryType() const override;

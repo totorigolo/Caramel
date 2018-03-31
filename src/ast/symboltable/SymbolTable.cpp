@@ -254,7 +254,8 @@ ArraySymbol::Ptr SymbolTable::addArrayAccess(
             return parent->addArrayAccess(antlrContext, name, statement);
         } else {
             throw UndefinedSymbolError(
-                    name, SymbolType::ArraySymbol,
+                    name,
+                    SymbolType::ArraySymbol,
                     antlrContext
             );
         }
@@ -303,8 +304,6 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDeclaration(
                 }
                 if (declaredParameterTypeIdentifier != parameterTypeIdentifier) {
                     throw FunctionDefinitionParameterTypeMismatchError(
-                            buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-                                    std::get<1>(declaredParameters[i]), std::get<1>(parameters[i])),
                             antlrContext,
                             std::get<1>(declaredParameters[i]),
                             std::get<1>(parameters[i])
@@ -385,11 +384,10 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
                             declaredParameterName,
                             parameterName
                     );
+
                 }
                 if (declaredParameterTypeIdentifier != parameterTypeIdentifier) {
                     throw FunctionDefinitionParameterTypeMismatchError(
-                            buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-                                    std::get<1>(declaredParameters[i]), parameters[i]->getType()),
                             antlrContext,
                             std::get<1>(declaredParameters[i]),
                             parameters[i]->getType()
@@ -652,21 +650,6 @@ std::string SymbolTable::buildFunctionDefinitionParameterNameMismatchErrorMessag
     std::stringstream res;
     res << name << "'s parameter name " << definedName
         << " mismatches with the previously declared parameter " << declaredName << ".";
-    return res.str();
-}
-
-std::string SymbolTable::buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-        PrimaryType::Ptr declaredType,
-        PrimaryType::Ptr declaredName) {
-    std::stringstream res;
-    res << "The function: "
-        << declaredType->getIdentifier()
-        << " was previously declared with a parameter of type "
-        << declaredName
-        << " .\n"
-        << "Actual parameter type is "
-        << declaredName->getIdentifier()
-        << ".";
     return res.str();
 }
 

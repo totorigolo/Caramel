@@ -36,6 +36,8 @@ public:
     using Ptr = std::shared_ptr<PlusOperator>;
     using WeakPtr = std::weak_ptr<PlusOperator>;
 
+    static constexpr const char* SYMBOL = "+";
+
 public:
     PlusOperator() = default;
 
@@ -50,7 +52,9 @@ public:
             std::shared_ptr<caramel::ast::Expression> const &rightExpression
     ) override;
 
-    StatementType expressionType() override;
+    StatementType getExpressionType() const override;
+
+    std::string getToken() const override;
 
 };
 

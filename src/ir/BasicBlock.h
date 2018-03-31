@@ -46,12 +46,16 @@ public:
     virtual ~BasicBlock() = default;
 
 public:
-    void generateAssembly(std::ostream &output);
 
     std::string addInstruction(std::shared_ptr<IR> const &instruction);
 
+    std::vector<std::shared_ptr<IR>> & getInstructions();
+    std::string & getLabelName();
+
     std::shared_ptr<BasicBlock> getNextWhenTrue() const;
     std::shared_ptr<BasicBlock> getNextWhenFalse() const;
+
+    long getSymbolIndex(std::string const &symbolName);
 
     CFG * getCFG();
 

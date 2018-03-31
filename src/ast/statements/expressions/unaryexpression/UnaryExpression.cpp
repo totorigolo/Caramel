@@ -31,7 +31,7 @@ UnaryExpression::UnaryExpression(
         std::shared_ptr<caramel::ast::Expression> const &innerExpression,
         std::shared_ptr<caramel::ast::UnaryOperator> const &unaryOperator,
         antlr4::Token *startToken
-) : Expression(startToken, mUnaryOperator->expressionType()),
+) : Expression(startToken, unaryOperator->getExpressionType()),
     mInnerExpression{innerExpression},
     mUnaryOperator{unaryOperator} {}
 
@@ -40,7 +40,22 @@ UnaryExpression::getIR(
         std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
 
 ) {
-    return mUnaryOperator->buildIR(mInnerExpression);
+    CARAMEL_UNUSED(currentBasicBlock);
+    return mUnaryOperator->buildIR(currentBasicBlock, mInnerExpression);
+}
+
+void UnaryExpression::acceptAstDotVisit() {
+    addNode(thisId(), "UnaryExpression: " + mUnaryOperator->getToken());
+    visitChildrenAstDot();
+}
+
+void UnaryExpression::visitChildrenAstDot() {
+    addEdge(thisId(), mInnerExpression->thisId());
+    mInnerExpression->acceptAstDotVisit();
+}
+
+PrimaryType::Ptr UnaryExpression::getPrimaryType() const {
+    return mInnerExpression->getPrimaryType();
 }
 
 } // namespace caramel::ast

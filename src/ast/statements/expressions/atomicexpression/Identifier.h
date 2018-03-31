@@ -40,7 +40,6 @@ public:
     ~Identifier() override = default;
 
     Symbol::Ptr getSymbol() const override;
-    SymbolType getSymbolType() const override;
     void setSymbol(VariableSymbol::Ptr symbol);
 
     PrimaryType::Ptr getPrimaryType() const override;

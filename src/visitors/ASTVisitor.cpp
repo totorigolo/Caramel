@@ -39,10 +39,7 @@ using namespace caramel::colors;
 using namespace caramel::visitors;
 
 ASTVisitor::ASTVisitor(std::string const &sourceFileName)
-        : mSourceFileUtil{sourceFileName},
-          mBitwiseShiftOperator{std::make_shared<BitwiseShiftOperator>()},
-          mMultOperator{std::make_shared<MultOperator>()},
-          mPlusOperator{std::make_shared<PlusOperator>()} {
+        : mSourceFileUtil{sourceFileName} {
 }
 
 antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
@@ -200,16 +197,12 @@ antlrcpp::Any ASTVisitor::visitReturnJump(CaramelParser::ReturnJumpContext *ctx)
     logger.trace() << "visiting return jump: " << grey <<ctx->getText();
 
     // Fixme : return true value
-
-    ReturnStatement::Ptr returnStatement;
-    Expression::Ptr returnedExpression;
     if (ctx->expression()) {
-        returnedExpression = visitExpression(ctx->expression());
+        Expression::Ptr returnedExpression = visitExpression(ctx->expression());
+        return castTo<Jump::Ptr>(std::make_shared<ReturnStatement>(returnedExpression, ctx->getStart()));
     } else {
-        returnedExpression = castTo<Expression::Ptr>(Constant::defaultConstant(ctx->getStart()));
+        return castTo<Jump::Ptr>(std::make_shared<ReturnStatement>(ctx->getStart()));
     }
-
-    return castTo<Jump::Ptr>(std::make_shared<ReturnStatement>(returnedExpression, ctx->getStart()));
 }
 
 std::shared_ptr<Context> ASTVisitor::currentContext() {

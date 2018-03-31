@@ -24,6 +24,7 @@
 
 #include "Identifier.h"
 #include "../../../../ir/BasicBlock.h"
+#include "../../../../ir/instructions/EmptyInstruction.h"
 
 namespace caramel::ast {
 
@@ -34,10 +35,6 @@ Symbol::Ptr Identifier::getSymbol() const {
     return mSymbol;
 }
 
-SymbolType Identifier::getSymbolType() const {
-    return mSymbol->getSymbolType();
-}
-
 void Identifier::setSymbol(VariableSymbol::Ptr symbol) {
     mSymbol = std::move(symbol);
 }
@@ -46,8 +43,8 @@ PrimaryType::Ptr Identifier::getPrimaryType() const {
     return mSymbol->getType();
 }
 
-std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {
-    return ir::IR::emptyInstruction(currentBasicBlock, mSymbol->getName());
+std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<ir::BasicBlock> const &currentBasicBlock) {
+    return std::make_shared<ir::EmptyInstruction>(currentBasicBlock, mSymbol->getName());
 }
 
 void Identifier::acceptAstDotVisit() {

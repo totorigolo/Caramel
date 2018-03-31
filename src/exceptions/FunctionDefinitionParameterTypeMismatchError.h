@@ -25,12 +25,15 @@
 #pragma once
 
 #include "SemanticError.h"
-#include "../Console.h"
-#include "../ast/symboltable/PrimaryType.h"
 
 #include <ParserRuleContext.h>
 
 #include <stdexcept>
+
+
+namespace caramel::ast {
+class PrimaryType;
+}
 
 
 namespace caramel::exceptions {
@@ -40,26 +43,17 @@ using namespace colors;
 
 class FunctionDefinitionParameterTypeMismatchError : public SemanticError {
 public:
-    FunctionDefinitionParameterTypeMismatchError(std::string const &message,
-                                                 antlr4::ParserRuleContext *antlrContext,
+    FunctionDefinitionParameterTypeMismatchError(antlr4::ParserRuleContext *antlrContext,
                                                  std::shared_ptr<PrimaryType> declaredType,
-                                                 std::shared_ptr<PrimaryType> definedType)
-            : SemanticError(message),
-              mAntlrContext{antlrContext},
-              mDeclaredType{std::move(declaredType)},
-              mDefinedType{std::move(definedType)} {
-    }
+                                                 std::shared_ptr<PrimaryType> definedType);
 
-    void explain(utils::SourceFileUtil sourceFileUtil) const override {
-        //todo
-        CARAMEL_UNUSED(sourceFileUtil);
-        logger.fatal() << what();
-    }
+    //void explain(utils::SourceFileUtil sourceFileUtil) const override;
 
-private:
-    antlr4::ParserRuleContext *mAntlrContext;
-    std::shared_ptr<caramel::ast::PrimaryType> mDeclaredType;
-    std::shared_ptr<caramel::ast::PrimaryType> mDefinedType;
+protected:
+    std::string buildFunctionDefinitionParameterTypeMismatchErrorMessage(
+            std::shared_ptr<PrimaryType> declaredType,
+            std::shared_ptr<PrimaryType> declaredName);
+
 };
 
 } // namespace caramel::exceptions

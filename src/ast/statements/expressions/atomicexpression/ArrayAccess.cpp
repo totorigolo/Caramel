@@ -35,10 +35,6 @@ Symbol::Ptr ArrayAccess::getSymbol() const {
     return mSymbol;
 }
 
-SymbolType ArrayAccess::getSymbolType() const {
-    return mSymbol->getSymbolType();
-}
-
 void ArrayAccess::setSymbol(ArraySymbol::Ptr symbol) {
     mSymbol = std::move(symbol);
 }

@@ -64,12 +64,11 @@ void FunctionSymbol::acceptAstDotVisit() {
 void FunctionSymbol::visitChildrenAstDot() {
     size_t i = 0;
     for (auto const &[paramName, paramType, paramSymbolType] : mParameters) {
-        addEdge(thisId(), thisId() + i, std::to_string(i));
-        addNode(thisId() + i, paramName + ": " + paramType->getIdentifier()
+        addEdge(thisId(), thisId() + i + 1, std::to_string(i));
+        addNode(thisId() + i + 1, paramName + ": " + paramType->getIdentifier()
                               + (paramSymbolType == SymbolType::ArraySymbol ? "[]" : ""));
         i++;
     }
 }
 
 } // namespace caramel::ast
-
