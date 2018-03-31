@@ -47,6 +47,11 @@ file(GLOB_RECURSE GRAMMAR_BASE ${CMAKE_SOURCE_DIR}/build/cpp-grammar/*.cpp)
 add_library(Grammar ${GRAMMAR_BASE})
 target_include_directories(Grammar SYSTEM PRIVATE ${PROJECT_LIBRARY_DIR}/antlr4-runtime-headers)
 
+# Disable GCC warnings when compiling Antlr
+target_compile_options(Grammar
+        PRIVATE "-Wno-unused-parameter"
+        PRIVATE "-Wno-unused-but-set-variable")
+
 
 #### Executable setup: define source files, executable, include directories and library links
 file(GLOB_RECURSE SOURCE_FILES
