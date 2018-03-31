@@ -1,6 +1,8 @@
 /*
  * Multi-line comment.
  */
+#include <stdio.h>
+#include <stdint.h>
 
 int32_t foo(int16_t a, int32_t b, int64_t c);
 int32_t foo(int16_t a, int32_t b, int64_t c);
