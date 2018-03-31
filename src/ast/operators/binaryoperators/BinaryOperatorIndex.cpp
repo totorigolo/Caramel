@@ -29,6 +29,10 @@
 #include "MinusOperator.h"
 #include "DivOperator.h"
 #include "LeftShiftOperator.h"
+#include "LowerThanOperator.h"
+#include "LowerEqThanOperator.h"
+#include "GreaterThanOperator.h"
+#include "GreaterEqThanOperator.h"
 
 #define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<BinaryOperator>(make_shared<op>())))
 
@@ -47,6 +51,12 @@ caramel::ast::BinaryOperatorIndex::BinaryOperatorIndex() {
     // Bitwise shift operators
     BIND(RightShiftOperator);
     BIND(LeftShiftOperator);
+
+    // Comparison operators
+    BIND(LowerThanOperator);
+    BIND(LowerEqThanOperator);
+    BIND(GreaterThanOperator);
+    BIND(GreaterEqThanOperator);
 
 }
 

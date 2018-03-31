@@ -73,6 +73,22 @@ AbstractSyntaxTreeVisitor::visitBitwiseShiftExpression(CaramelParser::BitwiseShi
 }
 
 antlrcpp::Any
+AbstractSyntaxTreeVisitor::visitComparison(CaramelParser::ComparisonContext *ctx) {
+    logger.trace() << "visiting comparison: " << grey <<ctx->getText();
+    if (ctx->children.size() == 1) {
+        // One children = No BinaryExpression at this step.
+        return visitChildren(ctx).as<Expression::Ptr>();
+    } else {
+        return std::dynamic_pointer_cast<Expression>(std::make_shared<BinaryExpression>(
+                visitComparison(ctx->comparison(0)),
+                visitComparativeOperator(ctx->comparativeOperator()),
+                visitComparison(ctx->comparison(1)),
+                ctx->getStart()
+        ));
+    }
+}
+
+antlrcpp::Any
 AbstractSyntaxTreeVisitor::visitMultiplicativeExpression(CaramelParser::MultiplicativeExpressionContext *ctx) {
     logger.trace() << "visiting multiplicative expression: " << grey <<ctx->getText();
     if (ctx->children.size() == 1) {
@@ -154,6 +170,10 @@ AbstractSyntaxTreeVisitor::visitMultiplicativeOperator(CaramelParser::Multiplica
 }
 
 antlrcpp::Any AbstractSyntaxTreeVisitor::visitBitwiseShiftOperator(CaramelParser::BitwiseShiftOperatorContext *ctx) {
+    return FIND_BINARY_OP(ctx);
+}
+
+antlrcpp::Any AbstractSyntaxTreeVisitor::visitComparativeOperator(CaramelParser::ComparativeOperatorContext *ctx) {
     return FIND_BINARY_OP(ctx);
 }
 

@@ -22,16 +22,14 @@
  * SOFTWARE.
 */
 
-#include "RightShiftOperator.h"
+#include "LowerEqThanOperator.h"
 
-namespace caramel::ast {
-
-std::shared_ptr<ir::IR>
-RightShiftOperator::buildIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock,
-        std::shared_ptr<Expression> const &leftExpression,
-        std::shared_ptr<Expression> const &rightExpression
+std::shared_ptr<caramel::ir::IR> caramel::ast::LowerEqThanOperator::buildIR(
+        std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
+        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+        std::shared_ptr<caramel::ast::Expression> const &rightExpression
 ) {
+
     CARAMEL_UNUSED(currentBasicBlock);
     CARAMEL_UNUSED(leftExpression);
     CARAMEL_UNUSED(rightExpression);
@@ -40,12 +38,10 @@ RightShiftOperator::buildIR(
     throw caramel::exceptions::NotImplementedException(__FILE__);
 }
 
-StatementType RightShiftOperator::getExpressionType() const {
-    return StatementType::BitwiseShiftExpression;
+caramel::ast::StatementType caramel::ast::LowerEqThanOperator::getExpressionType() const {
+    return StatementType::ComparativeExpression;
 }
 
-std::string RightShiftOperator::getToken() const {
+std::string caramel::ast::LowerEqThanOperator::getToken() const {
     return SYMBOL;
 }
-
-} // namespace caramel::ast

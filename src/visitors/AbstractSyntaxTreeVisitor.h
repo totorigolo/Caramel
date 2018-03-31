@@ -136,6 +136,9 @@ public:
     /// Returns Expression::Ptr
     antlrcpp::Any visitAtomicExpression(CaramelParser::AtomicExpressionContext *ctx) override;
 
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitComparison(CaramelParser::ComparisonContext *ctx) override;
+
     /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitNumberConstant(CaramelParser::NumberConstantContext *ctx) override;
 
@@ -170,6 +173,8 @@ public:
     antlrcpp::Any visitMultiplicativeOperator(CaramelParser::MultiplicativeOperatorContext *ctx) override;
 
     antlrcpp::Any visitBitwiseShiftOperator(CaramelParser::BitwiseShiftOperatorContext *ctx) override;
+
+    antlrcpp::Any visitComparativeOperator(CaramelParser::ComparativeOperatorContext *ctx) override;
 
 private:
     std::shared_ptr<caramel::ast::Context> currentContext(); //
