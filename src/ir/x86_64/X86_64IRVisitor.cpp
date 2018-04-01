@@ -24,6 +24,13 @@
 
 #include "X86_64IRVisitor.h"
 #include "../BasicBlock.h"
+#include "../instructions/CopyInstruction.h"
+#include "../instructions/EmptyInstruction.h"
+#include "../instructions/PrologInstruction.h"
+#include "../instructions/EpilogInstruction.h"
+#include "../instructions/LDConstInstruction.h"
+#include "../instructions/FunctionCallInstruction.h"
+#include "../instructions/NopInstruction.h"
 
 namespace caramel::ir::x86_64 {
 
@@ -32,45 +39,62 @@ std::string X86_64IRVisitor::address(std::string const &symbol) {
 }
 
 std::string X86_64IRVisitor::registerToAssembly(std::string const &register_) {
+    logger.trace() << "[x86_64] " << "registerToAssembly(" << register_ << ")";
+    std::string r;
 
     if (register_ == ir::IR::REGISTER_BASE_POINTER) {
-        return "%rbp";
+        r = "%rbp";
     } else if (register_ == ir::IR::REGISTER_STACK_POINTER) {
-        return "%rsp";
+        r = "%rsp";
     } else if (register_ == ir::IR::ACCUMULATOR) {
-        return "%eax";
+        r = "%eax";
+    } else {
+        throw std::runtime_error("Not valid register for " + register_);
     }
 
-    throw std::runtime_error("Not valid register for " + register_);
+    logger.trace() << "[x86_64] " << "  => " << r;
+    return r;
 }
 
 std::string X86_64IRVisitor::toAssembly(ir::IR *ir, std::string const &anySymbol) {
+    logger.trace() << "[x86_64] " << "toAssembly(" << "ir" << ", " << anySymbol << ")";
+    std::string r;
+
     // Is a register
     if (anySymbol[0] == '%') {
-        return registerToAssembly(anySymbol);
+        r = registerToAssembly(anySymbol);
         // Is a temp var
     } else if (anySymbol[0] == '!') {
-        return registerToAssembly(IR::ACCUMULATOR);
+        r = registerToAssembly(IR::ACCUMULATOR);
         // Is a constant
     } else if (anySymbol[0] >= '0' && anySymbol[0] <= '9') {
-        return "$" + anySymbol;
+        r = "$" + anySymbol;
     } else {
-        return std::to_string(ir->getParentBlock()->getSymbolIndex(anySymbol)) +
+        r = std::to_string(ir->getParentBlock()->getSymbolIndex(anySymbol)) +
                address(registerToAssembly(IR::REGISTER_BASE_POINTER));
     }
+
+    logger.trace() << "[x86_64] " << "  => " << r;
+    return r;
 }
 
 void X86_64IRVisitor::visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting copy: " << instruction->getReturnName();
+
     os << "  movl    " << toAssembly(instruction, instruction->getSource())
        << ", " << toAssembly(instruction, instruction->getDestination());
 }
 
 void X86_64IRVisitor::visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting empty";
+
     CARAMEL_UNUSED(instruction);
     CARAMEL_UNUSED(os);
 }
 
 void X86_64IRVisitor::visitProlog(caramel::ir::PrologInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting prolog";
+
     CARAMEL_UNUSED(instruction);
     os << "  pushq   %rbp" << std::endl;
     os << "  movq    %rsp, %rbp";
@@ -78,23 +102,31 @@ void X86_64IRVisitor::visitProlog(caramel::ir::PrologInstruction *instruction, s
 }
 
 void X86_64IRVisitor::visitEpilog(caramel::ir::EpilogInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting epilog";
+
     CARAMEL_UNUSED(instruction);
     os << "  popq    %rbp" << std::endl;
     os << "  ret";
 }
 
 void X86_64IRVisitor::visitAddition(caramel::ir::AdditionInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting addition: "; // TODO: complete the trace
+
     // Todo: create visitAddition
     CARAMEL_UNUSED(instruction);
     CARAMEL_UNUSED(os);
 }
 
 void X86_64IRVisitor::visitLdConst(caramel::ir::LDConstInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting ldconst: " << instruction->getReturnName() << " = " << instruction->getValue();
+
     os << "  movl    " << toAssembly(instruction, instruction->getValue())
        << ", " << toAssembly(instruction, instruction->getDestination());
 }
 
 void X86_64IRVisitor::visitNope(caramel::ir::NopInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting nop";
+
     CARAMEL_UNUSED(instruction);
     os << "  nop";
 }

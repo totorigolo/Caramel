@@ -27,62 +27,54 @@
 
 #include "instructions.h"
 #include "IR.h"
-#include "instructions/CopyInstruction.h"
-#include "instructions/EmptyInstruction.h"
-#include "instructions/PrologInstruction.h"
-#include "instructions/EpilogInstruction.h"
-#include "instructions/LDConstInstruction.h"
-#include "instructions/NopInstruction.h"
+
 
 namespace caramel::ir {
 
 class CopyInstruction;
-
 class EmptyInstruction;
-
 class PrologInstruction;
-
 class EpilogInstruction;
-
 class AdditionInstruction;
-
 class LDConstInstruction;
+class FunctionCallInstruction;
+class NopInstruction;
 
 class IRVisitor {
 public:
 
     virtual void visitCopy(
-            caramel::ir::CopyInstruction *instruction,
+            CopyInstruction *instruction,
             std::ostream &os
     ) = 0;
 
     virtual void visitEmpty(
-            caramel::ir::EmptyInstruction *instruction,
+            EmptyInstruction *instruction,
             std::ostream &os
     ) = 0;
 
     virtual void visitProlog(
-            caramel::ir::PrologInstruction *instruction,
+            PrologInstruction *instruction,
             std::ostream &os
     ) = 0;
 
     virtual void visitEpilog(
-            caramel::ir::EpilogInstruction *instruction,
+            EpilogInstruction *instruction,
             std::ostream &os
     ) = 0;
 
     virtual void visitAddition(
-            caramel::ir::AdditionInstruction *instruction,
+            AdditionInstruction *instruction,
             std::ostream &os
     ) = 0;
 
     virtual void visitLdConst(
-            caramel::ir::LDConstInstruction *instruction,
+            LDConstInstruction *instruction,
             std::ostream &os
     ) = 0;
 
     virtual void visitNope(
-            caramel::ir::NopInstruction *instruction,
+            NopInstruction *instruction,
             std::ostream &os
     ) = 0;
 

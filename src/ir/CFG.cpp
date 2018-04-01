@@ -38,6 +38,8 @@ CFG::CFG(
     stackLength{0},
     nextBasicBlockNumber{0},
     mBasicBlocks{} {
+    logger.debug() << "New CFG for " << mFileName << ".";
+
     mBasicBlocks.push_back(std::make_shared<BasicBlock>(
             nextBasicBlockNumber,
             this,
