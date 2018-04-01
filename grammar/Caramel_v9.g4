@@ -316,7 +316,7 @@ EqualityOp_ : '==' ;
 RefEqualityOp_ : '===' ;
 DiffOp_ : '!=' ;
 Letter_ : ( LowerCaseLetter_ | UpperCaseLetter_ ) ;
-FragmentIdentifier_ : ( Underscore_? Letter_ AnyCharacter_* ) ;
+FragmentIdentifier_ : ( Underscore_ | Underscore_? Letter_ AnyCharacter_* ) ;
 AnyCharacter_ : ( Underscore_ | Letter_ | Digit_ ) ;
 Assignment_ : '=' ;
 Comma_ : ',' ;
