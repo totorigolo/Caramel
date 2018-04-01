@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <ostream>
 #include "../ast/statements/Statement.h"
 #include "../ast/symboltable/Symbol.h"
 #include "../ast/context/Context.h"
@@ -61,16 +62,18 @@ public:
 
     std::string & getFileName();
 
+    friend std::ostream &operator<<(std::ostream &os, CFG const &cfg);
+
 protected:
     std::string mFileName;
     ast::Context::Ptr mRootContext;
 
     std::map<long, std::map<std::string, ast::PrimaryType::Ptr>> mSymbols;
     std::map<long, std::map<std::string, long>> mSymbolIndex;
-    size_t stackLength;
-    size_t stackLengthMemory;
+    long mStackLength;
+    long mStackLengthMemory;
 
-    int nextBasicBlockNumber;
+    int mNextBasicBlockNumber;
 
     std::vector<std::shared_ptr<BasicBlock>> mBasicBlocks;
 };

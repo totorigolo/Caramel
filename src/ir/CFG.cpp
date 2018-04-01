@@ -24,9 +24,12 @@
 
 #include "CFG.h"
 #include "BasicBlock.h"
+#include "../Console.h"
 
 
 namespace caramel::ir {
+
+using namespace colors;
 
 CFG::CFG(
         std::string const &fileName,
@@ -35,13 +38,13 @@ CFG::CFG(
     mRootContext{std::move(treeContext)},
     mSymbols{},
     mSymbolIndex{},
-    stackLength{0},
-    nextBasicBlockNumber{0},
+    mStackLength{0},
+    mNextBasicBlockNumber{0},
     mBasicBlocks{} {
     logger.debug() << "New CFG for " << mFileName << ".";
 
     mBasicBlocks.push_back(std::make_shared<BasicBlock>(
-            nextBasicBlockNumber,
+            mNextBasicBlockNumber,
             this,
             ""
     ));
@@ -53,7 +56,7 @@ CFG::CFG(
             mBasicBlocks.push_back(statement->getBasicBlock(this));
         } else {
             if (statement->getType() != ast::StatementType::FunctionDeclaration) {
-                logger.warning() << "Statement return neither IR nor BB: " << statement->getType();
+                logger.warning() << "[CFG] Statement return neither IR nor BB: " << statement->getType();
             }
         }
     }
@@ -65,19 +68,45 @@ void CFG::addBasicBlock(std::shared_ptr<BasicBlock> basicBlock) {
 
 bool CFG::hasSymbol(size_t controlBlockId, std::string const &symbolName) {
     return mSymbols[controlBlockId].find(symbolName) != mSymbols[controlBlockId].end()
-           && mSymbols[0].find(symbolName) != mSymbols[0].end();
+           || mSymbols[0].find(symbolName) != mSymbols[0].end();
 }
 
 long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, caramel::ast::PrimaryType::Ptr type) {
+    logger.trace() << "[CFG] Adding symbol " << yellow << "@" << controlBlockId << magenta << ": "
+                   << grey << symbolName << " of type " << type->getIdentifier();
+
+    if (hasSymbol(controlBlockId, symbolName)) {
+        long existingIndex = getSymbolIndex(controlBlockId, symbolName);
+        logger.warning() << "[CFG] Symbol " << symbolName << " already exists with index " << existingIndex << ".";
+        return existingIndex;
+    }
+
     mSymbols[controlBlockId][symbolName] = type;
-    stackLength = stackLength - type->getMemoryLength() / 8U;
-    mSymbolIndex[controlBlockId][symbolName] = stackLength;
-    return stackLength;
+    mStackLength = mStackLength - type->getMemoryLength() / 8U;
+    mSymbolIndex[controlBlockId][symbolName] = mStackLength;
+
+    logger.trace() << "[CFG] " << "  => " << mStackLength;
+    return mStackLength;
 }
 
 long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type, long index) {
+    logger.trace() << "[CFG] Adding symbol: " << grey << symbolName << " of type " << type->getIdentifier()
+                   << yellow << " at " << index;
+
+    if (hasSymbol(controlBlockId, symbolName)) {
+        long existingIndex = getSymbolIndex(controlBlockId, symbolName);
+        logger.warning() << "[CFG] Symbol " << symbolName << "already exists with index " << existingIndex << ".";
+        return existingIndex;
+    }
+
     mSymbols[controlBlockId][symbolName] = type;
     mSymbolIndex[controlBlockId][symbolName] = index;
+    if (index > 0) {
+        logger.warning() << "[CFG] TODO: Check this statement.";
+        mStackLength = size_t(index);
+    }
+
+    logger.trace() << "[CFG] " << "  => " << index;
     return index;
 }
 
@@ -92,20 +121,20 @@ long CFG::getSymbolIndex(size_t controlBlockId, std::string const &symbolName) {
 }
 
 void CFG::enterFunction() {
-    stackLengthMemory = stackLength;
-    stackLength = 0;
+    mStackLengthMemory = mStackLength;
+    mStackLength = 0;
 }
 
 void CFG::leaveFunction() {
-    stackLength = stackLengthMemory;
+    mStackLength = mStackLengthMemory;
 }
 
 std::shared_ptr<BasicBlock> CFG::generateBasicBlock(std::string const &entryName) {
-    return std::make_shared<BasicBlock>(nextBasicBlockNumber, this, entryName);
+    return std::make_shared<BasicBlock>(mNextBasicBlockNumber, this, entryName);
 }
 
 std::shared_ptr<BasicBlock> CFG::generateFunctionBlock(std::string const &entryName) {
-    return std::make_shared<BasicBlock>(++nextBasicBlockNumber, this, entryName);
+    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, this, entryName);
 }
 
 std::vector<std::shared_ptr<BasicBlock>> &CFG::getBasicBlocks() {
@@ -114,6 +143,27 @@ std::vector<std::shared_ptr<BasicBlock>> &CFG::getBasicBlocks() {
 
 std::string &CFG::getFileName() {
     return mFileName;
+}
+
+std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
+    os << "CFG:\n"
+       << " - mFileName: " << cfg.mFileName << '\n'
+       << " - mRootContext: " << *cfg.mRootContext << '\n'
+       << " - mSymbols & mSymbolsIndex:\n";
+    for (auto const &[basicBlockId, symbols] : cfg.mSymbols) {
+        for (auto const &[name, type] : symbols) {
+            os << "    - BB=" << basicBlockId
+               << ", name=" << name
+               << ", type=" << type->getIdentifier()
+               << ", index=" << cfg.mSymbolIndex.at(basicBlockId).at(name)
+               << '\n';
+        }
+    }
+    os << " - mStackLength: " << cfg.mStackLength << '\n'
+       << " - mStackLengthMemory: " << cfg.mStackLengthMemory << '\n'
+       << " - mNextBasicBlockNumber: " << cfg.mNextBasicBlockNumber << '\n'
+       << " - mBasicBlocks: " << cfg.mBasicBlocks.size() << " BBs";
+    return os;
 }
 
 } // namespace caramel::ir
