@@ -37,19 +37,13 @@ public:
     explicit AdditionInstruction(
             std::string const &returnName,
             std::shared_ptr<BasicBlock> const &parentBlock,
-            caramel::ast::PrimaryType::Ptr const &type,
-            std::vector<std::string> const &parameters
+            ast::PrimaryType::Ptr const &type
     );
 
     ~AdditionInstruction() override = default;
 
 private:
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-
 };
 
 } // namespace caramel::ir
-
-
-

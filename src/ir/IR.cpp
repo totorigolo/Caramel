@@ -32,25 +32,21 @@ namespace caramel::ir {
 IR::IR(
         std::shared_ptr<BasicBlock> parentBlock,
         Operation op,
-        caramel::ast::PrimaryType::Ptr type,
-        std::vector<std::string> parameters
+        ast::PrimaryType::Ptr type
 ) : mReturnName{""},
     mParentBlock{parentBlock},
     mOperation{op},
-    mType{type},
-    mParameters{std::move(parameters)} {}
+    mType{std::move(type)} {}
 
 IR::IR(
-        std::string const &returnName,
+        std::string returnName,
         std::shared_ptr<BasicBlock> parentBlock,
         Operation op,
-        caramel::ast::PrimaryType::Ptr type,
-        std::vector<std::string> parameters
-) : mReturnName{returnName},
+        ast::PrimaryType::Ptr type
+) : mReturnName{std::move(returnName)},
     mParentBlock{parentBlock},
     mOperation{op},
-    mType{type},
-    mParameters{std::move(parameters)} {}
+    mType{std::move(type)} {}
 
 std::string IR::getReturnName() {
     return mReturnName;
@@ -64,17 +60,8 @@ caramel::ast::PrimaryType::Ptr IR::getType() const {
     return mType;
 }
 
-Operation IR::getOperation() const {
-    return mOperation;
-}
-
 std::shared_ptr<BasicBlock> IR::getParentBlock() {
     return mParentBlock.lock();
 }
-
-std::vector<std::string> IR::getParameters() {
-    return mParameters;
-}
-
 
 } // namespace caramel::ir

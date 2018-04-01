@@ -29,7 +29,7 @@ namespace caramel::ir {
 
 PrologInstruction::PrologInstruction(
         std::shared_ptr<BasicBlock> const &parentBlock
-) : IR("", parentBlock, Operation::prolog, caramel::ast::Void_t::Create(), std::vector<std::string>()){}
+) : IR("", parentBlock, Operation::prolog, ast::Void_t::Create()){}
 
 void PrologInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitProlog(this, os);

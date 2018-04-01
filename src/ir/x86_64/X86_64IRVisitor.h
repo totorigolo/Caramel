@@ -26,11 +26,12 @@
 
 #include "../IR.h"
 #include "../IRVisitor.h"
+
 #include <memory>
 #include <ostream>
 
-namespace caramel::ir::x86_64 {
 
+namespace caramel::ir::x86_64 {
 
 class X86_64IRVisitor : public IRVisitor {
 public:

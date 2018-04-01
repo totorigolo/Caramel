@@ -29,9 +29,9 @@ namespace caramel::ir {
 
 CopyInstruction::CopyInstruction(
         std::shared_ptr<BasicBlock> const &parentBlock,
-        caramel::ast::PrimaryType::Ptr const &type, std::string const &dest,
+        ast::PrimaryType::Ptr const &type, std::string const &dest,
         std::string const &source
-) : IR(parentBlock, Operation::copy, type, std::vector{dest, source}), mDest{dest}, mSource{source} {}
+) : IR(parentBlock, Operation::copy, type), mDest{dest}, mSource{source} {}
 
 CopyInstruction::CopyInstruction(
         std::string const &returnName,
@@ -39,7 +39,7 @@ CopyInstruction::CopyInstruction(
         ast::PrimaryType::Ptr const &type,
         std::string const &dest,
         std::string const &source
-) : IR(returnName, parentBlock, Operation::copy, type, std::vector{dest, source}), mDest{dest}, mSource{source} {}
+) : IR(returnName, parentBlock, Operation::copy, type), mDest{dest}, mSource{source} {}
 
 std::string CopyInstruction::getDestination() {
     return mDest;

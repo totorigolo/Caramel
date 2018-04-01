@@ -34,5 +34,6 @@ void EmptyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::os
 EmptyInstruction::EmptyInstruction(
         std::shared_ptr<BasicBlock> parentBlock,
         std::string const &returnName
-) : IR(returnName, parentBlock, Operation::empty, caramel::ast::Void_t::Create(), std::vector<std::string>()) {}
+) : IR(returnName, parentBlock, Operation::empty, ast::Void_t::Create()) {}
+
 } // namespace caramel::ir

@@ -61,8 +61,8 @@ std::string X86_64IRVisitor::toAssembly(ir::IR *ir, std::string const &anySymbol
 }
 
 void X86_64IRVisitor::visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) {
-    os << "  movl    " << toAssembly(instruction, instruction->getSource()) << ", " << toAssembly(instruction,
-                                                                                                  instruction->getDestination());
+    os << "  movl    " << toAssembly(instruction, instruction->getSource())
+       << ", " << toAssembly(instruction, instruction->getDestination());
 }
 
 void X86_64IRVisitor::visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) {
@@ -90,7 +90,8 @@ void X86_64IRVisitor::visitAddition(caramel::ir::AdditionInstruction *instructio
 }
 
 void X86_64IRVisitor::visitLdConst(caramel::ir::LDConstInstruction *instruction, std::ostream &os) {
-    os << "  movl    " << toAssembly(instruction, instruction->getValue()) << ", " << toAssembly(instruction, instruction->getDestination());
+    os << "  movl    " << toAssembly(instruction, instruction->getValue())
+       << ", " << toAssembly(instruction, instruction->getDestination());
 }
 
 void X86_64IRVisitor::visitNope(caramel::ir::NopInstruction *instruction, std::ostream &os) {

@@ -66,16 +66,14 @@ public:
     explicit IR(
             std::shared_ptr<BasicBlock> parentBlock,
             Operation op,
-            ast::PrimaryType::Ptr type,
-            std::vector<std::string> parameters = std::vector<std::string>()
+            ast::PrimaryType::Ptr type
     );
 
     explicit IR(
-            std::string const &returnName,
+            std::string returnName,
             std::shared_ptr<BasicBlock> parentBlock,
             Operation op,
-            ast::PrimaryType::Ptr type,
-            std::vector<std::string> parameters = std::vector<std::string>()
+            ast::PrimaryType::Ptr type
     );
 
     virtual ~IR() = default;
@@ -84,13 +82,9 @@ public:
 
     bool isEmpty() const;
 
-    Operation getOperation() const;
-
     caramel::ast::PrimaryType::Ptr getType() const;
 
     std::shared_ptr<BasicBlock> getParentBlock();
-
-    std::vector<std::string> getParameters();
 
     virtual void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) = 0;
 
@@ -99,7 +93,6 @@ private:
     std::weak_ptr<BasicBlock> mParentBlock;
     Operation mOperation;
     ast::PrimaryType::Ptr mType;
-    std::vector<std::string> mParameters;
 };
 
 } // namespace caramel::ir

@@ -25,6 +25,7 @@
 #include "LDConstInstruction.h"
 #include "../IRVisitor.h"
 
+
 namespace caramel::ir {
 
 LDConstInstruction::LDConstInstruction(
@@ -33,7 +34,9 @@ LDConstInstruction::LDConstInstruction(
         ast::PrimaryType::Ptr const &type,
         std::string dest,
         std::string val
-) : IR(returnName, parentBlock, Operation::ldconst, type, std::vector<std::string>{dest, val}), mDestination{dest}, mValue{val} {}
+) : IR(returnName, parentBlock, Operation::ldconst, type),
+    mDestination{std::move(dest)},
+    mValue{std::move(val)} {}
 
 std::string LDConstInstruction::getDestination() const {
     return mDestination;
