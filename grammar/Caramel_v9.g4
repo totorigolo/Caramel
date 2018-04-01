@@ -249,6 +249,7 @@ charConstant
   | EscapedNL_
   | EscapedCR_
   | EscapedTB_
+  | EscapedInterro_
   | EscapedSimpeQuote_
   | EscapedDoubleQuote_
   | EscapedAntibackslash_
@@ -323,6 +324,7 @@ Comma_ : ',' ;
 EscapedNL_ : '\'\\\\n\'';
 EscapedCR_ : '\'\\\\r\'';
 EscapedTB_ : '\'\\\\t\'';
+EscapedInterro_ : '\'?\'';
 EscapedSimpeQuote_ : '\'\\\\\'\'';
 EscapedDoubleQuote_ : '\'\\\\"\'';
 EscapedAntibackslash_ : '\'\\\\\\\\\'';
