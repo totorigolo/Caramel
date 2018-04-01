@@ -25,6 +25,7 @@
 #pragma once
 
 #include "Symbol.h"
+#include "FunctionParameterSignature.h"
 
 #include <vector>
 #include <memory>
@@ -49,18 +50,16 @@ public:
     std::shared_ptr<Context> getContext();
     void setContext(std::shared_ptr<Context> context);
 
-    std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> getParameters() const;
+    std::vector<FunctionParameterSignature> getParameters() const;
     void setParameters(std::vector<Symbol::Ptr> const &parameters);
-    void setParameters(std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> &&parameters);
+    void setParameters(std::vector<FunctionParameterSignature> &&parameters);
 
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
 private:
     std::shared_ptr<Context> mContext;
-    std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> mParameters;
+    std::vector<FunctionParameterSignature> mParameters;
 };
 
-} // namespace caramel::dataStructure::symbolTable
-
-
+} // namespace caramel::ast

@@ -56,6 +56,8 @@ public:
 
     void visitNope(caramel::ir::NopInstruction *instruction, std::ostream &os) override;
 
+    void visitFunctionCall(caramel::ir::FunctionCallInstruction *instruction, std::ostream &os) override;
+
 private:
     std::string address(std::string const &symbol);
     std::string registerToAssembly(std::string const &register_);

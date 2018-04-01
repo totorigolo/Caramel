@@ -69,7 +69,7 @@ antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
     // Add prelude functions
     logger.debug() << "Adding prelude functions.";
     auto putsDecl = std::make_shared<FunctionDeclaration>(ctx->getStart());
-    std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> putsParams = {
+    std::vector<FunctionParameterSignature> putsParams = {
             {"c", char_t, SymbolType::VariableSymbol}
     };
     auto putsSymbol = symbolTable->addFunctionDeclaration(ctx, void_t, "puts", putsParams, putsDecl);

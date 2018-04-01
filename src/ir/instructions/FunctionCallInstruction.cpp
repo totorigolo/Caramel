@@ -22,39 +22,37 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "AtomicExpression.h"
-#include "../../../symboltable/Symbol.h"
-#include "../../../symboltable/FunctionSymbol.h"
+#include "FunctionCallInstruction.h"
+#include "../IRVisitor.h"
 
 
-namespace caramel::ast {
+namespace caramel::ir {
 
-class FunctionCall : public AtomicExpression {
-public:
-    using Ptr = std::shared_ptr<FunctionCall>;
-    using WeakPtr = std::shared_ptr<FunctionCall>;
+FunctionCallInstruction::FunctionCallInstruction(
+        std::string const &returnName,
+        std::shared_ptr<BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &returnType, std::string functionName,
+        std::vector<ast::FunctionParameterSignature> parameters,
+        std::vector<std::string> arguments
+) : IR(returnName, parentBlock, Operation::call, returnType),
+    mFunctionName{std::move(functionName)},
+    mParameters{std::move(parameters)},
+    mArguments{std::move(arguments)} {}
 
-    explicit FunctionCall(std::vector<Expression::Ptr> &&arguments, antlr4::Token *startToken);
-    ~FunctionCall() override = default;
+std::string FunctionCallInstruction::getFunctionName() const {
+    return mFunctionName;
+}
 
-    Symbol::Ptr getSymbol() const;
-    void setSymbol(FunctionSymbol::Ptr symbol);
+std::vector<std::string> const &FunctionCallInstruction::getArguments() const {
+    return mArguments;
+}
 
-    PrimaryType::Ptr getPrimaryType() const override;
+std::vector<ast::FunctionParameterSignature> const &FunctionCallInstruction::getParameters() const {
+    return mParameters;
+}
 
-    std::vector<PrimaryType::Ptr> getArgumentsPrimaryTypes() const;
+void FunctionCallInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitFunctionCall(this, os);
+}
 
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnAnIR() const override { return true; }
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
-
-private:
-    Symbol::Ptr mSymbol;
-    std::vector<Expression::Ptr> mArguments;
-};
-
-} // namespace caramel::ast
+} // namespace caramel::ir

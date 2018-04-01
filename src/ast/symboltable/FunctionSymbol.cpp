@@ -40,7 +40,7 @@ void FunctionSymbol::setContext(std::shared_ptr<Context> context) {
     mContext = std::move(context);
 }
 
-std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> FunctionSymbol::getParameters() const {
+std::vector<FunctionParameterSignature> FunctionSymbol::getParameters() const {
     return mParameters;
 }
 
@@ -51,7 +51,7 @@ void FunctionSymbol::setParameters(std::vector<Symbol::Ptr> const &parameters) {
     }
 }
 
-void FunctionSymbol::setParameters(std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> &&parameters) {
+void FunctionSymbol::setParameters(std::vector<FunctionParameterSignature> &&parameters) {
     mParameters.clear();
     std::move(parameters.begin(), parameters.end(), std::back_inserter(mParameters));
 }

@@ -130,4 +130,12 @@ void X86_64IRVisitor::visitNope(caramel::ir::NopInstruction *instruction, std::o
     CARAMEL_UNUSED(instruction);
     os << "  nop";
 }
+
+void X86_64IRVisitor::visitFunctionCall(caramel::ir::FunctionCallInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting functionCall: " << instruction->getFunctionName();
+
+    CARAMEL_UNUSED(instruction);
+    os << "";
+}
+
 } // namespace caramel::ir::x86_64

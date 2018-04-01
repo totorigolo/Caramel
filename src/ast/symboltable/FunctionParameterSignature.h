@@ -24,37 +24,22 @@
 
 #pragma once
 
-#include "AtomicExpression.h"
-#include "../../../symboltable/Symbol.h"
-#include "../../../symboltable/FunctionSymbol.h"
+#include "SymbolType.h"
+
+#include <memory>
 
 
 namespace caramel::ast {
 
-class FunctionCall : public AtomicExpression {
-public:
-    using Ptr = std::shared_ptr<FunctionCall>;
-    using WeakPtr = std::shared_ptr<FunctionCall>;
+class PrimaryType;
 
-    explicit FunctionCall(std::vector<Expression::Ptr> &&arguments, antlr4::Token *startToken);
-    ~FunctionCall() override = default;
+struct FunctionParameterSignature {
+    FunctionParameterSignature(std::string name, std::shared_ptr<PrimaryType> primaryType, SymbolType symbolType)
+            : name{std::move(name)}, primaryType{std::move(primaryType)}, symbolType{symbolType} {}
 
-    Symbol::Ptr getSymbol() const;
-    void setSymbol(FunctionSymbol::Ptr symbol);
-
-    PrimaryType::Ptr getPrimaryType() const override;
-
-    std::vector<PrimaryType::Ptr> getArgumentsPrimaryTypes() const;
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnAnIR() const override { return true; }
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
-
-private:
-    Symbol::Ptr mSymbol;
-    std::vector<Expression::Ptr> mArguments;
+    std::string name;
+    std::shared_ptr<PrimaryType> primaryType;
+    SymbolType symbolType;
 };
 
 } // namespace caramel::ast

@@ -24,37 +24,36 @@
 
 #pragma once
 
-#include "AtomicExpression.h"
-#include "../../../symboltable/Symbol.h"
-#include "../../../symboltable/FunctionSymbol.h"
+#include "../IR.h"
+#include "../../ast/symboltable/FunctionParameterSignature.h"
 
 
-namespace caramel::ast {
+namespace caramel::ir {
 
-class FunctionCall : public AtomicExpression {
+class FunctionCallInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<FunctionCall>;
-    using WeakPtr = std::shared_ptr<FunctionCall>;
+    using Ptr = std::shared_ptr<FunctionCallInstruction>;
+    using WeakPtr = std::shared_ptr<FunctionCallInstruction>;
 
-    explicit FunctionCall(std::vector<Expression::Ptr> &&arguments, antlr4::Token *startToken);
-    ~FunctionCall() override = default;
+    FunctionCallInstruction(std::string const &returnName,
+                            std::shared_ptr<BasicBlock> const &parentBlock,
+                            ast::PrimaryType::Ptr const &returnType, std::string functionName,
+                            std::vector<ast::FunctionParameterSignature> parameters,
+                            std::vector<std::string> arguments);
 
-    Symbol::Ptr getSymbol() const;
-    void setSymbol(FunctionSymbol::Ptr symbol);
+public:
+    std::string getFunctionName() const;
 
-    PrimaryType::Ptr getPrimaryType() const override;
+    std::vector<std::string> const &getArguments() const;
 
-    std::vector<PrimaryType::Ptr> getArgumentsPrimaryTypes() const;
+    std::vector<ast::FunctionParameterSignature> const &getParameters() const;
 
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnAnIR() const override { return true; }
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
-    Symbol::Ptr mSymbol;
-    std::vector<Expression::Ptr> mArguments;
+    std::string mFunctionName;
+    std::vector<ast::FunctionParameterSignature> mParameters;
+    std::vector<std::string> mArguments;
 };
 
-} // namespace caramel::ast
+} // namespace caramel::ir

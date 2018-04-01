@@ -23,10 +23,15 @@
 */
 
 #include "FunctionCall.h"
+#include "../../../../utils/Common.h"
 #include "../../../symboltable/Symbol.h"
+#include "../../../../ir/BasicBlock.h"
+#include "../../../../ir/instructions/FunctionCallInstruction.h"
 
 
 namespace caramel::ast {
+
+using namespace utils;
 
 FunctionCall::FunctionCall(std::vector<Expression::Ptr> &&arguments, antlr4::Token *startToken)
         : AtomicExpression(startToken, StatementType::FunctionCall), mArguments{arguments} {
@@ -64,6 +69,26 @@ void FunctionCall::visitChildrenAstDot() {
         addEdge(thisId(), argument->thisId());
         argument->acceptAstDotVisit();
     }
+}
+
+std::shared_ptr<ir::IR> FunctionCall::getIR(ir::BasicBlock::Ptr const &currentBasicBlock) {
+
+    std::string functionName = mSymbol->getName();
+    auto functionSymbol = castTo<FunctionSymbol::Ptr>(mSymbol);
+
+    std::vector<std::string> arguments;
+    for (auto it = mArguments.rbegin(), it_end = mArguments.rend(); it != it_end; ++it) {
+        arguments.push_back(currentBasicBlock->addInstruction((*it)->getIR(currentBasicBlock)));
+    }
+
+    return std::make_shared<ir::FunctionCallInstruction>(
+            functionName,
+            currentBasicBlock,
+            functionSymbol->getType(),
+            functionName,
+            functionSymbol->getParameters(),
+            arguments // mArguments
+    );
 }
 
 } // namespace caramel::ast

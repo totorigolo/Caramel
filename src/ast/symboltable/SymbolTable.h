@@ -108,7 +108,7 @@ public:
             antlr4::ParserRuleContext *antlrContext,
             std::shared_ptr<PrimaryType> const &returnType,
             std::string const &name,
-            std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> parameters,
+            std::vector<FunctionParameterSignature> parameters,
             const std::shared_ptr<Declaration> &declaration
     );
 

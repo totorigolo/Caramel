@@ -78,7 +78,6 @@ std::shared_ptr<ir::IR> VariableDefinition::getIR(std::shared_ptr<caramel::ir::B
             identifier,
             opName
     );
-
 }
 
 } // caramel::ast

@@ -78,6 +78,11 @@ public:
             std::ostream &os
     ) = 0;
 
+    virtual void visitFunctionCall(
+            FunctionCallInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
 };
 
 } // namespace caramel::ir

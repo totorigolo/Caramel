@@ -42,7 +42,7 @@ ASTVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *
 
     PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
     std::string name = visitValidIdentifier(innerCtx->validIdentifier());
-    std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> params =
+    std::vector<FunctionParameterSignature> params =
             visitFunctionArguments(innerCtx->functionArguments());
     FunctionDeclaration::Ptr functionDeclaration = std::make_shared<FunctionDeclaration>(innerCtx->start);
     FunctionSymbol::Ptr functionSymbol = currentContext()->getSymbolTable()->addFunctionDeclaration(
@@ -72,7 +72,7 @@ antlrcpp::Any ASTVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinit
 
     PrimaryType::Ptr returnType = visitTypeParameter(innerCtx->typeParameter()).as<TypeSymbol::Ptr>()->getType();
     std::string name = visitValidIdentifier(innerCtx->validIdentifier());
-    std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> params =
+    std::vector<FunctionParameterSignature> params =
             visitFunctionArguments(innerCtx->functionArguments());
 
     std::vector<Symbol::Ptr> paramsSymbols;
@@ -99,9 +99,9 @@ antlrcpp::Any ASTVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinit
 antlrcpp::Any ASTVisitor::visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) {
     logger.trace() << "Visiting named arguments: " << grey << ctx->getText();
 
-    std::vector<std::tuple<std::string, PrimaryType::Ptr, SymbolType>> params;
+    std::vector<FunctionParameterSignature> params;
     for (auto argument : ctx->functionArgument()) {
-        std::tuple<std::string, PrimaryType::Ptr, SymbolType> symbol = visitFunctionArgument(argument);
+        FunctionParameterSignature symbol = visitFunctionArgument(argument);
         params.push_back(symbol);
     }
     return params;
@@ -127,8 +127,8 @@ antlrcpp::Any ASTVisitor::visitFunctionArgument(CaramelParser::FunctionArgumentC
     // The argument is an array
     if (ctx->functionArgumentArraySuffix()) {
         logger.warning() << "Array function parameters aren't handled yet.";
-        return std::make_tuple(name, type->getType(), SymbolType::ArraySymbol);
+        return FunctionParameterSignature(name, type->getType(), SymbolType::ArraySymbol);
     } else {
-        return std::make_tuple(name, type->getType(), SymbolType::VariableSymbol);
+        return FunctionParameterSignature(name, type->getType(), SymbolType::VariableSymbol);
     }
 }

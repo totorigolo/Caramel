@@ -98,7 +98,7 @@ public:
     /// Returns std::vector< visitFunctionArgument()::returnType >
     antlrcpp::Any visitFunctionArguments(CaramelParser::FunctionArgumentsContext *ctx) override;
 
-    /// Returns std::tuple<std::string, PrimaryType::Ptr, SymbolType>
+    /// Returns FunctionParameterSignature
     antlrcpp::Any visitFunctionArgument(CaramelParser::FunctionArgumentContext *ctx) override;
 
     //--------------------------------------------------------------------------------------------------------
