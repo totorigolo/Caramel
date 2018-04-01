@@ -60,9 +60,10 @@ public:
 
 private:
     std::string address(std::string const &symbol);
-    std::string registerToAssembly(std::string const &register_);
-    std::string toAssembly(ir::IR *instruction, std::string const &anySymbol);
-
+    std::string registerToAssembly(std::string const &register_, size_t bitSize = 32U);
+    std::string toAssembly(ir::IR *instruction, std::string const &anySymbol, size_t bitSize = 32U);
+    std::string getSizeSuffix(size_t bitSize);
+    std::string getFunctionCallRegister(size_t index, size_t bitSize);
 };
 } // namespace caramel::ir::x86_64
 

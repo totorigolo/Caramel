@@ -33,7 +33,7 @@
 namespace caramel::ast {
 
 FunctionDefinition::FunctionDefinition(
-        std::shared_ptr<caramel::ast::Context> context,
+        std::shared_ptr<Context> context,
         antlr4::Token *startToken
 ) : Definition(startToken, StatementType::FunctionDefinition), mContext{std::move(context)}, mSymbol{} {}
 
@@ -42,7 +42,7 @@ std::weak_ptr<Symbol> FunctionDefinition::getSymbol() {
 }
 
 void FunctionDefinition::setSymbol(FunctionSymbol::Ptr functionSymbol) {
-    mSymbol = functionSymbol;
+    mSymbol = std::move(functionSymbol);
 }
 
 void FunctionDefinition::acceptAstDotVisit() {
@@ -59,23 +59,22 @@ void FunctionDefinition::visitChildrenAstDot() {
 std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
         ir::CFG *controlFlow
 ) {
-    caramel::ir::BasicBlock::Ptr bb = controlFlow->generateFunctionBlock(mSymbol->getName());
+    ir::BasicBlock::Ptr bb = controlFlow->generateFunctionBlock(mSymbol->getName());
 
     controlFlow->enterFunction();
+    bb->addInstruction(std::make_shared<ir::PrologInstruction>(
+            bb, mSymbol->getName(), mSymbol->getParameters()));
 
-    ir::IR::Ptr pushQInstruction = std::make_shared<ir::PrologInstruction>(bb);
-    bb->addInstruction(pushQInstruction);
-
-    for(caramel::ast::Statement::Ptr const &statement : mContext->getStatements()) {
-        if(statement->shouldReturnAnIR()) {
+    for (ast::Statement::Ptr const &statement : mContext->getStatements()) {
+        if (statement->shouldReturnAnIR()) {
             bb->addInstruction(statement->getIR(bb));
         } else if (statement->shouldReturnABasicBlock()) {
             controlFlow->addBasicBlock(statement->getBasicBlock(controlFlow));
         }
     }
 
-    ir::IR::Ptr epilogInstruction = std::make_shared<ir::EpilogInstruction>(bb);
-    bb->addInstruction(epilogInstruction);
+    bb->addInstruction(std::make_shared<ir::EpilogInstruction>(bb));
+    controlFlow->leaveFunction();
 
     return bb;
 }

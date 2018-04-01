@@ -8,9 +8,9 @@ int32_t foo(int16_t a, int32_t b, int64_t c);
 int32_t foo(int16_t a, int32_t b, int64_t c);
 int32_t foo(int16_t a, int32_t b, int64_t c);
 
-int32_t main(int32_t, char argv) {
+int32_t main() {
     int16_t var = 5;
-    foo(var, 2, 3);
+    foo(1, 2, 3);
     foo(2, var, 4);
     return 0;
 }

@@ -63,18 +63,25 @@ void CFG::addBasicBlock(std::shared_ptr<BasicBlock> basicBlock) {
     mBasicBlocks.push_back(basicBlock);
 }
 
-bool CFG::hasSymbol(int controlBlockId, std::string const &symbolName) {
+bool CFG::hasSymbol(size_t controlBlockId, std::string const &symbolName) {
     return mSymbols[controlBlockId].find(symbolName) != mSymbols[controlBlockId].end()
            && mSymbols[0].find(symbolName) != mSymbols[0].end();
 }
 
-void CFG::addSymbol(int controlBlockId, std::string const &symbolName, caramel::ast::PrimaryType::Ptr type) {
+long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, caramel::ast::PrimaryType::Ptr type) {
     mSymbols[controlBlockId][symbolName] = type;
     stackLength = stackLength - type->getMemoryLength() / 8U;
     mSymbolIndex[controlBlockId][symbolName] = stackLength;
+    return stackLength;
 }
 
-long CFG::getSymbolIndex(int controlBlockId, std::string const &symbolName) {
+long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type, long index) {
+    mSymbols[controlBlockId][symbolName] = type;
+    mSymbolIndex[controlBlockId][symbolName] = index;
+    return index;
+}
+
+long CFG::getSymbolIndex(size_t controlBlockId, std::string const &symbolName) {
     if (mSymbolIndex[controlBlockId].find(symbolName) != mSymbolIndex[controlBlockId].end()) {
         return mSymbolIndex[controlBlockId][symbolName];
     } else if (mSymbolIndex[0].find(symbolName) != mSymbolIndex[0].end()) {
@@ -89,7 +96,7 @@ void CFG::enterFunction() {
     stackLength = 0;
 }
 
-void CFG::exitFunction() {
+void CFG::leaveFunction() {
     stackLength = stackLengthMemory;
 }
 
@@ -108,6 +115,5 @@ std::vector<std::shared_ptr<BasicBlock>> &CFG::getBasicBlocks() {
 std::string &CFG::getFileName() {
     return mFileName;
 }
-
 
 } // namespace caramel::ir

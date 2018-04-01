@@ -27,13 +27,13 @@
 namespace caramel::ir {
 
 BasicBlock::BasicBlock(
-        int id,
+        size_t id,
         CFG *cfg,
-        std::string const &entryName
+        std::string entryName
 ) : mID{id},
     mExitWhenTrue{},
     mExitWhenFalse{},
-    mLabelName{entryName},
+    mLabelName{std::move(entryName)},
     mCfg{cfg},
     mInstructions{} {}
 
@@ -64,7 +64,7 @@ CFG *BasicBlock::getCFG() {
     return mCfg;
 }
 
-int BasicBlock::getId() {
+size_t BasicBlock::getId() {
     return mID;
 }
 
@@ -74,6 +74,14 @@ std::vector<std::shared_ptr<IR>> &BasicBlock::getInstructions() {
 
 std::string &BasicBlock::getLabelName() {
     return mLabelName;
+}
+
+long BasicBlock::addSymbol(std::string const &symbolName, ast::PrimaryType::Ptr type) {
+    return mCfg->addSymbol(mID, symbolName, type);
+}
+
+long BasicBlock::addSymbol(std::string const &symbolName, ast::PrimaryType::Ptr type, long index) {
+    return mCfg->addSymbol(mID, symbolName, type, index);
 }
 
 long BasicBlock::getSymbolIndex(std::string const &symbolName) {

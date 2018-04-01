@@ -55,15 +55,21 @@ int main(int argc, const char *argv[]) {
     std::string assembly = assemblySS.str();
 
     // Print the assembly on the standard output
-    std::cout << assembly;
+    using caramel::colors::reset;
+    logger.debug() << "Generated assembly code:\n" << reset << assembly;
 
-    // Compile the assembly on Linux
+    // Compile the assembly and run it, on Linux
     // TODO: Dirty, change this.
 #ifdef __linux__
+    logger.info() << "Assembling the Caramel output...";
     std::ofstream assemblyOutputFile("assembly.s");
     assemblyOutputFile << assembly;
     assemblyOutputFile.close();
-    system("gcc assembly.s -o caramel.out");
+    system("gcc assembly.s -no-pie -o caramel.out");
+
+    logger.info() << "Starting the Caramel-compiled program...";
+    const int ret = system("./caramel.out");
+    logger.info() << "End of the execution. It returned: " << ret << '.';
 #else
     logger.info() << "No assembly compilation on Windows.";
 #endif

@@ -25,20 +25,35 @@
 #pragma once
 
 #include "../IR.h"
+#include "../../ast/symboltable/FunctionParameterSignature.h"
+
 
 namespace caramel::ir {
+
+class BasicBlock;
 
 class PrologInstruction : public IR {
 public:
     using Ptr = std::shared_ptr<PrologInstruction>;
     using WeakPtr = std::shared_ptr<PrologInstruction>;
 
-    explicit PrologInstruction(std::shared_ptr<BasicBlock> const &parentBlock);
+    explicit PrologInstruction(
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            std::string functionName,
+            std::vector<ast::FunctionParameterSignature> parameters
+    );
 
     ~PrologInstruction() override = default;
 
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
+    std::string const &getFunctionName() const;
+
+    std::vector<ast::FunctionParameterSignature> const &getParameters() const;
+
+private:
+    std::string mFunctionName;
+    std::vector<ast::FunctionParameterSignature> mParameters;
 };
 
 } // namespace caramel::ir

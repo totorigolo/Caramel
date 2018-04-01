@@ -49,34 +49,26 @@ public:
     void addBasicBlock(
             std::shared_ptr<BasicBlock> basicBlock
     );
-
     std::vector<std::shared_ptr<BasicBlock>> & getBasicBlocks();
 
-    bool hasSymbol(int controlBlockId, std::string const &symbolName);
-
-    void addSymbol(int controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type);
-
-    long getSymbolIndex(int controlBlockId, std::string const &symbolName);
+    bool hasSymbol(size_t controlBlockId, std::string const &symbolName);
+    long addSymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type);
+    long addSymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type, long index);
+    long getSymbolIndex(size_t controlBlockId, std::string const &symbolName);
 
     void enterFunction();
-
-    void exitFunction();
+    void leaveFunction();
 
     std::string & getFileName();
-
-protected:
-    void generateAssemblyPrologue(std::ostream &output);
-
-    void generateAssemblyEpilogue(std::ostream &output);
 
 protected:
     std::string mFileName;
     ast::Context::Ptr mRootContext;
 
-    std::map<int, std::map<std::string, ast::PrimaryType::Ptr>> mSymbols;
-    std::map<int, std::map<std::string, long>> mSymbolIndex;
-    long stackLength;
-    long stackLengthMemory;
+    std::map<long, std::map<std::string, ast::PrimaryType::Ptr>> mSymbols;
+    std::map<long, std::map<std::string, long>> mSymbolIndex;
+    size_t stackLength;
+    size_t stackLengthMemory;
 
     int nextBasicBlockNumber;
 

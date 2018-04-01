@@ -67,13 +67,30 @@ antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
     symbolTable->addPrimaryType(int64_t, int64_t->getIdentifier());
 
     // Add prelude functions
+    // puts
     logger.debug() << "Adding prelude functions.";
-    auto putsDecl = std::make_shared<FunctionDeclaration>(ctx->getStart());
-    std::vector<FunctionParameterSignature> putsParams = {
-            {"c", char_t, SymbolType::VariableSymbol}
+    // TODO: Declare puts in prelude when constString_t will be handled
+//    auto putsDecl = std::make_shared<FunctionDeclaration>(ctx->getStart());
+//    std::vector<FunctionParameterSignature> putsParams = {
+//            {"c", char_t, SymbolType::VariableSymbol}
+//    };
+//    auto putsSymbol = symbolTable->addFunctionDeclaration(ctx, void_t, "puts", putsParams, putsDecl);
+//    putsDecl->setFunctionSymbol(putsSymbol);
+    // putchar
+    auto putcharDecl = std::make_shared<FunctionDeclaration>(ctx->getStart());
+    std::vector<FunctionParameterSignature> putcharParams = {
+//            {"c", char_t, SymbolType::VariableSymbol}
+            {"c", int32_t, SymbolType::VariableSymbol}
     };
-    auto putsSymbol = symbolTable->addFunctionDeclaration(ctx, void_t, "puts", putsParams, putsDecl);
-    putsDecl->setFunctionSymbol(putsSymbol);
+    auto putcharSymbol = symbolTable->addFunctionDeclaration(ctx, void_t, "putchar", putcharParams, putcharDecl);
+    putcharDecl->setFunctionSymbol(putcharSymbol);
+    // exit
+    auto exitDecl = std::make_shared<FunctionDeclaration>(ctx->getStart());
+    std::vector<FunctionParameterSignature> exitParams = {
+            {"code", int32_t, SymbolType::VariableSymbol}
+    };
+    auto exitSymbol = symbolTable->addFunctionDeclaration(ctx, void_t, "exit", exitParams, exitDecl);
+    exitDecl->setFunctionSymbol(exitSymbol);
 
     context->addStatements(visitStatements(ctx->statements()));
     return context;
