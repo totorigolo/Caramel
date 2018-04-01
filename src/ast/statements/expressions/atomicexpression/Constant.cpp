@@ -31,8 +31,7 @@ namespace caramel::ast {
 
 Constant::Constant(long long mValue, antlr4::Token *startToken, StatementType type)
         : AtomicExpression(startToken, type),
-        mValue(mValue) {
-}
+        mValue(mValue) {}
 
 long long Constant::getValue() const {
     return mValue;

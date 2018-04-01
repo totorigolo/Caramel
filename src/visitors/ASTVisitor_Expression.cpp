@@ -354,7 +354,7 @@ antlrcpp::Any ASTVisitor::visitNumberConstant(CaramelParser::NumberConstantConte
 antlrcpp::Any ASTVisitor::visitCharConstant(CaramelParser::CharConstantContext *ctx) {
     logger.trace() << "visiting char constant: " << grey << ctx->getText();
 
-    char value = ctx->getText().at(0);
+    char value = ctx->getText().at(1);
     return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->start));
 }
 
