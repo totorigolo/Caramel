@@ -42,20 +42,22 @@ public:
     Context();
     explicit Context(std::shared_ptr<Context> const &parent);
 
-    std::shared_ptr<caramel::ast::SymbolTable> getSymbolTable() const;
+    std::shared_ptr<Context> getParent() const;
 
-    void addStatements(std::vector<std::shared_ptr<caramel::ast::Statement>> &&statements);
+    std::shared_ptr<SymbolTable> getSymbolTable() const;
+
+    void addStatements(std::vector<std::shared_ptr<Statement>> &&statements);
+    std::vector<std::shared_ptr<Statement>> getStatements();
 
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
-    std::vector<std::shared_ptr<caramel::ast::Statement>> getStatements();
-
     friend std::ostream &operator<<(std::ostream &os, Context const &context);
 
 private:
-    std::shared_ptr<caramel::ast::SymbolTable> mSymbolTable;
-    std::vector<std::shared_ptr<caramel::ast::Statement>> mStatements;
+    std::shared_ptr<Context> mParent;
+    std::shared_ptr<SymbolTable> mSymbolTable;
+    std::vector<std::shared_ptr<Statement>> mStatements;
 };
 
 } // namespace caramel::dataStructure

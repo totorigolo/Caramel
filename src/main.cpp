@@ -46,7 +46,7 @@ int main(int argc, const char *argv[]) {
     logger.setLevel(config.verbosity);
 
     // Get the AST from the front-end
-    Context::Ptr astRoot{caramel::frontEnd(config)};
+    caramel::ast::Context::Ptr astRoot{caramel::frontEnd(config)};
 
     // Get the x86_64 assembly from the back-end
     std::stringstream assemblySS;

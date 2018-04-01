@@ -222,6 +222,14 @@ antlrcpp::Any ASTVisitor::visitReturnJump(CaramelParser::ReturnJumpContext *ctx)
     }
 }
 
+std::shared_ptr<Context> ASTVisitor::rootContext() {
+    Context::Ptr context = currentContext();
+    while (context->getParent()) {
+        context = context->getParent();
+    }
+    return context;
+}
+
 std::shared_ptr<Context> ASTVisitor::currentContext() {
     return mContextStack.top();
 }
@@ -244,10 +252,8 @@ ContextPusher::ContextPusher(ASTVisitor &ASTVisitor)
     logger.trace() << "ContextPusher: Trying to push a new context.";
 
     auto &contextStack = mASTVisitor.mContextStack;
-    SymbolTable::Ptr parentTable;
     if (not contextStack.empty()) {
-        Context::Ptr parent = contextStack.top();
-        contextStack.push(std::make_shared<Context>(parent));
+        contextStack.push(std::make_shared<Context>(contextStack.top()));
     } else {
         contextStack.push(std::make_shared<Context>());
     }

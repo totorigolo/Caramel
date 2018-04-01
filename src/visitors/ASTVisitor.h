@@ -206,13 +206,14 @@ public:
     antlrcpp::Any visitWhileBlock(CaramelParser::WhileBlockContext *ctx) override;
 
 private:
-    std::shared_ptr<caramel::ast::Context> currentContext(); //
+    std::shared_ptr<ast::Context> rootContext(); //
+    std::shared_ptr<ast::Context> currentContext(); //
     friend class ContextPusher;
 
     antlrcpp::Any visitChildren(antlr4::tree::ParseTree *node) override;
 
 private:
-    std::stack<std::shared_ptr<caramel::ast::Context>> mContextStack;
+    std::stack<std::shared_ptr<ast::Context>> mContextStack;
     utils::SourceFileUtil mSourceFileUtil;
 
     BinaryOperatorIndex mBinaryOperatorIndex;
@@ -225,7 +226,7 @@ public:
     explicit ContextPusher(ASTVisitor &abstractSyntaxTreeVisitor);
     virtual ~ContextPusher();
 
-    Context::Ptr getContext();
+    ast::Context::Ptr getContext();
 
 private:
     ASTVisitor &mASTVisitor;

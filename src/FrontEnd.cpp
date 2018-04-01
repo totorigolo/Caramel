@@ -25,6 +25,7 @@
 #include "FrontEnd.h"
 
 #include "Logger.h"
+#include "ast/context/Context.h"
 #include "utils/SourceFileUtil.h"
 #include "exceptions/SemanticError.h"
 #include "listeners/errorlistener/ParserErrorListener.h"
@@ -71,13 +72,13 @@ ast::Context::Ptr frontEnd(Config const &config) {
     try {
         caramel::visitors::ASTVisitor abstractSyntaxTreeVisitor(config.sourceFile);
         auto visitorResult = abstractSyntaxTreeVisitor.visit(parser.r());
-        if (!visitorResult.is<Context::Ptr>()) {
+        if (!visitorResult.is<ast::Context::Ptr>()) {
             logger.fatal() << "The visitor returned a bad root.";
             exit(1);
         }
 
         // The AST root
-        auto context = visitorResult.as<Context::Ptr>();
+        auto context = visitorResult.as<ast::Context::Ptr>();
 
         // Generate the dot of the ast if asked
         if (config.astDot) {

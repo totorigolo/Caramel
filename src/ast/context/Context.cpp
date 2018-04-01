@@ -28,10 +28,16 @@
 namespace caramel::ast {
 
 Context::Context()
-        : mSymbolTable(std::make_shared<SymbolTable>()) {}
+        : mParent{},
+          mSymbolTable(std::make_shared<SymbolTable>()) {}
 
-Context::Context(const std::shared_ptr<Context> &parent)
-        : mSymbolTable(std::make_shared<SymbolTable>(parent->getSymbolTable())) {}
+Context::Context(std::shared_ptr<Context> const &parent)
+        : mParent{parent},
+          mSymbolTable(std::make_shared<SymbolTable>(parent->getSymbolTable())) {}
+
+std::shared_ptr<Context> Context::getParent() const {
+    return mParent;
+}
 
 SymbolTable::Ptr Context::getSymbolTable() const {
     return mSymbolTable;
@@ -41,9 +47,17 @@ void Context::addStatements(std::vector<Statement::Ptr> &&statements) {
     std::move(statements.begin(), statements.end(), std::back_inserter(mStatements));
 }
 
+std::vector<Statement::Ptr> Context::getStatements() {
+    return mStatements;
+}
+
 void Context::acceptAstDotVisit() {
     addNode(thisId(), "Context", "house");
     visitChildrenAstDot();
+
+    if (getParent()) {
+        addEdge(getParent()->thisId(), thisId(), "parent");
+    }
 
     addEdge(thisId(), mSymbolTable->thisId());
     mSymbolTable->acceptAstDotVisit();
@@ -54,10 +68,6 @@ void Context::visitChildrenAstDot() {
         addEdge(thisId(), statement->thisId());
         statement->acceptAstDotVisit();
     }
-}
-
-std::vector<Statement::Ptr> Context::getStatements() {
-    return mStatements;
 }
 
 std::ostream &operator<<(std::ostream &os, Context const &context) {

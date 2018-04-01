@@ -45,7 +45,7 @@ ASTVisitor::visitFunctionDeclaration(CaramelParser::FunctionDeclarationContext *
     std::vector<FunctionParameterSignature> params =
             visitFunctionArguments(innerCtx->functionArguments());
     FunctionDeclaration::Ptr functionDeclaration = std::make_shared<FunctionDeclaration>(innerCtx->start);
-    FunctionSymbol::Ptr functionSymbol = currentContext()->getSymbolTable()->addFunctionDeclaration(
+    FunctionSymbol::Ptr functionSymbol = rootContext()->getSymbolTable()->addFunctionDeclaration(
             innerCtx, returnType, name, params, functionDeclaration);
     functionDeclaration->setFunctionSymbol(functionSymbol);
 
@@ -65,8 +65,12 @@ antlrcpp::Any ASTVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinit
 
     Context::Ptr parentContext = currentContext();
     ContextPusher contextPusher(*this);
+    Context::Ptr functionContext = contextPusher.getContext();
 
-    Context::Ptr functionContext = currentContext();
+    if (parentContext != rootContext()) {
+        logger.fatal() << "You can only declare functions in the global score, sorry.";
+        exit(1);
+    }
 
     auto innerCtx = ctx->functionDeclarationInner();
 
@@ -77,7 +81,7 @@ antlrcpp::Any ASTVisitor::visitFunctionDefinition(CaramelParser::FunctionDefinit
 
     std::vector<Symbol::Ptr> paramsSymbols;
     for (auto const &[paramName, paramType, paramSymbolType] : params) {
-        paramsSymbols.push_back(currentContext()->getSymbolTable()->addFunctionParameter(
+        paramsSymbols.push_back(functionContext->getSymbolTable()->addFunctionParameter(
                 ctx, paramName, paramType, paramSymbolType));
     }
 
