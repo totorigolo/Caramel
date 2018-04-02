@@ -38,7 +38,6 @@ CFG::CFG(
     mRootContext{std::move(treeContext)},
     mSymbols{},
     mSymbolIndex{},
-    mStackLength{0},
     mNextBasicBlockNumber{0},
     mBasicBlocks{} {
     logger.debug() << "New CFG for " << mFileName << ".";
@@ -81,12 +80,17 @@ long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, carame
         return existingIndex;
     }
 
-    mSymbols[controlBlockId][symbolName] = type;
-    mStackLength = mStackLength - type->getMemoryLength() / 8U;
-    mSymbolIndex[controlBlockId][symbolName] = mStackLength;
+    if (type->getMemoryLength() == 0) {
+        logger.fatal() << "Can't add symbol of size 0!";
+        exit(1);
+    }
 
-    logger.trace() << "[CFG] " << "  => " << mStackLength;
-    return mStackLength;
+    mSymbols[controlBlockId][symbolName] = type;
+    mStackSize[controlBlockId] = mStackSize[controlBlockId] - type->getMemoryLength() / 8U;
+    mSymbolIndex[controlBlockId][symbolName] = mStackSize[controlBlockId];
+
+    logger.trace() << "[CFG] " << "  => " << mStackSize[controlBlockId];
+    return mStackSize[controlBlockId];
 }
 
 long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type, long index) {
@@ -103,7 +107,7 @@ long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, ast::P
     mSymbolIndex[controlBlockId][symbolName] = index;
     if (index > 0) {
         logger.warning() << "[CFG] TODO: Check this statement.";
-        mStackLength = size_t(index);
+        mStackSize[controlBlockId] = size_t(index);
     }
 
     logger.trace() << "[CFG] " << "  => " << index;
@@ -120,13 +124,13 @@ long CFG::getSymbolIndex(size_t controlBlockId, std::string const &symbolName) {
     }
 }
 
-void CFG::enterFunction() {
-    mStackLengthMemory = mStackLength;
-    mStackLength = 0;
+void CFG::enterFunction(size_t controlBlockId) {
+    mStackSize[controlBlockId] = 0;
+    // FIXME: This won't work for nested BB
 }
 
-void CFG::leaveFunction() {
-    mStackLength = mStackLengthMemory;
+void CFG::leaveFunction(size_t controlBlockId) {
+    CARAMEL_UNUSED(controlBlockId);
 }
 
 std::shared_ptr<BasicBlock> CFG::generateBasicBlock(std::string const &entryName) {
@@ -159,9 +163,11 @@ std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
                << '\n';
         }
     }
-    os << " - mStackLength: " << cfg.mStackLength << '\n'
-       << " - mStackLengthMemory: " << cfg.mStackLengthMemory << '\n'
-       << " - mNextBasicBlockNumber: " << cfg.mNextBasicBlockNumber << '\n'
+    os << " - mStackSize:\n";
+    for (auto const &[basicBlockId, size] : cfg.mStackSize) {
+            os << "    - BB=" << basicBlockId << ", size=" << size << '\n';
+    }
+    os << " - mNextBasicBlockNumber: " << cfg.mNextBasicBlockNumber << '\n'
        << " - mBasicBlocks: " << cfg.mBasicBlocks.size() << " BBs";
     return os;
 }

@@ -37,6 +37,7 @@ class AdditionInstruction;
 class LDConstInstruction;
 class FunctionCallInstruction;
 class NopInstruction;
+class ReturnInstruction;
 
 class IRVisitor {
 public:
@@ -78,6 +79,11 @@ public:
 
     virtual void visitFunctionCall(
             FunctionCallInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitReturn(
+            ReturnInstruction *instruction,
             std::ostream &os
     ) = 0;
 

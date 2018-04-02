@@ -28,16 +28,16 @@
 namespace caramel::ast {
 
 BinaryExpression::BinaryExpression(
-        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-        std::shared_ptr<caramel::ast::BinaryOperator> const &binaryOperator,
-        std::shared_ptr<caramel::ast::Expression> const &rightExpression,
+        std::shared_ptr<Expression> const &leftExpression,
+        std::shared_ptr<BinaryOperator> const &binaryOperator,
+        std::shared_ptr<Expression> const &rightExpression,
         antlr4::Token *startToken
 ) : Expression(startToken, StatementType::BinaryExpression),
     mLeftExpression{leftExpression},
     mBinaryOperator{binaryOperator},
     mRightExpression{rightExpression} {}
 
-std::shared_ptr<caramel::ir::IR>
+std::shared_ptr<ir::IR>
 BinaryExpression::getIR(
         std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
 ) {

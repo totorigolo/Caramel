@@ -36,9 +36,9 @@ public:
     using WeakPtr = std::weak_ptr<BinaryExpression>;
 
     BinaryExpression(
-            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-            std::shared_ptr<caramel::ast::BinaryOperator> const &binaryOperator,
-            std::shared_ptr<caramel::ast::Expression> const &rightExpression,
+            std::shared_ptr<Expression> const &leftExpression,
+            std::shared_ptr<BinaryOperator> const &binaryOperator,
+            std::shared_ptr<Expression> const &rightExpression,
             antlr4::Token *startToken
     );
     ~BinaryExpression() override = default;
@@ -55,9 +55,9 @@ public:
     void acceptAstDotVisit() override;
 
 private:
-    std::shared_ptr<caramel::ast::Expression> mLeftExpression;
-    std::shared_ptr<caramel::ast::BinaryOperator> mBinaryOperator;
-    std::shared_ptr<caramel::ast::Expression> mRightExpression;
+    std::shared_ptr<Expression> mLeftExpression;
+    std::shared_ptr<BinaryOperator> mBinaryOperator;
+    std::shared_ptr<Expression> mRightExpression;
 };
 
 } // namespace caramel::ast

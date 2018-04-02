@@ -24,6 +24,7 @@
 
 #include "EmptyInstruction.h"
 #include "../IRVisitor.h"
+#include "../../ast/symboltable/PrimaryType.h"
 
 namespace caramel::ir {
 
@@ -33,7 +34,8 @@ void EmptyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::os
 
 EmptyInstruction::EmptyInstruction(
         std::shared_ptr<BasicBlock> parentBlock,
-        std::string const &returnName
-) : IR(returnName, parentBlock, Operation::empty, ast::Void_t::Create()) {}
+        std::string const &returnName,
+        ast::PrimaryType::Ptr const &type
+) : IR(returnName, parentBlock, Operation::empty, type) {}
 
 } // namespace caramel::ir

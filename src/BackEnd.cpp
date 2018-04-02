@@ -42,6 +42,7 @@ void BackEnd::generateAssembly(
 
     cfgVisitor->generateAssembly(cfg, os);
 
+    logger.debug() << *cfg;
 }
 
 std::vector<std::string> BackEnd::splitPath(std::string const &s, char delimiter) {

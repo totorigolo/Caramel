@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,29 +24,40 @@
 
 #pragma once
 
-#include "../BasicBlock.h"
+#include "../BinaryOperator.h"
+
+#include <Common.h>
 #include <memory>
 
 
-namespace caramel::ir {
+namespace caramel::ast {
 
-class EmptyInstruction : public IR {
+class LValue;
+
+class AssignmentOperator : public BinaryOperator {
 public:
-    using Ptr = std::shared_ptr<EmptyInstruction>;
-    using WeakPtr = std::weak_ptr<EmptyInstruction>;
+    using Ptr = std::shared_ptr<AssignmentOperator>;
+    using WeakPtr = std::weak_ptr<AssignmentOperator>;
 
-    explicit EmptyInstruction(
-            std::shared_ptr<BasicBlock> parentBlock,
-            std::string const &returnName,
-            std::shared_ptr<ast::PrimaryType> const &type
-            );
+    static constexpr const char* SYMBOL = "=";
 
-    ~EmptyInstruction() override = default;
+public:
+    AssignmentOperator(std::shared_ptr<LValue> lvalue);
+    ~AssignmentOperator() override = default;
 
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+public:
+    std::shared_ptr<ir::IR> buildIR(
+            std::shared_ptr<ir::BasicBlock> const &currentBasicBlock,
+            std::shared_ptr<Expression> const &leftExpression,
+            std::shared_ptr<Expression> const &rightExpression
+    ) override;
+
+    StatementType getExpressionType() const override;
+
+    std::string getToken() const override;
+
+private:
+    std::shared_ptr<LValue> mLValue;
 };
 
-} // namespace caramel::ir
-
-
-
+} // namespace caramel::ast

@@ -57,8 +57,8 @@ public:
     long addSymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type, long index);
     long getSymbolIndex(size_t controlBlockId, std::string const &symbolName);
 
-    void enterFunction();
-    void leaveFunction();
+    void enterFunction(size_t controlBlockId);
+    void leaveFunction(size_t controlBlockId);
 
     std::string & getFileName();
 
@@ -68,10 +68,9 @@ protected:
     std::string mFileName;
     ast::Context::Ptr mRootContext;
 
-    std::map<long, std::map<std::string, ast::PrimaryType::Ptr>> mSymbols;
-    std::map<long, std::map<std::string, long>> mSymbolIndex;
-    long mStackLength;
-    long mStackLengthMemory;
+    std::map<size_t, std::map<std::string, ast::PrimaryType::Ptr>> mSymbols;
+    std::map<size_t, std::map<std::string, long>> mSymbolIndex;
+    std::map<size_t, long> mStackSize;
 
     int mNextBasicBlockNumber;
 

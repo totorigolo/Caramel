@@ -144,9 +144,8 @@ atomicExpression // As right value
   | numberConstant
   | charConstant
   | stringConstant
-  | validIdentifier
+  | lvalue
   | validIdentifier callSufix
-  | validIdentifier arrayAccess
   ;
 callSufix
   : L_Par_ R_Par_
@@ -157,7 +156,7 @@ arrayAccess
   ;
 
 assignment
-  : lvalue InlineWS_* assignmentOperator InlineWS_* expression
+  : lvalue InlineWS_* assignmentOperator WS_* expression
   ;
 
 expression

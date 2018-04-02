@@ -50,14 +50,15 @@ std::string BasicBlock::addInstruction(std::shared_ptr<IR> const &instruction) {
         mInstructions.push_back(instruction);
     }
 
+    size_t memoryLength = instruction->getType()->getMemoryLength();
     std::string returnName = instruction->getReturnName();
-    if (!returnName.empty() && returnName[0] != '!' && returnName[0] != '%') {
+    if (!returnName.empty() && returnName[0] != '!' && returnName[0] != '%' && memoryLength > 0) {
         if (!mCfg->hasSymbol(mID, returnName)) {
             mCfg->addSymbol(mID, returnName, instruction->getType());
         }
     }
 
-    return instruction->getReturnName();
+    return returnName;
 }
 
 CFG *BasicBlock::getCFG() {

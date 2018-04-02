@@ -32,7 +32,7 @@ void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> c
 
     std::string mLabelName = basicBlock->getLabelName();
 
-    if(!mLabelName.empty()) {
+    if (!mLabelName.empty()) {
         os << mLabelName << ':' << std::endl;
     }
     for (IR::Ptr const &instr : basicBlock->getInstructions()) {
@@ -43,4 +43,5 @@ void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> c
     os << std::endl;
 
 }
+
 } // namespace caramel::ir::x86_64

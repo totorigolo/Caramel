@@ -31,11 +31,17 @@
 #include "../instructions/LDConstInstruction.h"
 #include "../instructions/FunctionCallInstruction.h"
 #include "../instructions/NopInstruction.h"
+#include "../instructions/ReturnInstruction.h"
 
 
 namespace caramel::ir::x86_64 {
 
 static constexpr size_t NB_FUNCTION_CALL_REGISTERS = 6;
+
+X86_64IRVisitor::X86_64IRVisitor() {
+    mRegisterContent[IR::REGISTER_10] = "";
+    mRegisterContent[IR::REGISTER_11] = "";
+}
 
 std::string X86_64IRVisitor::address(std::string const &symbol) {
     return "(" + symbol + ")";
@@ -65,12 +71,18 @@ std::string X86_64IRVisitor::registerToAssembly(std::string const &register_, si
             exit(1);
     }
 
-    if (register_ == ir::IR::REGISTER_BASE_POINTER) {
+    if (register_ == IR::REGISTER_BASE_POINTER) {
         r = "%" + sizePrefix + "bp";
-    } else if (register_ == ir::IR::REGISTER_STACK_POINTER) {
+    } else if (register_ == IR::REGISTER_STACK_POINTER) {
         r = "%" + sizePrefix + "sp";
-    } else if (register_ == ir::IR::ACCUMULATOR) {
+    } else if (register_ == IR::ACCUMULATOR) {
         r = "%" + sizePrefix + "ax";
+    } else if (register_ == IR::REGISTER_10) {
+        if (bitSize == 64) r = "%r10";
+        else r = "%r10d";
+    } else if (register_ == IR::REGISTER_11) {
+        if (bitSize == 64) r = "%r11";
+        else r = "%r11d";
     } else {
         throw std::runtime_error("Not valid register for " + register_);
     }
@@ -83,18 +95,45 @@ std::string X86_64IRVisitor::toAssembly(ir::IR *ir, std::string const &anySymbol
     logger.trace() << "[x86_64] " << "toAssembly(" << "ir" << ", " << anySymbol << ")";
     std::string r;
 
+//    return anySymbol;
+
     // Is a register
     if (anySymbol[0] == '%') {
         r = registerToAssembly(anySymbol, bitSize);
         // Is a temp var
     } else if (anySymbol[0] == '!') {
-        r = registerToAssembly(IR::ACCUMULATOR, bitSize);
+        if (mSymbolRegister.find(anySymbol) != mSymbolRegister.end()) {
+            r = mSymbolRegister[anySymbol];
+        } else {
+            if (mRegisterContent[IR::REGISTER_10].empty()) {
+                r = registerToAssembly(IR::REGISTER_10, bitSize);
+                mRegisterContent[IR::REGISTER_10] = anySymbol;
+                mSymbolRegister[anySymbol] = r;
+            } else if (mRegisterContent[IR::REGISTER_11].empty()) {
+                r = registerToAssembly(IR::REGISTER_11, bitSize);
+                mRegisterContent[IR::REGISTER_11] = anySymbol;
+                mSymbolRegister[anySymbol] = r;
+            } else if (mRegisterContent[IR::ACCUMULATOR].empty()) {
+                r = registerToAssembly(IR::ACCUMULATOR, bitSize);
+                mRegisterContent[IR::ACCUMULATOR] = anySymbol;
+                mSymbolRegister[anySymbol] = r;
+            } else {
+                auto symbolToSave = mRegisterContent[IR::REGISTER_10];
+                logger.warning() << "saving " << symbolToSave;
+                mRegisterContent[IR::REGISTER_10] = "";
+                mSymbolRegister.erase(symbolToSave);
+
+                r = registerToAssembly(IR::REGISTER_10, bitSize);
+                mRegisterContent[IR::REGISTER_10] = anySymbol;
+                mSymbolRegister[anySymbol] = r;
+            }
+        }
         // Is a constant
     } else if (anySymbol[0] >= '0' && anySymbol[0] <= '9') {
         r = "$" + anySymbol;
     } else {
         r = std::to_string(ir->getParentBlock()->getSymbolIndex(anySymbol)) +
-            address(registerToAssembly(IR::REGISTER_BASE_POINTER, bitSize));
+            address(registerToAssembly(IR::REGISTER_BASE_POINTER, 64)); // always %rbp
     }
 
     logger.trace() << "[x86_64] " << "  => " << r;
@@ -108,6 +147,7 @@ std::string X86_64IRVisitor::getSizeSuffix(size_t bitSize) {
     l (long) = 32 bits
     q (quad) = 64 bits
  */
+    // FIXME: It's movabsq instead of movq
     switch (bitSize) {
         case 8: return "b";
         case 16: return "w";
@@ -165,8 +205,10 @@ std::string X86_64IRVisitor::getFunctionCallRegister(size_t index, size_t bitSiz
 void X86_64IRVisitor::visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting copy: " << instruction->getReturnName();
 
-    os << "  movl    " << toAssembly(instruction, instruction->getSource())
-       << ", " << toAssembly(instruction, instruction->getDestination());
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    os << "  mov" + getSizeSuffix(parameterSize) + "    "
+       << toAssembly(instruction, instruction->getSource(), parameterSize)
+       << ", " << toAssembly(instruction, instruction->getDestination(), parameterSize);
 }
 
 void X86_64IRVisitor::visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) {
@@ -204,6 +246,7 @@ baz:
     for (auto const &parameter : instruction->getParameters()) {
         rspOffset += parameter.primaryType->getMemoryLength() / 8U;
     }
+    rspOffset = ((rspOffset + 1) % 16) * 16;
     if (rspOffset > 0) {
         os << "  subq    $" << rspOffset << ", %rsp" << '\n';
     }
@@ -212,9 +255,15 @@ baz:
     for (auto const &parameter : instruction->getParameters()) {
         size_t parameterSize = parameter.primaryType->getMemoryLength();
         if (i != 0) os << '\n';
-        instruction->getParentBlock()->addSymbol(parameter.name, parameter.primaryType);
-        os << "  mov" + getSizeSuffix(parameterSize) + "    " << getFunctionCallRegister(i, parameterSize)
-           << ", " << toAssembly(instruction, parameter.name, 64); // it's always %rbp
+        if (i < 6) {
+            instruction->getParentBlock()->addSymbol(parameter.name, parameter.primaryType);
+            os << "  mov" + getSizeSuffix(parameterSize) + "    " << getFunctionCallRegister(i, parameterSize)
+               << ", " << toAssembly(instruction, parameter.name, parameterSize); // it's always %rbp
+        } else {
+            long index = 16 + (i - 6) * 8;
+            instruction->getParentBlock()->addSymbol(parameter.name, parameter.primaryType, index);
+            os << "  # " << i << "-th parameter is at " << toAssembly(instruction, parameter.name, parameterSize);
+        }
         i++;
     }
 }
@@ -223,8 +272,8 @@ void X86_64IRVisitor::visitEpilog(caramel::ir::EpilogInstruction *instruction, s
     logger.trace() << "[x86_64] " << "visiting epilog";
 
     CARAMEL_UNUSED(instruction);
-//    os << "  popq    %rbp" << std::endl;
-    os << "  leave" << std::endl;
+//    os << "  popq    %rbp" << std::endl; // leave restore %rsp for us
+    os << "  leave" << '\n';
     os << "  ret";
 }
 
@@ -290,8 +339,8 @@ addq $24, %rsp  // 24 = 3 * 8
             stackOffset += 8;
 //            stackOffset += parameters[j].primaryType->getMemoryLength() / 8U;
         } else {
-            os << "  mov" + getSizeSuffix(64) + "    " << toAssembly(instruction, arguments[j], 64)
-               << ", " << getFunctionCallRegister(j, 64) << '\n';
+            os << "  mov" + getSizeSuffix(32) + "    " << toAssembly(instruction, arguments[j], 32)
+               << ", " << getFunctionCallRegister(j, 32) << '\n';
         }
     }
 
@@ -301,6 +350,15 @@ addq $24, %rsp  // 24 = 3 * 8
         os << '\n'
            << "  addq    $" << stackOffset << ", %rsp";
     }
+}
+
+void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting return: " << instruction->getReturnName();
+
+    const auto returnSize = instruction->getType()->getMemoryLength();
+    os << "  mov" + getSizeSuffix(returnSize) + "    "
+       << toAssembly(instruction, instruction->getSource(), returnSize)
+       << ", " << toAssembly(instruction, IR::ACCUMULATOR, 32); // TODO: See TODO in getSizeSuffix()
 }
 
 } // namespace caramel::ir::x86_64

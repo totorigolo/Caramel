@@ -38,11 +38,11 @@ long long Constant::getValue() const {
 }
 
 PrimaryType::Ptr Constant::getPrimaryType() const {
-    if (Int8_t::fits(mValue)) {
+    /* if (Int8_t::fits(mValue)) {
         return std::make_shared<Int8_t>();
     } else if (Int16_t::fits(mValue)) {
         return std::make_shared<Int16_t>();
-    } else if (Int32_t::fits(mValue)) {
+    } else */ if (Int32_t::fits(mValue)) {
         return std::make_shared<Int32_t>();
     } else { // if (Int64_t::fits(mValue)) {
         return std::make_shared<Int64_t>();
@@ -64,7 +64,8 @@ std::shared_ptr<ir::IR> Constant::getIR(std::shared_ptr<caramel::ir::BasicBlock>
     std::string tempVar = createVarName();
     std::string constValue = std::to_string(getValue());
     // Todo: check if Int64_t for constant is good or not
-    return std::make_shared<ir::LDConstInstruction>(tempVar, currentBasicBlock, Int64_t::Create(), tempVar, constValue);
+    return std::make_shared<ir::LDConstInstruction>(
+            tempVar, currentBasicBlock, Int64_t::Create(), tempVar, constValue);
 }
 
 } // namespace caramel::ast

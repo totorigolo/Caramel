@@ -23,8 +23,8 @@
 */
 
 #include "ReturnStatement.h"
-#include "../expressions/atomicexpression/Constant.h"
-#include "../../../ir/instructions/NopInstruction.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../ir/instructions/ReturnInstruction.h"
 
 
 namespace caramel::ast {
@@ -53,11 +53,12 @@ bool ReturnStatement::shouldReturnAnIR() const {
 }
 
 std::shared_ptr<ir::IR> ReturnStatement::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {
-    if(nullptr != mExpression) {
-        // Fixme: create valid return for expression
-        return mExpression->getIR(currentBasicBlock);
+    if (mExpression) {
+        std::string value = currentBasicBlock->addInstruction(mExpression->getIR(currentBasicBlock));
+        return std::make_shared<ir::ReturnInstruction>(
+                value, currentBasicBlock, mExpression->getPrimaryType(), value);
     } else {
-        return std::make_shared<ir::NopInstruction>(currentBasicBlock);
+        return std::make_shared<ir::ReturnInstruction>(currentBasicBlock);
     }
 }
 

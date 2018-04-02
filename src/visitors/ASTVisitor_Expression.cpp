@@ -30,6 +30,8 @@
 #include "../ast/statements/expressions/atomicexpression/ArrayAccess.h"
 #include "../ast/statements/expressions/atomicexpression/FunctionCall.h"
 #include "../ast/statements/expressions/binaryexpression/BinaryExpression.h"
+#include "../ast/operators/BinaryOperator.h"
+#include "../ast/operators/binaryoperators/AssignmentOperator.h"
 #include "../ast/operators/binaryoperators/BitwiseAndOperator.h"
 #include "../ast/operators/binaryoperators/BitwiseOrOperator.h"
 #include "../ast/operators/binaryoperators/BitwiseXorOperator.h"
@@ -37,6 +39,7 @@
 #include "../ast/operators/binaryoperators/ConjunctionOperator.h"
 #include "../ast/statements/expressions/unaryexpression/UnaryExpression.h"
 #include "../ast/statements/expressions/atomicexpression/Identifier.h"
+
 
 #define FIND_BINARY_OP(ctx) mBinaryOperatorIndex.getOpForToken((ctx)->getText())
 #define FIND_PREFIX_OP(ctx) mPrefixOperatorIndex.getOpForToken((ctx)->getText())
@@ -138,32 +141,19 @@ antlrcpp::Any ASTVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionC
 
     if (ctx->validIdentifier()) {
         std::string varName = visitValidIdentifier(ctx->validIdentifier());
-        if (ctx->callSufix()) {
-            std::vector<Expression::Ptr> arguments;
-            for (auto expression : ctx->callSufix()->expression()) {
-                Expression::Ptr exp = visitExpression(expression);
-                arguments.push_back(exp);
-            }
-
-            FunctionCall::Ptr functionCall = std::make_shared<FunctionCall>(std::move(arguments), ctx->getStart());
-            FunctionSymbol::Ptr variableSymbol = currentContext()->getSymbolTable()->addFunctionCall(
-                    ctx, varName, functionCall);
-            functionCall->setSymbol(variableSymbol);
-            return castTo<Expression::Ptr>(functionCall);
-        } else if (ctx->arrayAccess()) {
-            Expression::Ptr index = visitExpression(ctx->arrayAccess()->expression());
-            ArrayAccess::Ptr arrayAccess = std::make_shared<ArrayAccess>(index, ctx->getStart());
-            ArraySymbol::Ptr variableSymbol = currentContext()->getSymbolTable()->addArrayAccess(
-                    ctx, varName, arrayAccess);
-            arrayAccess->setSymbol(variableSymbol);
-            return castTo<Expression::Ptr>(arrayAccess);
-        } else { // if (ctx->identifier()) {
-            Identifier::Ptr identifier = std::make_shared<Identifier>(ctx->getStart());
-            VariableSymbol::Ptr variableSymbol = currentContext()->getSymbolTable()->addVariableUsage(
-                    ctx, varName, identifier);
-            identifier->setSymbol(variableSymbol);
-            return castTo<Expression::Ptr>(identifier);
+        std::vector<Expression::Ptr> arguments;
+        for (auto expression : ctx->callSufix()->expression()) {
+            Expression::Ptr exp = visitExpression(expression);
+            arguments.push_back(exp);
         }
+
+        FunctionCall::Ptr functionCall = std::make_shared<FunctionCall>(std::move(arguments), ctx->getStart());
+        FunctionSymbol::Ptr variableSymbol = currentContext()->getSymbolTable()->addFunctionCall(
+                ctx, varName, functionCall);
+        functionCall->setSymbol(variableSymbol);
+        return castTo<Expression::Ptr>(functionCall);
+    } else if (ctx->lvalue()) {
+        return visitLvalue(ctx->lvalue());
     } else if (ctx->charConstant()) {
         return castAnyTo<AtomicExpression::Ptr, Expression::Ptr>(visitCharConstant(ctx->charConstant()));
     } else if (ctx->numberConstant()) {
@@ -236,6 +226,7 @@ antlrcpp::Any ASTVisitor::visitConjunction(CaramelParser::ConjunctionContext *ct
         ));
     }
 }
+
 antlrcpp::Any ASTVisitor::visitDisjunction(CaramelParser::DisjunctionContext *ctx) {
     logger.trace() << "visiting disjunction: " << grey << ctx->getText();
     if (ctx->children.size() == 1) {
@@ -249,6 +240,18 @@ antlrcpp::Any ASTVisitor::visitDisjunction(CaramelParser::DisjunctionContext *ct
                 ctx->getStart()
         ));
     }
+}
+
+antlrcpp::Any ASTVisitor::visitAssignment(CaramelParser::AssignmentContext *ctx) {
+    logger.trace() << "visiting assignment: " << grey << ctx->getText();
+
+    Expression::Ptr lvalue = visitLvalue(ctx->lvalue());
+    return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
+            lvalue,
+            castTo<BinaryOperator::Ptr>(std::make_shared<AssignmentOperator>(castTo<LValue::Ptr>(lvalue))),
+            visitExpression(ctx->expression()),
+            ctx->getStart()
+    ));
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -339,6 +342,29 @@ antlrcpp::Any ASTVisitor::visitPrefixUnaryOperator(CaramelParser::PrefixUnaryOpe
 antlrcpp::Any ASTVisitor::visitPostfixUnaryOperator(CaramelParser::PostfixUnaryOperatorContext *ctx) {
     logger.trace() << "visiting unary postfix operator: " << grey << ctx->getText();
     return FIND_POSTFIX_OP(ctx);
+}
+
+//--------------------------------------------------------------------------------------------------------
+// LValue
+
+antlrcpp::Any ASTVisitor::visitLvalue(CaramelParser::LvalueContext *ctx) {
+    logger.trace() << "visiting lvalue: " << grey << ctx->getText();
+
+    std::string varName = visitValidIdentifier(ctx->validIdentifier());
+    if (ctx->arrayAccess()) {
+        Expression::Ptr index = visitExpression(ctx->arrayAccess()->expression());
+        ArrayAccess::Ptr arrayAccess = std::make_shared<ArrayAccess>(index, ctx->getStart());
+        ArraySymbol::Ptr variableSymbol = currentContext()->getSymbolTable()->addArrayAccess(
+                ctx, varName, arrayAccess);
+        arrayAccess->setSymbol(variableSymbol);
+        return castTo<Expression::Ptr>(arrayAccess);
+    } else {
+        Identifier::Ptr identifier = std::make_shared<Identifier>(ctx->getStart());
+        VariableSymbol::Ptr variableSymbol = currentContext()->getSymbolTable()->addVariableUsage(
+                ctx, varName, identifier);
+        identifier->setSymbol(variableSymbol);
+        return castTo<Expression::Ptr>(identifier);
+    }
 }
 
 //--------------------------------------------------------------------------------------------------------

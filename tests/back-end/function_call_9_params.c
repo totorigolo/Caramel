@@ -7,7 +7,7 @@
 int32_t foo(int32_t a, int32_t b, int32_t c,
             int32_t d, int32_t e, int32_t f,
             int32_t g, int32_t h, int32_t i) {
-    return a;
+    return b;
 }
 
 int32_t main() {

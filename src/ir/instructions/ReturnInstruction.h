@@ -24,26 +24,34 @@
 
 #pragma once
 
-#include "../BasicBlock.h"
-#include <memory>
-
+#include "../IR.h"
 
 namespace caramel::ir {
 
-class EmptyInstruction : public IR {
+class ReturnInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<EmptyInstruction>;
-    using WeakPtr = std::weak_ptr<EmptyInstruction>;
+    using Ptr = std::shared_ptr<ReturnInstruction>;
+    using WeakPtr = std::shared_ptr<ReturnInstruction>;
 
-    explicit EmptyInstruction(
-            std::shared_ptr<BasicBlock> parentBlock,
+    ReturnInstruction(
+            std::shared_ptr<BasicBlock> const &parentBlock
+    );
+
+    ReturnInstruction(
             std::string const &returnName,
-            std::shared_ptr<ast::PrimaryType> const &type
-            );
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            caramel::ast::PrimaryType::Ptr const &type,
+            std::string const &source
+    );
 
-    ~EmptyInstruction() override = default;
+    ~ReturnInstruction() override = default;
+
+    std::string getSource();
 
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+
+private:
+    std::string mSource;
 };
 
 } // namespace caramel::ir

@@ -61,6 +61,8 @@ public:
     static constexpr const char* REGISTER_BASE_POINTER = "%rbp";
     static constexpr const char* REGISTER_STACK_POINTER = "%rsp";
     static constexpr const char* ACCUMULATOR = "%eax";
+    static constexpr const char* REGISTER_10 = "%r10";
+    static constexpr const char* REGISTER_11 = "%r11";
 
 public:
     explicit IR(
@@ -82,7 +84,7 @@ public:
 
     bool isEmpty() const;
 
-    caramel::ast::PrimaryType::Ptr getType() const;
+    ast::PrimaryType::Ptr getType() const;
 
     std::shared_ptr<BasicBlock> getParentBlock();
 

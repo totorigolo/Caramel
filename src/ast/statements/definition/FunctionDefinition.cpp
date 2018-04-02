@@ -61,7 +61,7 @@ std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
 ) {
     ir::BasicBlock::Ptr bb = controlFlow->generateFunctionBlock(mSymbol->getName());
 
-    controlFlow->enterFunction();
+    controlFlow->enterFunction(bb->getId());
     bb->addInstruction(std::make_shared<ir::PrologInstruction>(
             bb, mSymbol->getName(), mSymbol->getParameters()));
 
@@ -74,7 +74,7 @@ std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
     }
 
     bb->addInstruction(std::make_shared<ir::EpilogInstruction>(bb));
-    controlFlow->leaveFunction();
+    controlFlow->leaveFunction(bb->getId());
 
     return bb;
 }

@@ -40,6 +40,8 @@
 #include "BitwiseXorOperator.h"
 #include "DisjunctionOperator.h"
 #include "ConjunctionOperator.h"
+#include "AssignmentOperator.h"
+
 
 #define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<BinaryOperator>(make_shared<op>())))
 
@@ -77,14 +79,19 @@ caramel::ast::BinaryOperatorIndex::BinaryOperatorIndex() {
     // Conjunction & Disjunction operators
     BIND(ConjunctionOperator);
     BIND(DisjunctionOperator);
-
 }
 
 caramel::ast::BinaryOperator::Ptr caramel::ast::BinaryOperatorIndex::getOpForToken(std::string token) {
     auto it = index.find(token);
 
     if (it == index.end()) {
-        return nullptr;
+        if (token == "=") {
+            logger.fatal() << "The = operator has to be handled manually, because it needs an lvalue.";
+            exit(1);
+        }
+
+        logger.fatal() << "Operator " << token << " not found.";
+        exit(1);
     }
 
     return it->second;

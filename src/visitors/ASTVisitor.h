@@ -37,8 +37,6 @@
 #include <stdexcept>
 #include <iostream>
 
-using namespace caramel::ast;
-
 namespace caramel::visitors {
 
 class ContextPusher;
@@ -140,6 +138,7 @@ public:
     /// Returns AtomicExpression::Ptr
     antlrcpp::Any visitPositiveConstant(CaramelParser::PositiveConstantContext *ctx) override;
 
+    /// Returns Expression::Ptr
     antlrcpp::Any visitPrefixUnaryExpression(CaramelParser::PrefixUnaryExpressionContext *ctx) override;
 
     // TODO: This function isn't implemented
@@ -165,6 +164,12 @@ public:
 
     /// Returns Expression::Ptr
     antlrcpp::Any visitDisjunction(CaramelParser::DisjunctionContext *ctx) override;
+
+    /// Returns Expression::Ptr
+    antlrcpp::Any visitAssignment(CaramelParser::AssignmentContext *ctx) override;
+
+    /// Returns LValue::Ptr
+    antlrcpp::Any visitLvalue(CaramelParser::LvalueContext *ctx) override;
 
     //--------------------------------------------------------------------------------------------------------
     // Operators
@@ -216,9 +221,9 @@ private:
     std::stack<std::shared_ptr<ast::Context>> mContextStack;
     utils::SourceFileUtil mSourceFileUtil;
 
-    BinaryOperatorIndex mBinaryOperatorIndex;
-    PrefixOperatorIndex mPrefixOperatorIndex;
-    PostfixOperatorIndex mPostfixOperatorIndex;
+    ast::BinaryOperatorIndex mBinaryOperatorIndex;
+    ast::PrefixOperatorIndex mPrefixOperatorIndex;
+    ast::PostfixOperatorIndex mPostfixOperatorIndex;
 };
 
 class ContextPusher {

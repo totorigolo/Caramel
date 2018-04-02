@@ -39,7 +39,7 @@ public:
     using WeakPtr = std::shared_ptr<X86_64IRVisitor>;
 
 public:
-    explicit X86_64IRVisitor() = default;
+    explicit X86_64IRVisitor();
     virtual ~X86_64IRVisitor() = default;
 
     void visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) override;
@@ -58,13 +58,18 @@ public:
 
     void visitFunctionCall(caramel::ir::FunctionCallInstruction *instruction, std::ostream &os) override;
 
+    void visitReturn(caramel::ir::ReturnInstruction *instruction, std::ostream &os) override;
+
 private:
     std::string address(std::string const &symbol);
     std::string registerToAssembly(std::string const &register_, size_t bitSize = 32U);
     std::string toAssembly(ir::IR *instruction, std::string const &anySymbol, size_t bitSize = 32U);
     std::string getSizeSuffix(size_t bitSize);
     std::string getFunctionCallRegister(size_t index, size_t bitSize);
+
+private:
+    std::map<std::string, std::string> mRegisterContent;
+    std::map<std::string, std::string> mSymbolRegister;
 };
+
 } // namespace caramel::ir::x86_64
-
-

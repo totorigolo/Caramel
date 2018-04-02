@@ -13,8 +13,9 @@ void remote_write_2(int32_t _, int32_t c) {
 }
 
 int32_t main() {
-    remote_write(97);
-    remote_write(106);
-    remote_write_2(97, 10);
+    remote_write('h');
+    remote_write('i');
+    remote_write('!');
+    remote_write_2('?', '\n');
     return 0;
 }

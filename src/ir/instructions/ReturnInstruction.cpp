@@ -22,31 +22,28 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "../BasicBlock.h"
-#include <memory>
-
+#include "../IRVisitor.h"
+#include "ReturnInstruction.h"
 
 namespace caramel::ir {
 
-class EmptyInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<EmptyInstruction>;
-    using WeakPtr = std::weak_ptr<EmptyInstruction>;
+ReturnInstruction::ReturnInstruction(
+        std::shared_ptr<BasicBlock> const &parentBlock
+) : IR(parentBlock, Operation::movq, ast::Void_t::Create()) {}
 
-    explicit EmptyInstruction(
-            std::shared_ptr<BasicBlock> parentBlock,
-            std::string const &returnName,
-            std::shared_ptr<ast::PrimaryType> const &type
-            );
+ReturnInstruction::ReturnInstruction(
+        std::string const &returnName,
+        std::shared_ptr<BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string const &source
+) : IR(returnName, parentBlock, Operation::copy, type), mSource{source} {}
 
-    ~EmptyInstruction() override = default;
+std::string ReturnInstruction::getSource() {
+    return mSource;
+}
 
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-};
+void ReturnInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitReturn(this, os);
+}
 
 } // namespace caramel::ir
-
-
-
