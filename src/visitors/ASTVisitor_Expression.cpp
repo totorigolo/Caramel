@@ -381,6 +381,14 @@ antlrcpp::Any ASTVisitor::visitCharConstant(CaramelParser::CharConstantContext *
     logger.trace() << "visiting char constant: " << grey << ctx->getText();
 
     char value = ctx->getText().at(1);
+    if (value == '\\') {
+        if (ctx->getText() == "'\\n'") value = '\n';
+        else if (ctx->getText() == "'\\r'") value = '\r';
+        else if (ctx->getText() == "'\\t'") value = '\t';
+        else if (ctx->getText() == "'\\''") value = '\'';
+        else if (ctx->getText() == "'\\\"'") value = '"';
+        else if (ctx->getText() == "'\\\\'") value = '\\';
+    }
     return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->start));
 }
 
