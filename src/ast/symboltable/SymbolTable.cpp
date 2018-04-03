@@ -295,8 +295,7 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDeclaration(
 
                 if (declaredParameterName != parameterName) {
                     throw FunctionDefinitionParameterNameMismatchError(
-                            buildFunctionDefinitionParameterNameMismatchErrorMessage(
-                                    name, declaredParameterName, parameterName),
+                            name,
                             antlrContext,
                             declaredParameterName,
                             parameterName
@@ -378,8 +377,7 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
 
                 if (declaredParameterName != parameterName) {
                     throw FunctionDefinitionParameterNameMismatchError(
-                            buildFunctionDefinitionParameterNameMismatchErrorMessage(
-                                    name, declaredParameterName, parameterName),
+                            name,
                             antlrContext,
                             declaredParameterName,
                             parameterName
@@ -644,13 +642,6 @@ SymbolTable::buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(const
     return res.str();
 }
 
-std::string SymbolTable::buildFunctionDefinitionParameterNameMismatchErrorMessage(const std::string &name,
-                                                                                  std::string declaredName,
-                                                                                  std::string definedName) {
-    std::stringstream res;
-    res << name << "'s parameter name " << definedName
-        << " mismatches with the previously declared parameter " << declaredName << ".";
-    return res.str();
-}
+
 
 } // namespace caramel::ast

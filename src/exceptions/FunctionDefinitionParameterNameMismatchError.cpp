@@ -22,44 +22,34 @@
  * SOFTWARE.
 */
 
-#include "SemanticError.h"
-#include "FunctionDefinitionParameterTypeMismatchError.h"
+#include "FunctionDefinitionParameterNameMismatchError.h"
 #include "Common.h"
-#include "../ast/symboltable/PrimaryType.h"
 
-#include <ParserRuleContext.h>
 
 
 namespace caramel::exceptions {
 
-using namespace ast;
 using namespace colors;
 
-FunctionDefinitionParameterTypeMismatchError::FunctionDefinitionParameterTypeMismatchError(antlr4::ParserRuleContext *antlrContext,
-                                                 std::shared_ptr<PrimaryType> declaredType,
-                                                 std::shared_ptr<PrimaryType> definedType)
-            : SemanticError(buildFunctionDefinitionParameterTypeMismatchErrorMessage(declaredType, definedType),
-                            antlrContext) {
+    FunctionDefinitionParameterNameMismatchError::FunctionDefinitionParameterNameMismatchError(std::string const &message,
+                                                 antlr4::ParserRuleContext *antlrContext,
+                                                 std::string declaredName,
+                                                 std::string definedName)
+            : SemanticError(buildFunctionDefinitionParameterNameMismatchErrorMessage(message, declaredName, definedName), antlrContext){
     }
 
-    void FunctionDefinitionParameterTypeMismatchError::explain(utils::SourceFileUtil sourceFileUtil) const {
+    void FunctionDefinitionParameterNameMismatchError::explain(utils::SourceFileUtil sourceFileUtil) const {
         //todo
         CARAMEL_UNUSED(sourceFileUtil);
         logger.fatal() << what();
     }
 
-    std::string FunctionDefinitionParameterTypeMismatchError::buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-            std::shared_ptr<PrimaryType> declaredType,
-            std::shared_ptr<PrimaryType> declaredName) {
+    std::string FunctionDefinitionParameterNameMismatchError::buildFunctionDefinitionParameterNameMismatchErrorMessage(const std::string &name,
+                                                                                      std::string declaredName,
+                                                                                      std::string definedName) {
         std::stringstream res;
-        res << "The function: "
-            << declaredType->getIdentifier()
-            << " was previously declared with a parameter of type "
-            << declaredName
-            << " .\n"
-            << "Actual parameter type is "
-            << declaredName->getIdentifier()
-            << ".";
+        res << name << "'s parameter name " << definedName
+            << " mismatches with the previously declared parameter " << declaredName << ".";
         return res.str();
     }
 
