@@ -25,30 +25,37 @@
 #pragma once
 
 #include "../IR.h"
-#include "../../ast/symboltable/FunctionParameterSignature.h"
-
+#include <memory>
 
 namespace caramel::ir {
 
-class FunctionCallInstruction : public IR {
+class CallParameterInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<FunctionCallInstruction>;
-    using WeakPtr = std::shared_ptr<FunctionCallInstruction>;
+    using Ptr = std::shared_ptr<CallParameterInstruction>;
+    using WeakPtr = std::weak_ptr<CallParameterInstruction>;
 
-    FunctionCallInstruction(
-            std::string const &returnName,
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const &returnType,
-            std::string functionName
+    explicit CallParameterInstruction(
+            std::shared_ptr<BasicBlock> parentBlock,
+            int index,
+            ast::PrimaryType::Ptr type,
+            std::string const &value
     );
 
-public:
-    std::string getFunctionName() const;
+    ~CallParameterInstruction() override = default;
+
+    std::string getValue() const;
 
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
+    int getIndex() const;
+
 private:
-    std::string mFunctionName;
+    int mIndex;
+    std::string mValue;
+
 };
 
 } // namespace caramel::ir
+
+
+

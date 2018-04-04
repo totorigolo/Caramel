@@ -22,33 +22,27 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "../IR.h"
-#include "../../ast/symboltable/FunctionParameterSignature.h"
-
+#include "CallParameterInstruction.h"
+#include "../IRVisitor.h"
 
 namespace caramel::ir {
 
-class FunctionCallInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<FunctionCallInstruction>;
-    using WeakPtr = std::shared_ptr<FunctionCallInstruction>;
+CallParameterInstruction::CallParameterInstruction(
+        std::shared_ptr<BasicBlock> parentBlock,
+        int index,
+        ast::PrimaryType::Ptr type, std::string const &value
+) : IR(parentBlock, Operation::movq, type), mIndex{index}, mValue{value} {}
 
-    FunctionCallInstruction(
-            std::string const &returnName,
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const &returnType,
-            std::string functionName
-    );
+std::string CallParameterInstruction::getValue() const {
+    return mValue;
+}
 
-public:
-    std::string getFunctionName() const;
+void CallParameterInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitCallParameter(this, os);
+}
 
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-private:
-    std::string mFunctionName;
-};
+int CallParameterInstruction::getIndex() const {
+    return mIndex;
+}
 
 } // namespace caramel::ir

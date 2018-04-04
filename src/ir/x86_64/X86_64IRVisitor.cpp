@@ -322,7 +322,7 @@ movl $1, %edi   // < 0
 call bar
 addq $24, %rsp  // 24 = 3 * 8
 */
-
+/*
     auto const &arguments = instruction->getArguments();
     auto const &parameters = instruction->getParameters();
     const size_t nbParameters = parameters.size();
@@ -343,13 +343,14 @@ addq $24, %rsp  // 24 = 3 * 8
                << ", " << getFunctionCallRegister(j, 32) << '\n';
         }
     }
-
+*/
     os << "  call    " << instruction->getFunctionName();
 
-    if (stackOffset > 0) {
+/*    if (stackOffset > 0) {
         os << '\n'
            << "  addq    $" << stackOffset << ", %rsp";
     }
+*/
 }
 
 void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, std::ostream &os) {
@@ -359,6 +360,16 @@ void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, s
     os << "  mov" + getSizeSuffix(returnSize) + "    "
        << toAssembly(instruction, instruction->getSource(), returnSize)
        << ", " << toAssembly(instruction, IR::ACCUMULATOR, 32); // TODO: See TODO in getSizeSuffix()
+}
+
+void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, std::ostream &os) {
+    int index = instruction->getIndex();
+    if( index < 6 ) {
+        os << "  mov" + getSizeSuffix(32) + "    " << toAssembly(instruction, instruction->getValue(), 32)
+           << ", " << getFunctionCallRegister(index, 32) << '\n';
+    } else {
+        os << "  pushq   " << toAssembly(instruction, instruction->getValue(), 64) << '\n';
+    }
 }
 
 } // namespace caramel::ir::x86_64

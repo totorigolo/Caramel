@@ -26,6 +26,7 @@
 #include "../../../../utils/Common.h"
 #include "../../../symboltable/Symbol.h"
 #include "../../../../ir/BasicBlock.h"
+#include "../../../../ir/instructions/CallParameterInstruction.h"
 #include "../../../../ir/instructions/FunctionCallInstruction.h"
 
 
@@ -77,17 +78,18 @@ std::shared_ptr<ir::IR> FunctionCall::getIR(ir::BasicBlock::Ptr const &currentBa
     auto functionSymbol = castTo<FunctionSymbol::Ptr>(mSymbol);
 
     std::vector<std::string> arguments;
-    for (auto it = mArguments.rbegin(), it_end = mArguments.rend(); it != it_end; ++it) {
-        arguments.push_back(currentBasicBlock->addInstruction((*it)->getIR(currentBasicBlock)));
+    for(size_t i = 0; i < mArguments.size(); i++) {
+        std::string tempVar = currentBasicBlock->addInstruction((mArguments[i])->getIR(currentBasicBlock));
+        currentBasicBlock->addInstruction(
+                std::make_shared<ir::CallParameterInstruction>(currentBasicBlock, i, mArguments[i]->getPrimaryType(), tempVar)
+        );
     }
 
     return std::make_shared<ir::FunctionCallInstruction>(
             functionName,
             currentBasicBlock,
             functionSymbol->getType(),
-            functionName,
-            functionSymbol->getParameters(),
-            arguments // mArguments
+            functionName
     );
 }
 
