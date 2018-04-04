@@ -50,7 +50,7 @@ public:
     void visitChildrenAstDot() override;
 
     bool shouldReturnABasicBlock() const override { return true; }
-    std::shared_ptr<ir::BasicBlock> getBasicBlock(ir::CFG *controlFlow) override;
+    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override;
 
 protected:
     std::shared_ptr<Context> mContext;

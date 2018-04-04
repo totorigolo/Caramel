@@ -96,10 +96,10 @@ std::string X86_64IRVisitor::toAssembly(ir::IR *ir, std::string const &anySymbol
     std::string r;
 
     if(anySymbol.empty()) {
-        logger.fatal() << "An IR symbol is empty for ir:";
+        logger.fatal() << "An IR symbol is empty for IR.";
         exit(1);
     }
-    // return anySymbol;
+//     return anySymbol;
 
     // Is a register
     if (anySymbol[0] == '%') {
@@ -389,8 +389,6 @@ void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, 
 }
 
 void X86_64IRVisitor::visitJump(JumpInstruction *instruction, std::ostream &os) {
-
-
 }
 
 void X86_64IRVisitor::visitJumpEqual(JumpEqualInstruction *instruction, std::ostream &os) {

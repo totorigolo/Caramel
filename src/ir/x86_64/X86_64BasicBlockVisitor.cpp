@@ -26,6 +26,7 @@
 #include "X86_64IRVisitor.h"
 
 namespace caramel::ir::x86_64 {
+
 X86_64BasicBlockVisitor::X86_64BasicBlockVisitor() : mIRVisitor{new X86_64IRVisitor} {}
 
 void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> const &basicBlock, std::ostream &os) {
@@ -40,8 +41,23 @@ void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> c
         os << std::endl;
     }
 
-    os << std::endl;
+    bool whenTrue = nullptr != basicBlock->getNextWhenTrue();
+    bool whenFalse = nullptr != basicBlock->getNextWhenFalse();
+    if (whenTrue && whenFalse) {
+        auto condInstr = basicBlock->getInstructions().back();
+        auto lastReturnName = condInstr->getReturnName();
+        auto lastReturnBitSize = condInstr->getType()->getMemoryLength();
 
+        os << "  cmpl    $0, " << mIRVisitor->toAssembly(nullptr, lastReturnName, lastReturnBitSize) << std::endl;
+        os << "  je    " << basicBlock->getNextWhenFalse()->getLabelName() << std::endl;
+    } else if (whenTrue) {
+        os << "  jmp    " << basicBlock->getNextWhenTrue()->getLabelName()
+           << std::endl;
+    } else {
+        logger.debug() << "End of function.";
+    }
+
+    os << std::endl;
 }
 
 } // namespace caramel::ir::x86_64

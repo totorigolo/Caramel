@@ -42,21 +42,26 @@ CFG::CFG(
     mBasicBlocks{} {
     logger.debug() << "New CFG for " << mFileName << ".";
 
-    mBasicBlocks.push_back(std::make_shared<BasicBlock>(
-            mNextBasicBlockNumber,
-            this,
-            ""
-    ));
-
     for (ast::Statement::Ptr const &statement : mRootContext->getStatements()) {
-        if (statement->shouldReturnAnIR()) {
-            mBasicBlocks[0]->addInstruction(statement->getIR(mBasicBlocks[0]));
-        } else if (statement->shouldReturnABasicBlock()) {
-            mBasicBlocks.push_back(statement->getBasicBlock(this));
+        if (statement->getType() == ast::StatementType::FunctionDefinition) {
+
+            auto [function_begin, function_end] = statement->getBasicBlock(this);
+            mBasicBlocks.push_back(function_begin);
+            CARAMEL_UNUSED(function_end);
+
         } else {
-            if (statement->getType() != ast::StatementType::FunctionDeclaration) {
-                logger.warning() << "[CFG] Statement return neither IR nor BB: " << statement->getType();
-            }
+            logger.warning() << "Skipping not-yet-handled non function definition statement in CFG::CFG().";
+
+            // old code:
+//            if (statement->shouldReturnAnIR()) {
+//                mBasicBlocks[0]->addInstruction(statement->getIR(mBasicBlocks[0]));
+//            } else if (statement->shouldReturnABasicBlock()) {
+//                mBasicBlocks.push_back(statement->getBasicBlock(this));
+//            } else {
+//                if (statement->getType() != ast::StatementType::FunctionDeclaration) {
+//                    logger.warning() << "[CFG] Statement return neither IR nor BB: " << statement->getType();
+//                }
+//            }
         }
     }
 }
@@ -133,11 +138,7 @@ void CFG::leaveFunction(size_t controlBlockId) {
     CARAMEL_UNUSED(controlBlockId);
 }
 
-std::shared_ptr<BasicBlock> CFG::generateBasicBlock(std::string const &entryName) {
-    return std::make_shared<BasicBlock>(mNextBasicBlockNumber, this, entryName);
-}
-
-std::shared_ptr<BasicBlock> CFG::generateFunctionBlock(std::string const &entryName) {
+std::shared_ptr<BasicBlock> CFG::generateBasicBlock(std::string entryName) {
     return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, this, entryName);
 }
 
@@ -171,9 +172,9 @@ std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
        << " - mBasicBlocks: " << cfg.mBasicBlocks.size() << " BBs";
     return os;
 }
+
 std::shared_ptr<BasicBlock> CFG::generateNamedBasicBlock() {
     return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, this, BasicBlock::getNextNumberName());
 }
-
 
 } // namespace caramel::ir

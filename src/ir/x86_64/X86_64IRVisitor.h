@@ -76,7 +76,7 @@ public:
 
     void visitCallParameter(CallParameterInstruction *instruction, std::ostream &os) override;
 
-private:
+//private:
     std::string address(std::string const &symbol);
     std::string registerToAssembly(std::string const &register_, size_t bitSize = 32U);
     std::string toAssembly(ir::IR *instruction, std::string const &anySymbol, size_t bitSize = 32U);

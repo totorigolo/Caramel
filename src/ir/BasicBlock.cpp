@@ -33,9 +33,9 @@ BasicBlock::BasicBlock(
 ) : mID{id},
     mExitWhenTrue{},
     mExitWhenFalse{},
-    mLabelName{std::move(entryName)},
     mCfg{cfg},
-    mInstructions{} {}
+    mInstructions{},
+    mLabelName{std::move(entryName)} {}
 
 std::shared_ptr<BasicBlock> BasicBlock::getNextWhenTrue() const {
     return mExitWhenTrue;
@@ -45,11 +45,11 @@ std::shared_ptr<BasicBlock> BasicBlock::getNextWhenFalse() const {
     return mExitWhenFalse;
 }
 
-void BasicBlock::setMExitWhenTrue(const std::shared_ptr<BasicBlock> &ExitWhenTrue) {
+void BasicBlock::setExitWhenTrue(const std::shared_ptr<BasicBlock> &ExitWhenTrue) {
     mExitWhenTrue = ExitWhenTrue;
 }
 
-void BasicBlock::setMExitWhenFalse(const std::shared_ptr<BasicBlock> &ExitWhenFalse) {
+void BasicBlock::setExitWhenFalse(const std::shared_ptr<BasicBlock> &ExitWhenFalse) {
     mExitWhenFalse = ExitWhenFalse;
 }
 
@@ -81,8 +81,8 @@ std::vector<std::shared_ptr<IR>> &BasicBlock::getInstructions() {
     return mInstructions;
 }
 
-std::string &BasicBlock::getLabelName() {
-    return mLabelName;
+std::string BasicBlock::getLabelName() {
+    return mLabelName;// + "_" + std::to_string(getId());
 }
 
 long BasicBlock::addSymbol(std::string const &symbolName, ast::PrimaryType::Ptr type) {
@@ -98,9 +98,15 @@ long BasicBlock::getSymbolIndex(std::string const &symbolName) {
 }
 
 std::string BasicBlock::getNextNumberName() {
-    long tmp = mNextNumberName;
-    mNextNumberName++;
-    return ".L" + std::to_string(tmp);
+    return ".L" + std::to_string(mNextNumberName++);
+}
+
+BasicBlock::Ptr BasicBlock::getNewWhenTrueBasicBlock(std::string nameSuffix) {
+    auto child = mCfg->generateBasicBlock(getNextNumberName() + nameSuffix);
+    if (this->getNextWhenTrue()) child->setExitWhenTrue(this->getNextWhenTrue());
+    if (this->getNextWhenFalse()) child->setExitWhenFalse(this->getNextWhenFalse());
+    this->setExitWhenTrue(child);
+    return child;
 }
 
 void BasicBlock::addInstructions(std::shared_ptr<BasicBlock> const &child) {
@@ -112,6 +118,5 @@ long BasicBlock::mNextNumberName = 0;
 void BasicBlock::setLabelName(const std::string &name) {
     mLabelName = name;
 }
-
 
 } // namespace caramel::ir

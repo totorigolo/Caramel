@@ -40,6 +40,16 @@ namespace caramel::ir {
     class IR;
     class BasicBlock;
     class CFG;
+
+struct GetBasicBlockReturn {
+    GetBasicBlockReturn(const std::shared_ptr<BasicBlock> &begin,
+                        const std::shared_ptr<BasicBlock> &end)
+            : begin(begin), end(end) {}
+
+    std::shared_ptr<ir::BasicBlock> begin;
+    std::shared_ptr<ir::BasicBlock> end;
+};
+
 }
 
 namespace caramel::ast {
@@ -73,7 +83,7 @@ public:
 
     virtual bool shouldReturnABasicBlock() const { return false; }
 
-    virtual std::shared_ptr<caramel::ir::BasicBlock> getBasicBlock(
+    virtual ir::GetBasicBlockReturn getBasicBlock(
             ir::CFG *controlFlow
     ) {
         CARAMEL_UNUSED(controlFlow);
