@@ -45,14 +45,15 @@ public:
 
     std::string getValue() const;
 
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+    std::string getReturnName() const override;
 
     int getIndex() const;
+
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
     int mIndex;
     std::string mValue;
-
 };
 
 } // namespace caramel::ir

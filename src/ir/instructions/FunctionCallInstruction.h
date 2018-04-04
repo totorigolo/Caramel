@@ -35,15 +35,14 @@ public:
     using Ptr = std::shared_ptr<FunctionCallInstruction>;
     using WeakPtr = std::shared_ptr<FunctionCallInstruction>;
 
-    FunctionCallInstruction(
-            std::string const &returnName,
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const &returnType,
-            std::string functionName
-    );
+    FunctionCallInstruction(std::string functionName,
+                            std::shared_ptr<BasicBlock> const &parentBlock,
+                            ast::PrimaryType::Ptr const &returnType);
 
 public:
     std::string getFunctionName() const;
+
+    std::string getReturnName() const override;
 
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 

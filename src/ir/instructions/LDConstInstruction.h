@@ -33,23 +33,21 @@ public:
     using Ptr = std::shared_ptr<LDConstInstruction>;
     using WeakPtr = std::shared_ptr<LDConstInstruction>;
 
-    LDConstInstruction(std::string const &returnName,
-                       std::shared_ptr<BasicBlock> const &parentBlock,
-                       caramel::ast::PrimaryType::Ptr const &type, std::string dest, std::string val);
+    LDConstInstruction(std::shared_ptr<BasicBlock> const &parentBlock,
+                       caramel::ast::PrimaryType::Ptr const &type, std::string destination, std::string val);
 
 public:
     std::string getDestination() const;
+
     std::string getValue() const;
+
+    std::string getReturnName() const override;
 
     void accept(std::shared_ptr<IRVisitor> const &visitor,std::ostream &os) override;
 
 private:
     std::string mDestination;
     std::string mValue;
-
 };
 
 } // namespace caramel::ir
-
-
-

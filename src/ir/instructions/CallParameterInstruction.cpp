@@ -31,18 +31,22 @@ CallParameterInstruction::CallParameterInstruction(
         std::shared_ptr<BasicBlock> parentBlock,
         int index,
         ast::PrimaryType::Ptr type, std::string const &value
-) : IR(parentBlock, Operation::movq, type), mIndex{index}, mValue{value} {}
+) : IR(Operation::movq, parentBlock, type), mIndex{index}, mValue{value} {}
 
 std::string CallParameterInstruction::getValue() const {
     return mValue;
 }
 
-void CallParameterInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitCallParameter(this, os);
+std::string CallParameterInstruction::getReturnName() const {
+    return mValue;
 }
 
 int CallParameterInstruction::getIndex() const {
     return mIndex;
+}
+
+void CallParameterInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitCallParameter(this, os);
 }
 
 } // namespace caramel::ir

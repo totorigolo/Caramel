@@ -65,7 +65,7 @@ std::shared_ptr<ir::IR> Constant::getIR(std::shared_ptr<caramel::ir::BasicBlock>
     std::string constValue = std::to_string(getValue());
     // Todo: check if Int64_t for constant is good or not
     return std::make_shared<ir::LDConstInstruction>(
-            tempVar, currentBasicBlock, Int64_t::Create(), tempVar, constValue);
+            currentBasicBlock, Int64_t::Create(), tempVar, constValue);
 }
 
 } // namespace caramel::ast

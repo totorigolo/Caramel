@@ -219,7 +219,7 @@ void X86_64IRVisitor::visitEmpty(caramel::ir::EmptyInstruction *instruction, std
 }
 
 void X86_64IRVisitor::visitProlog(caramel::ir::PrologInstruction *instruction, std::ostream &os) {
-    logger.trace() << "[x86_64] " << "visiting prolog: " << instruction->getFunctionName();
+    logger.trace() << "[x86_64] " << "visiting prolog: " << instruction->getReturnName();
 
 /*
  * Example function, with 9 32-bit arguments.
@@ -242,30 +242,33 @@ baz:
     os << "  pushq   %rbp" << '\n'
        << "  movq    %rsp, %rbp" << '\n';
 
-    size_t rspOffset = 0;
-    for (auto const &parameter : instruction->getParameters()) {
-        rspOffset += parameter.primaryType->getMemoryLength() / 8U;
-    }
-    rspOffset = ((rspOffset + 1) % 16) * 16;
-    if (rspOffset > 0) {
-        os << "  subq    $" << rspOffset << ", %rsp" << '\n';
-    }
+    os << "  # TODO: Prolog" << '\n';
 
-    size_t i = 0;
-    for (auto const &parameter : instruction->getParameters()) {
-        size_t parameterSize = parameter.primaryType->getMemoryLength();
-        if (i != 0) os << '\n';
-        if (i < 6) {
-            instruction->getParentBlock()->addSymbol(parameter.name, parameter.primaryType);
-            os << "  mov" + getSizeSuffix(parameterSize) + "    " << getFunctionCallRegister(i, parameterSize)
-               << ", " << toAssembly(instruction, parameter.name, parameterSize); // it's always %rbp
-        } else {
-            long index = 16 + (i - 6) * 8;
-            instruction->getParentBlock()->addSymbol(parameter.name, parameter.primaryType, index);
-            os << "  # " << i << "-th parameter is at " << toAssembly(instruction, parameter.name, parameterSize);
-        }
-        i++;
-    }
+    // FIXME: Prolog
+//    size_t rspOffset = 0;
+//    for (auto const &parameter : instruction->getParameters()) {
+//        rspOffset += parameter.primaryType->getMemoryLength() / 8U;
+//    }
+//    rspOffset = ((rspOffset + 1) % 16) * 16;
+//    if (rspOffset > 0) {
+//        os << "  subq    $" << rspOffset << ", %rsp" << '\n';
+//    }
+//
+//    size_t i = 0;
+//    for (auto const &parameter : instruction->getParameters()) {
+//        size_t parameterSize = parameter.primaryType->getMemoryLength();
+//        if (i != 0) os << '\n';
+//        if (i < 6) {
+//            instruction->getParentBlock()->addSymbol(parameter.name, parameter.primaryType);
+//            os << "  mov" + getSizeSuffix(parameterSize) + "    " << getFunctionCallRegister(i, parameterSize)
+//               << ", " << toAssembly(instruction, parameter.name, parameterSize); // it's always %rbp
+//        } else {
+//            long index = 16 + (i - 6) * 8;
+//            instruction->getParentBlock()->addSymbol(parameter.name, parameter.primaryType, index);
+//            os << "  # " << i << "-th parameter is at " << toAssembly(instruction, parameter.name, parameterSize);
+//        }
+//        i++;
+//    }
 }
 
 void X86_64IRVisitor::visitEpilog(caramel::ir::EpilogInstruction *instruction, std::ostream &os) {
@@ -286,7 +289,7 @@ void X86_64IRVisitor::visitAddition(caramel::ir::AdditionInstruction *instructio
 }
 
 void X86_64IRVisitor::visitLdConst(caramel::ir::LDConstInstruction *instruction, std::ostream &os) {
-    logger.trace() << "[x86_64] " << "visiting ldconst: " << instruction->getReturnName() << " = "
+    logger.trace() << "[x86_64] " << "visiting ldconst: " << instruction->getDestination() << " = "
                    << instruction->getValue();
 
     os << "  movl    " << toAssembly(instruction, instruction->getValue())
@@ -363,6 +366,8 @@ void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, s
 }
 
 void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting call parameter: " << instruction->getValue();
+
     int index = instruction->getIndex();
     if( index < 6 ) {
         os << "  mov" + getSizeSuffix(32) + "    " << toAssembly(instruction, instruction->getValue(), 32)
