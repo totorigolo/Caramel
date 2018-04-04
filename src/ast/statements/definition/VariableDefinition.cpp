@@ -72,7 +72,6 @@ std::shared_ptr<ir::IR> VariableDefinition::getIR(std::shared_ptr<caramel::ir::B
     std::string identifier = mSymbol.lock()->getName();
 
     return std::make_shared<ir::CopyInstruction>(
-            identifier,
             currentBasicBlock,
             mSymbol.lock()->getType(),
             identifier,

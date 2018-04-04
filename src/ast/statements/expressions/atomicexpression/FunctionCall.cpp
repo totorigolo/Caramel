@@ -84,10 +84,7 @@ std::shared_ptr<ir::IR> FunctionCall::getIR(ir::BasicBlock::Ptr const &currentBa
     return std::make_shared<ir::FunctionCallInstruction>(
             functionName,
             currentBasicBlock,
-            functionSymbol->getType(),
-            functionName,
-            functionSymbol->getParameters(),
-            arguments // mArguments
+            functionSymbol->getType()
     );
 }
 

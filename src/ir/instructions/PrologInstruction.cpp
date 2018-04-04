@@ -29,22 +29,16 @@ namespace caramel::ir {
 
 PrologInstruction::PrologInstruction(
         std::shared_ptr<BasicBlock> const &parentBlock,
-        std::string functionName,
-        std::vector<ast::FunctionParameterSignature> parameters
-) : IR("", parentBlock, Operation::prolog, ast::Void_t::Create()),
-    mFunctionName{std::move(functionName)},
-    mParameters{std::move(parameters)} {}
+        size_t size
+) : IR(Operation::prolog, parentBlock, ast::Void_t::Create()),
+    mSize{size} {}
 
 void PrologInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitProlog(this, os);
 }
 
-std::string const &PrologInstruction::getFunctionName() const {
-    return mFunctionName;
-}
-
-std::vector<ast::FunctionParameterSignature> const &PrologInstruction::getParameters() const {
-    return mParameters;
+std::string PrologInstruction::getReturnName() const {
+    return {};
 }
 
 } // namespace caramel::ir

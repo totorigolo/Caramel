@@ -56,7 +56,7 @@ std::shared_ptr<ir::IR> ReturnStatement::getIR(std::shared_ptr<caramel::ir::Basi
     if (mExpression) {
         std::string value = currentBasicBlock->addInstruction(mExpression->getIR(currentBasicBlock));
         return std::make_shared<ir::ReturnInstruction>(
-                value, currentBasicBlock, mExpression->getPrimaryType(), value);
+                currentBasicBlock, mExpression->getPrimaryType(), value);
     } else {
         return std::make_shared<ir::ReturnInstruction>(currentBasicBlock);
     }
