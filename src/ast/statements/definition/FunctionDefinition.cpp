@@ -62,8 +62,7 @@ std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
     ir::BasicBlock::Ptr bb = controlFlow->generateFunctionBlock(mSymbol->getName());
 
     controlFlow->enterFunction(bb->getId());
-    bb->addInstruction(std::make_shared<ir::PrologInstruction>(
-            bb, mSymbol->getName(), mSymbol->getParameters()));
+    bb->addInstruction(std::make_shared<ir::PrologInstruction>(bb, 42)); // FIXME: Function definition IR
 
     for (ast::Statement::Ptr const &statement : mContext->getStatements()) {
         if (statement->shouldReturnAnIR()) {

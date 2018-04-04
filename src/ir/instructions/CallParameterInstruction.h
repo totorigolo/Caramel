@@ -22,34 +22,41 @@
  * SOFTWARE.
 */
 
-#include "Identifier.h"
-#include "../../../../ir/BasicBlock.h"
-#include "../../../../ir/instructions/EmptyInstruction.h"
+#pragma once
 
-namespace caramel::ast {
+#include "../IR.h"
+#include <memory>
 
-Identifier::Identifier(antlr4::Token *startToken) :
-        LValue(startToken, StatementType::Identifier), mSymbol{} {}
+namespace caramel::ir {
 
-Symbol::Ptr Identifier::getSymbol() const {
-    return mSymbol;
-}
+class CallParameterInstruction : public IR {
+public:
+    using Ptr = std::shared_ptr<CallParameterInstruction>;
+    using WeakPtr = std::weak_ptr<CallParameterInstruction>;
 
-void Identifier::setSymbol(VariableSymbol::Ptr symbol) {
-    mSymbol = std::move(symbol);
-}
+    explicit CallParameterInstruction(
+            std::shared_ptr<BasicBlock> parentBlock,
+            int index,
+            ast::PrimaryType::Ptr type,
+            std::string const &value
+    );
 
-PrimaryType::Ptr Identifier::getPrimaryType() const {
-    return mSymbol->getType();
-}
+    ~CallParameterInstruction() override = default;
 
-std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<ir::BasicBlock> const &currentBasicBlock) {
-    return std::make_shared<ir::EmptyInstruction>(currentBasicBlock, mSymbol->getType());
-}
+    std::string getValue() const;
 
-void Identifier::acceptAstDotVisit() {
-    addNode(thisId(), "Identifier: " + mSymbol->getName());
-    addEdge(thisId(), mSymbol->thisId());
-}
+    std::string getReturnName() const override;
 
-} // namespace caramel::ast
+    int getIndex() const;
+
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+
+private:
+    int mIndex;
+    std::string mValue;
+};
+
+} // namespace caramel::ir
+
+
+

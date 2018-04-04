@@ -47,7 +47,7 @@ public:
                                                  std::shared_ptr<PrimaryType> declaredType,
                                                  std::shared_ptr<PrimaryType> definedType);
 
-    //void explain(utils::SourceFileUtil sourceFileUtil) const override;
+    void explain(utils::SourceFileUtil sourceFileUtil) const override;
 
 protected:
     std::string buildFunctionDefinitionParameterTypeMismatchErrorMessage(

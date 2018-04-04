@@ -25,18 +25,27 @@
 #pragma once
 
 #include "IR.h"
+#include "instructions/CallParameterInstruction.h"
 
 
 namespace caramel::ir {
 
 class CopyInstruction;
+
 class EmptyInstruction;
+
 class PrologInstruction;
+
 class EpilogInstruction;
+
 class AdditionInstruction;
+
 class LDConstInstruction;
+
 class FunctionCallInstruction;
+
 class NopInstruction;
+
 class ReturnInstruction;
 class JumpInstruction;
 class JumpEqualInstruction;
@@ -126,6 +135,11 @@ public:
 
     virtual void visitGTE(
             GTEInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitCallParameter(
+            CallParameterInstruction *instruction,
             std::ostream &os
     ) = 0;
 

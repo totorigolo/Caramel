@@ -35,25 +35,19 @@ public:
     using Ptr = std::shared_ptr<FunctionCallInstruction>;
     using WeakPtr = std::shared_ptr<FunctionCallInstruction>;
 
-    FunctionCallInstruction(std::string const &returnName,
+    FunctionCallInstruction(std::string functionName,
                             std::shared_ptr<BasicBlock> const &parentBlock,
-                            ast::PrimaryType::Ptr const &returnType, std::string functionName,
-                            std::vector<ast::FunctionParameterSignature> parameters,
-                            std::vector<std::string> arguments);
+                            ast::PrimaryType::Ptr const &returnType);
 
 public:
     std::string getFunctionName() const;
 
-    std::vector<std::string> const &getArguments() const;
-
-    std::vector<ast::FunctionParameterSignature> const &getParameters() const;
+    std::string getReturnName() const override;
 
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
     std::string mFunctionName;
-    std::vector<ast::FunctionParameterSignature> mParameters;
-    std::vector<std::string> mArguments;
 };
 
 } // namespace caramel::ir

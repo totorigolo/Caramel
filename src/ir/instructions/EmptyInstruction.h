@@ -37,11 +37,14 @@ public:
 
     explicit EmptyInstruction(
             std::shared_ptr<BasicBlock> parentBlock,
-            std::string const &returnName,
             std::shared_ptr<ast::PrimaryType> const &type
             );
 
     ~EmptyInstruction() override = default;
+
+    std::string getReturnName() const override;
+
+    bool isEmpty() const override;
 
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 };

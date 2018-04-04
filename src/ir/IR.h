@@ -51,6 +51,7 @@ enum class Operation {
     movq,
     ret,
     prolog,
+    epilog,
     leave,
     nope,
     jmp,
@@ -74,23 +75,18 @@ public:
 
 public:
     explicit IR(
+            Operation operation,
             std::shared_ptr<BasicBlock> parentBlock,
-            Operation op,
-            ast::PrimaryType::Ptr type
-    );
-
-    explicit IR(
-            std::string returnName,
-            std::shared_ptr<BasicBlock> parentBlock,
-            Operation op,
             ast::PrimaryType::Ptr type
     );
 
     virtual ~IR() = default;
 
-    std::string getReturnName();
+    virtual Operation getOperation() const;
 
-    bool isEmpty() const;
+    virtual std::string getReturnName() const = 0;
+
+    virtual bool isEmpty() const { return false; }
 
     ast::PrimaryType::Ptr getType() const;
 
@@ -101,9 +97,8 @@ public:
     virtual void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) = 0;
 
 private:
-    std::string mReturnName;
-    std::weak_ptr<BasicBlock> mParentBlock;
     Operation mOperation;
+    std::shared_ptr<BasicBlock> mParentBlock;
     ast::PrimaryType::Ptr mType;
 };
 

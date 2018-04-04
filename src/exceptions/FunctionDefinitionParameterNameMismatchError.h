@@ -25,15 +25,14 @@
 #pragma once
 
 #include "SemanticError.h"
-#include "../Console.h"
-#include "Common.h"
+
+#include <ParserRuleContext.h>
 
 #include <stdexcept>
 
 
 namespace caramel::exceptions {
 
-using namespace ast;
 using namespace colors;
 
 class FunctionDefinitionParameterNameMismatchError : public SemanticError {
@@ -41,21 +40,13 @@ public:
     FunctionDefinitionParameterNameMismatchError(std::string const &message,
                                                  antlr4::ParserRuleContext *antlrContext,
                                                  std::string declaredName,
-                                                 std::string definedName)
-            : SemanticError(message, antlrContext),
-              mDeclaredName{std::move(declaredName)},
-              mDefinedName{std::move(definedName)} {
-    }
+                                                 std::string definedName);
 
-    void explain(utils::SourceFileUtil sourceFileUtil) const override {
-        //todo
-        CARAMEL_UNUSED(sourceFileUtil);
-        logger.fatal() << what();
-    }
+    void explain(utils::SourceFileUtil sourceFileUtil) const override;
 
-private:
-    std::string mDeclaredName;
-    std::string mDefinedName;
+protected:
+    std::string buildFunctionDefinitionParameterNameMismatchErrorMessage(const std::string &name,
+                                                                         std::string declaredName,
+                                                                         std::string definedName);
 };
-
 } // namespace caramel::exceptions

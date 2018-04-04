@@ -36,15 +36,7 @@ public:
     CopyInstruction(
             std::shared_ptr<BasicBlock> const &parentBlock,
             caramel::ast::PrimaryType::Ptr const &type,
-            std::string const &dest,
-            std::string const &source
-    );
-
-    CopyInstruction(
-            std::string const &returnName,
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            caramel::ast::PrimaryType::Ptr const &type,
-            std::string const &dest,
+            std::string const &destination,
             std::string const &source
     );
 
@@ -54,10 +46,12 @@ public:
 
     std::string getSource();
 
+    std::string getReturnName() const override;
+
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
-    std::string mDest;
+    std::string mDestination;
     std::string mSource;
 };
 

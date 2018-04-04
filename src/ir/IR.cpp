@@ -27,33 +27,19 @@
 #include "IR.h"
 #include "BasicBlock.h"
 
+
 namespace caramel::ir {
 
 IR::IR(
+        Operation operation,
         std::shared_ptr<BasicBlock> parentBlock,
-        Operation op,
         ast::PrimaryType::Ptr type
-) : mReturnName{""},
-    mParentBlock{parentBlock},
-    mOperation{op},
+) : mOperation{operation},
+    mParentBlock{std::move(parentBlock)},
     mType{std::move(type)} {}
 
-IR::IR(
-        std::string returnName,
-        std::shared_ptr<BasicBlock> parentBlock,
-        Operation op,
-        ast::PrimaryType::Ptr type
-) : mReturnName{std::move(returnName)},
-    mParentBlock{parentBlock},
-    mOperation{op},
-    mType{std::move(type)} {}
-
-std::string IR::getReturnName() {
-    return mReturnName;
-}
-
-bool IR::isEmpty() const {
-    return mOperation == Operation::empty;
+Operation IR::getOperation() const {
+    return mOperation;
 }
 
 caramel::ast::PrimaryType::Ptr IR::getType() const {
@@ -61,7 +47,7 @@ caramel::ast::PrimaryType::Ptr IR::getType() const {
 }
 
 std::shared_ptr<BasicBlock> IR::getParentBlock() {
-    return mParentBlock.lock();
+    return mParentBlock;
 }
 
 Operation IR::getOperation() {

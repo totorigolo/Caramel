@@ -22,34 +22,31 @@
  * SOFTWARE.
 */
 
-#include "Identifier.h"
-#include "../../../../ir/BasicBlock.h"
-#include "../../../../ir/instructions/EmptyInstruction.h"
+#include "CallParameterInstruction.h"
+#include "../IRVisitor.h"
 
-namespace caramel::ast {
+namespace caramel::ir {
 
-Identifier::Identifier(antlr4::Token *startToken) :
-        LValue(startToken, StatementType::Identifier), mSymbol{} {}
+CallParameterInstruction::CallParameterInstruction(
+        std::shared_ptr<BasicBlock> parentBlock,
+        int index,
+        ast::PrimaryType::Ptr type, std::string const &value
+) : IR(Operation::movq, parentBlock, type), mIndex{index}, mValue{value} {}
 
-Symbol::Ptr Identifier::getSymbol() const {
-    return mSymbol;
+std::string CallParameterInstruction::getValue() const {
+    return mValue;
 }
 
-void Identifier::setSymbol(VariableSymbol::Ptr symbol) {
-    mSymbol = std::move(symbol);
+std::string CallParameterInstruction::getReturnName() const {
+    return mValue;
 }
 
-PrimaryType::Ptr Identifier::getPrimaryType() const {
-    return mSymbol->getType();
+int CallParameterInstruction::getIndex() const {
+    return mIndex;
 }
 
-std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<ir::BasicBlock> const &currentBasicBlock) {
-    return std::make_shared<ir::EmptyInstruction>(currentBasicBlock, mSymbol->getType());
+void CallParameterInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitCallParameter(this, os);
 }
 
-void Identifier::acceptAstDotVisit() {
-    addNode(thisId(), "Identifier: " + mSymbol->getName());
-    addEdge(thisId(), mSymbol->thisId());
-}
-
-} // namespace caramel::ast
+} // namespace caramel::ir
