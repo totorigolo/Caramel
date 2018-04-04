@@ -40,7 +40,9 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::PlusOperator::buildIR(
     std::shared_ptr<ir::AdditionInstruction> instr = std::make_shared<ir::AdditionInstruction>(
             tmp,
             currentBasicBlock,
-            PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType())
+            PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType()),
+            var1,
+            var2
     );
     return castTo<ir::IR::Ptr>(instr);
 

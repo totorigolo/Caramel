@@ -30,11 +30,21 @@ namespace caramel::ir {
 AdditionInstruction::AdditionInstruction(
         std::string const &returnName,
         std::shared_ptr<ir::BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &type
-) : IR(returnName, Operation::add, parentBlock, type) {}
+        ast::PrimaryType::Ptr const &type,
+        std::string const &left,
+        std::string const &right
+) : IR(returnName, Operation::add, parentBlock, type), mLeft{left}, mRight{right} {}
 
 void AdditionInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitAddition(this, os);
+}
+
+const std::string &AdditionInstruction::getLeft() const {
+    return mLeft;
+}
+
+const std::string &AdditionInstruction::getRight() const {
+    return mRight;
 }
 
 } // namespace caramel::ir
