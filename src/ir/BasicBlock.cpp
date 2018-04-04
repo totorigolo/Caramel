@@ -109,5 +109,9 @@ void BasicBlock::addInstructions(std::shared_ptr<BasicBlock> const &child) {
 
 long BasicBlock::mNextNumberName = 0;
 
+void BasicBlock::setLabelName(const std::string &name) {
+    mLabelName = name;
+}
+
 
 } // namespace caramel::ir

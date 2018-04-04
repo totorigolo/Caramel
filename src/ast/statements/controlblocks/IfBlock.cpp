@@ -74,7 +74,10 @@ std::shared_ptr<ir::BasicBlock> IfBlock::getBasicBlock(
         ir::CFG *controlFlow
 ) {
     caramel::ir::BasicBlock::Ptr bb = controlFlow->generateBasicBlock();
+    bb->mIsControlBlock = true;
 
+    std::string bbEndName = caramel::ir::BasicBlock::getNextNumberName();
+    caramel::ir::BasicBlock::Ptr bbEnd = controlFlow->generateBasicBlock(bbEndName);
 
     if (mCondition->shouldReturnAnIR()) {
         bb->addInstruction(mCondition->getIR(bb));
@@ -106,25 +109,40 @@ std::shared_ptr<ir::BasicBlock> IfBlock::getBasicBlock(
 
     std::string bbThenName = caramel::ir::BasicBlock::getNextNumberName();
     caramel::ir::BasicBlock::Ptr bbThen = controlFlow->generateBasicBlock(bbThenName);
+    bbThen->mIsControlBlock = true;
+
 
 
     for(caramel::ast::Statement::Ptr const &statement : mThenBlock){
         if(statement->shouldReturnAnIR()) {
             bbThen->addInstruction(statement->getIR(bbThen));
         } else if (statement->shouldReturnABasicBlock()){
-            bbThen->addInstructions(statement->getBasicBlock(controlFlow));
+            ir::BasicBlock::Ptr bbE = statement->getBasicBlock(controlFlow);
+            if(bbE->mIsControlBlock) {
+                bbThen = bbE;
+                bbThen->setLabelName(bbThenName);
+
+
+
+            } else {
+                bbThen->addInstructions(bbE);
+                bbThen->setMExitWhenTrue(bbEnd);
+            }
         }
     }
 
-    std::string bbEndName = caramel::ir::BasicBlock::getNextNumberName();
+    bb->setMExitWhenTrue(bbThen);
+
+
 
 //    ir::IR::Ptr jumpInstructionEnd = std::make_shared<ir::JumpInstruction>(bb, bbEndName);
 //    bb->addInstruction(jumpInstructionEnd);
 
     caramel::ir::BasicBlock::Ptr bbElse = controlFlow->generateBasicBlock(bbElseName);
+    bbElse->mIsControlBlock = true;
 
 
-    caramel::ir::BasicBlock::Ptr bbEnd = controlFlow->generateBasicBlock(bbEndName);
+
 
     if(mElseBlock.empty()) {
 
@@ -135,17 +153,22 @@ std::shared_ptr<ir::BasicBlock> IfBlock::getBasicBlock(
             if(statement->shouldReturnAnIR()) {
                 bbElse->addInstruction(statement->getIR(bbElse));
             } else if (statement->shouldReturnABasicBlock()){
-                bbElse->addInstructions(statement->getBasicBlock(controlFlow));
+                ir::BasicBlock::Ptr bbE = statement->getBasicBlock(controlFlow);
+                if(bbE->mIsControlBlock) {
+                    bbElse = bbE;
+                    bbElse->setLabelName(bbElseName);
+                } else {
+                    bbElse->addInstructions(bbE);
+                    bbElse->setMExitWhenTrue(bbEnd);
+                }
+
             }
         }
 
         bb->setMExitWhenFalse(bbElse);
-        bbElse->setMExitWhenTrue(bbEnd);
     }
 
 
-    bb->setMExitWhenTrue(bbThen);
-    bbThen->setMExitWhenTrue(bbEnd);
  //   controlFlow->addBasicBlock(bb);
 
     //bbElse->addInstruction(jumpInstructionEnd);

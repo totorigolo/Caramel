@@ -64,12 +64,16 @@ public:
 
     CFG * getCFG();
 
+    void setLabelName(std::string const &name);
+
     size_t getId();
 
     static std::string getNextNumberName();
 
     void addInstructions(std::shared_ptr<BasicBlock> const &child);
 
+public:
+    bool mIsControlBlock = false;
 
 private:
     size_t mID;
