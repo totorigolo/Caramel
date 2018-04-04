@@ -33,23 +33,18 @@ LDConstInstruction::LDConstInstruction(
         ast::PrimaryType::Ptr const &type,
         std::string destination,
         std::string val
-) : IR(Operation::ldconst, parentBlock, type),
-    mDestination{std::move(destination)}, mValue{std::move(val)} {}
-
-std::string LDConstInstruction::getDestination() const {
-    return mDestination;
-}
+) : IR(destination, Operation::ldconst, parentBlock, type), mValue{std::move(val)} {}
 
 std::string LDConstInstruction::getValue() const {
     return mValue;
 }
 
-std::string LDConstInstruction::getReturnName() const {
-    return mDestination;
-}
-
 void LDConstInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitLdConst(this, os);
+}
+
+std::string LDConstInstruction::getDestination() const {
+    return getReturnName();
 }
 
 } // namespace caramel::ir

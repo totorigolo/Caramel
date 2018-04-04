@@ -31,13 +31,9 @@ CallParameterInstruction::CallParameterInstruction(
         std::shared_ptr<BasicBlock> parentBlock,
         int index,
         ast::PrimaryType::Ptr type, std::string const &value
-) : IR(Operation::movq, parentBlock, type), mIndex{index}, mValue{value} {}
+) : IR(value, Operation::movq, parentBlock, type), mIndex{index}, mValue{value} {}
 
 std::string CallParameterInstruction::getValue() const {
-    return mValue;
-}
-
-std::string CallParameterInstruction::getReturnName() const {
     return mValue;
 }
 

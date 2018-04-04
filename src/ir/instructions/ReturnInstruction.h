@@ -47,8 +47,6 @@ public:
 
     std::string getSource();
 
-    std::string getReturnName() const override;
-
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:

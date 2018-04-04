@@ -95,7 +95,11 @@ std::string X86_64IRVisitor::toAssembly(ir::IR *ir, std::string const &anySymbol
     logger.trace() << "[x86_64] " << "toAssembly(" << "ir" << ", " << anySymbol << ")";
     std::string r;
 
-//    return anySymbol;
+    if(anySymbol.empty()) {
+        logger.fatal() << "An IR symbol is empty for ir:";
+        exit(1);
+    }
+    // return anySymbol;
 
     // Is a register
     if (anySymbol[0] == '%') {
@@ -209,6 +213,7 @@ void X86_64IRVisitor::visitCopy(caramel::ir::CopyInstruction *instruction, std::
     os << "  mov" + getSizeSuffix(parameterSize) + "    "
        << toAssembly(instruction, instruction->getSource(), parameterSize)
        << ", " << toAssembly(instruction, instruction->getDestination(), parameterSize);
+    // os << "\n#mov copy";
 }
 
 void X86_64IRVisitor::visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) {
@@ -268,7 +273,7 @@ baz:
 //            os << "  # " << i << "-th parameter is at " << toAssembly(instruction, parameter.name, parameterSize);
 //        }
 //        i++;
-//    }
+ //   }
 }
 
 void X86_64IRVisitor::visitEpilog(caramel::ir::EpilogInstruction *instruction, std::ostream &os) {
@@ -294,6 +299,8 @@ void X86_64IRVisitor::visitLdConst(caramel::ir::LDConstInstruction *instruction,
 
     os << "  movl    " << toAssembly(instruction, instruction->getValue())
        << ", " << toAssembly(instruction, instruction->getDestination());
+
+    // os << "\n#mov ldconst";
 }
 
 void X86_64IRVisitor::visitNope(caramel::ir::NopInstruction *instruction, std::ostream &os) {
@@ -363,6 +370,8 @@ void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, s
     os << "  mov" + getSizeSuffix(returnSize) + "    "
        << toAssembly(instruction, instruction->getSource(), returnSize)
        << ", " << toAssembly(instruction, IR::ACCUMULATOR, 32); // TODO: See TODO in getSizeSuffix()
+
+    // os << "\n#mov return";
 }
 
 void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, std::ostream &os) {
@@ -372,6 +381,8 @@ void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, 
     if( index < 6 ) {
         os << "  mov" + getSizeSuffix(32) + "    " << toAssembly(instruction, instruction->getValue(), 32)
            << ", " << getFunctionCallRegister(index, 32) << '\n';
+
+      //  os << "\n#mov call";
     } else {
         os << "  pushq   " << toAssembly(instruction, instruction->getValue(), 64) << '\n';
     }

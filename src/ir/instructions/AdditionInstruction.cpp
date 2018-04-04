@@ -31,14 +31,10 @@ AdditionInstruction::AdditionInstruction(
         std::string const &returnName,
         std::shared_ptr<ir::BasicBlock> const &parentBlock,
         ast::PrimaryType::Ptr const &type
-) : IR(Operation::add, parentBlock, type), mReturnName{returnName} {}
+) : IR(returnName, Operation::add, parentBlock, type) {}
 
 void AdditionInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitAddition(this, os);
-}
-
-std::string AdditionInstruction::getReturnName() const {
-    return mReturnName;
 }
 
 } // namespace caramel::ir

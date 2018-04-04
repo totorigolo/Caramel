@@ -7,16 +7,16 @@
 
 namespace caramel::ir {
 
-GTEInstruction::GTEInstruction(std::string const &returnName,
-                                            const std::shared_ptr<caramel::ir::BasicBlock> &parentBlock,
-                                            const caramel::ast::PrimaryType::Ptr &type) :
-
-IR(returnName,
-        parentBlock, Operation::cmp_ge,
-        type
+GTEInstruction::GTEInstruction(
+        std::string const &returnName,
+        const std::shared_ptr<caramel::ir::BasicBlock> &parentBlock,
+        const caramel::ast::PrimaryType::Ptr &type
+) : IR(returnName,
+       Operation::cmp_ge, parentBlock,
+       type
 ) {}
 
-void GTEInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream & os) {
+void GTEInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitGTE(this, os);
 }
 

@@ -79,12 +79,18 @@ public:
             std::shared_ptr<BasicBlock> parentBlock,
             ast::PrimaryType::Ptr type
     );
+    explicit IR(
+            std::string const& name,
+            Operation operation,
+            std::shared_ptr<BasicBlock> parentBlock,
+            ast::PrimaryType::Ptr type
+    );
 
     virtual ~IR() = default;
 
     virtual Operation getOperation() const;
 
-    virtual std::string getReturnName() const = 0;
+    virtual std::string getReturnName() const;
 
     virtual bool isEmpty() const { return false; }
 
@@ -97,6 +103,7 @@ public:
     virtual void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) = 0;
 
 private:
+    std::string mName;
     Operation mOperation;
     std::shared_ptr<BasicBlock> mParentBlock;
     ast::PrimaryType::Ptr mType;

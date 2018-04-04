@@ -11,6 +11,7 @@ int32_t main() {
     int32_t a, b = 0;
     int32_t c = '!';
     foo('\n', 'a', 'd');
+    putchar('d');
     return 0;
 }
 

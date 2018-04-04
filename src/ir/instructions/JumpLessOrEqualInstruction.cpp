@@ -31,7 +31,7 @@ JumpLessOrEqualInstruction::JumpLessOrEqualInstruction(
         std::shared_ptr<ir::BasicBlock> const &parentBlock,
         std::string dest
 ) : IR("",
-       parentBlock, Operation::jmp_le,
+       Operation::jmp_le, parentBlock,
        ast::Void_t::Create()),
     mDest{std::move(dest)}{}
 

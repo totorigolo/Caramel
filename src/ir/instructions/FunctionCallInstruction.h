@@ -42,8 +42,6 @@ public:
 public:
     std::string getFunctionName() const;
 
-    std::string getReturnName() const override;
-
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:

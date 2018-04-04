@@ -31,10 +31,10 @@ CopyInstruction::CopyInstruction(
         std::shared_ptr<BasicBlock> const &parentBlock,
         ast::PrimaryType::Ptr const &type, std::string const &destination,
         std::string const &source
-) : IR(Operation::copy, parentBlock, type), mDestination{destination}, mSource{source} {}
+) : IR(destination, Operation::copy, parentBlock, type), mSource{source} {}
 
 std::string CopyInstruction::getDestination() {
-    return mDestination;
+    return getReturnName();
 }
 
 std::string CopyInstruction::getSource() {
@@ -43,10 +43,6 @@ std::string CopyInstruction::getSource() {
 
 void CopyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitCopy(this, os);
-}
-
-std::string CopyInstruction::getReturnName() const {
-    return mDestination;
 }
 
 } // namespace caramel::ir

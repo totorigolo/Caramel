@@ -42,13 +42,8 @@ public:
 
     ~AdditionInstruction() override = default;
 
-    std::string getReturnName() const override;
-
 private:
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-private:
-    std::string mReturnName;
 };
 
 } // namespace caramel::ir

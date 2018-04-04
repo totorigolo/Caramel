@@ -31,12 +31,25 @@
 namespace caramel::ir {
 
 IR::IR(
+        std::string const &name,
         Operation operation,
         std::shared_ptr<BasicBlock> parentBlock,
         ast::PrimaryType::Ptr type
-) : mOperation{operation},
+) : mName{name},
+    mOperation{operation},
     mParentBlock{std::move(parentBlock)},
     mType{std::move(type)} {}
+
+IR::IR(
+        Operation operation,
+        std::shared_ptr<BasicBlock> parentBlock,
+        ast::PrimaryType::Ptr type
+) : mName{""},
+    mOperation{operation},
+    mParentBlock{std::move(parentBlock)},
+    mType{std::move(type)} {
+    logger.trace() << "Call without name";
+}
 
 Operation IR::getOperation() const {
     return mOperation;
@@ -52,6 +65,10 @@ std::shared_ptr<BasicBlock> IR::getParentBlock() {
 
 Operation IR::getOperation() {
     return mOperation;
+}
+
+std::string IR::getReturnName() const {
+    return mName;
 }
 
 } // namespace caramel::ir

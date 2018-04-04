@@ -38,11 +38,15 @@ public:
     explicit EmptyInstruction(
             std::shared_ptr<BasicBlock> parentBlock,
             std::shared_ptr<ast::PrimaryType> const &type
-            );
+    );
+
+    explicit EmptyInstruction(
+            std::string const & returnName,
+            std::shared_ptr<BasicBlock> parentBlock,
+            std::shared_ptr<ast::PrimaryType> const &type
+    );
 
     ~EmptyInstruction() override = default;
-
-    std::string getReturnName() const override;
 
     bool isEmpty() const override;
 

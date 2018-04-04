@@ -34,10 +34,6 @@ void NopInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostr
     visitor->visitNope(this, os);
 }
 
-std::string NopInstruction::getReturnName() const {
-    return {};
-}
-
 bool NopInstruction::isEmpty() const {
     return true;
 }

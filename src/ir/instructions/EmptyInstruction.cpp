@@ -33,12 +33,18 @@ EmptyInstruction::EmptyInstruction(
         ast::PrimaryType::Ptr const &type
 ) : IR(Operation::empty, parentBlock, type) {}
 
+EmptyInstruction::EmptyInstruction(
+        std::string const &returnName, std::shared_ptr<BasicBlock> parentBlock,
+        std::shared_ptr<ast::PrimaryType> const &type
+) : IR(
+        returnName,
+        Operation::empty,
+        parentBlock,
+        type
+) {}
+
 void EmptyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitEmpty(this, os);
-}
-
-std::string EmptyInstruction::getReturnName() const {
-    return {};
 }
 
 bool EmptyInstruction::isEmpty() const {

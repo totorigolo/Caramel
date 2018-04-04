@@ -31,9 +31,10 @@ JumpGreaterInstruction::JumpGreaterInstruction(
         std::shared_ptr<ir::BasicBlock> const &parentBlock,
         std::string dest
 ) : IR("",
-       parentBlock, Operation::jmp_gt,
-       ast::Void_t::Create()),
-    mDest{std::move(dest)}{}
+       Operation::jmp_gt, parentBlock,
+       ast::Void_t::Create()
+),
+    mDest{std::move(dest)} {}
 
 void JumpGreaterInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitJumpGreater(this, os);

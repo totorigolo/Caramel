@@ -37,8 +37,6 @@ public:
     explicit EpilogInstruction(std::shared_ptr<BasicBlock> parentBlock);
     ~EpilogInstruction() override = default;
 
-    std::string getReturnName() const override;
-
 public:
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 

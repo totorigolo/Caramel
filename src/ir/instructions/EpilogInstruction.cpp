@@ -35,8 +35,4 @@ void EpilogInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::o
     visitor->visitEpilog(this, os);
 }
 
-std::string EpilogInstruction::getReturnName() const {
-    return {};
-}
-
 } // namespace caramel::ir

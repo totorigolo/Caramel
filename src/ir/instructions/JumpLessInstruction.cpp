@@ -31,7 +31,7 @@ JumpLessInstruction::JumpLessInstruction(
         std::shared_ptr<ir::BasicBlock> const &parentBlock,
         std::string dest
 ) : IR("",
-       parentBlock, Operation::jmp_lt,
+       Operation::jmp_lt, parentBlock,
        ast::Void_t::Create()),
     mDest{std::move(dest)}{}
 

@@ -41,12 +41,9 @@ public:
 
     std::string getValue() const;
 
-    std::string getReturnName() const override;
-
     void accept(std::shared_ptr<IRVisitor> const &visitor,std::ostream &os) override;
 
 private:
-    std::string mDestination;
     std::string mValue;
 };
 

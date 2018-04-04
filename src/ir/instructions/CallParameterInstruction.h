@@ -45,8 +45,6 @@ public:
 
     std::string getValue() const;
 
-    std::string getReturnName() const override;
-
     int getIndex() const;
 
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;

@@ -37,8 +37,4 @@ void PrologInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::o
     visitor->visitProlog(this, os);
 }
 
-std::string PrologInstruction::getReturnName() const {
-    return {};
-}
-
 } // namespace caramel::ir

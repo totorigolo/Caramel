@@ -31,7 +31,7 @@ JumpInstruction::JumpInstruction(
         std::shared_ptr<ir::BasicBlock> const &parentBlock,
         std::string dest
 ) : IR("",
-       parentBlock, Operation::jmp,
+       Operation::jmp, parentBlock,
        ast::Void_t::Create()),
     mDest{std::move(dest)}{}
 

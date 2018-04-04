@@ -30,10 +30,12 @@ namespace caramel::ir {
 JumpEqualInstruction::JumpEqualInstruction(
         std::shared_ptr<ir::BasicBlock> const &parentBlock,
         std::string dest
-) : IR("",
-       parentBlock, Operation::jmp_eq,
-       ast::Void_t::Create()),
-    mDest{std::move(dest)}{}
+) : IR(
+        "",
+        Operation::jmp_eq, parentBlock,
+        ast::Void_t::Create()
+),
+    mDest{std::move(dest)} {}
 
 void JumpEqualInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitJumpEqual(this, os);
