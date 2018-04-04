@@ -32,6 +32,7 @@
 #include "../instructions/FunctionCallInstruction.h"
 #include "../instructions/NopInstruction.h"
 #include "../instructions/ReturnInstruction.h"
+#include "../instructions/AdditionInstruction.h"
 
 
 namespace caramel::ir::x86_64 {
@@ -250,11 +251,23 @@ void X86_64IRVisitor::visitEpilog(caramel::ir::EpilogInstruction *instruction, s
 }
 
 void X86_64IRVisitor::visitAddition(caramel::ir::AdditionInstruction *instruction, std::ostream &os) {
-    logger.trace() << "[x86_64] " << "visiting addition: "; // TODO: complete the trace
+    logger.trace() << "[x86_64] " << "visiting addition: "
+                   << instruction->getLeft() << " + " << instruction->getRight();
 
-    // Todo: create visitAddition
-    CARAMEL_UNUSED(instruction);
-    CARAMEL_UNUSED(os);
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+
+    os << "  mov" + getSizeSuffix(parameterSize) + "    "
+       << toAssembly(instruction, instruction->getLeft(), parameterSize)
+       << ", %edx" << '\n';
+
+    os << "  mov" + getSizeSuffix(parameterSize) + "    "
+       << toAssembly(instruction, instruction->getRight(), parameterSize)
+       << ", %eax" << '\n';
+
+    os << "  add" + getSizeSuffix(parameterSize) + "    "
+       << "%edx"
+       << ", %eax";
+
 }
 
 void X86_64IRVisitor::visitLdConst(caramel::ir::LDConstInstruction *instruction, std::ostream &os) {
