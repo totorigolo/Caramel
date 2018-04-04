@@ -165,17 +165,6 @@ private:
     inline bool isNotDeclared(std::string const &name) { return !isDeclared(name); }
     inline bool isNotDefined(std::string const &name) { return !isDefined(name); }
 
-    std::string buildMismatchSymbolTypeErrorMessage(std::string const &variableName, SymbolType requiredSymbolType);
-    std::string buildMismatchTypeErrorMessage(std::string const &variableName, std::shared_ptr<PrimaryType> const &requiredType);
-    std::string buildUnknownSymbolErrorMessage(std::string const &name);
-    std::string buildUndefinedSymbolErrorMessage(std::string const &name, SymbolType symbolType);
-    std::string buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(const std::string &name, unsigned long declaredSize,
-                                                                                  unsigned long definedSize);
-    std::string buildFunctionDefinitionParameterNameMismatchErrorMessage(const std::string &name, std::string declaredName,
-                                                                         std::string definedName);
-    std::string buildFunctionDefinitionParameterTypeMismatchErrorMessage(std::shared_ptr<PrimaryType> shared_ptr,
-                                                                         std::shared_ptr<PrimaryType> sharedPtr);
-
 private:
     std::map<std::string, Symbol::Ptr> mSymbolMap;
     std::shared_ptr<SymbolTable> mParentTable;

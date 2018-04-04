@@ -100,12 +100,18 @@ VariableSymbol::Ptr SymbolTable::addVariableDefinition(
         Symbol::Ptr recordedSymbol = getSymbol(antlrContext, name);
         if (recordedSymbol->getSymbolType() != SymbolType::VariableSymbol) {
             throw DeclarationMismatchException(
-                    buildMismatchSymbolTypeErrorMessage(name, SymbolType::VariableSymbol)
+                    antlrContext,
+                    name,
+                    SymbolType::VariableSymbol,
+                    mSymbolMap[name]
             );
         }
         if (!recordedSymbol->getType()->equals(primaryType)) {
             throw DeclarationMismatchException(
-                    buildMismatchTypeErrorMessage(name, primaryType)
+                    antlrContext,
+                    name,
+                    primaryType,
+                    mSymbolMap[name]
             );
         }
         recordedSymbol->addDefinition(definition);
@@ -130,7 +136,10 @@ VariableSymbol::Ptr SymbolTable::addVariableUsage(
         if (symbol->getSymbolType() != SymbolType::VariableSymbol) {
             // TODO: Create the right error
             throw DeclarationMismatchException(
-                    buildMismatchSymbolTypeErrorMessage(name, SymbolType::VariableSymbol)
+                    antlrContext,
+                    name,
+                    SymbolType::VariableSymbol,
+                    mSymbolMap[name]
             );
         }
         auto const &variableSymbol = castTo<VariableSymbol::Ptr>(symbol);
@@ -212,12 +221,18 @@ ArraySymbol::Ptr SymbolTable::addArrayDefinition(
         Symbol::Ptr recordedSymbol = getSymbol(antlrContext, name);
         if (recordedSymbol->getSymbolType() != SymbolType::ArraySymbol) {
             throw DeclarationMismatchException(
-                    buildMismatchSymbolTypeErrorMessage(name, SymbolType::ArraySymbol)
+                    antlrContext,
+                    name,
+                    SymbolType::ArraySymbol,
+                    mSymbolMap[name]
             );
         }
         if (!recordedSymbol->getType()->equals(primaryType)) {
             throw DeclarationMismatchException(
-                    buildMismatchTypeErrorMessage(name, primaryType)
+                    antlrContext,
+                    name,
+                    primaryType,
+                    mSymbolMap[name]
             );
         }
         recordedSymbol->addDefinition(definition);
@@ -242,7 +257,10 @@ ArraySymbol::Ptr SymbolTable::addArrayAccess(
         if (symbol->getSymbolType() != SymbolType::ArraySymbol) {
             // TODO: Create the right error
             throw DeclarationMismatchException(
-                    buildMismatchSymbolTypeErrorMessage(name, SymbolType::ArraySymbol)
+                    antlrContext,
+                    name,
+                    SymbolType::ArraySymbol,
+                    mSymbolMap[name]
             );
         }
         auto const &arraySymbol = castTo<ArraySymbol::Ptr>(symbol);
@@ -312,8 +330,8 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDeclaration(
             }
         } else {
             throw FunctionDefinitionNumberOfParametersMismatchError(
-                    buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(name, declaredParameters.size(),
-                                                                                  parameters.size()),
+
+                    name,
                     antlrContext,
                     declaredParameters.size(),
                     parameters.size()
@@ -454,7 +472,10 @@ FunctionSymbol::Ptr SymbolTable::addFunctionCall(
         Symbol::Ptr symbol = getSymbol(antlrContext, name);
         if (symbol->getSymbolType() != SymbolType::FunctionSymbol) {
             throw DeclarationMismatchException(
-                    buildMismatchSymbolTypeErrorMessage(name, SymbolType::FunctionSymbol)
+                    antlrContext,
+                    name,
+                    SymbolType::FunctionSymbol,
+                    mSymbolMap[name]
             );
         }
         auto functionSymbol = castTo<FunctionSymbol::Ptr>(symbol);
@@ -596,38 +617,5 @@ bool SymbolTable::isDefined(const std::string &name) {
     return (thisHasSymbol(name) && mSymbolMap.at(name)->isDefined()) ||
            (getParentTable() && getParentTable()->isDefined(name));
 }
-
-std::string SymbolTable::buildMismatchSymbolTypeErrorMessage(std::string const &variableName,
-                                                             SymbolType requiredSymbolType) {
-    std::stringstream res;
-    res << "Cannot defined a ";
-    switch (requiredSymbolType) {
-        case SymbolType::VariableSymbol:
-            res << "variable";
-            break;
-        case SymbolType::ArraySymbol:
-            res << "array";
-            break;
-        case SymbolType::FunctionSymbol:
-            res << "function";
-            break;
-        case SymbolType::TypeSymbol:
-            res << "type";
-            break;
-    }
-    res << " which has a previous occurrence as a " << mSymbolMap[variableName]->getSymbolType();
-    return res.str();
-}
-
-std::string
-SymbolTable::buildMismatchTypeErrorMessage(std::string const &variableName, PrimaryType::Ptr const &requiredType) {
-    std::stringstream res;
-    res << "Mismatch type for " << variableName << " between the type definition " << requiredType->getIdentifier()
-        << " and declaration type " << mSymbolMap[variableName]->getType()->getIdentifier() << '.';
-    return res.str();
-}
-
-
-
 
 } // namespace caramel::ast
