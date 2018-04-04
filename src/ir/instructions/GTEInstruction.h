@@ -21,45 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
 */
-
-
 #pragma once
 
-#include "ControlBlock.h"
-#include "../expressions/Expression.h"
+#include <memory>
+#include "../IR.h"
 
+namespace caramel::ir {
 
-namespace caramel::ast {
-
-class IfBlock : public ControlBlock {
+class GTEInstruction : public IR {
 public:
+    using Ptr = std::shared_ptr<GTEInstruction>;
+    using WeakPtr = std::weak_ptr<GTEInstruction>;
 
-    using Ptr = std::shared_ptr<IfBlock>;
-    using WeakPtr = std::weak_ptr<IfBlock>;
-
-    IfBlock(
-            std::shared_ptr<caramel::ast::Expression> const &condition,
-            std::vector<std::shared_ptr<caramel::ast::Statement>> const &thenBlock,
-            std::vector<std::shared_ptr<caramel::ast::Statement>> const &elseBlock,
-            antlr4::Token *startToken
+public:
+    explicit GTEInstruction(
+            std::string const &returnName,
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            ast::PrimaryType::Ptr const & type
     );
 
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnABasicBlock() const override;
-
-    std::shared_ptr<ir::BasicBlock> getBasicBlock(ir::CFG *controlFlow) override;
+~GTEInstruction() override  = default;
 
 private:
-    std::shared_ptr<caramel::ast::Expression> mCondition;
-    std::vector<
-            std::shared_ptr<caramel::ast::Statement>
-    > mThenBlock;
-    std::vector<
-            std::shared_ptr<caramel::ast::Statement>
-    > mElseBlock;
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream & os);
 
 };
 
-} // namespace caramel::ast
+} // namespace caramel::ir

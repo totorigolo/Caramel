@@ -22,44 +22,25 @@
  * SOFTWARE.
 */
 
+#include "JumpEqualInstruction.h"
+#include "../IRVisitor.h"
 
-#pragma once
+namespace caramel::ir {
 
-#include "ControlBlock.h"
-#include "../expressions/Expression.h"
+JumpEqualInstruction::JumpEqualInstruction(
+        std::shared_ptr<ir::BasicBlock> const &parentBlock,
+        std::string dest
+) : IR("",
+       parentBlock, Operation::jmp_eq,
+       ast::Void_t::Create()),
+    mDest{std::move(dest)}{}
 
+void JumpEqualInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitJumpEqual(this, os);
+}
 
-namespace caramel::ast {
+const std::string &JumpEqualInstruction::getDest() const {
+    return mDest;
+}
 
-class IfBlock : public ControlBlock {
-public:
-
-    using Ptr = std::shared_ptr<IfBlock>;
-    using WeakPtr = std::weak_ptr<IfBlock>;
-
-    IfBlock(
-            std::shared_ptr<caramel::ast::Expression> const &condition,
-            std::vector<std::shared_ptr<caramel::ast::Statement>> const &thenBlock,
-            std::vector<std::shared_ptr<caramel::ast::Statement>> const &elseBlock,
-            antlr4::Token *startToken
-    );
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnABasicBlock() const override;
-
-    std::shared_ptr<ir::BasicBlock> getBasicBlock(ir::CFG *controlFlow) override;
-
-private:
-    std::shared_ptr<caramel::ast::Expression> mCondition;
-    std::vector<
-            std::shared_ptr<caramel::ast::Statement>
-    > mThenBlock;
-    std::vector<
-            std::shared_ptr<caramel::ast::Statement>
-    > mElseBlock;
-
-};
-
-} // namespace caramel::ast
+} // namespace caramel::ir

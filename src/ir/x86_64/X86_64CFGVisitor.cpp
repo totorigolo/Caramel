@@ -36,6 +36,13 @@ void X86_64CFGVisitor::generateAssembly(std::shared_ptr<ir::CFG> const &controlF
 
     for(BasicBlock::Ptr const &bb : controlFlowGraph->getBasicBlocks()) {
         mBasicBlockVisitor->generateAssembly(bb, os);
+        if(nullptr != bb->getNextWhenTrue()) {
+            mBasicBlockVisitor->generateAssembly(bb->getNextWhenTrue(), os);
+        }
+
+        if(nullptr != bb->getNextWhenFalse()) {
+            mBasicBlockVisitor->generateAssembly(bb->getNextWhenFalse(), os);
+        }
     }
 
     os << std::endl;

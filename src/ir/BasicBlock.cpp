@@ -45,6 +45,14 @@ std::shared_ptr<BasicBlock> BasicBlock::getNextWhenFalse() const {
     return mExitWhenFalse;
 }
 
+void BasicBlock::setMExitWhenTrue(const std::shared_ptr<BasicBlock> &ExitWhenTrue) {
+    mExitWhenTrue = ExitWhenTrue;
+}
+
+void BasicBlock::setMExitWhenFalse(const std::shared_ptr<BasicBlock> &ExitWhenFalse) {
+    mExitWhenFalse = ExitWhenFalse;
+}
+
 std::string BasicBlock::addInstruction(std::shared_ptr<IR> const &instruction) {
     if (!instruction->isEmpty()) {
         mInstructions.push_back(instruction);
@@ -88,5 +96,18 @@ long BasicBlock::addSymbol(std::string const &symbolName, ast::PrimaryType::Ptr 
 long BasicBlock::getSymbolIndex(std::string const &symbolName) {
     return mCfg->getSymbolIndex(mID, symbolName);
 }
+
+std::string BasicBlock::getNextNumberName() {
+    long tmp = mNextNumberName;
+    mNextNumberName++;
+    return ".L" + std::to_string(tmp);
+}
+
+void BasicBlock::addInstructions(std::shared_ptr<BasicBlock> const &child) {
+    std::move(child->mInstructions.begin(), child->mInstructions.end(), std::back_inserter(mInstructions));
+}
+
+long BasicBlock::mNextNumberName = 0;
+
 
 } // namespace caramel::ir

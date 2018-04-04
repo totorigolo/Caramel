@@ -45,12 +45,20 @@ enum class Operation {
     cmp_eq,
     cmp_lt,
     cmp_le,
+    cmp_ge,
+    cmp_gt,
     pushq,
     movq,
     ret,
     prolog,
     leave,
-    nope
+    nope,
+    jmp,
+    jmp_eq,
+    jmp_lt,
+    jmp_le,
+    jmp_ge,
+    jmp_gt
 };
 
 class IR {
@@ -87,6 +95,8 @@ public:
     ast::PrimaryType::Ptr getType() const;
 
     std::shared_ptr<BasicBlock> getParentBlock();
+
+    Operation getOperation();
 
     virtual void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) = 0;
 

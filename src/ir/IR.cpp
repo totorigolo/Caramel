@@ -64,4 +64,8 @@ std::shared_ptr<BasicBlock> IR::getParentBlock() {
     return mParentBlock.lock();
 }
 
+Operation IR::getOperation() {
+    return mOperation;
+}
+
 } // namespace caramel::ir

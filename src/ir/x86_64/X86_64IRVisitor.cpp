@@ -361,4 +361,35 @@ void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, s
        << ", " << toAssembly(instruction, IR::ACCUMULATOR, 32); // TODO: See TODO in getSizeSuffix()
 }
 
+void X86_64IRVisitor::visitJump(JumpInstruction *instruction, std::ostream &os) {
+
+
+}
+
+void X86_64IRVisitor::visitJumpEqual(JumpEqualInstruction *instruction, std::ostream &os) {
+
+}
+
+void X86_64IRVisitor::visitJumpLess(JumpLessInstruction *instruction, std::ostream &os) {
+
+}
+
+void X86_64IRVisitor::visitJumpLessOrEqual(JumpLessOrEqualInstruction *instruction, std::ostream &os) {
+
+}
+
+void X86_64IRVisitor::visitJumpGreaterOrEqual(JumpGreaterOrEqualInstruction *instruction, std::ostream &os) {
+
+}
+
+void X86_64IRVisitor::visitJumpGreater(JumpGreaterInstruction *instruction, std::ostream &os) {
+
+}
+
+void X86_64IRVisitor::visitGTE(GTEInstruction *instruction, std::ostream &os) {
+
+}
+
+
+
 } // namespace caramel::ir::x86_64

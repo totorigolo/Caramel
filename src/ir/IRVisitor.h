@@ -38,6 +38,13 @@ class LDConstInstruction;
 class FunctionCallInstruction;
 class NopInstruction;
 class ReturnInstruction;
+class JumpInstruction;
+class JumpEqualInstruction;
+class JumpLessInstruction;
+class JumpLessOrEqualInstruction;
+class JumpGreaterOrEqualInstruction;
+class JumpGreaterInstruction;
+class GTEInstruction;
 
 class IRVisitor {
 public:
@@ -73,7 +80,7 @@ public:
     ) = 0;
 
     virtual void visitNope(
-            NopInstruction *instruction,
+            NopInstruction *instjump_eqruction,
             std::ostream &os
     ) = 0;
 
@@ -84,6 +91,41 @@ public:
 
     virtual void visitReturn(
             ReturnInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitJump(
+            JumpInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitJumpEqual(
+            JumpEqualInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitJumpLess(
+            JumpLessInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitJumpLessOrEqual(
+            JumpLessOrEqualInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitJumpGreaterOrEqual(
+            JumpGreaterOrEqualInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitJumpGreater(
+            JumpGreaterInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitGTE(
+            GTEInstruction *instruction,
             std::ostream &os
     ) = 0;
 
