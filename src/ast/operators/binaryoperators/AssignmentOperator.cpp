@@ -45,7 +45,6 @@ std::shared_ptr<ir::IR> AssignmentOperator::buildIR(
     std::string rvalue = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
 
     std::shared_ptr<ir::CopyInstruction> instr = std::make_shared<ir::CopyInstruction>(
-            lvalue,
             currentBasicBlock,
             PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType()),
             lvalue,

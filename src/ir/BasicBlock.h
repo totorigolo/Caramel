@@ -59,9 +59,17 @@ public:
     long addSymbol(std::string const &symbolName, ast::PrimaryType::Ptr type, long index);
     long getSymbolIndex(std::string const &symbolName);
 
+    void setMExitWhenTrue(const std::shared_ptr<BasicBlock> &ExitWhenTrue);
+    void setMExitWhenFalse(const std::shared_ptr<BasicBlock> &ExitWhenFalse);
+
     CFG * getCFG();
 
     size_t getId();
+
+    static std::string getNextNumberName();
+
+    void addInstructions(std::shared_ptr<BasicBlock> const &child);
+
 
 private:
     size_t mID;
@@ -77,6 +85,10 @@ private:
     std::string mLabelName;
     CFG *mCfg;
     std::vector<std::shared_ptr<IR>> mInstructions;
+    std::map<std::string, int> mSymbolsIndex;
+
+    static long mNextNumberName;
+
 };
 
 } // namespace caramel::ir

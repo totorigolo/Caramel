@@ -70,6 +70,7 @@ std::string
 DeclarationMismatchException::buildMismatchTypeErrorMessage(std::string const &variableName,
                                                             std::shared_ptr<PrimaryType> const &requiredType,
                                                             std::shared_ptr<ast::Symbol> symbol) {
+    //TODO never trigered in tests
     std::stringstream res;
     res << "Mismatch type for " << variableName << " between the type definition " << requiredType->getIdentifier()
         << " and declaration type " <<symbol->getType()->getIdentifier() << '.';

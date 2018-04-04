@@ -29,7 +29,7 @@ namespace caramel::ir {
 
 EpilogInstruction::EpilogInstruction(
         std::shared_ptr<BasicBlock> parentBlock
-) : IR("", parentBlock, Operation::leave, ast::Void_t::Create()) {}
+) : IR(Operation::epilog, parentBlock, ast::Void_t::Create()) {}
 
 void EpilogInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitEpilog(this, os);

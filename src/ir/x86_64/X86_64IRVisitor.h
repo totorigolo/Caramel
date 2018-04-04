@@ -60,6 +60,22 @@ public:
 
     void visitReturn(caramel::ir::ReturnInstruction *instruction, std::ostream &os) override;
 
+    void visitJump(JumpInstruction *instruction, std::ostream &os) override;
+
+    void visitJumpEqual(JumpEqualInstruction *instruction, std::ostream &os) override;
+
+    void visitJumpLess(JumpLessInstruction *instruction, std::ostream &os) override;
+
+    void visitJumpLessOrEqual(JumpLessOrEqualInstruction *instruction, std::ostream &os) override;
+
+    void visitJumpGreaterOrEqual(JumpGreaterOrEqualInstruction *instruction, std::ostream &os) override;
+
+    void visitJumpGreater(JumpGreaterInstruction *instruction, std::ostream &os) override;
+
+    void visitGTE(GTEInstruction *instruction, std::ostream &os) override;
+
+    void visitCallParameter(CallParameterInstruction *instruction, std::ostream &os) override;
+
 private:
     std::string address(std::string const &symbol);
     std::string registerToAssembly(std::string const &register_, size_t bitSize = 32U);

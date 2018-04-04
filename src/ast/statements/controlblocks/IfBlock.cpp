@@ -23,6 +23,15 @@
 */
 
 #include "IfBlock.h"
+#include "../../../ir/CFG.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../ir/IR.h"
+#include "../../../ir/instructions/JumpEqualInstruction.h"
+#include "../../../ir/instructions/JumpLessInstruction.h"
+#include "../../../ir/instructions/JumpLessOrEqualInstruction.h"
+#include "../../../ir/instructions/JumpInstruction.h"
+#include "../../../ir/instructions/JumpGreaterInstruction.h"
+#include "../../../ir/instructions/JumpGreaterOrEqualInstruction.h"
 
 
 namespace caramel::ast {
@@ -57,6 +66,96 @@ void IfBlock::visitChildrenAstDot() {
         addEdge(thisId() + 2, elseStatement->thisId());
         elseStatement->acceptAstDotVisit();
     }
+}
+
+
+
+std::shared_ptr<ir::BasicBlock> IfBlock::getBasicBlock(
+        ir::CFG *controlFlow
+) {
+    caramel::ir::BasicBlock::Ptr bb = controlFlow->generateBasicBlock();
+
+
+    if (mCondition->shouldReturnAnIR()) {
+        bb->addInstruction(mCondition->getIR(bb));
+    } else if (mCondition->shouldReturnABasicBlock()) {
+        bb->addInstructions(mCondition->getBasicBlock(controlFlow));
+    }
+
+//    ir::Operation conditionOperation = bb->getInstructions().back()->getOperation();
+
+
+    std::string bbElseName = caramel::ir::BasicBlock::getNextNumberName();
+
+//    ir::IR::Ptr jumpInstructionElse;
+//    if (ir::Operation::cmp_eq == conditionOperation) {
+//        jumpInstructionElse = std::make_shared<ir::JumpEqualInstruction>(bb, bbElseName);
+//    } else if (ir::Operation::cmp_lt == conditionOperation) {
+//        jumpInstructionElse = std::make_shared<ir::JumpLessInstruction>(bb, bbElseName);
+//    } else if (ir::Operation::cmp_le == conditionOperation) {
+//        jumpInstructionElse = std::make_shared<ir::JumpLessOrEqualInstruction>(bb, bbElseName);
+//    } else if (ir::Operation::cmp_gt == conditionOperation) {
+//        jumpInstructionElse = std::make_shared<ir::JumpGreaterInstruction>(bb, bbElseName);
+//    } else if (ir::Operation::cmp_ge == conditionOperation) {
+//        jumpInstructionElse = std::make_shared<ir::JumpGreaterOrEqualInstruction>(bb, bbElseName);
+//    } else {
+//        jumpInstructionElse = std::make_shared<ir::JumpInstruction>(bb, bbElseName); // FIXME : Should not be the case
+//    }
+//    bb->addInstruction(jumpInstructionElse);
+
+
+    std::string bbThenName = caramel::ir::BasicBlock::getNextNumberName();
+    caramel::ir::BasicBlock::Ptr bbThen = controlFlow->generateBasicBlock(bbThenName);
+
+
+    for(caramel::ast::Statement::Ptr const &statement : mThenBlock){
+        if(statement->shouldReturnAnIR()) {
+            bbThen->addInstruction(statement->getIR(bbThen));
+        } else if (statement->shouldReturnABasicBlock()){
+            bbThen->addInstructions(statement->getBasicBlock(controlFlow));
+        }
+    }
+
+    std::string bbEndName = caramel::ir::BasicBlock::getNextNumberName();
+
+//    ir::IR::Ptr jumpInstructionEnd = std::make_shared<ir::JumpInstruction>(bb, bbEndName);
+//    bb->addInstruction(jumpInstructionEnd);
+
+    caramel::ir::BasicBlock::Ptr bbElse = controlFlow->generateBasicBlock(bbElseName);
+
+
+    caramel::ir::BasicBlock::Ptr bbEnd = controlFlow->generateBasicBlock(bbEndName);
+
+    if(mElseBlock.empty()) {
+
+        bb->setMExitWhenFalse(bbEnd);
+
+    } else {
+        for(caramel::ast::Statement::Ptr const &statement : mElseBlock){
+            if(statement->shouldReturnAnIR()) {
+                bbElse->addInstruction(statement->getIR(bbElse));
+            } else if (statement->shouldReturnABasicBlock()){
+                bbElse->addInstructions(statement->getBasicBlock(controlFlow));
+            }
+        }
+
+        bb->setMExitWhenFalse(bbElse);
+        bbElse->setMExitWhenTrue(bbEnd);
+    }
+
+
+    bb->setMExitWhenTrue(bbThen);
+    bbThen->setMExitWhenTrue(bbEnd);
+ //   controlFlow->addBasicBlock(bb);
+
+    //bbElse->addInstruction(jumpInstructionEnd);
+
+
+    return bb;
+}
+
+bool IfBlock::shouldReturnABasicBlock() const {
+    return true;
 }
 
 } // namespace caramel::ast

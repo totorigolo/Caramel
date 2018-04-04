@@ -22,38 +22,26 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "../IR.h"
+#include "JumpGreaterInstruction.h"
+#include "../IRVisitor.h"
 
 namespace caramel::ir {
 
-class AdditionInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<AdditionInstruction>;
-    using WeakPtr = std::shared_ptr<AdditionInstruction>;
+JumpGreaterInstruction::JumpGreaterInstruction(
+        std::shared_ptr<ir::BasicBlock> const &parentBlock,
+        std::string dest
+) : IR("",
+       Operation::jmp_gt, parentBlock,
+       ast::Void_t::Create()
+),
+    mDest{std::move(dest)} {}
 
-public:
-    explicit AdditionInstruction(
-            std::string const &returnName,
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const &type,
-            std::string const &left,
-            std::string const &right
-    );
+void JumpGreaterInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitJumpGreater(this, os);
+}
 
-    ~AdditionInstruction() override = default;
-
-    const std::string &getLeft() const;
-
-    const std::string &getRight() const;
-
-private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-private:
-    std::string mLeft;
-    std::string mRight;
-};
+const std::string &JumpGreaterInstruction::getDest() const {
+    return mDest;
+}
 
 } // namespace caramel::ir

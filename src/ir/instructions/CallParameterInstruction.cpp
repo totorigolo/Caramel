@@ -22,38 +22,27 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "../IR.h"
+#include "CallParameterInstruction.h"
+#include "../IRVisitor.h"
 
 namespace caramel::ir {
 
-class AdditionInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<AdditionInstruction>;
-    using WeakPtr = std::shared_ptr<AdditionInstruction>;
+CallParameterInstruction::CallParameterInstruction(
+        std::shared_ptr<BasicBlock> parentBlock,
+        int index,
+        ast::PrimaryType::Ptr type, std::string const &value
+) : IR(value, Operation::movq, parentBlock, type), mIndex{index}, mValue{value} {}
 
-public:
-    explicit AdditionInstruction(
-            std::string const &returnName,
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const &type,
-            std::string const &left,
-            std::string const &right
-    );
+std::string CallParameterInstruction::getValue() const {
+    return mValue;
+}
 
-    ~AdditionInstruction() override = default;
+int CallParameterInstruction::getIndex() const {
+    return mIndex;
+}
 
-    const std::string &getLeft() const;
-
-    const std::string &getRight() const;
-
-private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-private:
-    std::string mLeft;
-    std::string mRight;
-};
+void CallParameterInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitCallParameter(this, os);
+}
 
 } // namespace caramel::ir

@@ -68,6 +68,8 @@ antlrcpp::Any ASTVisitor::visitIfBlock(CaramelParser::IfBlockContext *ctx) {
         std::vector<Statement::Ptr> elseIfBlockVector;
         elseIfBlockVector.push_back(elseIfBlock);
         ifBlock = std::make_shared<IfBlock>(expression, thenBlock, elseIfBlockVector, ctx->start);
+    } else {
+        ifBlock = std::make_shared<IfBlock>(expression, thenBlock, std::vector<Statement::Ptr>(), ctx->start);
     }
 
     return ifBlock;

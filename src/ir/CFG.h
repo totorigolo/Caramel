@@ -44,8 +44,10 @@ public:
 
 public:
 
-    std::shared_ptr<BasicBlock> generateBasicBlock(std::string const &entryName);
+    std::shared_ptr<BasicBlock> generateBasicBlock(std::string const &entryName = "");
     std::shared_ptr<BasicBlock> generateFunctionBlock(std::string const &entryName);
+    std::shared_ptr<BasicBlock> generateNamedBasicBlock();
+
 
     void addBasicBlock(
             std::shared_ptr<BasicBlock> basicBlock

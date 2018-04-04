@@ -25,35 +25,36 @@
 #pragma once
 
 #include "../IR.h"
+#include <memory>
 
 namespace caramel::ir {
 
-class AdditionInstruction : public IR {
+class CallParameterInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<AdditionInstruction>;
-    using WeakPtr = std::shared_ptr<AdditionInstruction>;
+    using Ptr = std::shared_ptr<CallParameterInstruction>;
+    using WeakPtr = std::weak_ptr<CallParameterInstruction>;
 
-public:
-    explicit AdditionInstruction(
-            std::string const &returnName,
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const &type,
-            std::string const &left,
-            std::string const &right
+    explicit CallParameterInstruction(
+            std::shared_ptr<BasicBlock> parentBlock,
+            int index,
+            ast::PrimaryType::Ptr type,
+            std::string const &value
     );
 
-    ~AdditionInstruction() override = default;
+    ~CallParameterInstruction() override = default;
 
-    const std::string &getLeft() const;
+    std::string getValue() const;
 
-    const std::string &getRight() const;
+    int getIndex() const;
 
-private:
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
-    std::string mLeft;
-    std::string mRight;
+    int mIndex;
+    std::string mValue;
 };
 
 } // namespace caramel::ir
+
+
+

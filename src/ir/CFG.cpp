@@ -171,5 +171,9 @@ std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
        << " - mBasicBlocks: " << cfg.mBasicBlocks.size() << " BBs";
     return os;
 }
+std::shared_ptr<BasicBlock> CFG::generateNamedBasicBlock() {
+    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, this, BasicBlock::getNextNumberName());
+}
+
 
 } // namespace caramel::ir

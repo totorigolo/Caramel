@@ -45,12 +45,21 @@ enum class Operation {
     cmp_eq,
     cmp_lt,
     cmp_le,
+    cmp_ge,
+    cmp_gt,
     pushq,
     movq,
     ret,
     prolog,
+    epilog,
     leave,
-    nope
+    nope,
+    jmp,
+    jmp_eq,
+    jmp_lt,
+    jmp_le,
+    jmp_ge,
+    jmp_gt
 };
 
 class IR {
@@ -66,34 +75,37 @@ public:
 
 public:
     explicit IR(
+            Operation operation,
             std::shared_ptr<BasicBlock> parentBlock,
-            Operation op,
             ast::PrimaryType::Ptr type
     );
-
     explicit IR(
-            std::string returnName,
+            std::string const& name,
+            Operation operation,
             std::shared_ptr<BasicBlock> parentBlock,
-            Operation op,
             ast::PrimaryType::Ptr type
     );
 
     virtual ~IR() = default;
 
-    std::string getReturnName();
+    virtual Operation getOperation() const;
 
-    bool isEmpty() const;
+    virtual std::string getReturnName() const;
+
+    virtual bool isEmpty() const { return false; }
 
     ast::PrimaryType::Ptr getType() const;
 
     std::shared_ptr<BasicBlock> getParentBlock();
 
+    Operation getOperation();
+
     virtual void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) = 0;
 
 private:
-    std::string mReturnName;
-    std::weak_ptr<BasicBlock> mParentBlock;
+    std::string mName;
     Operation mOperation;
+    std::shared_ptr<BasicBlock> mParentBlock;
     ast::PrimaryType::Ptr mType;
 };
 
