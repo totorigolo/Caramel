@@ -28,6 +28,7 @@
 #include "../../../ir/IR.h"
 #include "../../../ir/instructions/PrologInstruction.h"
 #include "../../../ir/instructions/EpilogInstruction.h"
+#include "../../../ir/instructions/CopyInstruction.h"
 
 
 namespace caramel::ast {
@@ -64,7 +65,20 @@ std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
     controlFlow->enterFunction(bb->getId());
     bb->addInstruction(std::make_shared<ir::PrologInstruction>(bb, 42)); // FIXME: Function definition IR
 
-    //
+    // Bind register and stack to parameters
+    size_t rspOffset = 0;
+    auto parameters = mSymbol->getParameters();
+    for(int i = 0; i < parameters.size(); i++) {
+        if(i < 6) {
+            bb->addInstruction(
+                    std::make_shared<ir::CopyInstruction>(bb, parameters[i].primaryType, parameters[i].name, i)
+            );
+        } else {
+            logger.fatal() << "Unaccepted arguments (out of bound)";
+            exit(1);
+        }
+
+    }
 
     for (ast::Statement::Ptr const &statement : mContext->getStatements()) {
         if (statement->shouldReturnAnIR()) {
