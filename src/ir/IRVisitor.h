@@ -39,6 +39,7 @@ class PrologInstruction;
 class EpilogInstruction;
 
 class AdditionInstruction;
+class SubtractionInstruction;
 
 class LDConstInstruction;
 
@@ -54,6 +55,8 @@ class JumpLessOrEqualInstruction;
 class JumpGreaterOrEqualInstruction;
 class JumpGreaterInstruction;
 class GTEInstruction;
+class PushInstruction;
+class PopInstruction;
 
 class IRVisitor {
 public:
@@ -140,6 +143,21 @@ public:
 
     virtual void visitCallParameter(
             CallParameterInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitSubtraction(
+            SubtractionInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitPush(
+            PushInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitPop(
+            PopInstruction *instruction,
             std::ostream &os
     ) = 0;
 

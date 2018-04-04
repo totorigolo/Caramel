@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,38 +22,39 @@
  * SOFTWARE.
 */
 
-#pragma once
+/*
+ * Multi-line comment.
+ */
+#include <stdio.h>
+#include <stdint.h>
 
-#include "../IR.h"
+int32_t main() {
+    int32_t a = '0';
+    int32_t b;
+    putchar(a);
+    putchar('\n');
 
-namespace caramel::ir {
+    b = a + 1;
+    putchar(b);
+    putchar('\n');
 
-class AdditionInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<AdditionInstruction>;
-    using WeakPtr = std::shared_ptr<AdditionInstruction>;
+    b = b + 2 - 1;
+    putchar(b);
+    putchar('\n');
 
-public:
-    explicit AdditionInstruction(
-            std::string const &returnName,
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const &type,
-            std::string left,
-            std::string right
-    );
+    b = ((b + 3) - 3) + 1;
+    putchar(b);
+    putchar('\n');
 
-    ~AdditionInstruction() override = default;
+    b = b + (1 + 2 + 3 - (5 + 1)) + 1;
+    putchar(b);
+    putchar('\n');
 
-    std::string getLeft() const;
+//    putchar(a);
 
-    std::string getRight() const;
+//    b = a - 1;
+//    putchar(b);
+//    putchar('\n');
 
-private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-private:
-    std::string mLeft;
-    std::string mRight;
-};
-
-} // namespace caramel::ir
+    return 0;
+}

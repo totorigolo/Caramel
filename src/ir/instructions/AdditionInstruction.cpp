@@ -31,19 +31,19 @@ AdditionInstruction::AdditionInstruction(
         std::string const &returnName,
         std::shared_ptr<ir::BasicBlock> const &parentBlock,
         ast::PrimaryType::Ptr const &type,
-        std::string const &left,
-        std::string const &right
+        std::string left,
+        std::string right
 ) : IR(returnName, Operation::add, parentBlock, type), mLeft{left}, mRight{right} {}
 
 void AdditionInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitAddition(this, os);
 }
 
-const std::string &AdditionInstruction::getLeft() const {
+std::string AdditionInstruction::getLeft() const {
     return mLeft;
 }
 
-const std::string &AdditionInstruction::getRight() const {
+std::string AdditionInstruction::getRight() const {
     return mRight;
 }
 

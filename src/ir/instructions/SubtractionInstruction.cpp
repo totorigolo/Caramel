@@ -22,38 +22,29 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "../IR.h"
+#include "SubtractionInstruction.h"
+#include "../IRVisitor.h"
 
 namespace caramel::ir {
 
-class AdditionInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<AdditionInstruction>;
-    using WeakPtr = std::shared_ptr<AdditionInstruction>;
+SubtractionInstruction::SubtractionInstruction(
+        std::string const &returnName,
+        std::shared_ptr<BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string left,
+        std::string right
+) : IR(returnName, Operation::sub, parentBlock, type), mLeft{left}, mRight{right} {}
 
-public:
-    explicit AdditionInstruction(
-            std::string const &returnName,
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const &type,
-            std::string left,
-            std::string right
-    );
+void SubtractionInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitSubtraction(this, os);
+}
 
-    ~AdditionInstruction() override = default;
+std::string SubtractionInstruction::getLeft() const {
+    return mLeft;
+}
 
-    std::string getLeft() const;
-
-    std::string getRight() const;
-
-private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-private:
-    std::string mLeft;
-    std::string mRight;
-};
+std::string SubtractionInstruction::getRight() const {
+    return mRight;
+}
 
 } // namespace caramel::ir

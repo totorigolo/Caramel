@@ -22,38 +22,24 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "../IR.h"
+#include "PushInstruction.h"
+#include "../IRVisitor.h"
+#include "../../ast/symboltable/PrimaryType.h"
 
 namespace caramel::ir {
 
-class AdditionInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<AdditionInstruction>;
-    using WeakPtr = std::shared_ptr<AdditionInstruction>;
+PushInstruction::PushInstruction(
+        std::shared_ptr<BasicBlock> parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string source
+) : IR(Operation::pushq, parentBlock, type), mSource{source} {}
 
-public:
-    explicit AdditionInstruction(
-            std::string const &returnName,
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const &type,
-            std::string left,
-            std::string right
-    );
+void PushInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitPush(this, os);
+}
 
-    ~AdditionInstruction() override = default;
-
-    std::string getLeft() const;
-
-    std::string getRight() const;
-
-private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-private:
-    std::string mLeft;
-    std::string mRight;
-};
+std::string PushInstruction::getSource() const {
+    return mSource;
+}
 
 } // namespace caramel::ir
