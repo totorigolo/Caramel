@@ -22,39 +22,36 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "SemanticError.h"
-
-#include <ParserRuleContext.h>
-
-#include <stdexcept>
-
-
-namespace caramel::ast {
-class PrimaryType;
-}
+#include "FunctionDefinitionNumberOfParametersMismatchError.h"
 
 
 namespace caramel::exceptions {
 
-using namespace ast;
+FunctionDefinitionNumberOfParametersMismatchError::FunctionDefinitionNumberOfParametersMismatchError(
+        std::string const &name,
+        antlr4::ParserRuleContext *antlrContext,
+        unsigned long declaredSize,
+        unsigned long definedSize)
+        : SemanticError(buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(name, declaredSize, definedSize),
+                        antlrContext) {
+}
 
-class FunctionDefinitionParameterTypeMismatchError : public SemanticError {
-public:
-    FunctionDefinitionParameterTypeMismatchError(antlr4::ParserRuleContext *antlrContext,
-                                                 std::string const &name,
-                                                 std::shared_ptr<PrimaryType> declaredType,
-                                                 std::shared_ptr<PrimaryType> definedType);
+std::string
+FunctionDefinitionNumberOfParametersMismatchError::buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(
+        const std::string &name,
+        unsigned long declaredSize,
+        unsigned long definedSize) {
+    std::stringstream res;
+    res << "The function: "
+        << name
+        << " was previously declared with "
+        << declaredSize
+        << " parameter(s).\n"
+        << "Actual definition has "
+        << definedSize
+        << " parameter(s).";
+    return res.str();
+}
 
-    void note() const override;
-
-protected:
-    std::string buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-            std::string const &name,
-            std::shared_ptr<PrimaryType> declaredType,
-            std::shared_ptr<PrimaryType> declaredName);
-
-};
 
 } // namespace caramel::exceptions

@@ -25,7 +25,6 @@
 #pragma once
 
 #include "SemanticError.h"
-#include "../Console.h"
 
 #include <stdexcept>
 
@@ -37,7 +36,6 @@ enum class SymbolType;
 
 namespace caramel::exceptions {
 
-using namespace colors;
 
 class UndefinedSymbolError : public SemanticError {
 

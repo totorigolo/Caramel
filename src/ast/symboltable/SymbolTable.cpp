@@ -304,6 +304,7 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDeclaration(
                 if (declaredParameterTypeIdentifier != parameterTypeIdentifier) {
                     throw FunctionDefinitionParameterTypeMismatchError(
                             antlrContext,
+                            name,
                             declaredParameters[i].primaryType,
                             parameters[i].primaryType
                     );
@@ -387,6 +388,7 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
                 if (declaredParameterTypeIdentifier != parameterTypeIdentifier) {
                     throw FunctionDefinitionParameterTypeMismatchError(
                             antlrContext,
+                            name,
                             declaredParameters[i].primaryType,
                             parameters[i]->getType()
                     );
@@ -394,8 +396,7 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
             }
         } else {
             throw FunctionDefinitionNumberOfParametersMismatchError(
-                    buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(name, declaredParameters.size(),
-                                                                                  parameters.size()),
+                    name,
                     antlrContext,
                     declaredParameters.size(),
                     parameters.size()
@@ -626,21 +627,6 @@ SymbolTable::buildMismatchTypeErrorMessage(std::string const &variableName, Prim
     return res.str();
 }
 
-std::string
-SymbolTable::buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(const std::string &name,
-                                                                           unsigned long declaredSize,
-                                                                           unsigned long definedSize) {
-    std::stringstream res;
-    res << "The function: "
-        << name
-        << " was previously declared with "
-        << declaredSize
-        << " parameter(s).\n"
-        << "Actual definition has "
-        << definedSize
-        << " parameter(s).";
-    return res.str();
-}
 
 
 

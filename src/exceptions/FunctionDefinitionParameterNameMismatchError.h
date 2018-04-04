@@ -48,5 +48,8 @@ protected:
     std::string buildFunctionDefinitionParameterNameMismatchErrorMessage(const std::string &name,
                                                                          std::string declaredName,
                                                                          std::string definedName);
+private:
+    antlr4::ParserRuleContext *mAntlrContext;
 };
+
 } // namespace caramel::exceptions

@@ -25,36 +25,25 @@
 #pragma once
 
 #include "SemanticError.h"
-#include "../Console.h"
+
+#include <ParserRuleContext.h>
 
 #include <stdexcept>
 
 
 namespace caramel::exceptions {
 
-using namespace ast;
-using namespace colors;
-
 class FunctionDefinitionNumberOfParametersMismatchError : public SemanticError {
 public:
     FunctionDefinitionNumberOfParametersMismatchError(std::string const &message,
                                                       antlr4::ParserRuleContext *antlrContext,
                                                       unsigned long declaredSize,
-                                                      unsigned long definedSize)
-            : SemanticError(message, antlrContext),
-              mDeclaredSize{declaredSize},
-              mDefinedSize{definedSize} {
-    }
-
-    void explain(utils::SourceFileUtil sourceFileUtil) const override {
-        //todo
-        CARAMEL_UNUSED(sourceFileUtil);
-        logger.fatal() << what();
-    }
-
-private:
-    unsigned long mDeclaredSize;
-    unsigned long mDefinedSize;
+                                                      unsigned long definedSize);
+protected:
+    std::string buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(
+            const std::string &name,
+            unsigned long declaredSize,
+            unsigned long definedSize);
 };
 
 } // namespace caramel::exceptions

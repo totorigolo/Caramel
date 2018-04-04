@@ -24,6 +24,7 @@
 
 #include "FunctionDefinitionParameterNameMismatchError.h"
 #include "Common.h"
+#include <Token.h>
 
 
 
@@ -35,13 +36,45 @@ using namespace colors;
                                                  antlr4::ParserRuleContext *antlrContext,
                                                  std::string declaredName,
                                                  std::string definedName)
-            : SemanticError(buildFunctionDefinitionParameterNameMismatchErrorMessage(message, declaredName, definedName), antlrContext){
+            : SemanticError(buildFunctionDefinitionParameterNameMismatchErrorMessage(message, declaredName, definedName), antlrContext),
+                            mAntlrContext{antlrContext}{
     }
 
     void FunctionDefinitionParameterNameMismatchError::explain(utils::SourceFileUtil sourceFileUtil) const {
-        //todo
-        CARAMEL_UNUSED(sourceFileUtil);
-        logger.fatal() << what();
+        // TODO: Create helper functions
+        const int LEFT_MARGIN = 4;
+
+        // Get shorter names for these
+        auto const &start = mAntlrContext->getStart();
+        auto const startLine = start->getLine();
+        auto const startColumn = int(start->getCharPositionInLine());
+        auto const &stop = mAntlrContext->getStop();
+        auto const length = int(mAntlrContext->getText().length());
+
+        // TODO: Handle multi-line statements
+        if (start->getLine() != stop->getLine()) {
+            logger.warning() << "Errors are buggy for multi-line statements.";
+        }
+
+        // Strip the left and right spaces
+        std::string line(sourceFileUtil.getLine(startLine));
+        size_t begin = line.find_first_not_of(' ');
+        size_t end = line.find_last_not_of(' ') + 1;
+        line = line.substr(begin, end - begin);
+
+        std::stringstream posInfoSS;
+        posInfoSS << startLine << ':' << startColumn;
+        std::string posInfo(posInfoSS.str());
+        auto posInfoLength = int(posInfo.length());
+
+        // Print the error
+        std::cerr << red << bold << "[WARNING] " << posInfo << ": " << reset
+                  << what() << std::endl
+                  << posInfo << std::setfill(' ') << std::setw(LEFT_MARGIN) << ""
+                  << line << std::endl
+                  << std::setfill(' ') << std::setw(LEFT_MARGIN + posInfoLength + startColumn - int(begin)) << ""
+                  << bold << red << std::setfill('~') << std::setw(length) << "" << reset
+                  << std::endl;
     }
 
     std::string FunctionDefinitionParameterNameMismatchError::buildFunctionDefinitionParameterNameMismatchErrorMessage(const std::string &name,
