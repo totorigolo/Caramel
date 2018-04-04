@@ -60,11 +60,13 @@ void IfBlock::visitChildrenAstDot() {
         thenStatement->acceptAstDotVisit();
     }
 
-    addNode(thisId() + 2, "Else block");
-    addEdge(thisId(), thisId() + 2);
-    for (const auto &elseStatement : mElseBlock) {
-        addEdge(thisId() + 2, elseStatement->thisId());
-        elseStatement->acceptAstDotVisit();
+    if (!mElseBlock.empty()) {
+        addNode(thisId() + 2, "Else block");
+        addEdge(thisId(), thisId() + 2);
+        for (const auto &elseStatement : mElseBlock) {
+            addEdge(thisId() + 2, elseStatement->thisId());s
+            elseStatement->acceptAstDotVisit();
+        }
     }
 }
 
