@@ -59,7 +59,8 @@ enum class Operation {
     jmp_lt,
     jmp_le,
     jmp_ge,
-    jmp_gt
+    jmp_gt,
+    popq
 };
 
 class IR {
@@ -70,6 +71,8 @@ public:
     static constexpr const char* REGISTER_BASE_POINTER = "%rbp";
     static constexpr const char* REGISTER_STACK_POINTER = "%rsp";
     static constexpr const char* ACCUMULATOR = "%eax";
+    static constexpr const char* ACCUMULATOR_1 = "%r10";
+    static constexpr const char* ACCUMULATOR_2 = "%r11";
     static constexpr const char* REGISTER_10 = "%r10";
     static constexpr const char* REGISTER_11 = "%r11";
 

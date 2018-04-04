@@ -219,7 +219,7 @@ private:
 
 private:
     std::stack<std::shared_ptr<ast::Context>> mContextStack;
-    utils::SourceFileUtil mSourceFileUtil;
+    std::string mSourceFilename;
 
     ast::BinaryOperatorIndex mBinaryOperatorIndex;
     ast::PrefixOperatorIndex mPrefixOperatorIndex;

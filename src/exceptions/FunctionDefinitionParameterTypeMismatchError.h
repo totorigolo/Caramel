@@ -39,18 +39,19 @@ class PrimaryType;
 namespace caramel::exceptions {
 
 using namespace ast;
-using namespace colors;
 
 class FunctionDefinitionParameterTypeMismatchError : public SemanticError {
 public:
     FunctionDefinitionParameterTypeMismatchError(antlr4::ParserRuleContext *antlrContext,
+                                                 std::string const &name,
                                                  std::shared_ptr<PrimaryType> declaredType,
                                                  std::shared_ptr<PrimaryType> definedType);
 
-    void explain(utils::SourceFileUtil sourceFileUtil) const override;
+    void note() const override;
 
 protected:
     std::string buildFunctionDefinitionParameterTypeMismatchErrorMessage(
+            std::string const &name,
             std::shared_ptr<PrimaryType> declaredType,
             std::shared_ptr<PrimaryType> declaredName);
 

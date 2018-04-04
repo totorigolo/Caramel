@@ -22,37 +22,29 @@
  * SOFTWARE.
 */
 
+#include "SubtractionInstruction.h"
 #include "../IRVisitor.h"
-#include "CopyInstruction.h"
 
 namespace caramel::ir {
 
-CopyInstruction::CopyInstruction(
+SubtractionInstruction::SubtractionInstruction(
+        std::string const &returnName,
         std::shared_ptr<BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &type, std::string const &destination,
-        std::string const &source
-) : IR(destination, Operation::copy, parentBlock, type), mSource{source}, mRegisterNumber{-1} {}
+        ast::PrimaryType::Ptr const &type,
+        std::string left,
+        std::string right
+) : IR(returnName, Operation::sub, parentBlock, type), mLeft{left}, mRight{right} {}
 
-CopyInstruction::CopyInstruction(
-        std::shared_ptr<BasicBlock> const &parentBlock,
-                                 caramel::ast::PrimaryType::Ptr const &type, std::string const &destination,
-                                 int registerNumber
-)  : IR(destination, Operation::copy, parentBlock, type), mSource{""}, mRegisterNumber{registerNumber} {}
-
-std::string CopyInstruction::getDestination() {
-    return getReturnName();
+void SubtractionInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitSubtraction(this, os);
 }
 
-std::string CopyInstruction::getSource() {
-    return mSource;
+std::string SubtractionInstruction::getLeft() const {
+    return mLeft;
 }
 
-void CopyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitCopy(this, os);
-}
-
-int CopyInstruction::getRegisterNumber() {
-    return mRegisterNumber;
+std::string SubtractionInstruction::getRight() const {
+    return mRight;
 }
 
 } // namespace caramel::ir

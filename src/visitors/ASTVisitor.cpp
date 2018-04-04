@@ -31,6 +31,7 @@
 #include "../ast/statements/definition/FunctionDefinition.h"
 #include "../ast/statements/declaration/FunctionDeclaration.h"
 #include "../ast/statements/expressions/atomicexpression/Constant.h"
+#include "../exceptions/SemanticError.h"
 
 
 using namespace caramel::ast;
@@ -39,7 +40,7 @@ using namespace caramel::colors;
 using namespace caramel::visitors;
 
 ASTVisitor::ASTVisitor(std::string const &sourceFileName)
-        : mSourceFileUtil{sourceFileName} {
+        : mSourceFilename{sourceFileName} {
 }
 
 antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
@@ -103,7 +104,11 @@ antlrcpp::Any ASTVisitor::visitStatements(CaramelParser::StatementsContext *ctx)
     for (auto statement : ctx->statement()) {
         logger.trace() << "[statements] visiting statement: " << grey << statement->getText();
 
-        antlrcpp::Any r = visitStatement(statement);
+        antlrcpp::Any r;
+        try {r = visitStatement(statement);}
+        catch(caramel::exceptions::SemanticError &semanticError){
+            semanticError.explain(utils::SourceFileUtil(mSourceFilename));
+        }
         if (r.is<Statement::Ptr>()) {
             statements.push_back(r.as<Statement::Ptr>());
             logger.debug() << green << "Yay statement:\n" << statement->getText();
@@ -124,12 +129,26 @@ antlrcpp::Any ASTVisitor::visitBlock(CaramelParser::BlockContext *ctx) {
     std::vector<Statement::Ptr> returnStatements;
 
     if (ctx->declarations()) {
-        std::vector<Statement::Ptr> declarations = visitDeclarations(ctx->declarations());
+        std::vector<Statement::Ptr> declarations;
+        try {
+            std::vector<Statement::Ptr> r = visitDeclarations( ctx->declarations() );
+            declarations = std::move(r); // TODO: Workaround
+        }
+        catch(caramel::exceptions::SemanticError &semanticError){
+            semanticError.explain(utils::SourceFileUtil(mSourceFilename));
+        }
         //currentContext()->addStatements(std::move(declarations));
         std::move(declarations.begin(),declarations.end(),std::back_inserter(returnStatements));
     }
     if (ctx->instructions()) {
-        std::vector<Statement::Ptr> instructions = visitInstructions(ctx->instructions());
+        std::vector<Statement::Ptr> instructions;
+        try {
+            std::vector<Statement::Ptr> i = visitInstructions(ctx->instructions());
+            instructions = std::move(i); // TODO: Workaround
+        }
+        catch(caramel::exceptions::SemanticError &semanticError){
+            semanticError.explain(utils::SourceFileUtil(mSourceFilename));
+        }
         //currentContext()->addStatements(std::move(instructions));
         std::move(instructions.begin(),instructions.end(),std::back_inserter(returnStatements));
     }
@@ -142,7 +161,11 @@ antlrcpp::Any ASTVisitor::visitDeclarations(CaramelParser::DeclarationsContext *
 
     std::vector<Statement::Ptr> declarations;
     for (auto declaration : ctx->declaration()) {
-        antlrcpp::Any r = visitDeclaration(declaration);
+        antlrcpp::Any r;
+        try {r = visitDeclaration(declaration);}
+        catch(caramel::exceptions::SemanticError &semanticError){
+            semanticError.explain(utils::SourceFileUtil(mSourceFilename));
+        }
         if (r.is<Statement::Ptr>()) {
             declarations.push_back(r.as<Statement::Ptr>());
         } else if (r.is<std::vector<Statement::Ptr>>()) {

@@ -22,37 +22,36 @@
  * SOFTWARE.
 */
 
-#include "../IRVisitor.h"
-#include "CopyInstruction.h"
+#include "FunctionDefinitionNumberOfParametersMismatchError.h"
 
-namespace caramel::ir {
 
-CopyInstruction::CopyInstruction(
-        std::shared_ptr<BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &type, std::string const &destination,
-        std::string const &source
-) : IR(destination, Operation::copy, parentBlock, type), mSource{source}, mRegisterNumber{-1} {}
+namespace caramel::exceptions {
 
-CopyInstruction::CopyInstruction(
-        std::shared_ptr<BasicBlock> const &parentBlock,
-                                 caramel::ast::PrimaryType::Ptr const &type, std::string const &destination,
-                                 int registerNumber
-)  : IR(destination, Operation::copy, parentBlock, type), mSource{""}, mRegisterNumber{registerNumber} {}
-
-std::string CopyInstruction::getDestination() {
-    return getReturnName();
+FunctionDefinitionNumberOfParametersMismatchError::FunctionDefinitionNumberOfParametersMismatchError(
+        std::string const &name,
+        antlr4::ParserRuleContext *antlrContext,
+        unsigned long declaredSize,
+        unsigned long definedSize)
+        : SemanticError(buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(name, declaredSize, definedSize),
+                        antlrContext) {
 }
 
-std::string CopyInstruction::getSource() {
-    return mSource;
+std::string
+FunctionDefinitionNumberOfParametersMismatchError::buildFunctionDefinitionNumberOfParametersMismatchErrorMessage(
+        const std::string &name,
+        unsigned long declaredSize,
+        unsigned long definedSize) {
+    std::stringstream res;
+    res << "The function: "
+        << name
+        << " was previously declared with "
+        << declaredSize
+        << " parameter(s).\n"
+        << "Actual definition has "
+        << definedSize
+        << " parameter(s).";
+    return res.str();
 }
 
-void CopyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitCopy(this, os);
-}
 
-int CopyInstruction::getRegisterNumber() {
-    return mRegisterNumber;
-}
-
-} // namespace caramel::ir
+} // namespace caramel::exceptions

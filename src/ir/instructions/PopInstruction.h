@@ -22,37 +22,36 @@
  * SOFTWARE.
 */
 
-#include "../IRVisitor.h"
-#include "CopyInstruction.h"
+#pragma once
+
+#include "../BasicBlock.h"
+#include <memory>
+
 
 namespace caramel::ir {
 
-CopyInstruction::CopyInstruction(
-        std::shared_ptr<BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &type, std::string const &destination,
-        std::string const &source
-) : IR(destination, Operation::copy, parentBlock, type), mSource{source}, mRegisterNumber{-1} {}
+class PopInstruction : public IR {
+public:
+    using Ptr = std::shared_ptr<PopInstruction>;
+    using WeakPtr = std::weak_ptr<PopInstruction>;
 
-CopyInstruction::CopyInstruction(
-        std::shared_ptr<BasicBlock> const &parentBlock,
-                                 caramel::ast::PrimaryType::Ptr const &type, std::string const &destination,
-                                 int registerNumber
-)  : IR(destination, Operation::copy, parentBlock, type), mSource{""}, mRegisterNumber{registerNumber} {}
+    explicit PopInstruction(
+            std::shared_ptr<BasicBlock> parentBlock,
+            std::shared_ptr<ast::PrimaryType> const &type,
+            std::string destination
+    );
 
-std::string CopyInstruction::getDestination() {
-    return getReturnName();
-}
+    ~PopInstruction() override = default;
 
-std::string CopyInstruction::getSource() {
-    return mSource;
-}
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
-void CopyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitCopy(this, os);
-}
+    std::string getDestination() const;
 
-int CopyInstruction::getRegisterNumber() {
-    return mRegisterNumber;
-}
+private:
+    std::string mDestination;
+};
 
 } // namespace caramel::ir
+
+
+

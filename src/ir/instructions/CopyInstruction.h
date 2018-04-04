@@ -40,16 +40,26 @@ public:
             std::string const &source
     );
 
+    CopyInstruction(
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            caramel::ast::PrimaryType::Ptr const &type,
+            std::string const &destination,
+            int registerNumber
+    );
+
     ~CopyInstruction() override = default;
 
     std::string getDestination();
 
     std::string getSource();
 
+    int getRegisterNumber();
+
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
     std::string mSource;
+    int mRegisterNumber;
 };
 
 } // namespace caramel::ir

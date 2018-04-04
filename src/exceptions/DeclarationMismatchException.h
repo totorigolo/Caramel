@@ -22,21 +22,50 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "SemanticError.h"
+
+#include <ParserRuleContext.h>
 
 #include <stdexcept>
 
+
+namespace caramel::ast {
+class Symbol;
+
+enum class SymbolType;
+
+class PrimaryType;
+}
+
+
 namespace caramel::exceptions {
 
-class DeclarationMismatchException : public std::runtime_error {
+using namespace ast;
 
+class DeclarationMismatchException : public SemanticError {
 public:
-    explicit DeclarationMismatchException(const std::string &__arg) : runtime_error(__arg) {}
+    DeclarationMismatchException(antlr4::ParserRuleContext *antlrContext,
+                                 std::string const &name,
+                                 ast::SymbolType const &symbolType,
+                                 std::shared_ptr<ast::Symbol> symbol);
 
-    explicit DeclarationMismatchException(const char * c) : runtime_error(c){}
+    DeclarationMismatchException(antlr4::ParserRuleContext *antlrContext,
+                                 std::string const &name,
+                                 std::shared_ptr<PrimaryType> const &requiredType,
+                                 std::shared_ptr<ast::Symbol> symbol);
 
-    explicit DeclarationMismatchException(const std::runtime_error & ex) : runtime_error(ex){}
+protected:
+    std::string buildMismatchSymbolTypeErrorMessage(
+            std::string const &variableName,
+            ast::SymbolType const &symbolType,
+            std::shared_ptr<ast::Symbol> symbol);
+
+    std::string
+    buildMismatchTypeErrorMessage(std::string const &variableName,
+                                  std::shared_ptr<PrimaryType> const &requiredType,
+                                  std::shared_ptr<ast::Symbol> symbol);
+
 
 };
 
-} // namespace caramel::exception
+} // namespace caramel::exceptions

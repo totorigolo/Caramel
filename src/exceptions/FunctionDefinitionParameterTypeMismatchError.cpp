@@ -22,45 +22,40 @@
  * SOFTWARE.
 */
 
-#include "SemanticError.h"
 #include "FunctionDefinitionParameterTypeMismatchError.h"
-#include "Common.h"
 #include "../ast/symboltable/PrimaryType.h"
-
-#include <ParserRuleContext.h>
 
 
 namespace caramel::exceptions {
 
 using namespace ast;
-using namespace colors;
 
-FunctionDefinitionParameterTypeMismatchError::FunctionDefinitionParameterTypeMismatchError(antlr4::ParserRuleContext *antlrContext,
-                                                 std::shared_ptr<PrimaryType> declaredType,
-                                                 std::shared_ptr<PrimaryType> definedType)
-            : SemanticError(buildFunctionDefinitionParameterTypeMismatchErrorMessage(declaredType, definedType),
-                            antlrContext) {
-    }
+FunctionDefinitionParameterTypeMismatchError::FunctionDefinitionParameterTypeMismatchError(
+        antlr4::ParserRuleContext *antlrContext,
+        std::string const &name,
+        std::shared_ptr<PrimaryType> declaredType,
+        std::shared_ptr<PrimaryType> definedType)
+        : SemanticError(buildFunctionDefinitionParameterTypeMismatchErrorMessage(name, declaredType, definedType),
+                        antlrContext) {
+}
 
-    void FunctionDefinitionParameterTypeMismatchError::explain(utils::SourceFileUtil sourceFileUtil) const {
-        //todo
-        CARAMEL_UNUSED(sourceFileUtil);
-        logger.fatal() << what();
-    }
+void FunctionDefinitionParameterTypeMismatchError::note() const {
+}
 
-    std::string FunctionDefinitionParameterTypeMismatchError::buildFunctionDefinitionParameterTypeMismatchErrorMessage(
-            std::shared_ptr<PrimaryType> declaredType,
-            std::shared_ptr<PrimaryType> declaredName) {
-        std::stringstream res;
-        res << "The function: "
-            << declaredType->getIdentifier()
-            << " was previously declared with a parameter of type "
-            << declaredName
-            << " .\n"
-            << "Actual parameter type is "
-            << declaredName->getIdentifier()
-            << ".";
-        return res.str();
-    }
+std::string FunctionDefinitionParameterTypeMismatchError::buildFunctionDefinitionParameterTypeMismatchErrorMessage(
+        std::string const &name,
+        std::shared_ptr<PrimaryType> declaredType,
+        std::shared_ptr<PrimaryType> definedType) {
+    std::stringstream res;
+    res << "The function: '"
+        << name
+        << "' was previously declared with a parameter of type "
+        << declaredType->getIdentifier()
+        << " .\n"
+        << "Parameter type found is "
+        << definedType->getIdentifier()
+        << ".";
+    return res.str();
+}
 
 } // namespace caramel::exceptions

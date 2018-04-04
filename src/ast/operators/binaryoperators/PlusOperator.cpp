@@ -26,6 +26,10 @@
 #include "../../../ir/BasicBlock.h"
 #include "../../../ir/instructions/AdditionInstruction.h"
 #include "../../../utils/Common.h"
+#include "../../../ir/instructions/CopyInstruction.h"
+#include "../../../ir/instructions/PushInstruction.h"
+#include "../../../ir/instructions/PopInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
 
 using namespace caramel::utils;
 
@@ -33,17 +37,30 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::PlusOperator::buildIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression) {
-    std::string var1 = currentBasicBlock->addInstruction(leftExpression->getIR(currentBasicBlock));
-    std::string var2 = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
-    std::string tmp = Statement::createVarName();
+
+    auto maxType = GET_MAX_TYPE(leftExpression, rightExpression);
+
+    auto left = GET_REGISTER(leftExpression);
+
+    MOVE_TO(left, ir::IR::ACCUMULATOR_2, maxType);
+
+    PUSH(ir::IR::ACCUMULATOR_2);
+
+    auto right = GET_REGISTER(rightExpression);
+
+    MOVE_TO(right, ir::IR::ACCUMULATOR_1, maxType);
+
+    POP(ir::IR::ACCUMULATOR_2);
 
     std::shared_ptr<ir::AdditionInstruction> instr = std::make_shared<ir::AdditionInstruction>(
-            tmp,
+            ir::IR::ACCUMULATOR_2,
             currentBasicBlock,
-            PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType())
+            maxType,
+            ir::IR::ACCUMULATOR_1,
+            ir::IR::ACCUMULATOR_2
     );
-    return castTo<ir::IR::Ptr>(instr);
 
+    return castTo<ir::IR::Ptr>(instr);
 }
 
 caramel::ast::StatementType caramel::ast::PlusOperator::getExpressionType() const {

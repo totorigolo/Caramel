@@ -32,16 +32,15 @@
 #include "../instructions/FunctionCallInstruction.h"
 #include "../instructions/NopInstruction.h"
 #include "../instructions/ReturnInstruction.h"
+#include "../instructions/AdditionInstruction.h"
+#include "../instructions/SubtractionInstruction.h"
+#include "../instructions/PushInstruction.h"
+#include "../instructions/PopInstruction.h"
 
 
 namespace caramel::ir::x86_64 {
 
 static constexpr size_t NB_FUNCTION_CALL_REGISTERS = 6;
-
-X86_64IRVisitor::X86_64IRVisitor() {
-    mRegisterContent[IR::REGISTER_10] = "";
-    mRegisterContent[IR::REGISTER_11] = "";
-}
 
 std::string X86_64IRVisitor::address(std::string const &symbol) {
     return "(" + symbol + ")";
@@ -77,10 +76,10 @@ std::string X86_64IRVisitor::registerToAssembly(std::string const &register_, si
         r = "%" + sizePrefix + "sp";
     } else if (register_ == IR::ACCUMULATOR) {
         r = "%" + sizePrefix + "ax";
-    } else if (register_ == IR::REGISTER_10) {
+    } else if (register_ == IR::REGISTER_10 || register_ == IR::ACCUMULATOR_1) {
         if (bitSize == 64) r = "%r10";
         else r = "%r10d";
-    } else if (register_ == IR::REGISTER_11) {
+    } else if (register_ == IR::REGISTER_11 || register_ == IR::ACCUMULATOR_2) {
         if (bitSize == 64) r = "%r11";
         else r = "%r11d";
     } else {
@@ -106,33 +105,8 @@ std::string X86_64IRVisitor::toAssembly(ir::IR *ir, std::string const &anySymbol
         r = registerToAssembly(anySymbol, bitSize);
         // Is a temp var
     } else if (anySymbol[0] == '!') {
-        if (mSymbolRegister.find(anySymbol) != mSymbolRegister.end()) {
-            r = mSymbolRegister[anySymbol];
-        } else {
-            if (mRegisterContent[IR::REGISTER_10].empty()) {
-                r = registerToAssembly(IR::REGISTER_10, bitSize);
-                mRegisterContent[IR::REGISTER_10] = anySymbol;
-                mSymbolRegister[anySymbol] = r;
-            } else if (mRegisterContent[IR::REGISTER_11].empty()) {
-                r = registerToAssembly(IR::REGISTER_11, bitSize);
-                mRegisterContent[IR::REGISTER_11] = anySymbol;
-                mSymbolRegister[anySymbol] = r;
-            } else if (mRegisterContent[IR::ACCUMULATOR].empty()) {
-                r = registerToAssembly(IR::ACCUMULATOR, bitSize);
-                mRegisterContent[IR::ACCUMULATOR] = anySymbol;
-                mSymbolRegister[anySymbol] = r;
-            } else {
-                auto symbolToSave = mRegisterContent[IR::REGISTER_10];
-                logger.warning() << "saving " << symbolToSave;
-                mRegisterContent[IR::REGISTER_10] = "";
-                mSymbolRegister.erase(symbolToSave);
-
-                r = registerToAssembly(IR::REGISTER_10, bitSize);
-                mRegisterContent[IR::REGISTER_10] = anySymbol;
-                mSymbolRegister[anySymbol] = r;
-            }
-        }
-        // Is a constant
+        r = registerToAssembly(IR::REGISTER_10, bitSize);
+        // TODO: Manage multiple registries
     } else if (anySymbol[0] >= '0' && anySymbol[0] <= '9') {
         r = "$" + anySymbol;
     } else {
@@ -153,10 +127,14 @@ std::string X86_64IRVisitor::getSizeSuffix(size_t bitSize) {
  */
     // FIXME: It's movabsq instead of movq
     switch (bitSize) {
-        case 8: return "b";
-        case 16: return "w";
-        case 32: return "l";
-        case 64: return "q";
+        case 8:
+            return "b";
+        case 16:
+            return "w";
+        case 32:
+            return "l";
+        case 64:
+            return "q";
         default:
             logger.fatal() << "Wrong bitSize in X86_64IRVisitor::getSizeSuffix(" << bitSize << ").";
             exit(1);
@@ -210,9 +188,14 @@ void X86_64IRVisitor::visitCopy(caramel::ir::CopyInstruction *instruction, std::
     logger.trace() << "[x86_64] " << "visiting copy: " << instruction->getReturnName();
 
     const auto parameterSize = instruction->getType()->getMemoryLength();
-    os << "  mov" + getSizeSuffix(parameterSize) + "    "
-       << toAssembly(instruction, instruction->getSource(), parameterSize)
-       << ", " << toAssembly(instruction, instruction->getDestination(), parameterSize);
+    os << "  mov" + getSizeSuffix(parameterSize) + "    ";
+
+    if (instruction->getRegisterNumber() != -1) {
+        os << getFunctionCallRegister(instruction->getRegisterNumber(), 32);
+    } else {
+        os << toAssembly(instruction, instruction->getSource(), parameterSize);
+    }
+    os << ", " << toAssembly(instruction, instruction->getDestination(), parameterSize);
     // os << "\n#mov copy";
 }
 
@@ -225,55 +208,12 @@ void X86_64IRVisitor::visitEmpty(caramel::ir::EmptyInstruction *instruction, std
 
 void X86_64IRVisitor::visitProlog(caramel::ir::PrologInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting prolog: " << instruction->getReturnName();
-
-/*
- * Example function, with 9 32-bit arguments.
-
-baz:
-  pushq %rbp
-  movq %rsp, %rbp
-  subq $24, %rsp
-  movl %edi, -4(%rbp)
-  movl %esi, -8(%rbp)
-  movl %edx, -12(%rbp)
-  movl %ecx, -16(%rbp)
-  movl %r8d, -20(%rbp)
-  movl %r9d, -24(%rbp)
-  nop
-  leave
-  ret
- */
-
     os << "  pushq   %rbp" << '\n'
        << "  movq    %rsp, %rbp" << '\n';
 
     os << "  # TODO: Prolog" << '\n';
-
-    // FIXME: Prolog
-//    size_t rspOffset = 0;
-//    for (auto const &parameter : instruction->getParameters()) {
-//        rspOffset += parameter.primaryType->getMemoryLength() / 8U;
-//    }
-//    rspOffset = ((rspOffset + 1) % 16) * 16;
-//    if (rspOffset > 0) {
-//        os << "  subq    $" << rspOffset << ", %rsp" << '\n';
-//    }
-//
-//    size_t i = 0;
-//    for (auto const &parameter : instruction->getParameters()) {
-//        size_t parameterSize = parameter.primaryType->getMemoryLength();
-//        if (i != 0) os << '\n';
-//        if (i < 6) {
-//            instruction->getParentBlock()->addSymbol(parameter.name, parameter.primaryType);
-//            os << "  mov" + getSizeSuffix(parameterSize) + "    " << getFunctionCallRegister(i, parameterSize)
-//               << ", " << toAssembly(instruction, parameter.name, parameterSize); // it's always %rbp
-//        } else {
-//            long index = 16 + (i - 6) * 8;
-//            instruction->getParentBlock()->addSymbol(parameter.name, parameter.primaryType, index);
-//            os << "  # " << i << "-th parameter is at " << toAssembly(instruction, parameter.name, parameterSize);
-//        }
-//        i++;
- //   }
+    // Fixme: Resize the stack to his real needed size
+    os << "  subq $1024, %rsp" << '\n';
 }
 
 void X86_64IRVisitor::visitEpilog(caramel::ir::EpilogInstruction *instruction, std::ostream &os) {
@@ -286,11 +226,20 @@ void X86_64IRVisitor::visitEpilog(caramel::ir::EpilogInstruction *instruction, s
 }
 
 void X86_64IRVisitor::visitAddition(caramel::ir::AdditionInstruction *instruction, std::ostream &os) {
-    logger.trace() << "[x86_64] " << "visiting addition: "; // TODO: complete the trace
+    logger.trace() << "[x86_64] " << "visiting addition: "
+                   << instruction->getLeft() << " + " << instruction->getRight();
 
-    // Todo: create visitAddition
-    CARAMEL_UNUSED(instruction);
-    CARAMEL_UNUSED(os);
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction, instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction, instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction, instruction->getReturnName(), parameterSize);
+
+    os << "  movl    " << rightLocation
+                       << ", " << storeLocation << '\n';
+
+    os << "  add" + getSizeSuffix(parameterSize) + "    "
+       << leftLocation << ", " << storeLocation;
+
 }
 
 void X86_64IRVisitor::visitLdConst(caramel::ir::LDConstInstruction *instruction, std::ostream &os) {
@@ -312,55 +261,7 @@ void X86_64IRVisitor::visitNope(caramel::ir::NopInstruction *instruction, std::o
 
 void X86_64IRVisitor::visitFunctionCall(caramel::ir::FunctionCallInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting functionCall: " << instruction->getFunctionName();
-
-/*
- * Example function call, with 9 arguments.
-
-int32_t bar(int32_t a, int32_t b, int32_t c,
-            int32_t d, int32_t e, int32_t f,
-            int32_t g, int32_t h, int32_t i) {}
-
-pushq $9        // < 8
-pushq $8        // < 7
-pushq $7        // < 6
-movl $6, %r9d   // < 5
-movl $5, %r8d   // < 4
-movl $4, %ecx   // < 3
-movl $3, %edx   // < 2
-movl $2, %esi   // < 1
-movl $1, %edi   // < 0
-call bar
-addq $24, %rsp  // 24 = 3 * 8
-*/
-/*
-    auto const &arguments = instruction->getArguments();
-    auto const &parameters = instruction->getParameters();
-    const size_t nbParameters = parameters.size();
-    size_t stackOffset = 0;
-    for (size_t i = 0; i < nbParameters; ++i) {
-        const size_t j = nbParameters - (i + 1);
-        const size_t parameterSize = parameters[j].primaryType->getMemoryLength();
-
-        if (j >= NB_FUNCTION_CALL_REGISTERS) {
-            if (parameterSize < 32) {
-                logger.warning() << "Wow! I don't know if I can handle a less-than-32-bit parameter!";
-            }
-            os << "  pushq   " << toAssembly(instruction, arguments[j], 64) << '\n';
-            stackOffset += 8;
-//            stackOffset += parameters[j].primaryType->getMemoryLength() / 8U;
-        } else {
-            os << "  mov" + getSizeSuffix(32) + "    " << toAssembly(instruction, arguments[j], 32)
-               << ", " << getFunctionCallRegister(j, 32) << '\n';
-        }
-    }
-*/
     os << "  call    " << instruction->getFunctionName();
-
-/*    if (stackOffset > 0) {
-        os << '\n'
-           << "  addq    $" << stackOffset << ", %rsp";
-    }
-*/
 }
 
 void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, std::ostream &os) {
@@ -378,11 +279,11 @@ void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, 
     logger.trace() << "[x86_64] " << "visiting call parameter: " << instruction->getValue();
 
     int index = instruction->getIndex();
-    if( index < 6 ) {
+    if (index < 6) {
         os << "  mov" + getSizeSuffix(32) + "    " << toAssembly(instruction, instruction->getValue(), 32)
            << ", " << getFunctionCallRegister(index, 32) << '\n';
 
-      //  os << "\n#mov call";
+        //  os << "\n#mov call";
     } else {
         os << "  pushq   " << toAssembly(instruction, instruction->getValue(), 64) << '\n';
     }
@@ -415,6 +316,52 @@ void X86_64IRVisitor::visitGTE(GTEInstruction *instruction, std::ostream &os) {
 
 }
 
+void X86_64IRVisitor::visitSubtraction(SubtractionInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting subtraction: "
+                   << instruction->getLeft() << " - " << instruction->getRight();
 
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction, instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction, instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction, instruction->getReturnName(), parameterSize);
+
+    os << "  movl    " << rightLocation // TODO: We might want to change "l" dynamically ?
+       << ", " << storeLocation << '\n';
+
+    os << "  sub" + getSizeSuffix(parameterSize) + "    "
+       << leftLocation << ", " << storeLocation;
+}
+
+void X86_64IRVisitor::visitPush(PushInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting push: " << instruction->getSource();
+
+    size_t typeSize = instruction->getType()->getMemoryLength();
+
+    const std::string sourceLocation = toAssembly(
+            instruction,
+            instruction->getSource(),
+            64
+            //instruction->getType()->getMemoryLength()
+    );
+
+    os << "  pushq" << "   " << sourceLocation;
+
+}
+
+void X86_64IRVisitor::visitPop(PopInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting push: " << instruction->getDestination();
+
+    size_t typeSize = instruction->getType()->getMemoryLength();
+
+    const std::string destLocation = toAssembly(
+            instruction,
+            instruction->getDestination(),
+            64
+            //instruction->getType()->getMemoryLength()
+    );
+
+    os << "  popq " << "   " << destLocation;
+
+}
 
 } // namespace caramel::ir::x86_64
