@@ -39,21 +39,15 @@ public:
 
     explicit PrologInstruction(
             std::shared_ptr<BasicBlock> const &parentBlock,
-            std::string functionName,
-            std::vector<ast::FunctionParameterSignature> parameters
+            size_t size
     );
 
     ~PrologInstruction() override = default;
 
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
-    std::string const &getFunctionName() const;
-
-    std::vector<ast::FunctionParameterSignature> const &getParameters() const;
-
 private:
-    std::string mFunctionName;
-    std::vector<ast::FunctionParameterSignature> mParameters;
+    size_t mSize;
 };
 
 } // namespace caramel::ir

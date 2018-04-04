@@ -29,20 +29,18 @@ namespace caramel::ir {
 
 CopyInstruction::CopyInstruction(
         std::shared_ptr<BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &type, std::string const &dest,
+        ast::PrimaryType::Ptr const &type, std::string const &destination,
         std::string const &source
-) : IR(parentBlock, Operation::copy, type), mDest{dest}, mSource{source} {}
+) : IR(destination, Operation::copy, parentBlock, type), mSource{source}, mRegisterNumber{-1} {}
 
 CopyInstruction::CopyInstruction(
-        std::string const &returnName,
         std::shared_ptr<BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &type,
-        std::string const &dest,
-        std::string const &source
-) : IR(returnName, parentBlock, Operation::copy, type), mDest{dest}, mSource{source} {}
+                                 caramel::ast::PrimaryType::Ptr const &type, std::string const &destination,
+                                 int registerNumber
+)  : IR(destination, Operation::copy, parentBlock, type), mSource{""}, mRegisterNumber{registerNumber} {}
 
 std::string CopyInstruction::getDestination() {
-    return mDest;
+    return getReturnName();
 }
 
 std::string CopyInstruction::getSource() {
@@ -51,6 +49,10 @@ std::string CopyInstruction::getSource() {
 
 void CopyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitCopy(this, os);
+}
+
+int CopyInstruction::getRegisterNumber() {
+    return mRegisterNumber;
 }
 
 } // namespace caramel::ir

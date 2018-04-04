@@ -21,39 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
 */
-
 #pragma once
 
+#include <memory>
 #include "../IR.h"
 
 namespace caramel::ir {
 
-class AdditionInstruction : public IR {
+class GTEInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<AdditionInstruction>;
-    using WeakPtr = std::shared_ptr<AdditionInstruction>;
+    using Ptr = std::shared_ptr<GTEInstruction>;
+    using WeakPtr = std::weak_ptr<GTEInstruction>;
 
 public:
-    explicit AdditionInstruction(
+    explicit GTEInstruction(
             std::string const &returnName,
             std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const &type,
-            std::string const &left,
-            std::string const &right
+            ast::PrimaryType::Ptr const & type
     );
 
-    ~AdditionInstruction() override = default;
-
-    const std::string &getLeft() const;
-
-    const std::string &getRight() const;
+~GTEInstruction() override  = default;
 
 private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream & os);
 
-private:
-    std::string mLeft;
-    std::string mRight;
 };
 
 } // namespace caramel::ir

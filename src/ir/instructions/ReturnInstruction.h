@@ -38,7 +38,6 @@ public:
     );
 
     ReturnInstruction(
-            std::string const &returnName,
             std::shared_ptr<BasicBlock> const &parentBlock,
             caramel::ast::PrimaryType::Ptr const &type,
             std::string const &source

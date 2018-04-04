@@ -29,17 +29,16 @@ namespace caramel::ir {
 
 ReturnInstruction::ReturnInstruction(
         std::shared_ptr<BasicBlock> const &parentBlock
-) : IR(parentBlock, Operation::movq, ast::Void_t::Create()) {}
+) : IR(Operation::movq, parentBlock, ast::Void_t::Create()) {}
 
 ReturnInstruction::ReturnInstruction(
-        std::string const &returnName,
         std::shared_ptr<BasicBlock> const &parentBlock,
         ast::PrimaryType::Ptr const &type,
         std::string const &source
-) : IR(returnName, parentBlock, Operation::copy, type), mSource{source} {}
+) : IR(source, Operation::copy, parentBlock, type) {}
 
 std::string ReturnInstruction::getSource() {
-    return mSource;
+    return getReturnName();
 }
 
 void ReturnInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {

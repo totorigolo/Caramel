@@ -28,32 +28,25 @@
 
 namespace caramel::ir {
 
-class AdditionInstruction : public IR {
+class JumpLessOrEqualInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<AdditionInstruction>;
-    using WeakPtr = std::shared_ptr<AdditionInstruction>;
+    using Ptr = std::shared_ptr<JumpLessOrEqualInstruction>;
+    using WeakPtr = std::shared_ptr<JumpLessOrEqualInstruction>;
 
 public:
-    explicit AdditionInstruction(
-            std::string const &returnName,
+    explicit JumpLessOrEqualInstruction(
             std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const &type,
-            std::string const &left,
-            std::string const &right
+            std::string dest
     );
 
-    ~AdditionInstruction() override = default;
+    ~JumpLessOrEqualInstruction() override = default;
 
-    const std::string &getLeft() const;
-
-    const std::string &getRight() const;
+    const std::string &getDest() const;
 
 private:
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
-private:
-    std::string mLeft;
-    std::string mRight;
+    std::string mDest;
 };
 
 } // namespace caramel::ir

@@ -28,10 +28,14 @@
 namespace caramel::ir {
     
 NopInstruction::NopInstruction(std::shared_ptr<ir::BasicBlock> const &parentBlock)
-: IR(parentBlock, Operation::nope, ast::Void_t::Create()){}
+: IR(Operation::nope, parentBlock, ast::Void_t::Create()) {}
 
 void NopInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitNope(this, os);
+}
+
+bool NopInstruction::isEmpty() const {
+    return true;
 }
 
 } // namespace caramel::ir

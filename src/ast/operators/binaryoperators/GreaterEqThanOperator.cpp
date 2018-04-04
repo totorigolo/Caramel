@@ -23,6 +23,12 @@
 */
 
 #include "GreaterEqThanOperator.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../ir/instructions/AdditionInstruction.h"
+#include "../../../utils/Common.h"
+#include "../../../ir/instructions/GTEInstruction.h"
+
+using namespace caramel::utils;
 
 std::shared_ptr<caramel::ir::IR> caramel::ast::GreaterEqThanOperator::buildIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
@@ -30,12 +36,16 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::GreaterEqThanOperator::buildIR(
         std::shared_ptr<caramel::ast::Expression> const &rightExpression
 ) {
 
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+    std::string var1 = currentBasicBlock->addInstruction(leftExpression->getIR(currentBasicBlock));
+    std::string var2 = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
+    std::string tmp = Statement::createVarName();
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+    std::shared_ptr<ir::GTEInstruction> instr = std::make_shared<ir::GTEInstruction>(
+            tmp,
+            currentBasicBlock,
+            PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType())
+    );
+    return castTo<ir::IR::Ptr>(instr);
 }
 
 caramel::ast::StatementType caramel::ast::GreaterEqThanOperator::getExpressionType() const {

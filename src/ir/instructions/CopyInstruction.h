@@ -36,16 +36,15 @@ public:
     CopyInstruction(
             std::shared_ptr<BasicBlock> const &parentBlock,
             caramel::ast::PrimaryType::Ptr const &type,
-            std::string const &dest,
+            std::string const &destination,
             std::string const &source
     );
 
     CopyInstruction(
-            std::string const &returnName,
             std::shared_ptr<BasicBlock> const &parentBlock,
             caramel::ast::PrimaryType::Ptr const &type,
-            std::string const &dest,
-            std::string const &source
+            std::string const &destination,
+            int registerNumber
     );
 
     ~CopyInstruction() override = default;
@@ -54,11 +53,13 @@ public:
 
     std::string getSource();
 
+    int getRegisterNumber();
+
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
-    std::string mDest;
     std::string mSource;
+    int mRegisterNumber;
 };
 
 } // namespace caramel::ir

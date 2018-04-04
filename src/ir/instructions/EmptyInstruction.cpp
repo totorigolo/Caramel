@@ -28,14 +28,27 @@
 
 namespace caramel::ir {
 
+EmptyInstruction::EmptyInstruction(
+        std::shared_ptr<BasicBlock> parentBlock,
+        ast::PrimaryType::Ptr const &type
+) : IR(Operation::empty, parentBlock, type) {}
+
+EmptyInstruction::EmptyInstruction(
+        std::string const &returnName, std::shared_ptr<BasicBlock> parentBlock,
+        std::shared_ptr<ast::PrimaryType> const &type
+) : IR(
+        returnName,
+        Operation::empty,
+        parentBlock,
+        type
+) {}
+
 void EmptyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitEmpty(this, os);
 }
 
-EmptyInstruction::EmptyInstruction(
-        std::shared_ptr<BasicBlock> parentBlock,
-        std::string const &returnName,
-        ast::PrimaryType::Ptr const &type
-) : IR(returnName, parentBlock, Operation::empty, type) {}
+bool EmptyInstruction::isEmpty() const {
+    return true;
+}
 
 } // namespace caramel::ir

@@ -37,6 +37,8 @@ public:
     explicit NopInstruction(std::shared_ptr<BasicBlock> const &parentBlock);
     ~NopInstruction() override = default;
 
+    bool isEmpty() const override;
+
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 };

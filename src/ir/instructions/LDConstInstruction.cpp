@@ -29,18 +29,11 @@
 namespace caramel::ir {
 
 LDConstInstruction::LDConstInstruction(
-        std::string const &returnName,
         std::shared_ptr<BasicBlock> const &parentBlock,
         ast::PrimaryType::Ptr const &type,
-        std::string dest,
+        std::string destination,
         std::string val
-) : IR(returnName, parentBlock, Operation::ldconst, type),
-    mDestination{std::move(dest)},
-    mValue{std::move(val)} {}
-
-std::string LDConstInstruction::getDestination() const {
-    return mDestination;
-}
+) : IR(destination, Operation::ldconst, parentBlock, type), mValue{std::move(val)} {}
 
 std::string LDConstInstruction::getValue() const {
     return mValue;
@@ -49,4 +42,9 @@ std::string LDConstInstruction::getValue() const {
 void LDConstInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitLdConst(this, os);
 }
+
+std::string LDConstInstruction::getDestination() const {
+    return getReturnName();
+}
+
 } // namespace caramel::ir
