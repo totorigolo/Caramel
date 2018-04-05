@@ -59,9 +59,21 @@ class GTEInstruction;
 class PushInstruction;
 class PopInstruction;
 class MultiplicationInstruction;
+class ModInstruction;
+class DivInstruction;
 
 class IRVisitor {
 public:
+
+    virtual void visitMod(
+            ModInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitDivision(
+            DivInstruction *instruction,
+            std::ostream &os
+    ) = 0;
 
     virtual void visitCopy(
             CopyInstruction *instruction,

@@ -75,6 +75,7 @@ public:
     static constexpr const char* ACCUMULATOR_2 = "%r11";
     static constexpr const char* REGISTER_10 = "%r10";
     static constexpr const char* REGISTER_11 = "%r11";
+    static constexpr const char* DATA_REG = "%edx";
 
 public:
     explicit IR(

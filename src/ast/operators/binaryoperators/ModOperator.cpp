@@ -22,7 +22,7 @@
  * SOFTWARE.
 */
 
-#include "DivOperator.h"
+#include "ModOperator.h"
 #include "../../../ir/BasicBlock.h"
 #include "../../../ir/instructions/AdditionInstruction.h"
 #include "../../../utils/Common.h"
@@ -31,11 +31,10 @@
 #include "../../../ir/instructions/PopInstruction.h"
 #include "../../../ir/helpers/IROperatorHelper.h"
 #include "../../../ir/instructions/ModInstruction.h"
-#include "../../../ir/instructions/DivInstruction.h"
 
 using namespace caramel::utils;
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::DivOperator::getIR(
+std::shared_ptr<caramel::ir::IR> caramel::ast::ModOperator::getIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression) {
@@ -54,8 +53,8 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::DivOperator::getIR(
 
     POP(ir::IR::ACCUMULATOR_2);
 
-    std::shared_ptr<ir::DivInstruction> instr = std::make_shared<ir::DivInstruction>(
-            ir::IR::ACCUMULATOR,
+    std::shared_ptr<ir::ModInstruction> instr = std::make_shared<ir::ModInstruction>(
+            ir::IR::DATA_REG,
             currentBasicBlock,
             maxType,
             ir::IR::ACCUMULATOR_2,
@@ -65,18 +64,18 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::DivOperator::getIR(
     return castTo<ir::IR::Ptr>(instr);
 }
 
-caramel::ast::StatementType caramel::ast::DivOperator::getExpressionType() const {
+caramel::ast::StatementType caramel::ast::ModOperator::getExpressionType() const {
     return StatementType::ModuloExpression;
 }
 
-std::string caramel::ast::DivOperator::getToken() const {
+std::string caramel::ast::ModOperator::getToken() const {
     return SYMBOL;
 }
 
-bool caramel::ast::DivOperator::shouldReturnAnIR() const {
+bool caramel::ast::ModOperator::shouldReturnAnIR() const {
     return true;
 }
 
-bool caramel::ast::DivOperator::shouldReturnABasicBlock() const {
+bool caramel::ast::ModOperator::shouldReturnABasicBlock() const {
     return false;
 }

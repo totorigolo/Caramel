@@ -27,6 +27,7 @@
 #include "../IR.h"
 #include "../IRVisitor.h"
 #include "../BasicBlock.h"
+#include "../instructions/DivInstruction.h"
 
 #include <memory>
 #include <ostream>
@@ -85,6 +86,12 @@ public:
 
     void visitPop(PopInstruction *instruction, std::ostream &os) override;
 
+    void visitMultiplication(MultiplicationInstruction *instruction, std::ostream &os) override;
+
+    void visitMod(ModInstruction *instruction, std::ostream &os) override ;
+
+    void visitDivision(DivInstruction *instruction, std::ostream &os) override ;
+
 //private:
     std::string address(std::string const &symbol);
     std::string registerToAssembly(std::string const &register_, size_t bitSize = 32U);
@@ -92,7 +99,8 @@ public:
     std::string getSizeSuffix(size_t bitSize);
     std::string getFunctionCallRegister(size_t index, size_t bitSize);
 
-    void visitMultiplication(MultiplicationInstruction *instruction, std::ostream &os) override;
+
+
 };
 
 } // namespace caramel::ir::x86_64

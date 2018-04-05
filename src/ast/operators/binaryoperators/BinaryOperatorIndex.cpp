@@ -41,6 +41,7 @@
 #include "DisjunctionOperator.h"
 #include "ConjunctionOperator.h"
 #include "AssignmentOperator.h"
+#include "ModOperator.h"
 
 
 #define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<BinaryOperator>(make_shared<op>())))
@@ -56,6 +57,9 @@ caramel::ast::BinaryOperatorIndex::BinaryOperatorIndex() {
     // Multiplicative operators
     BIND(MultOperator);
     BIND(DivOperator);
+
+    // Modulo
+    BIND(ModOperator);
 
     // Bitwise shift operators
     BIND(RightShiftOperator);

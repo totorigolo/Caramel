@@ -31,18 +31,18 @@
 
 namespace caramel::ast {
 
-class DivOperator : public BinaryOperator {
+class ModOperator : public BinaryOperator {
 public:
-    using Ptr = std::shared_ptr<DivOperator>;
-    using WeakPtr = std::weak_ptr<DivOperator>;
+    using Ptr = std::shared_ptr<ModOperator>;
+    using WeakPtr = std::weak_ptr<ModOperator>;
 
-    static constexpr const char* SYMBOL = "/";
-
-public:
-    DivOperator() = default;
+    static constexpr const char* SYMBOL = "%";
 
 public:
-    ~DivOperator() override = default;
+    ModOperator() = default;
+
+public:
+    ~ModOperator() override = default;
 
 public:
     std::shared_ptr<caramel::ir::IR>

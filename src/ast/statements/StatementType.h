@@ -59,6 +59,7 @@ enum class StatementType {
     BitwiseExpression,
     ConjunctionExpression,
     DisjunctionExpression,
+    ModuloExpression,
 
     // UnaryExpression w/ sub-types
     UnaryExpression,

@@ -22,44 +22,30 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "DivInstruction.h"
+#include "../IRVisitor.h"
 
-#include <memory>
-#include <Common.h>
-#include "../BinaryOperator.h"
+namespace caramel::ir {
 
+DivInstruction::DivInstruction(
+        std::string const &returnName,
+        std::shared_ptr<ir::BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string left,
+        std::string right
+) : IR(returnName, Operation::add, parentBlock, type), mLeft{left}, mRight{right} {}
 
-namespace caramel::ast {
+void DivInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitDivision(this, os);
+}
 
-class DivOperator : public BinaryOperator {
-public:
-    using Ptr = std::shared_ptr<DivOperator>;
-    using WeakPtr = std::weak_ptr<DivOperator>;
+std::string DivInstruction::getLeft() const {
+    return mLeft;
+}
 
-    static constexpr const char* SYMBOL = "/";
+std::string DivInstruction::getRight() const {
+    return mRight;
+}
 
-public:
-    DivOperator() = default;
+} // namespace caramel::ir
 
-public:
-    ~DivOperator() override = default;
-
-public:
-    std::shared_ptr<caramel::ir::IR>
-    getIR(
-            std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-            std::shared_ptr<caramel::ast::Expression> const &rightExpression
-    ) override;
-
-    StatementType getExpressionType() const override;
-
-    std::string getToken() const override;
-
-    bool shouldReturnAnIR() const override;
-
-    bool shouldReturnABasicBlock() const override;
-
-};
-
-} // namespace caramel::ast

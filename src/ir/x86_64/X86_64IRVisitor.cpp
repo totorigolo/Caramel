@@ -38,6 +38,8 @@
 #include "../instructions/PushInstruction.h"
 #include "../instructions/PopInstruction.h"
 #include "../instructions/MultiplicationInstruction.h"
+#include "../instructions/ModInstruction.h"
+#include "../instructions/DivInstruction.h"
 
 
 namespace caramel::ir::x86_64 {
@@ -76,6 +78,8 @@ std::string X86_64IRVisitor::registerToAssembly(std::string const &register_, si
         r = "%" + sizePrefix + "bp";
     } else if (register_ == IR::REGISTER_STACK_POINTER) {
         r = "%" + sizePrefix + "sp";
+    } else if (register_ == IR::DATA_REG) {
+        r = "%" + sizePrefix + "dx";
     } else if (register_ == IR::ACCUMULATOR) {
         r = "%" + sizePrefix + "ax";
     } else if (register_ == IR::REGISTER_10 || register_ == IR::ACCUMULATOR_1) {
@@ -261,6 +265,40 @@ void X86_64IRVisitor::visitEpilog(caramel::ir::EpilogInstruction *instruction, s
 //    os << "  popq    %rbp" << std::endl; // leave restore %rsp for us
     os << "  leave" << '\n';
     os << "  ret";
+}
+
+void X86_64IRVisitor::visitMod(caramel::ir::ModInstruction *instruction, std::ostream &os){
+    logger.trace() << "[x86_64] " << "visiting modulo: "
+                   << instruction->getLeft() << " % " << instruction->getRight();
+
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
+
+    os << "  movl    " << leftLocation
+       << ", " << "%eax" << '\n'; // TODO : Not write %eax directly
+    os << "  cltd" << '\n';
+
+    os << "  idivl    " << rightLocation << '\n';
+
+}
+
+void X86_64IRVisitor::visitDivision(caramel::ir::DivInstruction *instruction, std::ostream &os){
+    logger.trace() << "[x86_64] " << "visiting division: "
+                   << instruction->getLeft() << " / " << instruction->getRight();
+
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
+
+    os << "  movl    " << leftLocation
+       << ", " << storeLocation << '\n';
+    os << "  cltd" << '\n';
+
+    os << "  idivl    " << rightLocation << '\n';
+
 }
 
 void X86_64IRVisitor::visitAddition(caramel::ir::AdditionInstruction *instruction, std::ostream &os) {
