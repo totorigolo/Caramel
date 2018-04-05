@@ -75,7 +75,7 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
                                                           parameters[i].name, i)
             );
         } else {
-            function_root_bb->addSymbol(parameters[i].name, Int64_t::Create(), 16 + (i-6) * 8);
+            function_root_bb->addSymbol(parameters[i].name, Int64_t::Create(), 16 + i * 8);
         }
 
     }
