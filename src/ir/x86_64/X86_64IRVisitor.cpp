@@ -273,7 +273,11 @@ void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, s
     const auto returnSize = instruction->getType()->getMemoryLength();
     os << "  mov" + getSizeSuffix(returnSize) + "    "
        << toAssembly(instruction->getParentBlock(), instruction->getSource(), returnSize)
-       << ", " << toAssembly(instruction->getParentBlock(), IR::ACCUMULATOR, 32); // TODO: See TODO in getSizeSuffix()
+       << ", " << toAssembly(instruction->getParentBlock(), IR::ACCUMULATOR, 32) // TODO: See TODO in getSizeSuffix()
+       << "\n";
+    size_t functionContext = instruction->getParentBlock()->getFunctionContext();
+
+     os << "  jmp    " << instruction->getParentBlock()->getCFG()->getFunctionEndBasicBlock(functionContext)->getLabelName();
 
     // os << "\n#mov return";
 }

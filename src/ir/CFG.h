@@ -28,6 +28,7 @@
 #include "../ast/statements/Statement.h"
 #include "../ast/symboltable/Symbol.h"
 #include "../ast/context/Context.h"
+#include "BasicBlock.h"
 
 namespace caramel::ir {
 
@@ -59,6 +60,12 @@ public:
     long addSymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type, long index);
     long getSymbolIndex(size_t controlBlockId, std::string const &symbolName);
 
+    std::shared_ptr<BasicBlock> getFunctionBasicBlock(size_t functionBasicBlockIndex);
+    std::shared_ptr<BasicBlock> getFunctionEndBasicBlock(size_t functionBasicBlockIndex);
+
+
+    void addFunctionBBEnd(size_t functionId, std::shared_ptr<BasicBlock> functionBBEnd);
+
     void enterFunction(size_t controlBlockId);
     void leaveFunction(size_t controlBlockId);
 
@@ -78,6 +85,7 @@ protected:
     int mNextFunctionContext;
 
     std::vector<std::shared_ptr<BasicBlock>> mFunctionsBasicBlocks;
+    std::map<size_t, std::shared_ptr<BasicBlock>> mFunctionBBEnd;
     std::vector<caramel::ast::Declaration::Ptr> mGlobalContext;
 };
 
