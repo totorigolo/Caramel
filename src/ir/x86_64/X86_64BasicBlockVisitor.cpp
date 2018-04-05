@@ -43,7 +43,7 @@ void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> c
 
     bool whenTrue = nullptr != basicBlock->getNextWhenTrue();
     bool whenFalse = nullptr != basicBlock->getNextWhenFalse();
-    if (whenTrue && whenFalse) {
+    if (whenFalse) {
         if (basicBlock->getInstructions().empty()) {
             logger.fatal() << "Empty cond block!";
             return;
@@ -55,10 +55,12 @@ void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> c
 
         os << "  cmpl    $0, " << mIRVisitor->toAssembly(basicBlock, lastReturnName, lastReturnBitSize) << std::endl;
         os << "  je    " << basicBlock->getNextWhenFalse()->getLabelName() << std::endl;
-    } else if (whenTrue) {
+    }
+    if (whenTrue) {
         os << "  jmp    " << basicBlock->getNextWhenTrue()->getLabelName()
            << std::endl;
-    } else {
+    }
+    if (!whenTrue && !whenFalse) {
         logger.debug() << "End of function.";
     }
 

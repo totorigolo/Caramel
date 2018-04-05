@@ -56,14 +56,13 @@ void Do_WhileBlock::visitChildrenAstDot() {
 ir::GetBasicBlockReturn Do_WhileBlock::getBasicBlock(
         ir::CFG *controlFlow
 ) {
-    ir::BasicBlock::Ptr bbDWaction = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_DWaction");
     ir::BasicBlock::Ptr bbDWcond = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_DWcond");
+    ir::BasicBlock::Ptr bbDWaction = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_DWaction");
     ir::BasicBlock::Ptr bbDWend = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_DWend");
 
     bbDWaction->setExitWhenTrue(bbDWcond);
     bbDWcond->setExitWhenTrue(bbDWaction);
     bbDWcond->setExitWhenFalse(bbDWend);
-
 
     // COND BB
     if (mCondition->shouldReturnAnIR()) {

@@ -66,7 +66,7 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
     function_root_bb->addInstruction(std::make_shared<ir::PrologInstruction>(function_root_bb, 42)); // FIXME: Function definition IR
 
     auto parameters = mSymbol->getParameters();
-    for(int i = 0; i < parameters.size(); i++) {
+    for(size_t i = 0; i < parameters.size(); i++) {
         if(i < 6) {
             function_root_bb->addInstruction(
                     std::make_shared<ir::CopyInstruction>(function_root_bb, parameters[i].primaryType, parameters[i].name, i)
