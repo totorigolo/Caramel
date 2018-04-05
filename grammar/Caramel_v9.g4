@@ -90,6 +90,7 @@ breakJump : BreakKeyword_ ;
 controlBlock
   : ifBlock
   | whileBlock
+  | doWhileBlock
   | forBlock
   ;
 
@@ -97,7 +98,10 @@ ifBlock
   : IfKeyword_ WS_* L_Par_ WS_* expression WS_* R_Par_ WS_* block (WS_* ElseKeyword_ WS_* (ifBlock|block))?
   ;
 whileBlock
-  : WhileKeyWord_ WS_* L_Par_ WS_* expression WS_* R_Par_ WS_* block?
+  : WhileKeyWord_ WS_* L_Par_ WS_* expression WS_* R_Par_ WS_* block
+  ;
+doWhileBlock
+  : DoKeyWord_ InlineWS_* block InlineWS_* L_Par_ InlineWS_* expression WS_* R_Par_ Semilicon_
   ;
 forBlock
   : ForKeyword_ WS_* L_Par_
@@ -334,6 +338,7 @@ OrOp_ : '||' ;
 IfKeyword_ : 'if' ;
 ForKeyword_ : 'for' ;
 WhileKeyWord_ : 'while' ;
+DoKeyWord_ : 'do' ;
 ElseKeyword_ : 'else' ;
 ReturnKeyword_ : 'return' ;
 BreakKeyword_ : 'break' ;

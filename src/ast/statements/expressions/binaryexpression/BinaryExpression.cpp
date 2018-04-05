@@ -41,11 +41,19 @@ std::shared_ptr<ir::IR>
 BinaryExpression::getIR(
         std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
 ) {
-    return mBinaryOperator->buildIR(currentBasicBlock, mLeftExpression, mRightExpression);
+    return mBinaryOperator->getIR(currentBasicBlock, mLeftExpression, mRightExpression);
+}
+
+ir::GetBasicBlockReturn BinaryExpression::getBasicBlock(ir::CFG *controlFlow) {
+    return mBinaryOperator->getBasicBlock(controlFlow, mLeftExpression, mRightExpression);
 }
 
 bool BinaryExpression::shouldReturnAnIR() const {
-    return true;
+    return mBinaryOperator->shouldReturnAnIR();
+}
+
+bool BinaryExpression::shouldReturnABasicBlock() const {
+    return mBinaryOperator->shouldReturnABasicBlock();
 }
 
 PrimaryType::Ptr BinaryExpression::getPrimaryType() const {

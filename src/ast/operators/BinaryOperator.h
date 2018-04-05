@@ -41,12 +41,28 @@ public:
     ~BinaryOperator() override = default;
 
 public:
-    virtual std::shared_ptr<caramel::ir::IR> buildIR(
+    virtual std::shared_ptr<caramel::ir::IR> getIR(
             std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
             std::shared_ptr<caramel::ast::Expression> const &leftExpression,
             std::shared_ptr<caramel::ast::Expression> const &rightExpression
-    ) = 0;
-    
+    ) {
+        CARAMEL_UNUSED(currentBasicBlock);
+        CARAMEL_UNUSED(leftExpression);
+        CARAMEL_UNUSED(rightExpression);
+        throw caramel::exceptions::NotImplementedException(__FILE__);
+    };
+
+    virtual ir::GetBasicBlockReturn getBasicBlock(
+            ir::CFG *controlFlow,
+            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+            std::shared_ptr<caramel::ast::Expression> const &rightExpression
+    ) {
+        CARAMEL_UNUSED(controlFlow);
+        CARAMEL_UNUSED(leftExpression);
+        CARAMEL_UNUSED(rightExpression);
+        throw caramel::exceptions::NotImplementedException(__FILE__);
+    };
+
 };
 
 } // namespace caramel::ast

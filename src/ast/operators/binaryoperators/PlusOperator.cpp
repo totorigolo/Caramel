@@ -33,7 +33,7 @@
 
 using namespace caramel::utils;
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::PlusOperator::buildIR(
+std::shared_ptr<caramel::ir::IR> caramel::ast::PlusOperator::getIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression) {
@@ -69,4 +69,12 @@ caramel::ast::StatementType caramel::ast::PlusOperator::getExpressionType() cons
 
 std::string caramel::ast::PlusOperator::getToken() const {
     return SYMBOL;
+}
+
+bool caramel::ast::PlusOperator::shouldReturnAnIR() const {
+    return true;
+}
+
+bool caramel::ast::PlusOperator::shouldReturnABasicBlock() const {
+    return false;
 }

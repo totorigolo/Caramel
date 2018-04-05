@@ -43,7 +43,7 @@ public:
 
 public:
     std::shared_ptr<caramel::ir::IR>
-    buildIR(
+    getIR(
             std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
             std::shared_ptr<caramel::ast::Expression> const &leftExpression,
             std::shared_ptr<caramel::ast::Expression> const &rightExpression
@@ -52,6 +52,10 @@ public:
     StatementType getExpressionType() const override;
 
     std::string getToken() const override;
+
+    bool shouldReturnAnIR() const override;
+
+    bool shouldReturnABasicBlock() const override;
 };
 
 } // namespace caramel::ast

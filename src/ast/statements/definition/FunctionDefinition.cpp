@@ -81,8 +81,7 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
     }
 
 
-    ir::BasicBlock::Ptr function_end_bb = controlFlow->generateBasicBlock(
-            ir::BasicBlock::getNextNumberName() + "_endof_" + mSymbol->getName());
+    ir::BasicBlock::Ptr function_end_bb = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_endof_" + mSymbol->getName());
     function_root_bb->setExitWhenTrue(function_end_bb);
 
     ir::BasicBlock::Ptr bb = function_root_bb->getNewWhenTrueBasicBlock("_innerbeginof_" + mSymbol->getName());
@@ -90,7 +89,7 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
         if (statement->shouldReturnAnIR()) {
             bb->addInstruction(statement->getIR(bb));
         } else if (statement->shouldReturnABasicBlock()) {
-            auto[child_root, child_end] = statement->getBasicBlock(controlFlow);
+            auto [child_root, child_end] = statement->getBasicBlock(controlFlow);
 
             if (!bb->getNextWhenTrue()) {
                 logger.fatal() << "BB must have a child.";

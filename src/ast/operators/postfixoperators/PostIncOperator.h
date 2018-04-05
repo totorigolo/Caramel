@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+ * Copyright (c) 2018 insa.4if.hexanome_kalate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,36 +24,11 @@
 
 #pragma once
 
-#include "../BinaryOperator.h"
 
-namespace caramel::ast {
 
-class BitwiseAndOperator : public BinaryOperator {
-public:
-    using Ptr = std::shared_ptr<BitwiseAndOperator>;
-    using WeakPtr = std::weak_ptr<BitwiseAndOperator>;
+class PostIncOperator {
 
-    static constexpr const char* SYMBOL = "&";
-
-public:
-    BitwiseAndOperator() = default;
-
-public:
-    ~BitwiseAndOperator() override = default;
-
-public:
-    std::shared_ptr<caramel::ir::IR>
-    getIR(
-            std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-            std::shared_ptr<caramel::ast::Expression> const &rightExpression
-    ) override;
-
-    StatementType getExpressionType() const override;
-
-    std::string getToken() const override;
 };
 
-} // namespace caramel::ast
 
 
