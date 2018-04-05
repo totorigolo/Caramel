@@ -36,6 +36,7 @@
 #include "../../exceptions/FunctionDefinitionParameterTypeMismatchError.h"
 #include "../../exceptions/FunctionCallArgumentsNumberMismatchException.h"
 #include "../../exceptions/FunctionDefinitionNumberOfParametersMismatchError.h"
+#include "../../exceptions/FunctionNameAlreadyDeclaredError.h"
 
 
 namespace caramel::ast {
@@ -134,7 +135,6 @@ VariableSymbol::Ptr SymbolTable::addVariableUsage(
     if (isDefined(name)) {
         auto const &symbol = getSymbol(antlrContext, name);
         if (symbol->getSymbolType() != SymbolType::VariableSymbol) {
-            // TODO: Create the right error
             throw DeclarationMismatchException(
                     antlrContext,
                     name,
@@ -255,7 +255,6 @@ ArraySymbol::Ptr SymbolTable::addArrayAccess(
     if (isDefined(name)) {
         auto const &symbol = getSymbol(antlrContext, name);
         if (symbol->getSymbolType() != SymbolType::ArraySymbol) {
-            // TODO: Create the right error
             throw DeclarationMismatchException(
                     antlrContext,
                     name,
@@ -295,9 +294,11 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDeclaration(
 
         auto const &symbol = getSymbol(antlrContext, name);
         if (symbol->getSymbolType() != SymbolType::FunctionSymbol) {
-            // TODO: Create true error
-            throw std::runtime_error(
-                    name + " previously declared as a XXX, so it's impossible to redeclare it as a function.");
+            throw FunctionNameAlreadyDeclaredError(
+                    antlrContext,
+                    name,
+                    symbol
+            );
         }
         FunctionSymbol::Ptr const &functionSymbol = castTo<FunctionSymbol::Ptr>(symbol);
 
