@@ -54,6 +54,10 @@ public:
     void visitChildrenAstDot() override;
     void acceptAstDotVisit() override;
 
+    bool shouldReturnABasicBlock() const override;
+
+    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override;
+
 private:
     std::shared_ptr<Expression> mLeftExpression;
     std::shared_ptr<BinaryOperator> mBinaryOperator;

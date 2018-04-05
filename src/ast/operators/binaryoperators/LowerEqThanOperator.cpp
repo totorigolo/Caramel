@@ -24,7 +24,7 @@
 
 #include "LowerEqThanOperator.h"
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::LowerEqThanOperator::buildIR(
+std::shared_ptr<caramel::ir::IR> caramel::ast::LowerEqThanOperator::getIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression

@@ -24,7 +24,7 @@
 
 #include "DiffOperator.h"
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::DiffOperator::buildIR(
+std::shared_ptr<caramel::ir::IR> caramel::ast::DiffOperator::getIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression
