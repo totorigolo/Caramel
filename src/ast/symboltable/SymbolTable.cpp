@@ -489,7 +489,7 @@ FunctionSymbol::Ptr SymbolTable::addFunctionCall(
         if (argumentsTypes.size() != parameters.size()) {
             throw FunctionCallArgumentsNumberMismatchException(
                     "The function " + name + " takes " + std::to_string(parameters.size()) + " arguments, "
-                    + "but only " + std::to_string(argumentsTypes.size()) + " were given."
+                    + "but " + std::to_string(argumentsTypes.size()) + " were given."
             );
         }
         for (size_t i = 0; i < argumentsTypes.size(); ++i) {
