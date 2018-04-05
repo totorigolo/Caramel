@@ -22,39 +22,17 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "VoidInstruction.h"
+#include "../IRVisitor.h"
 
-#include "AtomicExpression.h"
-#include "../../../symboltable/Symbol.h"
-#include "../../../symboltable/FunctionSymbol.h"
+namespace caramel::ir {
 
+VoidInstruction::VoidInstruction(std::shared_ptr<ir::BasicBlock> const &parentBlock)
+: IR(Operation::nope, parentBlock, ast::Void_t::Create()) {}
 
-namespace caramel::ast {
+void VoidInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    CARAMEL_UNUSED(visitor);
+    CARAMEL_UNUSED(os);
+}
 
-class FunctionCall : public AtomicExpression {
-public:
-    using Ptr = std::shared_ptr<FunctionCall>;
-    using WeakPtr = std::shared_ptr<FunctionCall>;
-
-    explicit FunctionCall(std::vector<Expression::Ptr> &&arguments, antlr4::Token *startToken);
-    ~FunctionCall() override = default;
-
-    Symbol::Ptr getSymbol() const;
-    void setSymbol(FunctionSymbol::Ptr symbol);
-
-    PrimaryType::Ptr getPrimaryType() const override;
-
-    std::vector<PrimaryType::Ptr> getArgumentsPrimaryTypes() const;
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnAnIR() const override { return true; }
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) override;
-
-private:
-    Symbol::Ptr mSymbol;
-    std::vector<Expression::Ptr> mArguments;
-};
-
-} // namespace caramel::ast
+} // namespace caramel::ir

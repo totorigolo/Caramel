@@ -89,7 +89,8 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
     ir::BasicBlock::Ptr bb = function_root_bb->getNewWhenTrueBasicBlock("_innerbeginof_" + mSymbol->getName());
     for (ast::Statement::Ptr const &statement : mContext->getStatements()) {
         if (statement->shouldReturnAnIR()) {
-            bb->addInstruction(statement->getIR(bb));
+            auto ir = statement->getIR(bb);
+            bb->addInstruction(ir);
         } else if (statement->shouldReturnABasicBlock()) {
             auto [child_root, child_end] = statement->getBasicBlock(controlFlow);
 

@@ -47,7 +47,7 @@ public:
 
 public:
     std::shared_ptr<ir::IR> getIR(
-            std::shared_ptr<ir::BasicBlock> const &currentBasicBlock,
+            std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
             std::shared_ptr<Expression> const &leftExpression,
             std::shared_ptr<Expression> const &rightExpression
     ) override;

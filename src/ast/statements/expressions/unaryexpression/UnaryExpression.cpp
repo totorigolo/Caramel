@@ -37,7 +37,7 @@ UnaryExpression::UnaryExpression(
 
 std::shared_ptr<caramel::ir::IR>
 UnaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
+        std::shared_ptr<ir::BasicBlock> &currentBasicBlock
 
 ) {
     return mUnaryOperator->buildIR(currentBasicBlock, mInnerExpression);

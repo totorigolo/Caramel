@@ -22,26 +22,45 @@
  * SOFTWARE.
 */
 
-#include "BitwiseXorOperator.h"
+//int32_t foo(int32_t a, int32_t b) {
+////    int32_t useless = 1 + 2 + 8 * 4 - 4 && 1 && 5;
+//    putchar('0' + a);
+//    return b;
+//}
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::BitwiseXorOperator::getIR(
-        std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
-        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-        std::shared_ptr<caramel::ast::Expression> const &rightExpression
-) {
+int32_t main() {
 
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+//    // 0
+//    int32_t a = 1 && 0 && 1;
+//    int32_t b = 1 && (0 && 1);
+//    int32_t c = (1 && 0) && 1;
+//    int32_t d = 1 && (1 - 1) && 1;
+//    // 1
+//    int32_t e = (1+2+3*4-5) && (1-1+1-1+1-1+1) && (1-5+7);
+//    int32_t f = (1+2+3*4-5 && 1*(5 && 1)) && (1-1+1-1+1-1+1) && (1-5+7);
+//    int32_t g = (1+2+3*4-5 && 1*(5 && 1)) && (1-1+1-1+1-1+1) && (1-5+7);
+//    int32_t a = 1 + 2;
+//    int32_t a = 1 + (1 && (1-1) && 1);
+//    int32_t a = (1 && (1-1) && 1) + 1;
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
-}
+    //int32_t h = foo(1, 1) && 1 && 1; // 12
+//    int32_t h = foo(1, 1) && foo(2, 1) && foo(3, 1); // 12
+    int32_t useless = 1 + 2 + 8 * 4 - 4 && 1 && 5;
+    putchar('1');
+    putchar('\n');
 
-caramel::ast::StatementType caramel::ast::BitwiseXorOperator::getExpressionType() const {
-    return StatementType::BitwiseExpression;
-}
+//    putchar('0' + a);
+//    putchar('\n');
+//    putchar('1' + b);
+//    putchar('\n');
+//    putchar('2' + c);
+//    putchar('\n');
+//    putchar('3' + d);
+//    putchar('\n');
+//    putchar('3' + e);
+//    putchar('\n');
+//    putchar('4' + f);
+//    putchar('\n');
 
-std::string caramel::ast::BitwiseXorOperator::getToken() const {
-    return SYMBOL;
+    return 0;
 }

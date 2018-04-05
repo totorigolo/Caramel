@@ -23,26 +23,126 @@
 */
 
 #include "ConjunctionOperator.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../ir/instructions/LDConstInstruction.h"
+#include "../../../ir/instructions/EmptyInstruction.h"
+#include "../../../ir/instructions/NopInstruction.h"
+#include "../../../utils/Common.h"
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::ConjunctionOperator::getIR(
-        std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-        std::shared_ptr<caramel::ast::Expression> const &rightExpression
-) {
+using namespace caramel::ast;
+using namespace caramel::utils;
+using namespace caramel;
 
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+int ConjunctionOperator::nb = 0;
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+ir::GetBasicBlockReturn ConjunctionOperator::getBasicBlock(ir::CFG *controlFlow,
+                                                           std::shared_ptr<Expression> const &leftExpression,
+                                                           std::shared_ptr<Expression> const &rightExpression) {
+    nb++;
+    int currentNb = nb;
+    ir::BasicBlock::Ptr startBlock = controlFlow->generateBasicBlock(
+            ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_start");
+    ir::BasicBlock::Ptr trueBlock  = controlFlow->generateBasicBlock(
+            ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_true");
+    ir::BasicBlock::Ptr falseBlock  = controlFlow->generateBasicBlock(
+            ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_false");
+    ir::BasicBlock::Ptr endBlock = controlFlow->generateBasicBlock(
+            ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_end");
+
+    ir::BasicBlock::Ptr constStart = startBlock;
+    ir::BasicBlock::Ptr constEnd = endBlock;
+
+    startBlock->setExitWhenTrue(trueBlock);
+    startBlock->setExitWhenFalse(falseBlock);
+
+    std::string returnName = Statement::createVarName();
+    PrimaryType::Ptr Int64Type = std::make_shared<Int64_t>();
+
+    trueBlock->setExitWhenTrue(endBlock);
+    trueBlock->addInstruction(std::make_shared<ir::LDConstInstruction>(
+            trueBlock,
+            Int64Type,
+            returnName,
+            "1"
+    ));
+
+    falseBlock->setExitWhenTrue(endBlock);
+    falseBlock->addInstruction(std::make_shared<ir::LDConstInstruction>(
+            falseBlock,
+            Int64Type,
+            returnName,
+            "0"
+    ));
+
+    endBlock->addInstruction(std::make_shared<ir::EmptyInstruction>(
+            returnName,
+            endBlock,
+            Int64Type
+    ));
+
+    ir::BasicBlock::Ptr lastLeftBlock;
+
+    if (leftExpression->shouldReturnAnIR()) {
+        auto ir = leftExpression->getIR(startBlock);
+        startBlock->addInstruction(ir);
+        lastLeftBlock = startBlock;
+    } else {
+        auto leftBlockChain = leftExpression->getBasicBlock(controlFlow);
+
+        startBlock->setExitWhenTrue(leftBlockChain.begin);
+        lastLeftBlock = leftBlockChain.end;
+        lastLeftBlock->setExitWhenFalse(falseBlock);
+    }
+
+    if (rightExpression->shouldReturnAnIR()) {
+        ir::BasicBlock::Ptr midBlock = controlFlow->generateBasicBlock(
+                ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_mid");
+        auto ir = rightExpression->getIR(midBlock);
+        midBlock->addInstruction(ir);
+        midBlock->setExitWhenTrue(trueBlock);
+        midBlock->setExitWhenFalse(falseBlock);
+
+        lastLeftBlock->setExitWhenTrue(midBlock);
+    } else {
+        auto rightBlockChain = rightExpression->getBasicBlock(controlFlow);
+
+        lastLeftBlock->setExitWhenTrue(rightBlockChain.begin);
+
+        rightBlockChain.end->setExitWhenTrue(trueBlock);
+        rightBlockChain.end->setExitWhenFalse(falseBlock);
+    }
+
+    return {constStart, constEnd};
+
 }
 
-caramel::ast::StatementType caramel::ast::ConjunctionOperator::getExpressionType() const {
+std::shared_ptr<ir::IR> ConjunctionOperator::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
+                                                   std::shared_ptr<Expression> const &leftExpression,
+                                                   std::shared_ptr<Expression> const &rightExpression) {
+    auto [start, end] = getBasicBlock(currentBasicBlock->getCFG(), leftExpression, rightExpression);
+
+    currentBasicBlock->setExitWhenTrue(start);
+    currentBasicBlock = end;
+
+    return castTo<ir::IR::Ptr>(std::make_shared<ir::EmptyInstruction>(
+            currentBasicBlock->getInstructions().back()->getReturnName(),
+            currentBasicBlock,
+            currentBasicBlock->getInstructions().back()->getType()
+    ));
+}
+
+StatementType ConjunctionOperator::getExpressionType() const {
     return StatementType::ConjunctionExpression;
 }
 
-std::string caramel::ast::ConjunctionOperator::getToken() const {
+std::string ConjunctionOperator::getToken() const {
     return SYMBOL;
 }
 
+bool ConjunctionOperator::shouldReturnAnIR() const {
+    return false;
+}
+
+bool ConjunctionOperator::shouldReturnABasicBlock() const {
+    return true;
+}

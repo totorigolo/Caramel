@@ -44,7 +44,7 @@ PrimaryType::Ptr Identifier::getPrimaryType() const {
     return mSymbol->getType();
 }
 
-std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<ir::BasicBlock> const &currentBasicBlock) {
+std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) {
     return std::make_shared<ir::EmptyInstruction>(mSymbol->getName(), currentBasicBlock, mSymbol->getType());
 }
 
