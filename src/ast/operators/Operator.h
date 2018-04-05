@@ -43,7 +43,7 @@ public:
     virtual std::string getToken() const = 0;
 
     virtual bool shouldReturnAnIR() const {
-        throw exceptions::NotImplementedException(__FILE__);
+        return true;
     };
 
     virtual bool shouldReturnABasicBlock() const {
