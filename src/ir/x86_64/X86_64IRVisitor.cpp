@@ -230,8 +230,12 @@ void X86_64IRVisitor::visitArrayAccessCopy(ArrayAccessCopyInstruction *instructi
     std::string destAsmReg = toAssembly(
             instruction->getParentBlock(), instruction->getDestination(), length);
 
-    os << "  movl " << arrayAsmName << "," << indexAsmReg << "," << (length / 8U)
-       << "), " << destAsmReg;
+    if (instruction->isLValue()) {
+        os << "  movl " << destAsmReg << ", " << arrayAsmName << "," << indexAsmReg << "," << (length / 8U) << ")";
+    } else {
+        os << "  movl " << arrayAsmName << "," << indexAsmReg << "," << (length / 8U)
+           << "), " << destAsmReg;
+    }
 }
 
 void X86_64IRVisitor::visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) {

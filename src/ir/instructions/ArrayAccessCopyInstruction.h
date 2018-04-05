@@ -38,7 +38,8 @@ public:
             caramel::ast::PrimaryType::Ptr const &type,
             std::string const &destination,
             std::string const &index,
-            std::string const &arrayName
+            std::string const &arrayName,
+            bool lvalue
     );
 
     ~ArrayAccessCopyInstruction() override = default;
@@ -49,11 +50,14 @@ public:
 
     std::string getArrayName() const;
 
+    bool isLValue() const;
+
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
     std::string mIndex;
     std::string mArrayName;
+    bool mLValue;
 };
 
 } // namespace caramel::ir

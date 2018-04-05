@@ -27,6 +27,7 @@
 #include "../../../../ir/instructions/CopyInstruction.h"
 #include "../../../../ir/instructions/NopInstruction.h"
 #include "../../../../ir/instructions/ArrayAccessCopyInstruction.h"
+#include "../../../../ir/instructions/PopInstruction.h"
 
 namespace caramel::ast {
 
@@ -70,9 +71,18 @@ std::shared_ptr<ir::IR> ArrayAccess::getIR(std::shared_ptr<caramel::ir::BasicBlo
 
 //    cltq
 //    movl -16(%rbp,%rax,4), %eax
-    return std::make_shared<ir::ArrayAccessCopyInstruction>(
-            currentBasicBlock, mSymbol->getType(), createVarName(), prevSrc, mSymbol->getName()
-    );
+    if (isUsedInLeft()) {
+        currentBasicBlock->addInstruction(std::make_shared<ir::PopInstruction>(
+                currentBasicBlock, mSymbol->getType(), ir::IR::ACCUMULATOR
+        ));
+        return std::make_shared<ir::ArrayAccessCopyInstruction>(
+                currentBasicBlock, mSymbol->getType(), ir::IR::ACCUMULATOR, prevSrc, mSymbol->getName(), isUsedInLeft()
+        );
+    } else {
+        return std::make_shared<ir::ArrayAccessCopyInstruction>(
+                currentBasicBlock, mSymbol->getType(), createVarName(), prevSrc, mSymbol->getName(), isUsedInLeft()
+        );
+    }
 }
 
 } // namespace caramel::ast

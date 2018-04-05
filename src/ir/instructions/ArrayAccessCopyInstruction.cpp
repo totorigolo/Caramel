@@ -32,10 +32,12 @@ ArrayAccessCopyInstruction::ArrayAccessCopyInstruction(
         caramel::ast::PrimaryType::Ptr const &type,
         std::string const &destination,
         std::string const &index,
-        std::string const &arrayName
+        std::string const &arrayName,
+        bool lvalue
 ) : IR(destination, Operation::copy, parentBlock, type),
     mIndex{index},
-    mArrayName{arrayName} {}
+    mArrayName{arrayName},
+    mLValue{lvalue} {}
 
 std::string ArrayAccessCopyInstruction::getDestination() const {
     return getReturnName();
@@ -47,6 +49,10 @@ std::string ArrayAccessCopyInstruction::getIndex() const {
 
 std::string ArrayAccessCopyInstruction::getArrayName() const {
     return mArrayName;
+}
+
+bool ArrayAccessCopyInstruction::isLValue() const {
+    return mLValue;
 }
 
 void ArrayAccessCopyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {

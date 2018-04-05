@@ -28,6 +28,7 @@
 #include "../../../ir/instructions/CopyInstruction.h"
 #include "../../../ir/instructions/AdditionInstruction.h"
 #include "../../statements/expressions/atomicexpression/LValue.h"
+#include "../../../ir/instructions/PushInstruction.h"
 
 
 namespace caramel::ast {
@@ -41,16 +42,38 @@ std::shared_ptr<ir::IR> AssignmentOperator::buildIR(
         ir::BasicBlock::Ptr const &currentBasicBlock,
         Expression::Ptr const &leftExpression,
         Expression::Ptr const &rightExpression) {
-    std::string lvalue = currentBasicBlock->addInstruction(mLValue->getIR(currentBasicBlock));
-    std::string rvalue = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
 
-    std::shared_ptr<ir::CopyInstruction> instr = std::make_shared<ir::CopyInstruction>(
-            currentBasicBlock,
-            PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType()),
-            lvalue,
-            rvalue
-    );
-    return castTo<ir::IR::Ptr>(instr);
+    mLValue->setIsUsedInLeft(true);
+
+    if (mLValue->getType() == StatementType::ArrayAccess) {
+
+        std::string rvalue = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
+        currentBasicBlock->addInstruction(std::make_shared<ir::PushInstruction>(
+                currentBasicBlock, rightExpression->getPrimaryType(), rvalue
+        ));
+
+        std::string lvalue = currentBasicBlock->addInstruction(mLValue->getIR(currentBasicBlock));
+
+        std::shared_ptr<ir::CopyInstruction> instr = std::make_shared<ir::CopyInstruction>(
+                currentBasicBlock,
+                PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType()),
+                lvalue,
+                rvalue
+        );
+        return castTo<ir::IR::Ptr>(instr);
+
+    } else {
+        std::string lvalue = currentBasicBlock->addInstruction(mLValue->getIR(currentBasicBlock));
+        std::string rvalue = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
+
+        std::shared_ptr<ir::CopyInstruction> instr = std::make_shared<ir::CopyInstruction>(
+                currentBasicBlock,
+                PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType()),
+                lvalue,
+                rvalue
+        );
+        return castTo<ir::IR::Ptr>(instr);
+    }
 }
 
 StatementType AssignmentOperator::getExpressionType() const {
