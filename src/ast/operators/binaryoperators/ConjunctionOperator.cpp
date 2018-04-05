@@ -24,7 +24,7 @@
 
 #include "ConjunctionOperator.h"
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::ConjunctionOperator::buildIR(
+std::shared_ptr<caramel::ir::IR> caramel::ast::ConjunctionOperator::getIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression
@@ -45,3 +45,4 @@ caramel::ast::StatementType caramel::ast::ConjunctionOperator::getExpressionType
 std::string caramel::ast::ConjunctionOperator::getToken() const {
     return SYMBOL;
 }
+

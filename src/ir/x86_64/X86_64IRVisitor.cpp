@@ -300,6 +300,9 @@ void X86_64IRVisitor::visitNope(caramel::ir::NopInstruction *instruction, std::o
 void X86_64IRVisitor::visitFunctionCall(caramel::ir::FunctionCallInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting functionCall: " << instruction->getFunctionName();
     os << "  call    " << instruction->getFunctionName();
+    if(instruction->getArgumentsLength() > 6) {
+        os << "\n  addq    $" << (instruction->getArgumentsLength() - 6) * 8 << ", %rsp";
+    }
 }
 
 void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, std::ostream &os) {
@@ -308,7 +311,11 @@ void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, s
     const auto returnSize = instruction->getType()->getMemoryLength();
     os << "  mov" + getSizeSuffix(returnSize) + "    "
        << toAssembly(instruction->getParentBlock(), instruction->getSource(), returnSize)
-       << ", " << toAssembly(instruction->getParentBlock(), IR::ACCUMULATOR, 32); // TODO: See TODO in getSizeSuffix()
+       << ", " << toAssembly(instruction->getParentBlock(), IR::ACCUMULATOR, 32) // TODO: See TODO in getSizeSuffix()
+       << "\n";
+    size_t functionContext = instruction->getParentBlock()->getFunctionContext();
+
+     os << "  jmp    " << instruction->getParentBlock()->getCFG()->getFunctionEndBasicBlock(functionContext)->getLabelName();
 
     // os << "\n#mov return";
 }

@@ -22,7 +22,7 @@
  * SOFTWARE.
 */
 
-#include "PreIncrOperator.h"
+#include "PostIncOperator.h"
 #include "../../../ir/instructions/AdditionInstruction.h"
 #include "../../statements/expressions/atomicexpression/LValue.h"
 #include "../../../utils/Common.h"
@@ -33,7 +33,7 @@
 
 using namespace caramel::utils;
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::PreIncrOperator::buildIR(
+std::shared_ptr<caramel::ir::IR> caramel::ast::PostIncOperator::buildIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &expression
 ) {
@@ -66,20 +66,21 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::PreIncrOperator::buildIR(
     );
     currentBasicBlock->addInstruction(copyBack);
 
-    ir::IR::Ptr copyToRegister = std::make_shared<ir::LDConstInstruction>(
+    ir::IR::Ptr substraction = std::make_shared<ir::SubtractionInstruction>(
+            ir::IR::ACCUMULATOR_1,
             currentBasicBlock,
             lvalue->getPrimaryType(),
-            Statement::createVarName(),
-            lvalue->getSymbol()->getName()
+            "1",
+            tmpName
     );
-    return copyToRegister;
+    return substraction;
 
 }
 
-caramel::ast::StatementType caramel::ast::PreIncrOperator::getExpressionType() const {
+caramel::ast::StatementType caramel::ast::PostIncOperator::getExpressionType() const {
     return StatementType::UnaryAdditiveExpression;
 }
 
-std::string caramel::ast::PreIncrOperator::getToken() const {
+std::string caramel::ast::PostIncOperator::getToken() const {
     return SYMBOL;
 }
