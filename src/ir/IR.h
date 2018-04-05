@@ -60,7 +60,8 @@ enum class Operation {
     jmp_le,
     jmp_ge,
     jmp_gt,
-    popq
+    popq,
+    ftr // equivalent of ser
 };
 
 class IR {

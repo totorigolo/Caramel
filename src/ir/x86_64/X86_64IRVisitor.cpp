@@ -38,6 +38,7 @@
 #include "../instructions/PushInstruction.h"
 #include "../instructions/PopInstruction.h"
 #include "../instructions/MultiplicationInstruction.h"
+#include "../instructions/FlagToRegInstruction.h"
 #include "../instructions/ModInstruction.h"
 #include "../instructions/DivInstruction.h"
 
@@ -52,48 +53,7 @@ std::string X86_64IRVisitor::address(std::string const &symbol) {
 
 std::string X86_64IRVisitor::registerToAssembly(std::string const &register_, size_t bitSize) {
     logger.trace() << "[x86_64] " << "registerToAssembly(" << register_ << ")";
-    std::string r;
-
-    std::string sizePrefix;
-    switch (bitSize) {
-        case 8:
-            logger.warning() << "X86_64IRVisitor::registerToAssembly(): using 16bits for 8bits value.";
-            sizePrefix = "";
-            break;
-        case 16:
-            sizePrefix = "";
-            break;
-        case 32:
-            sizePrefix = "e";
-            break;
-        case 64:
-            sizePrefix = "r";
-            break;
-        default:
-            logger.fatal() << "Wrong bitSize in X86_64IRVisitor::registerToAssembly().";
-            exit(1);
-    }
-
-    if (register_ == IR::REGISTER_BASE_POINTER) {
-        r = "%" + sizePrefix + "bp";
-    } else if (register_ == IR::REGISTER_STACK_POINTER) {
-        r = "%" + sizePrefix + "sp";
-    } else if (register_ == IR::DATA_REG) {
-        r = "%" + sizePrefix + "dx";
-    } else if (register_ == IR::ACCUMULATOR) {
-        r = "%" + sizePrefix + "ax";
-    } else if (register_ == IR::REGISTER_10 || register_ == IR::ACCUMULATOR_1) {
-        if (bitSize == 64) r = "%r10";
-        else r = "%r10d";
-    } else if (register_ == IR::REGISTER_11 || register_ == IR::ACCUMULATOR_2) {
-        if (bitSize == 64) r = "%r11";
-        else r = "%r11d";
-    } else {
-        throw std::runtime_error("Not valid register for " + register_);
-    }
-
-    logger.trace() << "[x86_64] " << "  => " << r;
-    return r;
+    return getRegister(register_, bitSize);
 }
 
 std::string X86_64IRVisitor::toAssembly(ir::BasicBlock::Ptr parentBB, std::string const &anySymbol, size_t bitSize) {
@@ -141,6 +101,48 @@ std::string X86_64IRVisitor::getSizeSuffix(size_t bitSize) {
             logger.fatal() << "Wrong bitSize in X86_64IRVisitor::getSizeSuffix(" << bitSize << ").";
             exit(1);
     }
+}
+
+std::string X86_64IRVisitor::getRegister(std::string register_, size_t bitSize) {
+    static bool init = false;
+    static std::map<std::string, std::map<size_t, std::string>> REGISTERS;
+    if (!init) {
+        REGISTERS[IR::ACCUMULATOR][8] = "%al";
+        REGISTERS[IR::ACCUMULATOR][16] = "%ax";
+        REGISTERS[IR::ACCUMULATOR][32] = "%eax";
+        REGISTERS[IR::ACCUMULATOR][64] = "%rax";
+        REGISTERS[IR::ACCUMULATOR_1][8] = "%r10b";
+        REGISTERS[IR::ACCUMULATOR_1][16] = "%r10w";
+        REGISTERS[IR::ACCUMULATOR_1][32] = "%r10d";
+        REGISTERS[IR::ACCUMULATOR_1][64] = "%r10";
+        REGISTERS[IR::ACCUMULATOR_2][8] = "%r11b";
+        REGISTERS[IR::ACCUMULATOR_2][16] = "%r11w";
+        REGISTERS[IR::ACCUMULATOR_2][32] = "%r11d";
+        REGISTERS[IR::ACCUMULATOR_2][64] = "%r11";
+        REGISTERS[IR::REGISTER_10][8] = "%r10b";
+        REGISTERS[IR::REGISTER_10][16] = "%r10w";
+        REGISTERS[IR::REGISTER_10][32] = "%r10d";
+        REGISTERS[IR::REGISTER_10][64] = "%r10";
+        REGISTERS[IR::REGISTER_11][8] = "%r11b";
+        REGISTERS[IR::REGISTER_11][16] = "%r11w";
+        REGISTERS[IR::REGISTER_11][32] = "%r11d";
+        REGISTERS[IR::REGISTER_11][64] = "%r11";
+        REGISTERS[IR::REGISTER_BASE_POINTER][8] = "%bp"; // < using the 16-bit register
+        REGISTERS[IR::REGISTER_BASE_POINTER][16] = "%bp";
+        REGISTERS[IR::REGISTER_BASE_POINTER][32] = "%ebp";
+        REGISTERS[IR::REGISTER_BASE_POINTER][64] = "%rbp";
+        REGISTERS[IR::REGISTER_STACK_POINTER][8] = "%sp"; // < using the 16-bit register
+        REGISTERS[IR::REGISTER_STACK_POINTER][16] = "%sp";
+        REGISTERS[IR::REGISTER_STACK_POINTER][32] = "%esp";
+        REGISTERS[IR::REGISTER_STACK_POINTER][64] = "%rsp";
+        init = true;
+    }
+
+    if (REGISTERS[register_].find(bitSize) == REGISTERS[register_].end()) {
+        logger.fatal() << "The size " << bitSize << " is not valid!";
+        exit(1);
+    }
+    return REGISTERS[register_][bitSize];
 }
 
 std::string X86_64IRVisitor::getFunctionCallRegister(size_t index, size_t bitSize) {
@@ -438,6 +440,22 @@ void X86_64IRVisitor::visitMultiplication(MultiplicationInstruction *instruction
 
     os << "  imul" + getSizeSuffix(parameterSize) + "    "
        << leftLocation << ", " << storeLocation;
+}
+
+void X86_64IRVisitor::visitFlagToReg(FlagToRegInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting flag to reg: "
+                   << instruction->getLeft() << " - " << instruction->getRight();
+
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    // TODO : Change 64 to a defined variable
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), 64);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), 64);
+    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), 8);
+
+    os << "  cmp     " << rightLocation << ", " << leftLocation << '\n';
+
+    os << "  set" << instruction->getFtrType() << "    " << storeLocation;
+
 }
 
 } // namespace caramel::ir::x86_64

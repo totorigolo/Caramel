@@ -28,18 +28,18 @@
 
 namespace caramel::ast {
 
-class DiffOperator : public BinaryOperator {
+class NotEqOperator : public BinaryOperator {
 public:
-    using Ptr = std::shared_ptr<DiffOperator>;
-    using WeakPtr = std::weak_ptr<DiffOperator>;
+    using Ptr = std::shared_ptr<NotEqOperator>;
+    using WeakPtr = std::weak_ptr<NotEqOperator>;
 
     static constexpr const char* SYMBOL = "!=";
 
 public:
-    DiffOperator() = default;
+    NotEqOperator() = default;
 
 public:
-    ~DiffOperator() override = default;
+    ~NotEqOperator() override = default;
 
 public:
     std::shared_ptr<caramel::ir::IR>

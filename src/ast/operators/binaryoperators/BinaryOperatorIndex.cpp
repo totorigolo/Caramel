@@ -34,7 +34,7 @@
 #include "GreaterThanOperator.h"
 #include "GreaterEqThanOperator.h"
 #include "EqualityOperator.h"
-#include "DiffOperator.h"
+#include "NotEqOperator.h"
 #include "BitwiseAndOperator.h"
 #include "BitwiseOrOperator.h"
 #include "BitwiseXorOperator.h"
@@ -73,7 +73,7 @@ caramel::ast::BinaryOperatorIndex::BinaryOperatorIndex() {
 
     // Equality operators
     BIND(EqualityOperator);
-    BIND(DiffOperator);
+    BIND(NotEqOperator);
 
     // Bitwise operators
     BIND(BitwiseAndOperator);

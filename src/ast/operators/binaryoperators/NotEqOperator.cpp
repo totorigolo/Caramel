@@ -22,26 +22,51 @@
  * SOFTWARE.
 */
 
-#include "DiffOperator.h"
+#include "NotEqOperator.h"
+#include "../../../utils/Common.h"
+#include "../../../ir/instructions/CopyInstruction.h"
+#include "../../../ir/instructions/PushInstruction.h"
+#include "../../../ir/instructions/PopInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
+#include "../../../ir/instructions/FlagToRegInstruction.h"
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::DiffOperator::getIR(
+using namespace caramel::utils;
+
+std::shared_ptr<caramel::ir::IR> caramel::ast::NotEqOperator::getIR(
         std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression
 ) {
 
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+    auto maxType = GET_MAX_TYPE(leftExpression, rightExpression);
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+    std::string left = GET_REGISTER(leftExpression);
+
+    MOVE_TO(left, ir::IR::ACCUMULATOR_2, maxType);
+
+    PUSH(ir::IR::ACCUMULATOR_2);
+
+    std::string right = GET_REGISTER(rightExpression);
+
+    MOVE_TO(right, ir::IR::ACCUMULATOR_1, maxType);
+
+    POP(ir::IR::ACCUMULATOR_2);
+
+    std::shared_ptr<ir::FlagToRegInstruction> instr = std::make_shared<ir::FlagToRegInstruction>(
+            ir::IR::ACCUMULATOR_2,
+            currentBasicBlock,
+            PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType()),
+            ir::IR::ACCUMULATOR_2, // left value
+            ir::IR::ACCUMULATOR_1, // right value (be careful to PUSH/POP)
+            ir::FlagToRegType::NotEq
+    );
+    return castTo<ir::IR::Ptr>(instr);
 }
 
-caramel::ast::StatementType caramel::ast::DiffOperator::getExpressionType() const {
+caramel::ast::StatementType caramel::ast::NotEqOperator::getExpressionType() const {
     return StatementType::EqualityExpression;
 }
 
-std::string caramel::ast::DiffOperator::getToken() const {
+std::string caramel::ast::NotEqOperator::getToken() const {
     return SYMBOL;
 }

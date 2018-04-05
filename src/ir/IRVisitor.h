@@ -61,6 +61,7 @@ class PopInstruction;
 class MultiplicationInstruction;
 class ModInstruction;
 class DivInstruction;
+class FlagToRegInstruction;
 
 class IRVisitor {
 public:
@@ -147,6 +148,11 @@ public:
 
     virtual void visitMultiplication(
             MultiplicationInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitFlagToReg(
+            FlagToRegInstruction *instruction,
             std::ostream &os
     ) = 0;
 

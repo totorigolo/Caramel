@@ -38,8 +38,6 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::PlusOperator::getIR(
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression) {
 
-    auto bb = currentBasicBlock;
-
     auto maxType = GET_MAX_TYPE(leftExpression, rightExpression);
 
     std::string left = GET_REGISTER(leftExpression);
