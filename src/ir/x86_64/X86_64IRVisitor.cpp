@@ -202,8 +202,7 @@ void X86_64IRVisitor::visitCopy(caramel::ir::CopyInstruction *instruction, std::
 void X86_64IRVisitor::visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting empty";
 
-    CARAMEL_UNUSED(instruction);
-    CARAMEL_UNUSED(os);
+    os << "  nop # empty with returnName=" << instruction->getReturnName();
 }
 
 void X86_64IRVisitor::visitProlog(caramel::ir::PrologInstruction *instruction, std::ostream &os) {

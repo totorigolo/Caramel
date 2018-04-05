@@ -6,10 +6,10 @@
 
 int32_t main() {
     int32_t a = 5;
-    while(a){
+    do {
         putchar('0'+a);
         a = a - 1;
-    }
+    }while(a+1-1);
     putchar('\n');
     putchar('e');
     putchar('x');

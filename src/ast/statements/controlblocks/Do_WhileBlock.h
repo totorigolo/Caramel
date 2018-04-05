@@ -30,12 +30,12 @@
 
 namespace caramel::ast {
 
-class WhileBlock : public ControlBlock {
+class Do_WhileBlock : public ControlBlock {
 public:
-    using Ptr = std::shared_ptr<WhileBlock>;
-    using WeakPtr = std::weak_ptr<WhileBlock>;
+    using Ptr = std::shared_ptr<Do_WhileBlock>;
+    using WeakPtr = std::weak_ptr<Do_WhileBlock>;
 
-    WhileBlock(
+    Do_WhileBlock(
             std::shared_ptr<caramel::ast::Expression> condition,
             std::vector<std::shared_ptr<caramel::ast::Statement>> block,
             antlr4::Token *token

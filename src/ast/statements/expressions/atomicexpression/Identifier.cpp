@@ -25,6 +25,7 @@
 #include "Identifier.h"
 #include "../../../../ir/BasicBlock.h"
 #include "../../../../ir/instructions/EmptyInstruction.h"
+#include "../../../../ir/instructions/NopInstruction.h"
 
 namespace caramel::ast {
 
