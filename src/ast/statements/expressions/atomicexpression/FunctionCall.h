@@ -50,7 +50,7 @@ public:
     void visitChildrenAstDot() override;
 
     bool shouldReturnAnIR() const override { return true; }
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
+    std::shared_ptr<ir::IR> getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) override;
 
 private:
     Symbol::Ptr mSymbol;

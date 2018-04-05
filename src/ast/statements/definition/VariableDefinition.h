@@ -52,8 +52,8 @@ public:
 
     void acceptAstDotVisit() override;
 
-    bool shouldReturnAnIR() const override { return true; }
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
+    bool shouldReturnAnIR() const override;
+    std::shared_ptr<ir::IR> getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) override;
 
 private:
     std::weak_ptr<VariableSymbol> mSymbol;

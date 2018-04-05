@@ -28,7 +28,7 @@ namespace caramel::ast {
 
 std::shared_ptr<ir::IR>
 RightShiftOperator::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock,
+        std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
         std::shared_ptr<Expression> const &leftExpression,
         std::shared_ptr<Expression> const &rightExpression
 ) {

@@ -66,9 +66,14 @@ std::weak_ptr<Symbol> VariableDefinition::getSymbol() {
     return std::dynamic_pointer_cast<Symbol>(mSymbol.lock());
 }
 
-std::shared_ptr<ir::IR> VariableDefinition::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {
+bool VariableDefinition::shouldReturnAnIR() const {
+    return true;
+}
 
-    std::string opName = currentBasicBlock->addInstruction(mInitializer->getIR(currentBasicBlock));
+std::shared_ptr<ir::IR> VariableDefinition::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) {
+
+    auto ir = mInitializer->getIR(currentBasicBlock);
+    std::string opName = currentBasicBlock->addInstruction(ir);
     std::string identifier = mSymbol.lock()->getName();
 
     return std::make_shared<ir::CopyInstruction>(

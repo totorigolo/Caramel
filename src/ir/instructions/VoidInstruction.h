@@ -22,27 +22,26 @@
  * SOFTWARE.
 */
 
-#include "JumpEqualInstruction.h"
-#include "../IRVisitor.h"
+#pragma once
+
+#include "../IR.h"
 
 namespace caramel::ir {
 
-JumpEqualInstruction::JumpEqualInstruction(
-        std::shared_ptr<ir::BasicBlock> const &parentBlock,
-        std::string dest
-) : IR(
-        "",
-        Operation::jmp_eq, parentBlock,
-        ast::Void_t::Create()
-),
-    mDest{std::move(dest)} {}
+class VoidInstruction : public IR {
+public:
+    using Ptr = std::shared_ptr<VoidInstruction>;
+    using WeakPtr = std::weak_ptr<VoidInstruction>;
 
-void JumpEqualInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitJumpEqual(this, os);
-}
+public:
+    explicit VoidInstruction(std::shared_ptr<BasicBlock> const &parentBlock);
+    ~VoidInstruction() override = default;
 
-const std::string &JumpEqualInstruction::getDest() const {
-    return mDest;
-}
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+
+};
 
 } // namespace caramel::ir
+
+
+

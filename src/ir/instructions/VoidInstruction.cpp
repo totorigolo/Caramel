@@ -21,30 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
 */
-#pragma once
 
-#include <memory>
-#include "../IR.h"
+#include "VoidInstruction.h"
+#include "../IRVisitor.h"
 
 namespace caramel::ir {
 
-class GTEInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<GTEInstruction>;
-    using WeakPtr = std::weak_ptr<GTEInstruction>;
+VoidInstruction::VoidInstruction(std::shared_ptr<ir::BasicBlock> const &parentBlock)
+: IR(Operation::nope, parentBlock, ast::Void_t::Create()) {}
 
-public:
-    explicit GTEInstruction(
-            std::string const &returnName,
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const & type
-    );
-
-~GTEInstruction() override  = default;
-
-private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream & os);
-
-};
+void VoidInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    CARAMEL_UNUSED(visitor);
+    CARAMEL_UNUSED(os);
+}
 
 } // namespace caramel::ir

@@ -112,6 +112,7 @@ antlrcpp::Any ASTVisitor::visitStatements(CaramelParser::StatementsContext *ctx)
         antlrcpp::Any r;
         try {r = visitStatement(statement);}
         catch(caramel::exceptions::SemanticError &semanticError){
+            incrementErrorCount();
             semanticError.explain(utils::SourceFileUtil(mSourceFilename));
         }
         if (r.is<Statement::Ptr>()) {
@@ -140,6 +141,7 @@ antlrcpp::Any ASTVisitor::visitBlock(CaramelParser::BlockContext *ctx) {
             declarations = std::move(r); // TODO: Workaround
         }
         catch(caramel::exceptions::SemanticError &semanticError){
+            incrementErrorCount();
             semanticError.explain(utils::SourceFileUtil(mSourceFilename));
         }
         //currentContext()->addStatements(std::move(declarations));
@@ -152,6 +154,7 @@ antlrcpp::Any ASTVisitor::visitBlock(CaramelParser::BlockContext *ctx) {
             instructions = std::move(i); // TODO: Workaround
         }
         catch(caramel::exceptions::SemanticError &semanticError){
+            incrementErrorCount();
             semanticError.explain(utils::SourceFileUtil(mSourceFilename));
         }
         //currentContext()->addStatements(std::move(instructions));
@@ -169,6 +172,7 @@ antlrcpp::Any ASTVisitor::visitDeclarations(CaramelParser::DeclarationsContext *
         antlrcpp::Any r;
         try {r = visitDeclaration(declaration);}
         catch(caramel::exceptions::SemanticError &semanticError){
+            incrementErrorCount();
             semanticError.explain(utils::SourceFileUtil(mSourceFilename));
         }
         if (r.is<Statement::Ptr>()) {
@@ -208,8 +212,7 @@ ASTVisitor::visitTypeParameter(CaramelParser::TypeParameterContext *ctx) {
         Symbol::Ptr symbol = currentContext()->getSymbolTable()->getSymbol(ctx, symbolName);
         return castTo<TypeSymbol::Ptr>(symbol);
     } else {
-        logger.warning() << "Default symbol " << symbolName << " is created with void_t as return type";
-        return std::make_shared<TypeSymbol>( symbolName, Void_t::Create() );
+        throw std::runtime_error("Default symbol " + symbolName + " is created with void_t as return type");
     }
 }
 
@@ -275,6 +278,14 @@ antlrcpp::Any ASTVisitor::visitChildren(antlr4::tree::ParseTree *node) {
     return childResult;
 }
 
+void ASTVisitor::incrementErrorCount(){
+    mErrorCount++;
+}
+int ASTVisitor::getErrorCount(){
+    return mErrorCount;
+}
+
+
 ContextPusher::ContextPusher(ASTVisitor &ASTVisitor)
         : mASTVisitor(ASTVisitor) {
     logger.trace() << "ContextPusher: Trying to push a new context.";
@@ -290,10 +301,34 @@ ContextPusher::ContextPusher(ASTVisitor &ASTVisitor)
 }
 
 ContextPusher::~ContextPusher() {
-    logger.debug() << "Pop context: " << *mASTVisitor.mContextStack.top();
+    logger.trace() << "Popping context: " << *mASTVisitor.mContextStack.top();
+    verifUsageStatic(mASTVisitor.mContextStack.top());
+    logger.debug() << "Popped context: " << *mASTVisitor.mContextStack.top();
     mASTVisitor.mContextStack.pop();
 }
 
 Context::Ptr ContextPusher::getContext() {
     return mASTVisitor.currentContext();
+}
+
+void ContextPusher::verifUsageStatic(ast::Context::Ptr context) {
+    logger.trace() << "Running static analysis on: " << *mASTVisitor.mContextStack.top();
+
+    auto symbolTable = context->getSymbolTable();
+    for (auto symbolMapElem : symbolTable->getSymbols()) {
+        auto symbol = symbolMapElem.second;
+        if (symbolTable->isDeclared(symbolMapElem.first)) {
+            if (!symbolTable->isDefined(symbolMapElem.first)) {
+                logger.warning() << "The element '" << symbolMapElem.first << "' was declared but never defined";
+            }
+        }
+        if (symbolTable->isDefined(symbolMapElem.first)) {
+            if (symbol->getSymbolType() != ast::SymbolType::TypeSymbol && symbol->getName() != "main") {
+                if (symbol->getOccurrences().empty()) {
+                    logger.warning() << "The element '" << symbolMapElem.first << "' was declared but never used";
+                }
+            }
+
+        }
+    }
 }

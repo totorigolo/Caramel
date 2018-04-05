@@ -141,7 +141,6 @@ public:
     /// Returns Expression::Ptr
     antlrcpp::Any visitPrefixUnaryExpression(CaramelParser::PrefixUnaryExpressionContext *ctx) override;
 
-    // TODO: This function isn't implemented
     antlrcpp::Any visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) override;
 
     /// Returns Expression::Ptr
@@ -220,6 +219,11 @@ private:
 
     antlrcpp::Any visitChildren(antlr4::tree::ParseTree *node) override;
 
+    void incrementErrorCount();
+
+public:
+    int getErrorCount();
+
 private:
     std::stack<std::shared_ptr<ast::Context>> mContextStack;
     std::string mSourceFilename;
@@ -227,6 +231,7 @@ private:
     ast::BinaryOperatorIndex mBinaryOperatorIndex;
     ast::PrefixOperatorIndex mPrefixOperatorIndex;
     ast::PostfixOperatorIndex mPostfixOperatorIndex;
+    int mErrorCount = 0;
 };
 
 class ContextPusher {
@@ -235,6 +240,9 @@ public:
     virtual ~ContextPusher();
 
     ast::Context::Ptr getContext();
+
+    // TODO: Move to a proper class
+    void verifUsageStatic(ast::Context::Ptr context);
 
 private:
     ASTVisitor &mASTVisitor;

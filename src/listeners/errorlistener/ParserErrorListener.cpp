@@ -54,6 +54,8 @@ void ParserErrorListener::syntaxError(
     }
 
     mLastErrorLine = line;
+
+    exit(1);
 }
 
 void ParserErrorListener::reportAmbiguity(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa, size_t startIndex,

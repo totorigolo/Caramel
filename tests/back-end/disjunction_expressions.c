@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,31 @@
  * SOFTWARE.
 */
 
-#pragma once
+int32_t foo(int32_t a, int32_t b) {
+    int32_t useless = 1 + 2 + 8 * 4 - 4 || 1 || 5;
+    putchar('0' + a);
+    return b;
+}
 
-#include "../IR.h"
+int32_t main() {
 
-namespace caramel::ir {
+    int32_t f = 0 || 1; // 1
+    int32_t g = 0 || (1-1) || (1-3+4); // 1
+    int32_t h = foo(1, 1) || 0 || 0; // 1
+    int32_t i = 0 || ((1-1) || (3*4-4-4-4)); // 0
+    int32_t k = ((0 || (1-1)) || (3*4-4-4-4)) + 1 || 4; // 1
+    int32_t l = (14+7*2-4*7 || (1+1+1-3)*(4 || 2)) || 0 || (0 || 0*( 1 || 2 ) || 0-4+5); // 1
+    putchar('\n');
+    putchar('0' + f);
+    putchar('0' + f + g);
+    putchar('0' + f + g + h);
+    putchar('\n');
+    putchar('0' + i);
+    putchar('0' + i + k);
+    putchar('0' + i + k + l);
+    putchar('\n');
+    foo(1, 0) || foo(2, 1) || foo(3, 0); // 12
+    putchar('\n');
 
-class JumpLessInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<JumpLessInstruction>;
-    using WeakPtr = std::shared_ptr<JumpLessInstruction>;
-
-public:
-    explicit JumpLessInstruction(
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            std::string dest
-    );
-
-    ~JumpLessInstruction() override = default;
-
-    const std::string &getDest() const;
-
-private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-    std::string mDest;
-};
-
-} // namespace caramel::ir
+    return 0;
+}

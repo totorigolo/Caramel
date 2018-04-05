@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,44 @@
  * SOFTWARE.
 */
 
-#pragma once
+int32_t foo(int32_t a, int32_t b) {
+    int32_t useless = 1 + 2 + 8 * 4 - 4 && 1 && 5;
+    putchar('0' + a);
+    return b;
+}
 
-#include "../IR.h"
+int32_t main() {
 
-namespace caramel::ir {
+    // 0
+    int32_t a = 1 && 0 && 1;
+    int32_t b = 1 && (0 && 1);
+    int32_t c = (1 && 0) && 1;
+    int32_t d = 1 && (1 - 1) && 1;
+    // 1
+    int32_t e = (1+2+3*4-5) && (1-1+1-1+1-1+1) && (1-5+7);
+    int32_t f = (1+2+3*4-5 && 1*(5 && 1)) && (1-1+1-1+1-1+1) && (1-5+7);
+    int32_t g = (1+2+3*4-5 && 1*(5 && 1)) && (1-1+1-1+1-1+1) && (1-5+7);
 
-class JumpGreaterInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<JumpGreaterInstruction>;
-    using WeakPtr = std::shared_ptr<JumpGreaterInstruction>;
+    int32_t h = foo(1, 1) && (1 && 1); // 1
+    int32_t k;
+    putchar('\n');
+    k = foo(1, 1) && foo(2, 0) && foo(3, 0); // 12
+    putchar('\n');
 
-public:
-    explicit JumpGreaterInstruction(
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            std::string dest
-    );
+    putchar('0' + a);
+    putchar('\n');
+    putchar('1' + b);
+    putchar('\n');
+    putchar('2' + c);
+    putchar('\n');
+    putchar('3' + d);
+    putchar('\n');
+    putchar('3' + e); // 4
+    putchar('\n');
+    putchar('3' + e + f); // 5
+    putchar('\n');
+    putchar('3' + e + f + g); // 6
+    putchar('\n');
 
-    ~JumpGreaterInstruction() override = default;
-
-    const std::string &getDest() const;
-
-private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-    std::string mDest;
-};
-
-} // namespace caramel::ir
+    return 0;
+}

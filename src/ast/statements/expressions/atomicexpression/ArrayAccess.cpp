@@ -61,7 +61,7 @@ bool ArrayAccess::shouldReturnAnIR() const {
     return true;
 }
 
-std::shared_ptr<ir::IR> ArrayAccess::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {
+std::shared_ptr<ir::IR> ArrayAccess::getIR(std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock) {
 
 //    movl -4(%rbp), %eax
     auto indexSrc = currentBasicBlock->addInstruction(mIndex->getIR(currentBasicBlock));

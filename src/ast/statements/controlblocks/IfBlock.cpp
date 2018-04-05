@@ -26,12 +26,6 @@
 #include "../../../ir/CFG.h"
 #include "../../../ir/BasicBlock.h"
 #include "../../../ir/IR.h"
-#include "../../../ir/instructions/JumpEqualInstruction.h"
-#include "../../../ir/instructions/JumpLessInstruction.h"
-#include "../../../ir/instructions/JumpLessOrEqualInstruction.h"
-#include "../../../ir/instructions/JumpInstruction.h"
-#include "../../../ir/instructions/JumpGreaterInstruction.h"
-#include "../../../ir/instructions/JumpGreaterOrEqualInstruction.h"
 
 
 namespace caramel::ast {
@@ -86,7 +80,6 @@ ir::GetBasicBlockReturn IfBlock::getBasicBlock(
         // TODO: Grab the returnName here? (I think not)
         bbCond->addInstruction(mCondition->getIR(bbCond));
     } else if (mCondition->shouldReturnABasicBlock()) {
-        logger.warning() << "Untested BB in if block condition BB.";
 
         auto [cond_begin, cond_end] = mCondition->getBasicBlock(controlFlow);
 

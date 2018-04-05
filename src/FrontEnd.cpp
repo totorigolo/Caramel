@@ -72,6 +72,15 @@ ast::Context::Ptr frontEnd(Config const &config) {
     try {
         caramel::visitors::ASTVisitor abstractSyntaxTreeVisitor(config.sourceFile);
         auto visitorResult = abstractSyntaxTreeVisitor.visit(parser.r());
+
+        int count = abstractSyntaxTreeVisitor.getErrorCount();
+        if (count == 1) {
+            logger.fatal() << "There was one semantic error.";
+            exit(1);
+        } else if (count > 1) {
+            logger.fatal() << "There were " << count << " semantic errors.";
+            exit(1);
+        }
         if (!visitorResult.is<ast::Context::Ptr>()) {
             logger.fatal() << "The visitor returned a bad root.";
             exit(1);

@@ -39,7 +39,7 @@ AssignmentOperator::AssignmentOperator(LValue::Ptr lvalue)
         : mLValue{std::move(lvalue)} {}
 
 std::shared_ptr<ir::IR> AssignmentOperator::getIR(
-        const std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
+        std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
         Expression::Ptr const &leftExpression,
         Expression::Ptr const &rightExpression) {
 

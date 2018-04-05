@@ -42,16 +42,24 @@ public:
     ~ConjunctionOperator() override = default;
 
 public:
-    std::shared_ptr<caramel::ir::IR>
-    getIR(
-            std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-            std::shared_ptr<caramel::ast::Expression> const &rightExpression
-    ) override;
 
     StatementType getExpressionType() const override;
 
     std::string getToken() const override;
+
+    bool shouldReturnAnIR() const override;
+
+    bool shouldReturnABasicBlock() const override;
+
+    ir::GetBasicBlockReturn
+    getBasicBlock(ir::CFG *controlFlow, std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+                  std::shared_ptr<caramel::ast::Expression> const &rightExpression) override;
+
+    std::shared_ptr<ir::IR> getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
+                                  std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+                                  std::shared_ptr<caramel::ast::Expression> const &rightExpression) override;
+private:
+    static int nb;
 };
 
 } // namespace caramel::ast
