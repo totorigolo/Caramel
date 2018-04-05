@@ -39,6 +39,7 @@ public:
 
     BasicBlock(
             size_t id,
+            size_t functionContext,
             CFG *cfg,
             std::string entryName
     );
@@ -66,7 +67,9 @@ public:
 
     void setLabelName(std::string const &name);
 
-    size_t getId();
+    size_t getId() const;
+
+    size_t getFunctionContext() const;
 
     static std::string getNextNumberName();
     BasicBlock::Ptr getNewWhenTrueBasicBlock(std::string nameSuffix = "");
@@ -78,6 +81,7 @@ public:
 
 private:
     size_t mID;
+    size_t mFunctionContext;
     /**
      * pointer to the next basic block, true branch. If nullptr, return from procedure
      */

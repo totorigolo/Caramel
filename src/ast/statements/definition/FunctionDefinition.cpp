@@ -28,6 +28,7 @@
 #include "../../../ir/IR.h"
 #include "../../../ir/instructions/PrologInstruction.h"
 #include "../../../ir/instructions/EpilogInstruction.h"
+#include "../../../ir/instructions/CopyInstruction.h"
 
 
 namespace caramel::ast {
@@ -59,10 +60,24 @@ void FunctionDefinition::visitChildrenAstDot() {
 ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
         ir::CFG *controlFlow
 ) {
-    ir::BasicBlock::Ptr function_root_bb = controlFlow->generateBasicBlock(mSymbol->getName());
+    ir::BasicBlock::Ptr function_root_bb = controlFlow->generateFunctionBlock(mSymbol->getName());
 
     controlFlow->enterFunction(function_root_bb->getId());
     function_root_bb->addInstruction(std::make_shared<ir::PrologInstruction>(function_root_bb, 42)); // FIXME: Function definition IR
+
+    auto parameters = mSymbol->getParameters();
+    for(int i = 0; i < parameters.size(); i++) {
+        if(i < 6) {
+            function_root_bb->addInstruction(
+                    std::make_shared<ir::CopyInstruction>(function_root_bb, parameters[i].primaryType, parameters[i].name, i)
+            );
+        } else {
+            logger.fatal() << "Unaccepted arguments (out of bound)";
+            exit(1);
+        }
+
+    }
+
 
     ir::BasicBlock::Ptr function_end_bb = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_endof_" + mSymbol->getName());
     function_root_bb->setExitWhenTrue(function_end_bb);
