@@ -48,6 +48,10 @@ std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<ir::BasicBlock> const 
     return std::make_shared<ir::EmptyInstruction>(mSymbol->getName(), currentBasicBlock, mSymbol->getType());
 }
 
+bool Identifier::shouldReturnAnIR() const {
+    return true;
+}
+
 void Identifier::acceptAstDotVisit() {
     addNode(thisId(), "Identifier: " + mSymbol->getName());
     addEdge(thisId(), mSymbol->thisId());

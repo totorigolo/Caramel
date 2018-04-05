@@ -48,8 +48,6 @@ public:
 
     ~EmptyInstruction() override = default;
 
-    bool isEmpty() const override;
-
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 };
 

@@ -83,6 +83,7 @@ ir::GetBasicBlockReturn IfBlock::getBasicBlock(
 
     // COND BB
     if (mCondition->shouldReturnAnIR()) {
+        // TODO: Grab the returnName here? (I think not)
         bbCond->addInstruction(mCondition->getIR(bbCond));
     } else if (mCondition->shouldReturnABasicBlock()) {
         logger.warning() << "Untested BB in if block condition BB.";

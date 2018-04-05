@@ -47,8 +47,4 @@ void EmptyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::os
     visitor->visitEmpty(this, os);
 }
 
-bool EmptyInstruction::isEmpty() const {
-    return true;
-}
-
 } // namespace caramel::ir

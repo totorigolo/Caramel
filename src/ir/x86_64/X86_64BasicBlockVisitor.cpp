@@ -53,7 +53,7 @@ void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> c
         auto lastReturnBitSize = condInstr->getType()->getMemoryLength();
         lastReturnBitSize = 32; // FIXME
 
-        os << "  cmpl    $0, " << mIRVisitor->toAssembly(nullptr, lastReturnName, lastReturnBitSize) << std::endl;
+        os << "  cmpl    $0, " << mIRVisitor->toAssembly(basicBlock, lastReturnName, lastReturnBitSize) << std::endl;
         os << "  je    " << basicBlock->getNextWhenFalse()->getLabelName() << std::endl;
     } else if (whenTrue) {
         os << "  jmp    " << basicBlock->getNextWhenTrue()->getLabelName()
