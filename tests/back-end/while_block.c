@@ -6,7 +6,7 @@
 
 int32_t main() {
     int32_t a = 5;
-    while(a){
+    while(a + 1 - 1){
         putchar('0'+a);
         a = a - 1;
     }
