@@ -61,7 +61,7 @@ bool ArrayDefinition::shouldReturnAnIR() const {
     return true;
 }
 
-std::shared_ptr<ir::IR> ArrayDefinition::getIR(ir::BasicBlock::Ptr const &currentBasicBlock) {
+std::shared_ptr<ir::IR> ArrayDefinition::getIR(ir::BasicBlock::Ptr &currentBasicBlock) {
 
     auto arraySymbol = mSymbol.lock();
     auto arrayName = arraySymbol->getName();

@@ -48,7 +48,7 @@ public:
     bool shouldReturnAnIR() const override;
 
     std::shared_ptr<ir::IR> getIR(
-            std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
+            std::shared_ptr<ir::BasicBlock> &currentBasicBlock
     ) override;
 
     void visitChildrenAstDot() override;

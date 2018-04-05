@@ -50,7 +50,7 @@ public:
 
     bool shouldReturnAnIR() const override;
 
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
+    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock) override;
 
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;

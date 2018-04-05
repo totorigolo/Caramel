@@ -39,7 +39,7 @@ BinaryExpression::BinaryExpression(
 
 std::shared_ptr<ir::IR>
 BinaryExpression::getIR(
-        std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
+        std::shared_ptr<ir::BasicBlock> &currentBasicBlock
 ) {
     return mBinaryOperator->getIR(currentBasicBlock, mLeftExpression, mRightExpression);
 }

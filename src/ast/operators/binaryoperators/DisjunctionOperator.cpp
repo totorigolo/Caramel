@@ -23,25 +23,156 @@
 */
 
 #include "DisjunctionOperator.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../ir/instructions/LDConstInstruction.h"
+#include "../../../ir/instructions/EmptyInstruction.h"
+#include "../../../ir/instructions/NopInstruction.h"
+#include "../../../utils/Common.h"
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::DisjunctionOperator::getIR(
-        std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-        std::shared_ptr<caramel::ast::Expression> const &rightExpression
-) {
+using namespace caramel::ast;
+using namespace caramel::utils;
+using namespace caramel;
 
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+int DisjunctionOperator::nb = 0;
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+ir::GetBasicBlockReturn DisjunctionOperator::getBasicBlock(ir::CFG *controlFlow,
+                                                           std::shared_ptr<Expression> const &leftExpression,
+                                                           std::shared_ptr<Expression> const &rightExpression) {
+    nb++;
+    int currentNb = nb;
+    ir::BasicBlock::Ptr startBlock = controlFlow->generateBasicBlock(
+            ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_start");
+    ir::BasicBlock::Ptr trueBlock  = controlFlow->generateBasicBlock(
+            ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_true");
+    ir::BasicBlock::Ptr falseBlock  = controlFlow->generateBasicBlock(
+            ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_false");
+    ir::BasicBlock::Ptr endBlock = controlFlow->generateBasicBlock(
+            ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_end");
+
+    ir::BasicBlock::Ptr constEnd = endBlock;
+
+    logger.warning() << "DisjunctionOperator[startBlock - getBBmain] Does it? #" << startBlock->getId();
+    startBlock->setExitWhenTrue(trueBlock);
+    startBlock->setExitWhenFalse(falseBlock);
+
+    std::string returnName = Statement::createVarName();
+    PrimaryType::Ptr Int64Type = std::make_shared<Int64_t>();
+
+    logger.warning() << "DisjunctionOperator[trueBlock - getBBmain] Does it? #" << trueBlock->getId();
+    trueBlock->setExitWhenTrue(endBlock);
+    trueBlock->addInstruction(std::make_shared<ir::LDConstInstruction>(
+            trueBlock,
+            Int64Type,
+            returnName,
+            "1"
+    ));
+
+    logger.warning() << "DisjunctionOperator[falseBlock - getBBmain] Does it? #" << falseBlock->getId();
+    falseBlock->setExitWhenTrue(endBlock);
+    falseBlock->addInstruction(std::make_shared<ir::LDConstInstruction>(
+            falseBlock,
+            Int64Type,
+            returnName,
+            "0"
+    ));
+
+    endBlock->addInstruction(std::make_shared<ir::EmptyInstruction>(
+            returnName,
+            endBlock,
+            Int64Type
+    ));
+
+    ir::BasicBlock::Ptr lastLeftBlock;
+
+    if (leftExpression->shouldReturnAnIR()) {
+        auto ir = leftExpression->getIR(startBlock);
+        startBlock->addInstruction(ir);
+        lastLeftBlock = startBlock;
+    } else {
+        auto leftBlockChain = leftExpression->getBasicBlock(controlFlow);
+        leftBlockChain.end->setExitWhenTrue(startBlock->getNextWhenTrue());
+        leftBlockChain.end->setExitWhenFalse(startBlock->getNextWhenFalse());
+
+        startBlock = leftBlockChain.begin;
+        lastLeftBlock = leftBlockChain.end;
+
+//        logger.warning() << "DisjunctionOperator[startBlock - leftBB] Does it? #" << startBlock->getId();
+//        startBlock->setExitWhenTrue(leftBlockChain.begin);
+//        lastLeftBlock = leftBlockChain.end;
+//
+//        logger.warning() << "DisjunctionOperator[lastLeftBlock - leftBB] Does it? #" << lastLeftBlock->getId();
+//
+//        lastLeftBlock->setExitWhenFalse(falseBlock);
+    }
+
+    if (rightExpression->shouldReturnAnIR()) {
+        ir::BasicBlock::Ptr midBlock = controlFlow->generateBasicBlock(
+                ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_mid");
+        auto ir = rightExpression->getIR(midBlock);
+        midBlock->addInstruction(ir);
+
+        logger.warning() << "DisjunctionOperator[midBlock] Does it? #" << midBlock->getId();
+        midBlock->setExitWhenTrue(trueBlock);
+        midBlock->setExitWhenFalse(falseBlock);
+
+        logger.warning() << "DisjunctionOperator[lastLeftBlock - rightIR] Does it? #" << lastLeftBlock->getId();
+
+        lastLeftBlock->setExitWhenFalse(midBlock); //< this is the only difference with conjunction !
+    } else {
+        auto rightBlockChain = rightExpression->getBasicBlock(controlFlow);
+
+        logger.warning() << "DisjunctionOperator[lastLeftBlock - rightBB] Does it? #" << lastLeftBlock->getId();
+        lastLeftBlock->setExitWhenFalse(rightBlockChain.begin); //< this is the only difference with conjunction !
+
+
+        logger.warning() << "DisjunctionOperator[rightBlockChain] Does it? #" << rightBlockChain.end->getId();
+        rightBlockChain.end->setExitWhenTrue(trueBlock);
+        rightBlockChain.end->setExitWhenFalse(falseBlock);
+    }
+
+    return {startBlock, constEnd};
+
 }
 
-caramel::ast::StatementType caramel::ast::DisjunctionOperator::getExpressionType() const {
-    return StatementType::BitwiseExpression;
+std::shared_ptr<ir::IR> DisjunctionOperator::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
+                                                   std::shared_ptr<Expression> const &leftExpression,
+                                                   std::shared_ptr<Expression> const &rightExpression) {
+    auto [start, end] = getBasicBlock(currentBasicBlock->getCFG(), leftExpression, rightExpression);
+
+    auto nextTrue  = currentBasicBlock->getNextWhenTrue();
+    auto nextFalse = currentBasicBlock->getNextWhenFalse();
+
+    if (nextTrue) {
+        end->setExitWhenTrue(nextTrue);
+    }
+    if (nextFalse) {
+        end->setExitWhenFalse(nextFalse);
+    }
+
+    logger.warning() << "DisjunctionOperator[getIR] Does it? #" << currentBasicBlock->getId();
+    currentBasicBlock->setExitWhenTrue(start);
+    currentBasicBlock->setExitWhenFalse(nullptr);
+    currentBasicBlock = end;
+
+    return castTo<ir::IR::Ptr>(std::make_shared<ir::EmptyInstruction>(
+            currentBasicBlock->getInstructions().back()->getReturnName(),
+            currentBasicBlock,
+            currentBasicBlock->getInstructions().back()->getType()
+    ));
 }
 
-std::string caramel::ast::DisjunctionOperator::getToken() const {
+StatementType DisjunctionOperator::getExpressionType() const {
+    return StatementType::ConjunctionExpression;
+}
+
+std::string DisjunctionOperator::getToken() const {
     return SYMBOL;
+}
+
+bool DisjunctionOperator::shouldReturnAnIR() const {
+    return false;
+}
+
+bool DisjunctionOperator::shouldReturnABasicBlock() const {
+    return true;
 }

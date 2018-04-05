@@ -300,6 +300,9 @@ void X86_64IRVisitor::visitNope(caramel::ir::NopInstruction *instruction, std::o
 void X86_64IRVisitor::visitFunctionCall(caramel::ir::FunctionCallInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting functionCall: " << instruction->getFunctionName();
     os << "  call    " << instruction->getFunctionName();
+    for(int i = 0; i < 6 && i < instruction->getArgumentsLength(); i++) {
+        os << "\n  popq     " << getFunctionCallRegister(i, 64);
+    }
     if(instruction->getArgumentsLength() > 6) {
         os << "\n  addq    $" << (instruction->getArgumentsLength() - 6) * 8 << ", %rsp";
     }
@@ -325,6 +328,7 @@ void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, 
 
     int index = instruction->getIndex();
     if (index < 6) {
+        os << "  pushq    " << getFunctionCallRegister(index, 64) << '\n';
         os << "  mov" + getSizeSuffix(32) + "    " << toAssembly(instruction->getParentBlock(), instruction->getValue(), 32)
            << ", " << getFunctionCallRegister(index, 32) << '\n';
 

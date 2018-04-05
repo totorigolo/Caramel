@@ -52,7 +52,7 @@ bool ReturnStatement::shouldReturnAnIR() const {
     return true;
 }
 
-std::shared_ptr<ir::IR> ReturnStatement::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {
+std::shared_ptr<ir::IR> ReturnStatement::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) {
     if (mExpression) {
         std::string value = currentBasicBlock->addInstruction(mExpression->getIR(currentBasicBlock));
         return std::make_shared<ir::ReturnInstruction>(

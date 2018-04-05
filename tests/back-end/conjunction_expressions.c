@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,39 +22,44 @@
  * SOFTWARE.
 */
 
-#pragma once
+int32_t foo(int32_t a, int32_t b) {
+    int32_t useless = 1 + 2 + 8 * 4 - 4 && 1 && 5;
+    putchar('0' + a);
+    return b;
+}
 
-#include "AtomicExpression.h"
-#include "../../../symboltable/Symbol.h"
-#include "../../../symboltable/FunctionSymbol.h"
+int32_t main() {
 
+    // 0
+    int32_t a = 1 && 0 && 1;
+    int32_t b = 1 && (0 && 1);
+    int32_t c = (1 && 0) && 1;
+    int32_t d = 1 && (1 - 1) && 1;
+    // 1
+    int32_t e = (1+2+3*4-5) && (1-1+1-1+1-1+1) && (1-5+7);
+    int32_t f = (1+2+3*4-5 && 1*(5 && 1)) && (1-1+1-1+1-1+1) && (1-5+7);
+    int32_t g = (1+2+3*4-5 && 1*(5 && 1)) && (1-1+1-1+1-1+1) && (1-5+7);
 
-namespace caramel::ast {
+    int32_t h = foo(1, 1) && (1 && 1); // 1
+    int32_t k;
+    putchar('\n');
+    k = foo(1, 1) && foo(2, 0) && foo(3, 0); // 12
+    putchar('\n');
 
-class FunctionCall : public AtomicExpression {
-public:
-    using Ptr = std::shared_ptr<FunctionCall>;
-    using WeakPtr = std::shared_ptr<FunctionCall>;
+    putchar('0' + a);
+    putchar('\n');
+    putchar('1' + b);
+    putchar('\n');
+    putchar('2' + c);
+    putchar('\n');
+    putchar('3' + d);
+    putchar('\n');
+    putchar('3' + e); // 4
+    putchar('\n');
+    putchar('3' + e + f); // 5
+    putchar('\n');
+    putchar('3' + e + f + g); // 6
+    putchar('\n');
 
-    explicit FunctionCall(std::vector<Expression::Ptr> &&arguments, antlr4::Token *startToken);
-    ~FunctionCall() override = default;
-
-    Symbol::Ptr getSymbol() const;
-    void setSymbol(FunctionSymbol::Ptr symbol);
-
-    PrimaryType::Ptr getPrimaryType() const override;
-
-    std::vector<PrimaryType::Ptr> getArgumentsPrimaryTypes() const;
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnAnIR() const override { return true; }
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) override;
-
-private:
-    Symbol::Ptr mSymbol;
-    std::vector<Expression::Ptr> mArguments;
-};
-
-} // namespace caramel::ast
+    return 0;
+}

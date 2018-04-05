@@ -45,7 +45,7 @@ void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> c
     bool whenFalse = nullptr != basicBlock->getNextWhenFalse();
     if (whenFalse) {
         if (basicBlock->getInstructions().empty()) {
-            logger.fatal() << "Empty cond block!";
+            logger.fatal() << "Empty BB with false jump for BB #" << basicBlock->getId();
             return;
         }
         auto condInstr = basicBlock->getInstructions().back();

@@ -59,7 +59,7 @@ bool Constant::shouldReturnAnIR() const {
     return true;
 }
 
-std::shared_ptr<ir::IR> Constant::getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) {
+std::shared_ptr<ir::IR> Constant::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) {
 
     std::string tempVar = createVarName();
     std::string constValue = std::to_string(getValue());

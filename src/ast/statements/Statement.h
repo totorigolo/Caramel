@@ -79,7 +79,7 @@ public:
     }
 
     virtual std::shared_ptr<caramel::ir::IR> getIR(
-            std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock
+            std::shared_ptr<ir::BasicBlock> &currentBasicBlock
     ) {
         CARAMEL_UNUSED(currentBasicBlock);
         throw caramel::exceptions::NotImplementedException(__FILE__); };

@@ -25,7 +25,7 @@
 #include "BitwiseAndOperator.h"
 
 std::shared_ptr<caramel::ir::IR> caramel::ast::BitwiseAndOperator::getIR(
-        std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
+        std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression
 ) {

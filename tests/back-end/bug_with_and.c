@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,39 +22,19 @@
  * SOFTWARE.
 */
 
-#pragma once
+int32_t foo(int32_t a, int32_t b) {
+    int32_t useless = 1 + 2 + 8 * 4 - 4 && 1 && 5;
+    putchar('0' + a);
+    return b;
+}
 
-#include "AtomicExpression.h"
-#include "../../../symboltable/Symbol.h"
-#include "../../../symboltable/FunctionSymbol.h"
+int32_t main() {
 
+    int32_t useless = 1 && 2;
+    putchar('1');
+    putchar('\n');
 
-namespace caramel::ast {
+    foo(2, 1);
 
-class FunctionCall : public AtomicExpression {
-public:
-    using Ptr = std::shared_ptr<FunctionCall>;
-    using WeakPtr = std::shared_ptr<FunctionCall>;
-
-    explicit FunctionCall(std::vector<Expression::Ptr> &&arguments, antlr4::Token *startToken);
-    ~FunctionCall() override = default;
-
-    Symbol::Ptr getSymbol() const;
-    void setSymbol(FunctionSymbol::Ptr symbol);
-
-    PrimaryType::Ptr getPrimaryType() const override;
-
-    std::vector<PrimaryType::Ptr> getArgumentsPrimaryTypes() const;
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnAnIR() const override { return true; }
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) override;
-
-private:
-    Symbol::Ptr mSymbol;
-    std::vector<Expression::Ptr> mArguments;
-};
-
-} // namespace caramel::ast
+    return 0;
+}
