@@ -57,6 +57,7 @@ class JumpGreaterInstruction;
 class GTEInstruction;
 class PushInstruction;
 class PopInstruction;
+class MultiplicationInstruction;
 
 class IRVisitor {
 public:
@@ -158,6 +159,11 @@ public:
 
     virtual void visitPop(
             PopInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitMultiplication(
+            MultiplicationInstruction *instruction,
             std::ostream &os
     ) = 0;
 

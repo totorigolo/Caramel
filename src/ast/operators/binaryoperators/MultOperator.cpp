@@ -23,6 +23,15 @@
 */
 
 #include "MultOperator.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../utils/Common.h"
+#include "../../../ir/instructions/CopyInstruction.h"
+#include "../../../ir/instructions/PushInstruction.h"
+#include "../../../ir/instructions/PopInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
+#include "../../../ir/instructions/MultiplicationInstruction.h"
+
+using namespace caramel::utils;
 
 std::shared_ptr<caramel::ir::IR> caramel::ast::MultOperator::buildIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
@@ -30,12 +39,29 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::MultOperator::buildIR(
         std::shared_ptr<caramel::ast::Expression> const &rightExpression
 ) {
 
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+    auto maxType = GET_MAX_TYPE(leftExpression, rightExpression);
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+    auto left = GET_REGISTER(leftExpression);
+
+    MOVE_TO(left, ir::IR::ACCUMULATOR_2, maxType);
+
+    PUSH(ir::IR::ACCUMULATOR_2);
+
+    auto right = GET_REGISTER(rightExpression);
+
+    MOVE_TO(right, ir::IR::ACCUMULATOR_1, maxType);
+
+    POP(ir::IR::ACCUMULATOR_2);
+
+    std::shared_ptr<ir::MultiplicationInstruction> instr = std::make_shared<ir::MultiplicationInstruction>(
+            ir::IR::ACCUMULATOR_2,
+            currentBasicBlock,
+            maxType,
+            ir::IR::ACCUMULATOR_1,
+            ir::IR::ACCUMULATOR_2
+    );
+
+    return castTo<ir::IR::Ptr>(instr);
 }
 
 caramel::ast::StatementType caramel::ast::MultOperator::getExpressionType() const {
