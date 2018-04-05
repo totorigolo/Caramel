@@ -23,42 +23,29 @@
 */
 
 int32_t foo(int32_t a, int32_t b) {
-    int32_t useless = 1 + 2 + 8 * 4 - 4 && 1 && 5;
+    int32_t useless = 1 + 2 + 8 * 4 - 4 || 1 || 5;
     putchar('0' + a);
     return b;
 }
 
 int32_t main() {
 
-    // 0
-    int32_t a = 1 && 0 && 1;
-    int32_t b = 1 && (0 && 1);
-    int32_t c = (1 && 0) && 1;
-    int32_t d = 1 && (1 - 1) && 1;
-    // 1
-    int32_t e = (1+2+3*4-5) && (1-1+1-1+1-1+1) && (1-5+7);
-    int32_t f = (1+2+3*4-5 && 1*(5 && 1)) && (1-1+1-1+1-1+1) && (1-5+7);
-    int32_t g = (1+2+3*4-5 && 1*(5 && 1)) && (1-1+1-1+1-1+1) && (1-5+7);
-
-    int32_t h = foo(1, 1) && (1 && 1); // 1
-    int32_t k;
+    int32_t f = 0 || 1; // 1
+    int32_t g = 0 || (1-1) || (1-3+4); // 1
+    int32_t h = foo(1, 1) || 0 || 0; // 1
+    int32_t i = 0 || ((1-1) || (3*4-4-4-4)); // 0
+    int32_t k = ((0 || (1-1)) || (3*4-4-4-4)) + 1 || 4; // 1
+    int32_t l = (14+7*2-4*7 || (1+1+1-3)*(4 || 2)) || 0 || (0 || 0*( 1 || 2 ) || 0-4+5); // 1
     putchar('\n');
-    k = foo(1, 1) && foo(2, 0) && foo(3, 0); // 12
+    putchar('0' + f);
+    putchar('0' + f + g);
+    putchar('0' + f + g + h);
     putchar('\n');
-
-    putchar('0' + a);
+    putchar('0' + i);
+    putchar('0' + i + k);
+    putchar('0' + i + k + l);
     putchar('\n');
-    putchar('1' + b);
-    putchar('\n');
-    putchar('2' + c);
-    putchar('\n');
-    putchar('3' + d);
-    putchar('\n');
-    putchar('3' + e); // 4
-    putchar('\n');
-    putchar('3' + e + f); // 5
-    putchar('\n');
-    putchar('3' + e + f + g); // 6
+    foo(1, 0) || foo(2, 1) || foo(3, 0); // 12
     putchar('\n');
 
     return 0;
