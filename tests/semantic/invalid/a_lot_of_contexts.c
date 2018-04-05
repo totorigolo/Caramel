@@ -1,5 +1,5 @@
 /*
- * Multi-line comment.
+ * Not really an error, it comes from ASTVisitor
  */
 
 #include <stdio.h>

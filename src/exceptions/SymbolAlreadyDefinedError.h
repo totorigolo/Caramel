@@ -55,6 +55,7 @@ protected:
 private:
     std::shared_ptr<ast::Definition> mExistingDefinition;
     std::shared_ptr<ast::Declaration> mFaultyDeclaration;
+    std::shared_ptr<ast::Symbol> mSymbol;
 };
 
 } // namespace caramel::exceptions
