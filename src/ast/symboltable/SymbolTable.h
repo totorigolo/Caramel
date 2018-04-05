@@ -159,7 +159,6 @@ public:
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
-private:
     bool isDeclared(std::string const &name);
     bool isDefined(std::string const &name);
     inline bool isNotDeclared(std::string const &name) { return !isDeclared(name); }
