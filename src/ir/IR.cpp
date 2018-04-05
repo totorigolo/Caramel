@@ -48,7 +48,7 @@ IR::IR(
     mOperation{operation},
     mParentBlock{std::move(parentBlock)},
     mType{std::move(type)} {
-    logger.trace() << "Call without name";
+    logger.trace() << "IR without name created.";
 }
 
 Operation IR::getOperation() const {

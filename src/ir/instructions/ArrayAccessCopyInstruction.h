@@ -24,29 +24,43 @@
 
 #pragma once
 
-#include "AtomicExpression.h"
-#include "../../../symboltable/Symbol.h"
+#include "../IR.h"
 
+namespace caramel::ir {
 
-namespace caramel::ast {
-
-class LValue : public AtomicExpression {
+class ArrayAccessCopyInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<LValue>;
-    using WeakPtr = std::shared_ptr<LValue>;
+    using Ptr = std::shared_ptr<ArrayAccessCopyInstruction>;
+    using WeakPtr = std::shared_ptr<ArrayAccessCopyInstruction>;
 
-public:
-    explicit LValue(antlr4::Token *startToken, StatementType type = StatementType::LValue);
-    ~LValue() override = default;
+    ArrayAccessCopyInstruction(
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            caramel::ast::PrimaryType::Ptr const &type,
+            std::string const &destination,
+            std::string const &index,
+            std::string const &arrayName,
+            bool lvalue
+    );
 
-    bool isUsedInLeft() const;
+    ~ArrayAccessCopyInstruction() override = default;
 
-    void setIsUsedInLeft(bool isUsedInLeft);
+    std::string getDestination() const;
 
-    virtual Symbol::Ptr getSymbol() const = 0;
+    std::string getIndex() const;
+
+    std::string getArrayName() const;
+
+    bool isLValue() const;
+
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
-    bool mIsUsedInLeft;
+    std::string mIndex;
+    std::string mArrayName;
+    bool mLValue;
 };
 
-} // namespace caramel::ast
+} // namespace caramel::ir
+
+
+

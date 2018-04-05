@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,19 @@
  * SOFTWARE.
 */
 
-#pragma once
+/*
+ * Multi-line comment.
+ */
+#include <stdio.h>
+#include <stdint.h>
 
-#include "AtomicExpression.h"
-#include "../../../symboltable/Symbol.h"
+int32_t main() {
 
+    int32_t c = getchar();
+    c = c + 5;
 
-namespace caramel::ast {
+    putchar(c);
+    putchar('\n');
 
-class LValue : public AtomicExpression {
-public:
-    using Ptr = std::shared_ptr<LValue>;
-    using WeakPtr = std::shared_ptr<LValue>;
-
-public:
-    explicit LValue(antlr4::Token *startToken, StatementType type = StatementType::LValue);
-    ~LValue() override = default;
-
-    bool isUsedInLeft() const;
-
-    void setIsUsedInLeft(bool isUsedInLeft);
-
-    virtual Symbol::Ptr getSymbol() const = 0;
-
-private:
-    bool mIsUsedInLeft;
-};
-
-} // namespace caramel::ast
+    return 0;
+}

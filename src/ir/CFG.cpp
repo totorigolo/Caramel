@@ -63,7 +63,7 @@ CFG::CFG(
 //            if (statement->shouldReturnAnIR()) {
 //                mBasicBlocks[0]->addInstruction(statement->getIR(mBasicBlocks[0]));
 //            } else if (statement->shouldReturnABasicBlock()) {
-//                mBasicBlocks.push_back(statement->getBasicBlock(this));
+//                mBasicBlocks.push_back(statement->getFunctionBasicBlock(this));
 //            } else {
 //                if (statement->getType() != ast::StatementType::FunctionDeclaration) {
 //                    logger.warning() << "[CFG] Statement return neither IR nor BB: " << statement->getType();
@@ -136,6 +136,8 @@ long CFG::getSymbolIndex(size_t controlBlockId, std::string const &symbolName) {
     }
 }
 
+
+
 void CFG::enterFunction(size_t controlBlockId) {
     mStackSize[controlBlockId] = 0;
     // FIXME: This won't work for nested BB
@@ -187,6 +189,16 @@ std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
 std::shared_ptr<BasicBlock> CFG::generateNamedBasicBlock() {
     return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, mNextFunctionContext, this,
                                         BasicBlock::getNextNumberName());
+}
+
+
+void CFG::addFunctionBBEnd(size_t functionId, BasicBlock::Ptr functionBBEnd) {
+    mFunctionBBEnd[functionId] = functionBBEnd;
+
+}
+
+std::shared_ptr<BasicBlock> CFG::getFunctionEndBasicBlock(size_t functionBasicBlockIndex) {
+    return mFunctionBBEnd.at(functionBasicBlockIndex);
 }
 
 } // namespace caramel::ir

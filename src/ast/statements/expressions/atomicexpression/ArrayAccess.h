@@ -48,6 +48,10 @@ public:
 
     PrimaryType::Ptr getPrimaryType() const override;
 
+    bool shouldReturnAnIR() const override;
+
+    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
+
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 

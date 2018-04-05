@@ -91,13 +91,22 @@ void ArraySymbol::setContent(std::vector<Expression::Ptr> &&content) {
 
 void ArraySymbol::acceptAstDotVisit() {
     addNode(thisId(), "ArraySymbol: " + getName() + " as " + getType()->getIdentifier(), "note", "orange");
+
+    if (mIsSizeDefined) {
+        addEdge(thisId(), thisId() + 1);
+        addNode(thisId() + 1, "size=" + std::to_string(mSize));
+    } else {
+        addEdge(thisId(), thisId() + 1);
+        addNode(thisId() + 1, "size unknown");
+    }
+
     visitChildrenAstDot();
 }
 
 void ArraySymbol::visitChildrenAstDot() {
     if (!mIsContentDefined) {
-        addEdge(thisId(), thisId() + 1, "note");
-        addNode(thisId() + 1, "undefined content");
+        addEdge(thisId(), thisId() + 2, "note");
+        addNode(thisId() + 2, "undefined content");
     } else {
         size_t i = 0;
         for (auto const& content : mContent) {
