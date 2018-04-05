@@ -75,6 +75,7 @@ protected:
     std::map<size_t, long> mStackSize;
 
     int mNextBasicBlockNumber;
+    int mNextFunctionContext;
 
     std::vector<std::shared_ptr<BasicBlock>> mBasicBlocks;
 };

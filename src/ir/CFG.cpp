@@ -39,6 +39,7 @@ CFG::CFG(
     mSymbols{},
     mSymbolIndex{},
     mNextBasicBlockNumber{0},
+    mNextFunctionContext{0},
     mBasicBlocks{} {
     logger.debug() << "New CFG for " << mFileName << ".";
 
@@ -139,7 +140,11 @@ void CFG::leaveFunction(size_t controlBlockId) {
 }
 
 std::shared_ptr<BasicBlock> CFG::generateBasicBlock(std::string entryName) {
-    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, this, entryName);
+    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, mNextFunctionContext, this, entryName);
+}
+
+std::shared_ptr<BasicBlock> CFG::generateFunctionBlock(std::string entryName) {
+    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, ++mNextFunctionContext, this, entryName);
 }
 
 std::vector<std::shared_ptr<BasicBlock>> &CFG::getBasicBlocks() {
@@ -155,12 +160,12 @@ std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
        << " - mFileName: " << cfg.mFileName << '\n'
        << " - mRootContext: " << *cfg.mRootContext << '\n'
        << " - mSymbols & mSymbolsIndex:\n";
-    for (auto const &[basicBlockId, symbols] : cfg.mSymbols) {
+    for (auto const &[functionContextId, symbols] : cfg.mSymbols) {
         for (auto const &[name, type] : symbols) {
-            os << "    - BB=" << basicBlockId
+            os << "    - BB=" << functionContextId
                << ", name=" << name
                << ", type=" << type->getIdentifier()
-               << ", index=" << cfg.mSymbolIndex.at(basicBlockId).at(name)
+               << ", index=" << cfg.mSymbolIndex.at(functionContextId).at(name)
                << '\n';
         }
     }
@@ -174,7 +179,7 @@ std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
 }
 
 std::shared_ptr<BasicBlock> CFG::generateNamedBasicBlock() {
-    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, this, BasicBlock::getNextNumberName());
+    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, mNextFunctionContext, this, BasicBlock::getNextNumberName());
 }
 
 } // namespace caramel::ir
