@@ -44,12 +44,14 @@ public:
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
+    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override ;
+    bool shouldReturnABasicBlock() const override ;
+
 private:
     std::shared_ptr<caramel::ast::Expression> mCondition;
     std::vector<
             std::shared_ptr<caramel::ast::Statement>
     > mBlock;
-
 };
 
 } // namespace caramel::ast

@@ -46,6 +46,8 @@ public:
 
     std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
 
+    bool shouldReturnAnIR() const override;
+
     void acceptAstDotVisit() override;
 
 private:

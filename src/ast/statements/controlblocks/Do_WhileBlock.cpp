@@ -22,7 +22,7 @@
  * SOFTWARE.
 */
 
-#include "WhileBlock.h"
+#include "Do_WhileBlock.h"
 #include "../../../ir/BasicBlock.h"
 #include "../../../ir/CFG.h"
 #include "IfBlock.h"
@@ -30,18 +30,18 @@
 
 namespace caramel::ast {
 
-WhileBlock::WhileBlock(
+Do_WhileBlock::Do_WhileBlock(
         std::shared_ptr<caramel::ast::Expression> condition,
         std::vector<std::shared_ptr<caramel::ast::Statement>> block,
         antlr4::Token *token
 ) : ControlBlock(token), mCondition{std::move(condition)}, mBlock{std::move(block)} {}
 
-void WhileBlock::acceptAstDotVisit() {
+void Do_WhileBlock::acceptAstDotVisit() {
     addNode(thisId(), "While");
     visitChildrenAstDot();
 }
 
-void WhileBlock::visitChildrenAstDot() {
+void Do_WhileBlock::visitChildrenAstDot() {
     addEdge(thisId(), mCondition->thisId(), "condition");
     mCondition->acceptAstDotVisit();
 
@@ -53,54 +53,55 @@ void WhileBlock::visitChildrenAstDot() {
     }
 }
 
-ir::GetBasicBlockReturn WhileBlock::getBasicBlock(
+ir::GetBasicBlockReturn Do_WhileBlock::getBasicBlock(
         ir::CFG *controlFlow
 ) {
-    ir::BasicBlock::Ptr bbWcond = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_Wcond");
-    ir::BasicBlock::Ptr bbWthen = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_Wthen");
-    ir::BasicBlock::Ptr bbWend = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_Wend");
+    ir::BasicBlock::Ptr bbDWaction = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_DWaction");
+    ir::BasicBlock::Ptr bbDWcond = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_DWcond");
+    ir::BasicBlock::Ptr bbDWend = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_DWend");
 
-    bbWcond->setExitWhenTrue(bbWthen);
-    bbWcond->setExitWhenFalse(bbWend);
-    bbWthen->setExitWhenTrue(bbWcond);
+    bbDWaction->setExitWhenTrue(bbDWcond);
+    bbDWcond->setExitWhenTrue(bbDWaction);
+    bbDWcond->setExitWhenFalse(bbDWend);
+
 
     // COND BB
     if (mCondition->shouldReturnAnIR()) {
-        bbWcond->addInstruction(mCondition->getIR(bbWcond));
+        bbDWcond->addInstruction(mCondition->getIR(bbDWcond));
     } else if (mCondition->shouldReturnABasicBlock()) {
         logger.warning() << "Untested BB in while block condition BB.";
 
         auto[cond_begin, cond_end] = mCondition->getBasicBlock(controlFlow);
 
-        bbWcond->setExitWhenTrue(cond_begin);
+        bbDWcond->setExitWhenTrue(cond_begin);
         // bb has no when_false
-        cond_end->setExitWhenTrue(bbWthen);
-        cond_end->setExitWhenFalse(bbWend); //< ?? Check mElseBlock.empty() before
+        cond_end->setExitWhenTrue(bbDWaction);
+        cond_end->setExitWhenFalse(bbDWend); //< ?? Check mElseBlock.empty() before
 
-        bbWcond = cond_end->getNewWhenTrueBasicBlock("_Wcondafter");
+        bbDWcond = cond_end->getNewWhenTrueBasicBlock("_DWcondafter");
     }
 
-    // THEN BB
+    // Action BB
     for (auto const &statement : mBlock) {
         if (statement->shouldReturnAnIR()) {
-            bbWthen->addInstruction(statement->getIR(bbWthen));
+            bbDWaction->addInstruction(statement->getIR(bbDWaction));
         } else if (statement->shouldReturnABasicBlock()) {
             auto[then_begin, then_end] = statement->getBasicBlock(controlFlow);
 
-            then_end->setExitWhenTrue(bbWthen->getNextWhenTrue());
+            then_end->setExitWhenTrue(bbDWaction->getNextWhenTrue());
             // bbThen has no when_false
 
-            bbWthen->setExitWhenTrue(then_begin);
+            bbDWaction->setExitWhenTrue(then_begin);
             // bbThen has no when_false
 
-            bbWthen = then_end->getNewWhenTrueBasicBlock("_Wthenafter");
+            bbDWaction = then_end->getNewWhenTrueBasicBlock("_DWthenafter");
         }
     }
 
-    return {bbWcond, bbWend};
+    return {bbDWaction, bbDWend};
 }
 
-bool WhileBlock::shouldReturnABasicBlock() const {
+bool Do_WhileBlock::shouldReturnABasicBlock() const {
     return true;
 }
 

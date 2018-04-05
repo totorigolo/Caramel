@@ -22,31 +22,30 @@
  * SOFTWARE.
 */
 
-#include "FunctionCallInstruction.h"
-#include "../IRVisitor.h"
+#pragma once
 
+#include "SemanticError.h"
 
-namespace caramel::ir {
+#include <stdexcept>
+#include <memory>
 
-FunctionCallInstruction::FunctionCallInstruction(
-        std::string functionName,
-        std::shared_ptr<BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &returnType,
-        int argumentsLength
-) : IR(IR::ACCUMULATOR, Operation::call, parentBlock, returnType),
-    mFunctionName{std::move(functionName)},
-    mArgumentsLength{argumentsLength} {}
-
-std::string FunctionCallInstruction::getFunctionName() const {
-    return mFunctionName;
+namespace caramel::ast {
+class Symbol;
 }
 
-void FunctionCallInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitFunctionCall(this, os);
-}
+namespace caramel::exceptions {
 
-int FunctionCallInstruction::getArgumentsLength() const {
-    return mArgumentsLength;
-}
+class FunctionNameAlreadyDeclaredError : public SemanticError {
+public:
+    FunctionNameAlreadyDeclaredError(antlr4::ParserRuleContext *antlrContext,
+                                     std::string const &name,
+                                     std::shared_ptr<ast::Symbol> symbol);
 
-} // namespace caramel::ir
+protected:
+    std::string
+    buildFunctionNameAlreadyDeclaredErrorMessage(std::string const &name,
+                                                 std::shared_ptr<ast::Symbol> symbol);
+
+};
+
+} // namespace caramel::exceptions

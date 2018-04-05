@@ -34,8 +34,4 @@ void NopInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostr
     visitor->visitNope(this, os);
 }
 
-bool NopInstruction::isEmpty() const {
-    return true;
-}
-
 } // namespace caramel::ir

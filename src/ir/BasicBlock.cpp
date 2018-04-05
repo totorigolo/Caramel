@@ -56,9 +56,7 @@ void BasicBlock::setExitWhenFalse(const std::shared_ptr<BasicBlock> &ExitWhenFal
 }
 
 std::string BasicBlock::addInstruction(std::shared_ptr<IR> const &instruction) {
-    if (!instruction->isEmpty()) {
-        mInstructions.push_back(instruction);
-    }
+    mInstructions.push_back(instruction);
 
     size_t memoryLength = instruction->getType()->getMemoryLength();
     std::string returnName = instruction->getReturnName();

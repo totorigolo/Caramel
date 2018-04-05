@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,18 @@
  * SOFTWARE.
 */
 
-#include "FunctionCallInstruction.h"
-#include "../IRVisitor.h"
 
+int32_t main() {
+//    int32_t a;
 
-namespace caramel::ir {
+    putchar(21*2);
+    putchar('\n');
 
-FunctionCallInstruction::FunctionCallInstruction(
-        std::string functionName,
-        std::shared_ptr<BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &returnType,
-        int argumentsLength
-) : IR(IR::ACCUMULATOR, Operation::call, parentBlock, returnType),
-    mFunctionName{std::move(functionName)},
-    mArgumentsLength{argumentsLength} {}
+//    putchar(a);
 
-std::string FunctionCallInstruction::getFunctionName() const {
-    return mFunctionName;
+//    b = a - 1;
+//    putchar(b);
+//    putchar('\n');
+
+    return 0;
 }
-
-void FunctionCallInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitFunctionCall(this, os);
-}
-
-int FunctionCallInstruction::getArgumentsLength() const {
-    return mArgumentsLength;
-}
-
-} // namespace caramel::ir

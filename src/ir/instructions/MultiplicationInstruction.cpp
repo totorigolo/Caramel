@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,30 @@
  * SOFTWARE.
 */
 
-#include "FunctionCallInstruction.h"
+#include "MultiplicationInstruction.h"
 #include "../IRVisitor.h"
-
 
 namespace caramel::ir {
 
-FunctionCallInstruction::FunctionCallInstruction(
-        std::string functionName,
-        std::shared_ptr<BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &returnType,
-        int argumentsLength
-) : IR(IR::ACCUMULATOR, Operation::call, parentBlock, returnType),
-    mFunctionName{std::move(functionName)},
-    mArgumentsLength{argumentsLength} {}
+MultiplicationInstruction::MultiplicationInstruction(
+        std::string const &returnName,
+        std::shared_ptr<ir::BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string left,
+        std::string right
+) : IR(returnName, Operation::add, parentBlock, type), mLeft{left}, mRight{right} {}
 
-std::string FunctionCallInstruction::getFunctionName() const {
-    return mFunctionName;
+void MultiplicationInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitMultiplication(this, os);
 }
 
-void FunctionCallInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitFunctionCall(this, os);
+std::string MultiplicationInstruction::getLeft() const {
+    return mLeft;
 }
 
-int FunctionCallInstruction::getArgumentsLength() const {
-    return mArgumentsLength;
+std::string MultiplicationInstruction::getRight() const {
+    return mRight;
 }
 
 } // namespace caramel::ir
+

@@ -73,7 +73,10 @@ public:
     size_t getLength() const;
     StatementType getType() const;
 
-    virtual bool shouldReturnAnIR() const { return false; }
+    virtual bool shouldReturnAnIR() const {
+        logger.warning() << "No IR for statement of type: " << getType();
+        return false;
+    }
 
     virtual std::shared_ptr<caramel::ir::IR> getIR(
             std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock

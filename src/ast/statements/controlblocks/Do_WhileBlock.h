@@ -22,31 +22,36 @@
  * SOFTWARE.
 */
 
-#include "FunctionCallInstruction.h"
-#include "../IRVisitor.h"
+#pragma once
+
+#include "ControlBlock.h"
+#include "../expressions/Expression.h"
 
 
-namespace caramel::ir {
+namespace caramel::ast {
 
-FunctionCallInstruction::FunctionCallInstruction(
-        std::string functionName,
-        std::shared_ptr<BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &returnType,
-        int argumentsLength
-) : IR(IR::ACCUMULATOR, Operation::call, parentBlock, returnType),
-    mFunctionName{std::move(functionName)},
-    mArgumentsLength{argumentsLength} {}
+class Do_WhileBlock : public ControlBlock {
+public:
+    using Ptr = std::shared_ptr<Do_WhileBlock>;
+    using WeakPtr = std::weak_ptr<Do_WhileBlock>;
 
-std::string FunctionCallInstruction::getFunctionName() const {
-    return mFunctionName;
-}
+    Do_WhileBlock(
+            std::shared_ptr<caramel::ast::Expression> condition,
+            std::vector<std::shared_ptr<caramel::ast::Statement>> block,
+            antlr4::Token *token
+    );
 
-void FunctionCallInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitFunctionCall(this, os);
-}
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
 
-int FunctionCallInstruction::getArgumentsLength() const {
-    return mArgumentsLength;
-}
+    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override ;
+    bool shouldReturnABasicBlock() const override ;
 
-} // namespace caramel::ir
+private:
+    std::shared_ptr<caramel::ast::Expression> mCondition;
+    std::vector<
+            std::shared_ptr<caramel::ast::Statement>
+    > mBlock;
+};
+
+} // namespace caramel::ast

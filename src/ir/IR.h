@@ -95,8 +95,6 @@ public:
 
     virtual std::string getReturnName() const;
 
-    virtual bool isEmpty() const { return mOperation == Operation::empty; }
-
     ast::PrimaryType::Ptr getType() const;
 
     std::shared_ptr<BasicBlock> getParentBlock();
