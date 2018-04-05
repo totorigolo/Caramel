@@ -54,7 +54,6 @@ public:
 private:
     std::shared_ptr<ast::Declaration> mExistingDeclaration;
     std::shared_ptr<ast::Declaration> mFaultyDeclaration;
-    std::shared_ptr<ast::Symbol> mSymbol;
 };
 
 } // namespace caramel::exceptions

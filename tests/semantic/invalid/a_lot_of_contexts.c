@@ -1,5 +1,5 @@
 /*
- * Not really an error, it comes from ASTVisitor
+ * Multi-line comment.
  */
 
 #include <stdio.h>

@@ -38,14 +38,13 @@ SymbolAlreadyDefinedError::SymbolAlreadyDefinedError(std::string const &message,
                                                      std::shared_ptr<ast::Declaration> const &faultyDeclaration)
         : SemanticError(buildAlreadyDefinedErrorMessage(message, symbol), antlrContext),
           mExistingDefinition{existingDefinition},
-          mFaultyDeclaration{faultyDeclaration},
-          mSymbol{symbol}{}
+          mFaultyDeclaration{faultyDeclaration} {}
 
 void SymbolAlreadyDefinedError::note() const {
     if (1) {
         //TODO: test if different type, return primary type (int32_t) instead of statement type (VariableDeclaration)
         std::cerr << bold << "Note: " << reset
-                  << "different previous type: was " << mSymbol->getType()->getIdentifier()
+                  << "different previous type: was " << mExistingDefinition->getType()
                   << "and is now " << mFaultyDeclaration->getType()
                   << std::endl;
     }

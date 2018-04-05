@@ -38,14 +38,13 @@ SymbolAlreadyDeclaredError::SymbolAlreadyDeclaredError(std::string const &messag
                                                        std::shared_ptr<ast::Declaration> const &faultyDeclaration)
         : SemanticError(buildAlreadyDeclaredErrorMessage(message, symbol), antlrContext),
           mExistingDeclaration{existingDeclaration},
-          mFaultyDeclaration{faultyDeclaration},
-          mSymbol{symbol}{}
+          mFaultyDeclaration{faultyDeclaration} {}
 
 void SymbolAlreadyDeclaredError::note() const {
     if (1) {
         //TODO: test if different type, return primary type (int32_t) instead of statement type (VariableDeclaration)
         std::cerr << bold << "Note: " << reset
-                  << "different previous type: was " <<  mSymbol->getType()->getIdentifier()
+                  << "different previous type: was " << mExistingDeclaration->getType()
                   << " and is now " << mFaultyDeclaration->getType()
                   << std::endl;
     }
@@ -57,7 +56,6 @@ SymbolAlreadyDeclaredError::buildAlreadyDeclaredErrorMessage(std::string const &
     res << "Cannot use identifier: '" << variableName << "' because ";
     std::shared_ptr<ast::Symbol> previousDeclaration = symbol;
     ast::Symbol rawSymbol = *symbol;
-
     switch (previousDeclaration->getSymbolType()) {
         case ast::SymbolType::FunctionSymbol:
             res << "a function with the same name is already declared at line "
