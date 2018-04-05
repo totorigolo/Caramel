@@ -86,7 +86,6 @@ ir::GetBasicBlockReturn IfBlock::getBasicBlock(
         // TODO: Grab the returnName here? (I think not)
         bbCond->addInstruction(mCondition->getIR(bbCond));
     } else if (mCondition->shouldReturnABasicBlock()) {
-        logger.warning() << "Untested BB in if block condition BB.";
 
         auto [cond_begin, cond_end] = mCondition->getBasicBlock(controlFlow);
 

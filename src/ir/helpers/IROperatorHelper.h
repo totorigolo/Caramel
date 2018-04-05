@@ -26,7 +26,9 @@
 
 #define GET_MAX_TYPE(leftExpr, rightExpr) PrimaryType::max(leftExpr->getPrimaryType(), rightExpr->getPrimaryType());
 
-#define GET_REGISTER(expr) currentBasicBlock->addInstruction(expr->getIR(currentBasicBlock));
+#define GET_REGISTER(expr)                                                                          \
+([&] () {auto GET_REG_PLEASE_DONT_HURT_ME = expr->getIR(currentBasicBlock);                \
+return currentBasicBlock->addInstruction(GET_REG_PLEASE_DONT_HURT_ME);})()
 
 #define MOVE_TO(var, to, max)                                                                       \
 currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(                            \
@@ -34,14 +36,14 @@ currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(        
     max,                                                                                            \
     to,                                                                                             \
     var                                                                                             \
-));
+))
 
 #define PUSH(src)                                                                                    \
 currentBasicBlock->addInstruction(std::make_shared<ir::PushInstruction>(                             \
         currentBasicBlock,                                                                           \
         maxType,                                                                                     \
         src                                                                                          \
-));
+))
 
 #define POP(dest)                                                                                    \
 currentBasicBlock->addInstruction(std::make_shared<ir::PopInstruction>(                              \

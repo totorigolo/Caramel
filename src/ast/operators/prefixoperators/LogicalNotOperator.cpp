@@ -34,9 +34,9 @@ namespace caramel::ast {
 
 using namespace caramel::utils;
 
-std::shared_ptr<caramel::ir::IR> LogicalNotOperator::buildIR(
-        std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-        std::shared_ptr<Expression> const &expression
+std::shared_ptr<caramel::ir::IR> caramel::ast::LogicalNotOperator::buildIR(
+        std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
+        std::shared_ptr<caramel::ast::Expression> const &expression
 ) {
     return std::make_shared<BinaryExpression>(
             castTo<Expression::Ptr>(expression),

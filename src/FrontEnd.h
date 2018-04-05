@@ -42,4 +42,6 @@ namespace caramel {
 
 ast::Context::Ptr frontEnd(Config const &config);
 
+void verifUsageStatic(ast::Context::Ptr rootContext);
+
 } // namespace Caramel

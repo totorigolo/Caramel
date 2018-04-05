@@ -23,6 +23,11 @@
 */
 
 #include "ArrayAccess.h"
+#include "../../../../ir/instructions/EmptyInstruction.h"
+#include "../../../../ir/instructions/CopyInstruction.h"
+#include "../../../../ir/instructions/NopInstruction.h"
+#include "../../../../ir/instructions/ArrayAccessCopyInstruction.h"
+#include "../../../../ir/instructions/PopInstruction.h"
 
 namespace caramel::ast {
 
@@ -50,6 +55,34 @@ void ArrayAccess::acceptAstDotVisit() {
 void ArrayAccess::visitChildrenAstDot() {
     addEdge(thisId(), mIndex->thisId());
     mIndex->acceptAstDotVisit();
+}
+
+bool ArrayAccess::shouldReturnAnIR() const {
+    return true;
+}
+
+std::shared_ptr<ir::IR> ArrayAccess::getIR(std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock) {
+
+//    movl -4(%rbp), %eax
+    auto indexSrc = currentBasicBlock->addInstruction(mIndex->getIR(currentBasicBlock));
+    auto prevSrc = currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(
+            currentBasicBlock, mSymbol->getType(), createVarName(), indexSrc
+    ));
+
+//    cltq
+//    movl -16(%rbp,%rax,4), %eax
+    if (isUsedInLeft()) {
+        currentBasicBlock->addInstruction(std::make_shared<ir::PopInstruction>(
+                currentBasicBlock, mSymbol->getType(), ir::IR::ACCUMULATOR
+        ));
+        return std::make_shared<ir::ArrayAccessCopyInstruction>(
+                currentBasicBlock, mSymbol->getType(), ir::IR::ACCUMULATOR, prevSrc, mSymbol->getName(), isUsedInLeft()
+        );
+    } else {
+        return std::make_shared<ir::ArrayAccessCopyInstruction>(
+                currentBasicBlock, mSymbol->getType(), createVarName(), prevSrc, mSymbol->getName(), isUsedInLeft()
+        );
+    }
 }
 
 } // namespace caramel::ast

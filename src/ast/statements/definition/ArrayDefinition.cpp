@@ -25,8 +25,11 @@
 #include "ArrayDefinition.h"
 
 #include "../../symboltable/ArraySymbol.h"
-#include "../expressions/atomicexpression/Constant.h"
 #include "../../../utils/Common.h"
+#include "../expressions/atomicexpression/Constant.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../ir/instructions/CopyInstruction.h"
+#include "../../../ir/instructions/NopInstruction.h"
 
 
 namespace caramel::ast {
@@ -50,8 +53,39 @@ void ArrayDefinition::acceptAstDotVisit() {
         return;
     }
     auto arraySymbol = castTo<ArraySymbol::Ptr>(mSymbol.lock());
-    addNode(thisId(), "ArraySymbol: " + arraySymbol->getName());
+    addNode(thisId(), "ArrayDefinition: " + arraySymbol->getName());
     addEdge(thisId(), arraySymbol->thisId());
+}
+
+bool ArrayDefinition::shouldReturnAnIR() const {
+    return true;
+}
+
+std::shared_ptr<ir::IR> ArrayDefinition::getIR(ir::BasicBlock::Ptr &currentBasicBlock) {
+
+    auto arraySymbol = mSymbol.lock();
+    auto arrayName = arraySymbol->getName();
+    auto const &content = arraySymbol->getContent();
+
+    long index = arraySymbol->getSize();
+    for (auto it = content.rbegin(), it_end = content.rend(); it != it_end; ++it) {
+        auto const &expression = *it;
+        --index;
+
+        std::string valueName = currentBasicBlock->addInstruction(expression->getIR(currentBasicBlock));
+        std::string destination = arrayName;
+        if (index > 0) {
+            destination += "[" + std::to_string(index) + "]";
+        }
+        currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(
+                currentBasicBlock,
+                arraySymbol->getType(),
+                destination,
+                valueName
+        ));
+    }
+
+    return std::make_shared<ir::NopInstruction>(currentBasicBlock);
 }
 
 } // namespace caramel::ast

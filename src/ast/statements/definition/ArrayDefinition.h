@@ -43,6 +43,10 @@ public:
 
     void acceptAstDotVisit() override;
 
+    bool shouldReturnAnIR() const override;
+
+    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock) override;
+
 private:
     antlr4::Token *mStartToken;
     std::weak_ptr<ArraySymbol> mSymbol;

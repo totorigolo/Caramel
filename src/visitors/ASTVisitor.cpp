@@ -85,6 +85,11 @@ antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
     };
     auto putcharSymbol = symbolTable->addFunctionDeclaration(ctx, void_t, "putchar", putcharParams, putcharDecl);
     putcharDecl->setFunctionSymbol(putcharSymbol);
+    // getchar
+    auto getcharDecl = std::make_shared<FunctionDeclaration>(ctx->getStart());
+    std::vector<FunctionParameterSignature> getcharParams = {};
+    auto getcharSymbol = symbolTable->addFunctionDeclaration(ctx, int32_t, "getchar", getcharParams, getcharDecl);
+    getcharDecl->setFunctionSymbol(getcharSymbol);
     // exit
     auto exitDecl = std::make_shared<FunctionDeclaration>(ctx->getStart());
     std::vector<FunctionParameterSignature> exitParams = {
@@ -107,6 +112,7 @@ antlrcpp::Any ASTVisitor::visitStatements(CaramelParser::StatementsContext *ctx)
         antlrcpp::Any r;
         try {r = visitStatement(statement);}
         catch(caramel::exceptions::SemanticError &semanticError){
+            incrementErrorCount();
             semanticError.explain(utils::SourceFileUtil(mSourceFilename));
         }
         if (r.is<Statement::Ptr>()) {
@@ -135,6 +141,7 @@ antlrcpp::Any ASTVisitor::visitBlock(CaramelParser::BlockContext *ctx) {
             declarations = std::move(r); // TODO: Workaround
         }
         catch(caramel::exceptions::SemanticError &semanticError){
+            incrementErrorCount();
             semanticError.explain(utils::SourceFileUtil(mSourceFilename));
         }
         //currentContext()->addStatements(std::move(declarations));
@@ -147,6 +154,7 @@ antlrcpp::Any ASTVisitor::visitBlock(CaramelParser::BlockContext *ctx) {
             instructions = std::move(i); // TODO: Workaround
         }
         catch(caramel::exceptions::SemanticError &semanticError){
+            incrementErrorCount();
             semanticError.explain(utils::SourceFileUtil(mSourceFilename));
         }
         //currentContext()->addStatements(std::move(instructions));
@@ -164,6 +172,7 @@ antlrcpp::Any ASTVisitor::visitDeclarations(CaramelParser::DeclarationsContext *
         antlrcpp::Any r;
         try {r = visitDeclaration(declaration);}
         catch(caramel::exceptions::SemanticError &semanticError){
+            incrementErrorCount();
             semanticError.explain(utils::SourceFileUtil(mSourceFilename));
         }
         if (r.is<Statement::Ptr>()) {
@@ -203,8 +212,7 @@ ASTVisitor::visitTypeParameter(CaramelParser::TypeParameterContext *ctx) {
         Symbol::Ptr symbol = currentContext()->getSymbolTable()->getSymbol(ctx, symbolName);
         return castTo<TypeSymbol::Ptr>(symbol);
     } else {
-        logger.warning() << "Default symbol " << symbolName << " is created with void_t as return type";
-        return std::make_shared<TypeSymbol>( symbolName, Void_t::Create() );
+        throw std::runtime_error("Default symbol " + symbolName + " is created with void_t as return type");
     }
 }
 
@@ -269,6 +277,14 @@ antlrcpp::Any ASTVisitor::visitChildren(antlr4::tree::ParseTree *node) {
     }
     return childResult;
 }
+
+void ASTVisitor::incrementErrorCount(){
+    mErrorCount++;
+}
+int ASTVisitor::getErrorCount(){
+    return mErrorCount;
+}
+
 
 ContextPusher::ContextPusher(ASTVisitor &ASTVisitor)
         : mASTVisitor(ASTVisitor) {

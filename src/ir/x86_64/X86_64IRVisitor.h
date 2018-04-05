@@ -43,6 +43,8 @@ public:
     explicit X86_64IRVisitor() = default;
     virtual ~X86_64IRVisitor() = default;
 
+    void visitArrayAccessCopy(ArrayAccessCopyInstruction *instruction, std::ostream &os) override;
+
     void visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) override;
 
     void visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) override;

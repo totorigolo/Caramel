@@ -72,7 +72,7 @@ void FunctionCall::visitChildrenAstDot() {
     }
 }
 
-std::shared_ptr<ir::IR> FunctionCall::getIR(ir::BasicBlock::Ptr const &currentBasicBlock) {
+std::shared_ptr<ir::IR> FunctionCall::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) {
 
     std::string functionName = mSymbol->getName();
     auto functionSymbol = castTo<FunctionSymbol::Ptr>(mSymbol);
