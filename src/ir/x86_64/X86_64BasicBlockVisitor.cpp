@@ -34,7 +34,7 @@ void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> c
     std::string mLabelName = basicBlock->getLabelName();
 
     if (!mLabelName.empty()) {
-        os << mLabelName << ':' << std::endl;
+        os << '\n' << mLabelName << ':' << std::endl;
     }
     for (IR::Ptr const &instr : basicBlock->getInstructions()) {
         instr->accept(mIRVisitor, os);
