@@ -301,10 +301,34 @@ ContextPusher::ContextPusher(ASTVisitor &ASTVisitor)
 }
 
 ContextPusher::~ContextPusher() {
-    logger.debug() << "Pop context: " << *mASTVisitor.mContextStack.top();
+    logger.trace() << "Popping context: " << *mASTVisitor.mContextStack.top();
+    verifUsageStatic(mASTVisitor.mContextStack.top());
+    logger.debug() << "Popped context: " << *mASTVisitor.mContextStack.top();
     mASTVisitor.mContextStack.pop();
 }
 
 Context::Ptr ContextPusher::getContext() {
     return mASTVisitor.currentContext();
+}
+
+void ContextPusher::verifUsageStatic(ast::Context::Ptr context) {
+    logger.trace() << "Running static analysis on: " << *mASTVisitor.mContextStack.top();
+
+    auto symbolTable = context->getSymbolTable();
+    for (auto symbolMapElem : symbolTable->getSymbols()) {
+        auto symbol = symbolMapElem.second;
+        if (symbolTable->isDeclared(symbolMapElem.first)) {
+            if (!symbolTable->isDefined(symbolMapElem.first)) {
+                logger.warning() << "The element '" << symbolMapElem.first << "' was declared but never defined";
+            }
+        }
+        if (symbolTable->isDefined(symbolMapElem.first)) {
+            if (symbol->getSymbolType() != ast::SymbolType::TypeSymbol && symbol->getName() != "main") {
+                if (symbol->getOccurrences().empty()) {
+                    logger.warning() << "The element '" << symbolMapElem.first << "' was declared but never used";
+                }
+            }
+
+        }
+    }
 }

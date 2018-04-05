@@ -241,11 +241,11 @@ public:
 
     ast::Context::Ptr getContext();
 
-
+    // TODO: Move to a proper class
+    void verifUsageStatic(ast::Context::Ptr context);
 
 private:
     ASTVisitor &mASTVisitor;
-
 };
 
 } // namespace caramel::visitors

@@ -2,4 +2,6 @@
  * Multi-line comment.
  */
 
-extern int32_t a;
+void main(){
+  int32_t a;
+}

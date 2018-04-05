@@ -77,8 +77,7 @@ ast::Context::Ptr frontEnd(Config const &config) {
         if (count == 1) {
             logger.fatal() << "There was one semantic error.";
             exit(1);
-        }
-        else if (count > 1) {
+        } else if (count > 1) {
             logger.fatal() << "There were " << count << " semantic errors.";
             exit(1);
         }
@@ -89,8 +88,6 @@ ast::Context::Ptr frontEnd(Config const &config) {
 
         // The AST root
         auto context = visitorResult.as<ast::Context::Ptr>();
-
-        verifUsageStatic(context);
 
         // Generate the dot of the ast if asked
         if (config.astDot) {
@@ -112,18 +109,5 @@ ast::Context::Ptr frontEnd(Config const &config) {
         exit(1);
     }
 }
-
-void verifUsageStatic(ast::Context::Ptr rootContext){
-    shared_ptr<ast::SymbolTable> symbolTable = rootContext->getSymbolTable();
-    for (auto symbolMapElem : symbolTable->getSymbols()){
-        if (symbolTable->isDeclared(symbolMapElem.first)){
-            if(!symbolTable->isDefined(symbolMapElem.first)){
-                logger.fatal() << "[Warning] The variable " << symbolMapElem.first << " was declared but never defined";
-            }
-        }
-
-    }
-}
-
 
 } // namespace Caramel
