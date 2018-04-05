@@ -9,8 +9,8 @@ int32_t main() {
     int32_t b = 2;
     int32_t c = 4;
 
-    for (a = 5; a + 1 - 1; a = a - 1) {
-        putchar('a');
+    for (a = 5; a; a = a - 1) {
+        putchar('0' + a);
         putchar('\n');
     }
 
