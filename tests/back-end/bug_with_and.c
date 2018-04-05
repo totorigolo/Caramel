@@ -22,17 +22,19 @@
  * SOFTWARE.
 */
 
-//int32_t foo(int32_t a, int32_t b) {
-////    int32_t useless = 1 + 2 + 8 * 4 - 4 && 1 && 5;
-//    putchar('0' + a);
-//    return b;
-//}
+int32_t foo(int32_t a, int32_t b) {
+    int32_t useless = 1 + 2 + 8 * 4 - 4 && 1 && 5;
+    putchar('0' + a);
+    return b;
+}
 
 int32_t main() {
 
-    int32_t useless = 0 && 2;
+    int32_t useless = 1 && 2;
     putchar('1');
     putchar('\n');
+
+    foo(2, 1);
 
     return 0;
 }

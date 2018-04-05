@@ -22,11 +22,11 @@
  * SOFTWARE.
 */
 
-//int32_t foo(int32_t a, int32_t b) {
-////    int32_t useless = 1 + 2 + 8 * 4 - 4 && 1 && 5;
-//    putchar('0' + a);
-//    return b;
-//}
+int32_t foo(int32_t a, int32_t b) {
+    int32_t useless = 1 + 2 + 8 * 4 - 4 && 1 && 5;
+    putchar('0' + a);
+    return b;
+}
 
 int32_t main() {
 
@@ -39,14 +39,11 @@ int32_t main() {
 //    int32_t e = (1+2+3*4-5) && (1-1+1-1+1-1+1) && (1-5+7);
 //    int32_t f = (1+2+3*4-5 && 1*(5 && 1)) && (1-1+1-1+1-1+1) && (1-5+7);
 //    int32_t g = (1+2+3*4-5 && 1*(5 && 1)) && (1-1+1-1+1-1+1) && (1-5+7);
-//    int32_t a = 1 + 2;
-//    int32_t a = 1 + (1 && (1-1) && 1);
-//    int32_t a = (1 && (1-1) && 1) + 1;
 
-    //int32_t h = foo(1, 1) && 1 && 1; // 12
-//    int32_t h = foo(1, 1) && foo(2, 1) && foo(3, 1); // 12
-    int32_t useless = 1 + 2 + 8 * 4 - 4 && 1 && 5;
-    putchar('1');
+    int32_t h = foo(1, 1) && (1 && 1); // 1
+    int32_t k;
+    putchar('\n');
+    k = foo(1, 1) && foo(2, 0) && foo(3, 0); // 12
     putchar('\n');
 
 //    putchar('0' + a);
