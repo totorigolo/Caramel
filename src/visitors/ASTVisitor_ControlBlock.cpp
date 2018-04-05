@@ -29,6 +29,7 @@
 #include "../ast/statements/controlblocks/ForBlock.h"
 #include "../ast/statements/controlblocks/WhileBlock.h"
 #include "../ast/statements/expressions/binaryexpression/BinaryExpression.h"
+#include "../ast/statements/controlblocks/Do_WhileBlock.h"
 
 
 using namespace caramel::ast;
@@ -44,6 +45,8 @@ antlrcpp::Any ASTVisitor::visitControlBlock(CaramelParser::ControlBlockContext *
         return castAnyTo<IfBlock::Ptr, ControlBlock::Ptr>(visitIfBlock(ctx->ifBlock()));
     } else if (ctx->whileBlock()) {
         return castAnyTo<WhileBlock::Ptr, ControlBlock::Ptr>(visitWhileBlock(ctx->whileBlock()));
+    } else if (ctx->doWhileBlock()) {
+        return castAnyTo<Do_WhileBlock::Ptr, ControlBlock::Ptr>(visitDoWhileBlock(ctx->doWhileBlock()));
     } else { // if (ctx->forBlock()) {
         return castAnyTo<ForBlock::Ptr, ControlBlock::Ptr>(visitForBlock(ctx->forBlock()));
     }
@@ -84,6 +87,17 @@ antlrcpp::Any ASTVisitor::visitWhileBlock(CaramelParser::WhileBlockContext *ctx)
 
     WhileBlock::Ptr whileBlock = std::make_shared<WhileBlock>(expression, block, ctx->start);
     return whileBlock;
+}
+
+antlrcpp::Any ASTVisitor::visitDoWhileBlock(CaramelParser::DoWhileBlockContext *ctx) {
+    logger.trace() << "visiting do while block: " << grey <<ctx->getText();
+
+    Expression::Ptr expression = visitExpression(ctx->expression());
+    logger.trace() << "do while condition :";
+    std::vector<Statement::Ptr> block = visitBlock(ctx->block());
+
+    Do_WhileBlock::Ptr doWhileBlock = std::make_shared<Do_WhileBlock>(expression, block, ctx->start);
+    return doWhileBlock;
 }
 
 antlrcpp::Any ASTVisitor::visitForBlock(CaramelParser::ForBlockContext *ctx) {

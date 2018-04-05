@@ -280,18 +280,23 @@ ASTVisitor::visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionCon
     antlrcpp::Any atomicExpression = visitAtomicExpression(ctx->atomicExpression());
     auto *postfixCtx = ctx->postfixUnaryOperation();
     if (postfixCtx) {
-        if (postfixCtx->postfixUnaryOperator()) {
-            if (!atomicExpression.is<VariableSymbol::Ptr>()) {
-                throw std::runtime_error("Cannot use postfix Unary Operator on non variable symbol");
-            }
 
-            // Return an unary expression with the corresponding operator
-            return castTo<Expression::Ptr>(std::make_shared<UnaryExpression>(
-                    visitAtomicExpression(ctx->atomicExpression()),
-                    visitPostfixUnaryOperator(postfixCtx->postfixUnaryOperator()),
-                    ctx->getStart()
-            ));
+        if (postfixCtx->postfixUnaryOperator()) {
+            if (castAnyTo<Expression::Ptr, Identifier::Ptr>(atomicExpression)) {
+
+                Expression::Ptr expression = atomicExpression;
+                return castTo<Expression::Ptr>(std::make_shared<UnaryExpression>(
+                        expression,
+                        visitPostfixUnaryOperator(postfixCtx->postfixUnaryOperator()),
+                        ctx->getStart()
+                ));
+
+            } else if (atomicExpression.is<VariableSymbol::Ptr>()) {
+                logger.fatal() << "Cannot execute postfix operation on rvalue";
+            }
         }
+
+
     }
 
     if (atomicExpression.is<Symbol::Ptr>()) {

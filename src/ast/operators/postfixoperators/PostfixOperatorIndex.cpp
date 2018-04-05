@@ -23,6 +23,8 @@
 */
 
 #include "PostfixOperatorIndex.h"
+#include "PostIncOperator.h"
+#include "PostDecOperator.h"
 
 #define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<UnaryOperator>(make_shared<op>())))
 
@@ -31,6 +33,8 @@ using namespace std;
 caramel::ast::PostfixOperatorIndex::PostfixOperatorIndex() {
 
     // Insert operators binding here...
+    BIND(PostIncOperator);
+    BIND(PostDecOperator);
 
 }
 

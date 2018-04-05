@@ -41,6 +41,14 @@ public:
     virtual ~Operator() = default;
     virtual StatementType getExpressionType() const = 0;
     virtual std::string getToken() const = 0;
+
+    virtual bool shouldReturnAnIR() const {
+        throw exceptions::NotImplementedException(__FILE__);
+    };
+
+    virtual bool shouldReturnABasicBlock() const {
+        throw exceptions::NotImplementedException(__FILE__);
+    };
 };
 
 } // namespace caramel::ast

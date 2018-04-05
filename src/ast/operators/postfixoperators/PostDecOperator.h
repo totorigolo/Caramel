@@ -24,29 +24,28 @@
 
 #pragma once
 
-#include "../BinaryOperator.h"
+#include "../UnaryOperator.h"
 
 namespace caramel::ast {
 
-class BitwiseAndOperator : public BinaryOperator {
+class PostDecOperator : public UnaryOperator {
 public:
-    using Ptr = std::shared_ptr<BitwiseAndOperator>;
-    using WeakPtr = std::weak_ptr<BitwiseAndOperator>;
+    using Ptr = std::shared_ptr<PostDecOperator>;
+    using WeakPtr = std::weak_ptr<PostDecOperator>;
 
-    static constexpr const char* SYMBOL = "&";
-
-public:
-    BitwiseAndOperator() = default;
+    static constexpr const char* SYMBOL = "--";
 
 public:
-    ~BitwiseAndOperator() override = default;
+    PostDecOperator() = default;
+
+public:
+    ~PostDecOperator() override = default;
 
 public:
     std::shared_ptr<caramel::ir::IR>
-    getIR(
+    buildIR(
             std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-            std::shared_ptr<caramel::ast::Expression> const &rightExpression
+            std::shared_ptr<caramel::ast::Expression> const &expression
     ) override;
 
     StatementType getExpressionType() const override;

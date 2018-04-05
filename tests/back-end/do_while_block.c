@@ -9,7 +9,7 @@ int32_t main() {
     do {
         putchar('0'+a);
         a = a - 1;
-    }while(a+1-1);
+    } while(a);
     putchar('\n');
     putchar('e');
     putchar('x');
