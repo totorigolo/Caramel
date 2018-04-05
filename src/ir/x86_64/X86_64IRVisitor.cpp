@@ -42,6 +42,7 @@
 #include "../instructions/ModInstruction.h"
 #include "../instructions/DivInstruction.h"
 #include "../instructions/LeftShiftInstruction.h"
+#include "../instructions/RightShiftInstruction.h"
 
 
 namespace caramel::ir::x86_64 {
@@ -469,9 +470,24 @@ void X86_64IRVisitor::visitLeftShift(LeftShiftInstruction *instruction, std::ost
     //const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
     os << "  movb    " << rightLocation << ", %cl" << '\n';
-    os << "  sal" + getSizeSuffix(parameterSize) << "    " << "%cl"//rightLocation
+    os << "  sal" + getSizeSuffix(parameterSize) << "    " << "%cl"
        << ", " << leftLocation;
 
+
+}
+
+void X86_64IRVisitor::visitRightShift(RightShiftInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting right shift: "
+                   << instruction->getLeft() << " - " << instruction->getRight();
+
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), 8);
+    //const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
+
+    os << "  movb    " << rightLocation << ", %cl" << '\n';
+    os << "  sar" + getSizeSuffix(parameterSize) << "    " << "%cl"
+       << ", " << leftLocation;
 
 }
 

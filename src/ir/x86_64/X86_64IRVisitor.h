@@ -81,7 +81,10 @@ public:
 
     void visitLeftShift(LeftShiftInstruction *instruction, std::ostream &os) override ;
 
-//private:
+    void visitRightShift(RightShiftInstruction *instruction, std::ostream &os) override ;
+
+
+    //private:
     std::string address(std::string const &symbol);
     std::string registerToAssembly(std::string const &register_, size_t bitSize = 32U);
     std::string toAssembly(ir::BasicBlock::Ptr parentBB, std::string const &anySymbol, size_t bitSize = 32U);

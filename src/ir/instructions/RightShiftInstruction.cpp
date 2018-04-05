@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+ * Copyright (c) 2018 insa.4if.hexanome_kalate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,44 +22,29 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "RightShiftInstruction.h"
+#include "../IRVisitor.h"
 
-#include <memory>
-#include <Common.h>
-#include "../BinaryOperator.h"
+namespace caramel::ir {
 
+RightShiftInstruction::RightShiftInstruction(
+        std::string const &returnName,
+        std::shared_ptr<ir::BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string left,
+        std::string right
+) : IR(returnName, Operation::rbs, parentBlock, type), mLeft{left}, mRight{right} {}
 
-namespace caramel::ast {
+void RightShiftInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitRightShift(this, os);
+}
 
-class RightShiftOperator : public BinaryOperator {
-public:
-    using Ptr = std::shared_ptr<RightShiftOperator>;
-    using WeakPtr = std::weak_ptr<RightShiftOperator>;
+std::string RightShiftInstruction::getLeft() const {
+    return mLeft;
+}
 
-    static constexpr const char* SYMBOL = ">>";
+std::string RightShiftInstruction::getRight() const {
+    return mRight;
+}
 
-public:
-    RightShiftOperator() = default;
-
-public:
-    ~RightShiftOperator() override = default;
-
-public:
-    std::shared_ptr<caramel::ir::IR>
-    getIR(
-            std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock,
-            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-            std::shared_ptr<caramel::ast::Expression> const &rightExpression
-    ) override;
-
-    StatementType getExpressionType() const override;
-
-    std::string getToken() const override;
-
-    bool shouldReturnAnIR() const override;
-
-    bool shouldReturnABasicBlock() const override;
-
-};
-
-} // namespace caramel::ast
+} // namespace caramel::ir

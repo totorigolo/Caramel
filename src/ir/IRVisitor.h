@@ -56,6 +56,7 @@ class ModInstruction;
 class DivInstruction;
 class FlagToRegInstruction;
 class LeftShiftInstruction;
+class RightShiftInstruction;
 
 class IRVisitor {
 public:
@@ -147,6 +148,11 @@ public:
 
     virtual void visitLeftShift(
             LeftShiftInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitRightShift(
+            RightShiftInstruction *instruction,
             std::ostream &os
     ) = 0;
 
