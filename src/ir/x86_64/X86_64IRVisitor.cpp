@@ -369,9 +369,9 @@ void X86_64IRVisitor::visitMultiplication(MultiplicationInstruction *instruction
                    << instruction->getLeft() << " - " << instruction->getRight();
 
     const auto parameterSize = instruction->getType()->getMemoryLength();
-    const std::string leftLocation = toAssembly(instruction, instruction->getLeft(), parameterSize);
-    const std::string rightLocation = toAssembly(instruction, instruction->getRight(), parameterSize);
-    const std::string storeLocation = toAssembly(instruction, instruction->getReturnName(), parameterSize);
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
     os << "  movl    " << rightLocation // TODO: We might want to change "l" dynamically ?
        << ", " << storeLocation << '\n';
