@@ -85,6 +85,11 @@ antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
     };
     auto putcharSymbol = symbolTable->addFunctionDeclaration(ctx, void_t, "putchar", putcharParams, putcharDecl);
     putcharDecl->setFunctionSymbol(putcharSymbol);
+    // getchar
+    auto getcharDecl = std::make_shared<FunctionDeclaration>(ctx->getStart());
+    std::vector<FunctionParameterSignature> getcharParams = {};
+    auto getcharSymbol = symbolTable->addFunctionDeclaration(ctx, int32_t, "getchar", getcharParams, getcharDecl);
+    getcharDecl->setFunctionSymbol(getcharSymbol);
     // exit
     auto exitDecl = std::make_shared<FunctionDeclaration>(ctx->getStart());
     std::vector<FunctionParameterSignature> exitParams = {
