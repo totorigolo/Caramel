@@ -33,7 +33,7 @@ ModInstruction::ModInstruction(
         ast::PrimaryType::Ptr const &type,
         std::string left,
         std::string right
-) : IR(returnName, Operation::add, parentBlock, type), mLeft{left}, mRight{right} {}
+) : IR(returnName, Operation::mod, parentBlock, type), mLeft{left}, mRight{right} {}
 
 void ModInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitMod(this, os);

@@ -49,19 +49,13 @@ class FunctionCallInstruction;
 class NopInstruction;
 
 class ReturnInstruction;
-class JumpInstruction;
-class JumpEqualInstruction;
-class JumpLessInstruction;
-class JumpLessOrEqualInstruction;
-class JumpGreaterOrEqualInstruction;
-class JumpGreaterInstruction;
-class GTEInstruction;
 class PushInstruction;
 class PopInstruction;
 class MultiplicationInstruction;
 class ModInstruction;
 class DivInstruction;
 class FlagToRegInstruction;
+class LeftShiftInstruction;
 
 class IRVisitor {
 public:
@@ -148,6 +142,11 @@ public:
 
     virtual void visitMultiplication(
             MultiplicationInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitLeftShift(
+            LeftShiftInstruction *instruction,
             std::ostream &os
     ) = 0;
 

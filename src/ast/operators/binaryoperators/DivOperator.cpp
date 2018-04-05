@@ -66,7 +66,7 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::DivOperator::getIR(
 }
 
 caramel::ast::StatementType caramel::ast::DivOperator::getExpressionType() const {
-    return StatementType::ModuloExpression;
+    return StatementType::MultiplicativeExpression;
 }
 
 std::string caramel::ast::DivOperator::getToken() const {

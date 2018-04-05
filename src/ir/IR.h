@@ -39,6 +39,10 @@ enum class Operation {
     add,
     sub,
     mul,
+    mod,
+    div,
+    lbs,
+    rbs,
     rmem,
     wmem,
     call,
@@ -54,12 +58,6 @@ enum class Operation {
     epilog,
     leave,
     nope,
-    jmp,
-    jmp_eq,
-    jmp_lt,
-    jmp_le,
-    jmp_ge,
-    jmp_gt,
     popq,
     ftr // equivalent of ser
 };

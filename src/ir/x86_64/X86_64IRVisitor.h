@@ -79,6 +79,8 @@ public:
 
     void visitFlagToReg(FlagToRegInstruction *instruction, std::ostream &os) override;
 
+    void visitLeftShift(LeftShiftInstruction *instruction, std::ostream &os) override ;
+
 //private:
     std::string address(std::string const &symbol);
     std::string registerToAssembly(std::string const &register_, size_t bitSize = 32U);

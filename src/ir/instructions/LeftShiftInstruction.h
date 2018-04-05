@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+ * Copyright (c) 2018 insa.4if.hexanome_kalate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,30 +22,38 @@
  * SOFTWARE.
 */
 
-#include "MultiplicationInstruction.h"
-#include "../IRVisitor.h"
+#pragma once
+
+#include "../IR.h"
 
 namespace caramel::ir {
 
-MultiplicationInstruction::MultiplicationInstruction(
-        std::string const &returnName,
-        std::shared_ptr<ir::BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &type,
-        std::string left,
-        std::string right
-) : IR(returnName, Operation::mul, parentBlock, type), mLeft{left}, mRight{right} {}
+class LeftShiftInstruction : public IR {
+public:
+    using Ptr = std::shared_ptr<LeftShiftInstruction>;
+    using WeakPtr = std::shared_ptr<LeftShiftInstruction>;
 
-void MultiplicationInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitMultiplication(this, os);
-}
+public:
+    explicit LeftShiftInstruction(
+            std::string const &returnName,
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            ast::PrimaryType::Ptr const &type,
+            std::string left,
+            std::string right
+    );
 
-std::string MultiplicationInstruction::getLeft() const {
-    return mLeft;
-}
+    ~LeftShiftInstruction() override = default;
 
-std::string MultiplicationInstruction::getRight() const {
-    return mRight;
-}
+    std::string getLeft() const;
+
+    std::string getRight() const;
+
+private:
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+
+private:
+    std::string mLeft;
+    std::string mRight;
+};
 
 } // namespace caramel::ir
-
