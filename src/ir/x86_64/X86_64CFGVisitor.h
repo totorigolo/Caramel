@@ -26,6 +26,10 @@
 
 #include "../CFG.h"
 #include "../CFGVisitor.h"
+#include "../BasicBlock.h"
+
+#include <map>
+#include <set>
 #include <memory>
 #include <ostream>
 
@@ -45,6 +49,12 @@ public:
 
     void generateAssembly(std::shared_ptr<ir::CFG> const &controlFlowGraph, std::ostream &os);
 
+    void generateAssembly(
+            std::shared_ptr<ir::CFG> const &controlFlowGraph,
+            std::ostream &os,
+            size_t functionRootId,
+            ir::BasicBlock::Ptr bb);
+
     void generateAssemblyPrologue(
             std::shared_ptr<ir::CFG> const &controlFlowGraph,
             std::ostream &os
@@ -57,6 +67,8 @@ public:
 
 private:
     std::shared_ptr<X86_64BasicBlockVisitor> mBasicBlockVisitor;
+    std::map<size_t, std::vector<ir::BasicBlock::Ptr>> mOrders;
+    std::set<size_t> mVisitedBB;
 };
 
 } // namespace caramel::ir::x86_64

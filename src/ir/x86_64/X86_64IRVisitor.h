@@ -26,6 +26,7 @@
 
 #include "../IR.h"
 #include "../IRVisitor.h"
+#include "../BasicBlock.h"
 
 #include <memory>
 #include <ostream>
@@ -39,7 +40,7 @@ public:
     using WeakPtr = std::shared_ptr<X86_64IRVisitor>;
 
 public:
-    explicit X86_64IRVisitor();
+    explicit X86_64IRVisitor() = default;
     virtual ~X86_64IRVisitor() = default;
 
     void visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) override;
@@ -76,16 +77,20 @@ public:
 
     void visitCallParameter(CallParameterInstruction *instruction, std::ostream &os) override;
 
-private:
+    void visitSubtraction(SubtractionInstruction *instruction, std::ostream &os) override;
+
+    void visitPush(PushInstruction *instruction, std::ostream &os) override;
+
+    void visitPop(PopInstruction *instruction, std::ostream &os) override;
+
+//private:
     std::string address(std::string const &symbol);
     std::string registerToAssembly(std::string const &register_, size_t bitSize = 32U);
-    std::string toAssembly(ir::IR *instruction, std::string const &anySymbol, size_t bitSize = 32U);
+    std::string toAssembly(ir::BasicBlock::Ptr parentBB, std::string const &anySymbol, size_t bitSize = 32U);
     std::string getSizeSuffix(size_t bitSize);
     std::string getFunctionCallRegister(size_t index, size_t bitSize);
 
-private:
-    std::map<std::string, std::string> mRegisterContent;
-    std::map<std::string, std::string> mSymbolRegister;
+    void visitMultiplication(MultiplicationInstruction *instruction, std::ostream &os) override;
 };
 
 } // namespace caramel::ir::x86_64

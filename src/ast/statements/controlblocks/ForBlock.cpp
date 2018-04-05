@@ -23,6 +23,7 @@
 */
 
 #include "ForBlock.h"
+#include "../../../ir/BasicBlock.h"
 
 
 namespace caramel::ast {
@@ -60,6 +61,94 @@ void ForBlock::visitChildrenAstDot() {
         addEdge(thisId() + 2, blockStatement->thisId());
         blockStatement->acceptAstDotVisit();
     }
+}
+
+bool ForBlock::shouldReturnABasicBlock() const {
+    return true;
+}
+
+ir::GetBasicBlockReturn ForBlock::getBasicBlock(ir::CFG *controlFlow) {
+
+    ir::BasicBlock::Ptr bbInit = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_Finit");
+    ir::BasicBlock::Ptr bbCond = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_Fcond");
+    ir::BasicBlock::Ptr bbThen = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_Fthen");
+    ir::BasicBlock::Ptr bbInc = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_Finc");
+    ir::BasicBlock::Ptr bbEnd = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_Fend");
+
+    bbInit->setExitWhenTrue(bbCond);
+    bbCond->setExitWhenTrue(bbThen);
+    bbCond->setExitWhenFalse(bbEnd);
+    bbThen->setExitWhenTrue(bbInc);
+    bbInc->setExitWhenTrue(bbCond);
+
+    // INIT BB
+    if (mBegin->shouldReturnAnIR()) {
+        bbInit->addInstruction(mBegin->getIR(bbInit));
+    } else if (mBegin->shouldReturnABasicBlock()) {
+        auto [init_begin, init_end] = mBegin->getBasicBlock(controlFlow);
+
+        init_end->setExitWhenTrue(bbInit->getNextWhenTrue());
+        // bbInit has no when_false
+
+        bbInit->setExitWhenTrue(init_begin);
+        // bbInit has no when_false
+
+        bbInit = init_end->getNewWhenTrueBasicBlock("_Finitafter");
+    }
+
+
+    // COND BB
+    if (mEnd->shouldReturnAnIR()) {
+        bbCond->addInstruction(mEnd->getIR(bbCond));
+    } else if (mEnd->shouldReturnABasicBlock()) {
+        logger.warning() << "Untested BB in for block condition BB.";
+
+        auto [cond_begin, cond_end] = mBegin->getBasicBlock(controlFlow);
+
+        bbCond->setExitWhenTrue(cond_begin);
+        // bb has no when_false
+        cond_end->setExitWhenTrue(bbThen);
+        cond_end->setExitWhenFalse(bbEnd);
+
+        bbCond = cond_end->getNewWhenTrueBasicBlock("_Fcondafter");
+    }
+
+    // THEN BB
+    for (auto const &statement : mBlock) {
+        if (statement->shouldReturnAnIR()) {
+            bbThen->addInstruction(statement->getIR(bbThen));
+        } else if (statement->shouldReturnABasicBlock()) {
+            auto [then_begin, then_end] = statement->getBasicBlock(controlFlow);
+
+            then_end->setExitWhenTrue(bbThen->getNextWhenTrue());
+            // bbThen has no when_false
+
+            bbThen->setExitWhenTrue(then_begin);
+            // bbThen has no when_false
+
+            bbThen = then_end->getNewWhenTrueBasicBlock("_Fthenafter");
+        }
+    }
+
+
+    // INC BB
+    if (mStep->shouldReturnAnIR()) {
+        bbInc->addInstruction(mStep->getIR(bbInc));
+    } else if (mStep->shouldReturnABasicBlock()) {
+        auto [inc_begin, inc_end] = mStep->getBasicBlock(controlFlow);
+
+        inc_end->setExitWhenTrue(bbInc->getNextWhenTrue());
+        // bbInc has no when_false
+
+        bbInc->setExitWhenTrue(inc_begin);
+        // bbInc has no when_false
+
+        bbInc = inc_end->getNewWhenTrueBasicBlock("_Fincafter");
+    }
+
+
+    return {bbInit, bbEnd};
+
 }
 
 

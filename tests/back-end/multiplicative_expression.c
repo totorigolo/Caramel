@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,39 +22,18 @@
  * SOFTWARE.
 */
 
-#pragma once
 
-#include "Definition.h"
-#include "../../context/Context.h"
-#include "../../symboltable/FunctionSymbol.h"
+int32_t main() {
+//    int32_t a;
 
+    putchar(21*2);
+    putchar('\n');
 
-namespace caramel::ast {
+//    putchar(a);
 
-class FunctionDefinition : public Definition {
-public:
-    using Ptr = std::shared_ptr<FunctionDefinition>;
-    using WeakPtr = std::weak_ptr<FunctionDefinition>;
+//    b = a - 1;
+//    putchar(b);
+//    putchar('\n');
 
-    FunctionDefinition(
-            std::shared_ptr<caramel::ast::Context> context,
-            antlr4::Token *startToken
-    );
-    ~FunctionDefinition() override = default;
-
-public:
-    Symbol::WeakPtr getSymbol();
-    void setSymbol(FunctionSymbol::Ptr functionSymbol);
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnABasicBlock() const override { return true; }
-    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override;
-
-protected:
-    std::shared_ptr<Context> mContext;
-    std::shared_ptr<FunctionSymbol> mSymbol;
-};
-
-} // namespace caramel::ast
+    return 0;
+}

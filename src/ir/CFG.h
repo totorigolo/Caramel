@@ -44,8 +44,8 @@ public:
 
 public:
 
-    std::shared_ptr<BasicBlock> generateBasicBlock(std::string const &entryName = "");
-    std::shared_ptr<BasicBlock> generateFunctionBlock(std::string const &entryName);
+    std::shared_ptr<BasicBlock> generateBasicBlock(std::string entryName = "");
+    std::shared_ptr<BasicBlock> generateFunctionBlock(std::string entryName);
     std::shared_ptr<BasicBlock> generateNamedBasicBlock();
 
 
@@ -75,6 +75,7 @@ protected:
     std::map<size_t, long> mStackSize;
 
     int mNextBasicBlockNumber;
+    int mNextFunctionContext;
 
     std::vector<std::shared_ptr<BasicBlock>> mBasicBlocks;
 };

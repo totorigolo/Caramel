@@ -22,39 +22,24 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "PopInstruction.h"
+#include "../IRVisitor.h"
+#include "../../ast/symboltable/PrimaryType.h"
 
-#include "Definition.h"
-#include "../../context/Context.h"
-#include "../../symboltable/FunctionSymbol.h"
+namespace caramel::ir {
 
+PopInstruction::PopInstruction(
+        std::shared_ptr<BasicBlock> parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string destination
+) : IR(Operation::popq, parentBlock, type), mDestination{destination} {}
 
-namespace caramel::ast {
+void PopInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitPop(this, os);
+}
 
-class FunctionDefinition : public Definition {
-public:
-    using Ptr = std::shared_ptr<FunctionDefinition>;
-    using WeakPtr = std::weak_ptr<FunctionDefinition>;
+std::string PopInstruction::getDestination() const {
+    return mDestination;
+}
 
-    FunctionDefinition(
-            std::shared_ptr<caramel::ast::Context> context,
-            antlr4::Token *startToken
-    );
-    ~FunctionDefinition() override = default;
-
-public:
-    Symbol::WeakPtr getSymbol();
-    void setSymbol(FunctionSymbol::Ptr functionSymbol);
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnABasicBlock() const override { return true; }
-    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override;
-
-protected:
-    std::shared_ptr<Context> mContext;
-    std::shared_ptr<FunctionSymbol> mSymbol;
-};
-
-} // namespace caramel::ast
+} // namespace caramel::ir

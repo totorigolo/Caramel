@@ -24,37 +24,34 @@
 
 #pragma once
 
-#include "Definition.h"
-#include "../../context/Context.h"
-#include "../../symboltable/FunctionSymbol.h"
+#include "../BasicBlock.h"
+#include <memory>
 
 
-namespace caramel::ast {
+namespace caramel::ir {
 
-class FunctionDefinition : public Definition {
+class PushInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<FunctionDefinition>;
-    using WeakPtr = std::weak_ptr<FunctionDefinition>;
+    using Ptr = std::shared_ptr<PushInstruction>;
+    using WeakPtr = std::weak_ptr<PushInstruction>;
 
-    FunctionDefinition(
-            std::shared_ptr<caramel::ast::Context> context,
-            antlr4::Token *startToken
+    explicit PushInstruction(
+            std::shared_ptr<BasicBlock> parentBlock,
+            std::shared_ptr<ast::PrimaryType> const &type,
+            std::string source
     );
-    ~FunctionDefinition() override = default;
 
-public:
-    Symbol::WeakPtr getSymbol();
-    void setSymbol(FunctionSymbol::Ptr functionSymbol);
+    ~PushInstruction() override = default;
 
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
-    bool shouldReturnABasicBlock() const override { return true; }
-    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override;
+    std::string getSource() const;
 
-protected:
-    std::shared_ptr<Context> mContext;
-    std::shared_ptr<FunctionSymbol> mSymbol;
+private:
+    std::string mSource;
 };
 
-} // namespace caramel::ast
+} // namespace caramel::ir
+
+
+

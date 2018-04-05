@@ -23,19 +23,44 @@
 */
 
 #include "MinusOperator.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../ir/instructions/SubtractionInstruction.h"
+#include "../../../utils/Common.h"
+#include "../../../ir/instructions/CopyInstruction.h"
+#include "../../../ir/instructions/PopInstruction.h"
+#include "../../../ir/instructions/PushInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
+
+using namespace caramel::utils;
 
 std::shared_ptr<caramel::ir::IR> caramel::ast::MinusOperator::buildIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression
 ) {
+    auto maxType = GET_MAX_TYPE(leftExpression, rightExpression);
 
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+    auto left = GET_REGISTER(leftExpression);
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+    MOVE_TO(left, ir::IR::ACCUMULATOR_2, maxType);
+
+    PUSH(ir::IR::ACCUMULATOR_2);
+
+    auto right = GET_REGISTER(rightExpression);
+
+    MOVE_TO(right, ir::IR::ACCUMULATOR_1, maxType);
+
+    POP(ir::IR::ACCUMULATOR_2);
+
+    std::shared_ptr<ir::SubtractionInstruction> instr = std::make_shared<ir::SubtractionInstruction>(
+            ir::IR::ACCUMULATOR_2,
+            currentBasicBlock,
+            maxType,
+            ir::IR::ACCUMULATOR_1,
+            ir::IR::ACCUMULATOR_2
+    );
+
+    return castTo<ir::IR::Ptr>(instr);
 }
 
 caramel::ast::StatementType caramel::ast::MinusOperator::getExpressionType() const {

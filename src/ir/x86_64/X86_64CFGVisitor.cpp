@@ -34,20 +34,37 @@ void X86_64CFGVisitor::generateAssembly(std::shared_ptr<ir::CFG> const &controlF
     generateAssemblyPrologue(controlFlowGraph, os);
     os << std::endl;
 
-    for(BasicBlock::Ptr const &bb : controlFlowGraph->getBasicBlocks()) {
-        mBasicBlockVisitor->generateAssembly(bb, os);
-        if(nullptr != bb->getNextWhenTrue()) {
-            mBasicBlockVisitor->generateAssembly(bb->getNextWhenTrue(), os);
-        }
+    for (auto const &function_root_bb : controlFlowGraph->getBasicBlocks()) {
+        generateAssembly(controlFlowGraph, os, function_root_bb->getId(), function_root_bb);
 
-        if(nullptr != bb->getNextWhenFalse()) {
-            mBasicBlockVisitor->generateAssembly(bb->getNextWhenFalse(), os);
+        auto &order = mOrders[function_root_bb->getId()];
+        for (auto it = order.rbegin(), end_it = order.rend(); it != end_it; ++it) {
+            mBasicBlockVisitor->generateAssembly(*it, os);
         }
     }
 
     os << std::endl;
     generateAssemblyEpilogue(controlFlowGraph, os);
+}
 
+void X86_64CFGVisitor::generateAssembly(
+        std::shared_ptr<ir::CFG> const &controlFlowGraph,
+        std::ostream &os,
+        size_t functionRootId,
+        ir::BasicBlock::Ptr bb) {
+    if (mVisitedBB.find(bb->getId()) != mVisitedBB.end()) {
+        return;
+    }
+    mVisitedBB.insert(bb->getId());
+
+    if (bb->getNextWhenFalse()) {
+        generateAssembly(controlFlowGraph, os, functionRootId , bb->getNextWhenFalse());
+    }
+    if (bb->getNextWhenTrue()) {
+        generateAssembly(controlFlowGraph, os, functionRootId , bb->getNextWhenTrue());
+    }
+
+    mOrders[functionRootId].push_back(bb);
 }
 
 void X86_64CFGVisitor::generateAssemblyPrologue(
@@ -59,7 +76,7 @@ void X86_64CFGVisitor::generateAssemblyPrologue(
        << '\n'
        << ".Ltext0:" << '\n'
        << "  .globl main" << '\n'
-       << "  .type main, @function";
+       << "  .type main, @function\n";
 }
 
 void X86_64CFGVisitor::generateAssemblyEpilogue(
@@ -68,7 +85,8 @@ void X86_64CFGVisitor::generateAssemblyEpilogue(
 ) {
     CARAMEL_UNUSED(controlFlowGraph);
     CARAMEL_UNUSED(os);
-}
 
+    // Strings
+}
 
 } // namespace caramel::ir::x86_64

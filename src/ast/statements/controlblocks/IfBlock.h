@@ -49,7 +49,7 @@ public:
 
     bool shouldReturnABasicBlock() const override;
 
-    std::shared_ptr<ir::BasicBlock> getBasicBlock(ir::CFG *controlFlow) override;
+    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override;
 
 private:
     std::shared_ptr<caramel::ast::Expression> mCondition;

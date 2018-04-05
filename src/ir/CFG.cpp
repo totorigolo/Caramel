@@ -39,24 +39,30 @@ CFG::CFG(
     mSymbols{},
     mSymbolIndex{},
     mNextBasicBlockNumber{0},
+    mNextFunctionContext{0},
     mBasicBlocks{} {
     logger.debug() << "New CFG for " << mFileName << ".";
 
-    mBasicBlocks.push_back(std::make_shared<BasicBlock>(
-            mNextBasicBlockNumber,
-            this,
-            ""
-    ));
-
     for (ast::Statement::Ptr const &statement : mRootContext->getStatements()) {
-        if (statement->shouldReturnAnIR()) {
-            mBasicBlocks[0]->addInstruction(statement->getIR(mBasicBlocks[0]));
-        } else if (statement->shouldReturnABasicBlock()) {
-            mBasicBlocks.push_back(statement->getBasicBlock(this));
+        if (statement->getType() == ast::StatementType::FunctionDefinition) {
+
+            auto [function_begin, function_end] = statement->getBasicBlock(this);
+            mBasicBlocks.push_back(function_begin);
+            CARAMEL_UNUSED(function_end);
+
         } else {
-            if (statement->getType() != ast::StatementType::FunctionDeclaration) {
-                logger.warning() << "[CFG] Statement return neither IR nor BB: " << statement->getType();
-            }
+            logger.warning() << "Skipping not-yet-handled non function definition statement in CFG::CFG().";
+
+            // old code:
+//            if (statement->shouldReturnAnIR()) {
+//                mBasicBlocks[0]->addInstruction(statement->getIR(mBasicBlocks[0]));
+//            } else if (statement->shouldReturnABasicBlock()) {
+//                mBasicBlocks.push_back(statement->getBasicBlock(this));
+//            } else {
+//                if (statement->getType() != ast::StatementType::FunctionDeclaration) {
+//                    logger.warning() << "[CFG] Statement return neither IR nor BB: " << statement->getType();
+//                }
+//            }
         }
     }
 }
@@ -133,12 +139,12 @@ void CFG::leaveFunction(size_t controlBlockId) {
     CARAMEL_UNUSED(controlBlockId);
 }
 
-std::shared_ptr<BasicBlock> CFG::generateBasicBlock(std::string const &entryName) {
-    return std::make_shared<BasicBlock>(mNextBasicBlockNumber, this, entryName);
+std::shared_ptr<BasicBlock> CFG::generateBasicBlock(std::string entryName) {
+    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, mNextFunctionContext, this, entryName);
 }
 
-std::shared_ptr<BasicBlock> CFG::generateFunctionBlock(std::string const &entryName) {
-    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, this, entryName);
+std::shared_ptr<BasicBlock> CFG::generateFunctionBlock(std::string entryName) {
+    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, ++mNextFunctionContext, this, entryName);
 }
 
 std::vector<std::shared_ptr<BasicBlock>> &CFG::getBasicBlocks() {
@@ -154,12 +160,12 @@ std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
        << " - mFileName: " << cfg.mFileName << '\n'
        << " - mRootContext: " << *cfg.mRootContext << '\n'
        << " - mSymbols & mSymbolsIndex:\n";
-    for (auto const &[basicBlockId, symbols] : cfg.mSymbols) {
+    for (auto const &[functionContextId, symbols] : cfg.mSymbols) {
         for (auto const &[name, type] : symbols) {
-            os << "    - BB=" << basicBlockId
+            os << "    - BB=" << functionContextId
                << ", name=" << name
                << ", type=" << type->getIdentifier()
-               << ", index=" << cfg.mSymbolIndex.at(basicBlockId).at(name)
+               << ", index=" << cfg.mSymbolIndex.at(functionContextId).at(name)
                << '\n';
         }
     }
@@ -171,9 +177,9 @@ std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
        << " - mBasicBlocks: " << cfg.mBasicBlocks.size() << " BBs";
     return os;
 }
-std::shared_ptr<BasicBlock> CFG::generateNamedBasicBlock() {
-    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, this, BasicBlock::getNextNumberName());
-}
 
+std::shared_ptr<BasicBlock> CFG::generateNamedBasicBlock() {
+    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, mNextFunctionContext, this, BasicBlock::getNextNumberName());
+}
 
 } // namespace caramel::ir

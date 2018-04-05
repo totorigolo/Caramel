@@ -60,32 +60,88 @@ void IfBlock::visitChildrenAstDot() {
         thenStatement->acceptAstDotVisit();
     }
 
-    addNode(thisId() + 2, "Else block");
-    addEdge(thisId(), thisId() + 2);
-    for (const auto &elseStatement : mElseBlock) {
-        addEdge(thisId() + 2, elseStatement->thisId());
-        elseStatement->acceptAstDotVisit();
+    if (!mElseBlock.empty()) {
+        addNode(thisId() + 2, "Else block");
+        addEdge(thisId(), thisId() + 2);
+        for (const auto &elseStatement : mElseBlock) {
+            addEdge(thisId() + 2, elseStatement->thisId());
+            elseStatement->acceptAstDotVisit();
+        }
     }
 }
 
-
-
-std::shared_ptr<ir::BasicBlock> IfBlock::getBasicBlock(
+ir::GetBasicBlockReturn IfBlock::getBasicBlock(
         ir::CFG *controlFlow
 ) {
-    caramel::ir::BasicBlock::Ptr bb = controlFlow->generateBasicBlock();
+    ir::BasicBlock::Ptr bbCond = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_cond");
+    ir::BasicBlock::Ptr bbThen = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_then");
+    ir::BasicBlock::Ptr bbElse = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_else");
+    ir::BasicBlock::Ptr bbEnd = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_end");
 
+    bbCond->setExitWhenTrue(bbThen);
+    bbThen->setExitWhenTrue(bbEnd);
 
+    // COND BB
     if (mCondition->shouldReturnAnIR()) {
-        bb->addInstruction(mCondition->getIR(bb));
+        // TODO: Grab the returnName here? (I think not)
+        bbCond->addInstruction(mCondition->getIR(bbCond));
     } else if (mCondition->shouldReturnABasicBlock()) {
-        bb->addInstructions(mCondition->getBasicBlock(controlFlow));
+        logger.warning() << "Untested BB in if block condition BB.";
+
+        auto [cond_begin, cond_end] = mCondition->getBasicBlock(controlFlow);
+
+        bbCond->setExitWhenTrue(cond_begin);
+        // bb has no when_false
+        cond_end->setExitWhenTrue(bbThen);
+        cond_end->setExitWhenFalse(bbElse); //< ?? Check mElseBlock.empty() before
+
+        bbCond = cond_end->getNewWhenTrueBasicBlock("_condafter");
     }
 
-//    ir::Operation conditionOperation = bb->getInstructions().back()->getOperation();
+    // THEN BB
+    for (auto const &statement : mThenBlock) {
+        if (statement->shouldReturnAnIR()) {
+            bbThen->addInstruction(statement->getIR(bbThen));
+        } else if (statement->shouldReturnABasicBlock()) {
+            auto [then_begin, then_end] = statement->getBasicBlock(controlFlow);
 
+            then_end->setExitWhenTrue(bbThen->getNextWhenTrue());
+            // bbThen has no when_false
 
-    std::string bbElseName = caramel::ir::BasicBlock::getNextNumberName();
+            bbThen->setExitWhenTrue(then_begin);
+            // bbThen has no when_false
+
+            bbThen = then_end->getNewWhenTrueBasicBlock("_thenafter");
+        }
+    }
+
+    // NO ELSE BB
+    if (mElseBlock.empty()) {
+        bbCond->setExitWhenFalse(bbEnd);
+        return {bbCond, bbEnd};
+    }
+
+    // ELSE BB
+    bbCond->setExitWhenFalse(bbElse);
+    bbElse->setExitWhenTrue(bbEnd);
+    for (ast::Statement::Ptr const &statement : mElseBlock){
+        if(statement->shouldReturnAnIR()) {
+            bbElse->addInstruction(statement->getIR(bbElse));
+        } else if (statement->shouldReturnABasicBlock()){
+            auto [else_begin, else_end] = statement->getBasicBlock(controlFlow);
+
+            else_end->setExitWhenTrue(bbElse->getNextWhenTrue());
+            // bbElse has no when_false
+
+            bbElse->setExitWhenTrue(else_begin);
+            // bbElse has no when_false
+
+            bbElse = else_end->getNewWhenTrueBasicBlock("_elseafter");
+        }
+    }
+
+    return {bbCond, bbEnd};
+
 
 //    ir::IR::Ptr jumpInstructionElse;
 //    if (ir::Operation::cmp_eq == conditionOperation) {
@@ -102,56 +158,6 @@ std::shared_ptr<ir::BasicBlock> IfBlock::getBasicBlock(
 //        jumpInstructionElse = std::make_shared<ir::JumpInstruction>(bb, bbElseName); // FIXME : Should not be the case
 //    }
 //    bb->addInstruction(jumpInstructionElse);
-
-
-    std::string bbThenName = caramel::ir::BasicBlock::getNextNumberName();
-    caramel::ir::BasicBlock::Ptr bbThen = controlFlow->generateBasicBlock(bbThenName);
-
-
-    for(caramel::ast::Statement::Ptr const &statement : mThenBlock){
-        if(statement->shouldReturnAnIR()) {
-            bbThen->addInstruction(statement->getIR(bbThen));
-        } else if (statement->shouldReturnABasicBlock()){
-            bbThen->addInstructions(statement->getBasicBlock(controlFlow));
-        }
-    }
-
-    std::string bbEndName = caramel::ir::BasicBlock::getNextNumberName();
-
-//    ir::IR::Ptr jumpInstructionEnd = std::make_shared<ir::JumpInstruction>(bb, bbEndName);
-//    bb->addInstruction(jumpInstructionEnd);
-
-    caramel::ir::BasicBlock::Ptr bbElse = controlFlow->generateBasicBlock(bbElseName);
-
-
-    caramel::ir::BasicBlock::Ptr bbEnd = controlFlow->generateBasicBlock(bbEndName);
-
-    if(mElseBlock.empty()) {
-
-        bb->setMExitWhenFalse(bbEnd);
-
-    } else {
-        for(caramel::ast::Statement::Ptr const &statement : mElseBlock){
-            if(statement->shouldReturnAnIR()) {
-                bbElse->addInstruction(statement->getIR(bbElse));
-            } else if (statement->shouldReturnABasicBlock()){
-                bbElse->addInstructions(statement->getBasicBlock(controlFlow));
-            }
-        }
-
-        bb->setMExitWhenFalse(bbElse);
-        bbElse->setMExitWhenTrue(bbEnd);
-    }
-
-
-    bb->setMExitWhenTrue(bbThen);
-    bbThen->setMExitWhenTrue(bbEnd);
- //   controlFlow->addBasicBlock(bb);
-
-    //bbElse->addInstruction(jumpInstructionEnd);
-
-
-    return bb;
 }
 
 bool IfBlock::shouldReturnABasicBlock() const {

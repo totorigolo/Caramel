@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+ * Copyright (c) 2018 insa.4if.hexanome_kalate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,38 @@
  * SOFTWARE.
 */
 
-/*
- * Multi-line comment.
- */
-#include <stdio.h>
-#include <stdint.h>
+#pragma once
 
-int32_t main() {
-    int32_t a = 42 + 1;
-    putchar(a);
-    putchar('\n');
-    return 0;
-}
+#include "../IR.h"
+
+namespace caramel::ir {
+
+class SubtractionInstruction : public IR {
+public:
+    using Ptr = std::shared_ptr<SubtractionInstruction>;
+    using WeakPtr = std::shared_ptr<SubtractionInstruction>;
+
+public:
+    explicit SubtractionInstruction(
+            std::string const &returnName,
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            ast::PrimaryType::Ptr const &type,
+            std::string left,
+            std::string right
+    );
+
+    ~SubtractionInstruction() override = default;
+
+    std::string getLeft() const;
+
+    std::string getRight() const;
+
+private:
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+
+private:
+    std::string mLeft;
+    std::string mRight;
+};
+
+} // namespace caramel::ir

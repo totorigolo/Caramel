@@ -47,7 +47,7 @@ std::string DeclarationMismatchException::buildMismatchSymbolTypeErrorMessage(st
                                                                               ast::SymbolType const &requiredSymbolType,
                                                                               std::shared_ptr<ast::Symbol> symbol) {
     std::stringstream res;
-    res << "Cannot define a ";
+    res << "Cannot define the ";
     switch (requiredSymbolType) {
         case SymbolType::VariableSymbol:
             res << "variable";
@@ -62,7 +62,7 @@ std::string DeclarationMismatchException::buildMismatchSymbolTypeErrorMessage(st
             res << "type";
             break;
     }
-    res << " which has a previous occurrence as a " << symbol->getSymbolType();
+    res << "'" << variableName << "' which has a previous occurrence as a " << symbol->getSymbolType();
     return res.str();
 }
 

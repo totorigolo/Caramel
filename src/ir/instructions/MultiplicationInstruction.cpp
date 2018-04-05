@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,39 +22,30 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "MultiplicationInstruction.h"
+#include "../IRVisitor.h"
 
-#include "Definition.h"
-#include "../../context/Context.h"
-#include "../../symboltable/FunctionSymbol.h"
+namespace caramel::ir {
 
+MultiplicationInstruction::MultiplicationInstruction(
+        std::string const &returnName,
+        std::shared_ptr<ir::BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string left,
+        std::string right
+) : IR(returnName, Operation::add, parentBlock, type), mLeft{left}, mRight{right} {}
 
-namespace caramel::ast {
+void MultiplicationInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitMultiplication(this, os);
+}
 
-class FunctionDefinition : public Definition {
-public:
-    using Ptr = std::shared_ptr<FunctionDefinition>;
-    using WeakPtr = std::weak_ptr<FunctionDefinition>;
+std::string MultiplicationInstruction::getLeft() const {
+    return mLeft;
+}
 
-    FunctionDefinition(
-            std::shared_ptr<caramel::ast::Context> context,
-            antlr4::Token *startToken
-    );
-    ~FunctionDefinition() override = default;
+std::string MultiplicationInstruction::getRight() const {
+    return mRight;
+}
 
-public:
-    Symbol::WeakPtr getSymbol();
-    void setSymbol(FunctionSymbol::Ptr functionSymbol);
+} // namespace caramel::ir
 
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnABasicBlock() const override { return true; }
-    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override;
-
-protected:
-    std::shared_ptr<Context> mContext;
-    std::shared_ptr<FunctionSymbol> mSymbol;
-};
-
-} // namespace caramel::ast

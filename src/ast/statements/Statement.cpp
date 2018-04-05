@@ -55,4 +55,4 @@ void Statement::acceptAstDotVisit() {
     logger.warning() << "Default accept() for " << thisId() << ", which is a " << mType << '.';
 }
 
-}
+} // namespace caramel::ast

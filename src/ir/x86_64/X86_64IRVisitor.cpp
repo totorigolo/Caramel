@@ -33,16 +33,15 @@
 #include "../instructions/NopInstruction.h"
 #include "../instructions/ReturnInstruction.h"
 #include "../instructions/AdditionInstruction.h"
+#include "../instructions/SubtractionInstruction.h"
+#include "../instructions/PushInstruction.h"
+#include "../instructions/PopInstruction.h"
+#include "../instructions/MultiplicationInstruction.h"
 
 
 namespace caramel::ir::x86_64 {
 
 static constexpr size_t NB_FUNCTION_CALL_REGISTERS = 6;
-
-X86_64IRVisitor::X86_64IRVisitor() {
-    mRegisterContent[IR::REGISTER_10] = "";
-    mRegisterContent[IR::REGISTER_11] = "";
-}
 
 std::string X86_64IRVisitor::address(std::string const &symbol) {
     return "(" + symbol + ")";
@@ -78,10 +77,10 @@ std::string X86_64IRVisitor::registerToAssembly(std::string const &register_, si
         r = "%" + sizePrefix + "sp";
     } else if (register_ == IR::ACCUMULATOR) {
         r = "%" + sizePrefix + "ax";
-    } else if (register_ == IR::REGISTER_10) {
+    } else if (register_ == IR::REGISTER_10 || register_ == IR::ACCUMULATOR_1) {
         if (bitSize == 64) r = "%r10";
         else r = "%r10d";
-    } else if (register_ == IR::REGISTER_11) {
+    } else if (register_ == IR::REGISTER_11 || register_ == IR::ACCUMULATOR_2) {
         if (bitSize == 64) r = "%r11";
         else r = "%r11d";
     } else {
@@ -92,52 +91,27 @@ std::string X86_64IRVisitor::registerToAssembly(std::string const &register_, si
     return r;
 }
 
-std::string X86_64IRVisitor::toAssembly(ir::IR *ir, std::string const &anySymbol, size_t bitSize) {
+std::string X86_64IRVisitor::toAssembly(ir::BasicBlock::Ptr parentBB, std::string const &anySymbol, size_t bitSize) {
     logger.trace() << "[x86_64] " << "toAssembly(" << "ir" << ", " << anySymbol << ")";
     std::string r;
 
     if(anySymbol.empty()) {
-        logger.fatal() << "An IR symbol is empty for ir:";
+        logger.fatal() << "An IR symbol is empty for IR.";
         exit(1);
     }
-    // return anySymbol;
+//     return anySymbol;
 
     // Is a register
     if (anySymbol[0] == '%') {
         r = registerToAssembly(anySymbol, bitSize);
         // Is a temp var
     } else if (anySymbol[0] == '!') {
-        if (mSymbolRegister.find(anySymbol) != mSymbolRegister.end()) {
-            r = mSymbolRegister[anySymbol];
-        } else {
-            if (mRegisterContent[IR::REGISTER_10].empty()) {
-                r = registerToAssembly(IR::REGISTER_10, bitSize);
-                mRegisterContent[IR::REGISTER_10] = anySymbol;
-                mSymbolRegister[anySymbol] = r;
-            } else if (mRegisterContent[IR::REGISTER_11].empty()) {
-                r = registerToAssembly(IR::REGISTER_11, bitSize);
-                mRegisterContent[IR::REGISTER_11] = anySymbol;
-                mSymbolRegister[anySymbol] = r;
-            } else if (mRegisterContent[IR::ACCUMULATOR].empty()) {
-                r = registerToAssembly(IR::ACCUMULATOR, bitSize);
-                mRegisterContent[IR::ACCUMULATOR] = anySymbol;
-                mSymbolRegister[anySymbol] = r;
-            } else {
-                auto symbolToSave = mRegisterContent[IR::REGISTER_10];
-                logger.warning() << "saving " << symbolToSave;
-                mRegisterContent[IR::REGISTER_10] = "";
-                mSymbolRegister.erase(symbolToSave);
-
-                r = registerToAssembly(IR::REGISTER_10, bitSize);
-                mRegisterContent[IR::REGISTER_10] = anySymbol;
-                mSymbolRegister[anySymbol] = r;
-            }
-        }
-        // Is a constant
+        r = registerToAssembly(IR::REGISTER_10, bitSize);
+        // TODO: Manage multiple registries
     } else if (anySymbol[0] >= '0' && anySymbol[0] <= '9') {
         r = "$" + anySymbol;
     } else {
-        r = std::to_string(ir->getParentBlock()->getSymbolIndex(anySymbol)) +
+        r = std::to_string(parentBB->getSymbolIndex(anySymbol)) +
             address(registerToAssembly(IR::REGISTER_BASE_POINTER, 64)); // always %rbp
     }
 
@@ -154,10 +128,14 @@ std::string X86_64IRVisitor::getSizeSuffix(size_t bitSize) {
  */
     // FIXME: It's movabsq instead of movq
     switch (bitSize) {
-        case 8: return "b";
-        case 16: return "w";
-        case 32: return "l";
-        case 64: return "q";
+        case 8:
+            return "b";
+        case 16:
+            return "w";
+        case 32:
+            return "l";
+        case 64:
+            return "q";
         default:
             logger.fatal() << "Wrong bitSize in X86_64IRVisitor::getSizeSuffix(" << bitSize << ").";
             exit(1);
@@ -210,25 +188,22 @@ std::string X86_64IRVisitor::getFunctionCallRegister(size_t index, size_t bitSiz
 void X86_64IRVisitor::visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting copy: " << instruction->getReturnName();
 
-
-
     const auto parameterSize = instruction->getType()->getMemoryLength();
     os << "  mov" + getSizeSuffix(parameterSize) + "    ";
 
-    if(instruction->getRegisterNumber() != -1) {
+    if (instruction->getRegisterNumber() != -1) {
         os << getFunctionCallRegister(instruction->getRegisterNumber(), 32);
     } else {
-        os << toAssembly(instruction, instruction->getSource(), parameterSize);
+        os << toAssembly(instruction->getParentBlock(), instruction->getSource(), parameterSize);
     }
-    os << ", " << toAssembly(instruction, instruction->getDestination(), parameterSize);
+    os << ", " << toAssembly(instruction->getParentBlock(), instruction->getDestination(), parameterSize);
     // os << "\n#mov copy";
 }
 
 void X86_64IRVisitor::visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting empty";
 
-    CARAMEL_UNUSED(instruction);
-    CARAMEL_UNUSED(os);
+    os << "  nop # empty with returnName=" << instruction->getReturnName();
 }
 
 void X86_64IRVisitor::visitProlog(caramel::ir::PrologInstruction *instruction, std::ostream &os) {
@@ -255,18 +230,15 @@ void X86_64IRVisitor::visitAddition(caramel::ir::AdditionInstruction *instructio
                    << instruction->getLeft() << " + " << instruction->getRight();
 
     const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
-    os << "  mov" + getSizeSuffix(parameterSize) + "    "
-       << toAssembly(instruction, instruction->getLeft(), parameterSize)
-       << ", %edx" << '\n';
-
-    os << "  mov" + getSizeSuffix(parameterSize) + "    "
-       << toAssembly(instruction, instruction->getRight(), parameterSize)
-       << ", %eax" << '\n';
+    os << "  movl    " << rightLocation
+                       << ", " << storeLocation << '\n';
 
     os << "  add" + getSizeSuffix(parameterSize) + "    "
-       << "%edx"
-       << ", %eax";
+       << leftLocation << ", " << storeLocation;
 
 }
 
@@ -274,8 +246,8 @@ void X86_64IRVisitor::visitLdConst(caramel::ir::LDConstInstruction *instruction,
     logger.trace() << "[x86_64] " << "visiting ldconst: " << instruction->getDestination() << " = "
                    << instruction->getValue();
 
-    os << "  movl    " << toAssembly(instruction, instruction->getValue())
-       << ", " << toAssembly(instruction, instruction->getDestination());
+    os << "  movl    " << toAssembly(instruction->getParentBlock(), instruction->getValue())
+       << ", " << toAssembly(instruction->getParentBlock(), instruction->getDestination());
 
     // os << "\n#mov ldconst";
 }
@@ -297,8 +269,8 @@ void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, s
 
     const auto returnSize = instruction->getType()->getMemoryLength();
     os << "  mov" + getSizeSuffix(returnSize) + "    "
-       << toAssembly(instruction, instruction->getSource(), returnSize)
-       << ", " << toAssembly(instruction, IR::ACCUMULATOR, 32); // TODO: See TODO in getSizeSuffix()
+       << toAssembly(instruction->getParentBlock(), instruction->getSource(), returnSize)
+       << ", " << toAssembly(instruction->getParentBlock(), IR::ACCUMULATOR, 32); // TODO: See TODO in getSizeSuffix()
 
     // os << "\n#mov return";
 }
@@ -307,19 +279,17 @@ void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, 
     logger.trace() << "[x86_64] " << "visiting call parameter: " << instruction->getValue();
 
     int index = instruction->getIndex();
-    if( index < 6 ) {
-        os << "  mov" + getSizeSuffix(32) + "    " << toAssembly(instruction, instruction->getValue(), 32)
+    if (index < 6) {
+        os << "  mov" + getSizeSuffix(32) + "    " << toAssembly(instruction->getParentBlock(), instruction->getValue(), 32)
            << ", " << getFunctionCallRegister(index, 32) << '\n';
 
-      //  os << "\n#mov call";
+        //  os << "\n#mov call";
     } else {
-        os << "  pushq   " << toAssembly(instruction, instruction->getValue(), 64) << '\n';
+        os << "  pushq   " << toAssembly(instruction->getParentBlock(), instruction->getValue(), 64) << '\n';
     }
 }
 
 void X86_64IRVisitor::visitJump(JumpInstruction *instruction, std::ostream &os) {
-
-
 }
 
 void X86_64IRVisitor::visitJumpEqual(JumpEqualInstruction *instruction, std::ostream &os) {
@@ -346,6 +316,68 @@ void X86_64IRVisitor::visitGTE(GTEInstruction *instruction, std::ostream &os) {
 
 }
 
+void X86_64IRVisitor::visitSubtraction(SubtractionInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting subtraction: "
+                   << instruction->getLeft() << " - " << instruction->getRight();
 
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
+
+    os << "  movl    " << rightLocation // TODO: We might want to change "l" dynamically ?
+       << ", " << storeLocation << '\n';
+
+    os << "  sub" + getSizeSuffix(parameterSize) + "    "
+       << leftLocation << ", " << storeLocation;
+}
+
+void X86_64IRVisitor::visitPush(PushInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting push: " << instruction->getSource();
+
+    size_t typeSize = instruction->getType()->getMemoryLength();
+
+    const std::string sourceLocation = toAssembly(
+            instruction->getParentBlock(),
+            instruction->getSource(),
+            64
+            //instruction->getType()->getMemoryLength()
+    );
+
+    os << "  pushq" << "   " << sourceLocation;
+
+}
+
+void X86_64IRVisitor::visitPop(PopInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting push: " << instruction->getDestination();
+
+    size_t typeSize = instruction->getType()->getMemoryLength();
+
+    const std::string destLocation = toAssembly(
+            instruction->getParentBlock(),
+            instruction->getDestination(),
+            64
+            //instruction->getType()->getMemoryLength()
+    );
+
+    os << "  popq " << "   " << destLocation;
+
+}
+
+void X86_64IRVisitor::visitMultiplication(MultiplicationInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting multiplication: "
+                   << instruction->getLeft() << " - " << instruction->getRight();
+
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
+
+    os << "  movl    " << rightLocation // TODO: We might want to change "l" dynamically ?
+       << ", " << storeLocation << '\n';
+
+    os << "  imul" + getSizeSuffix(parameterSize) + "    "
+       << leftLocation << ", " << storeLocation;
+}
 
 } // namespace caramel::ir::x86_64

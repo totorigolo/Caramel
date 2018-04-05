@@ -32,7 +32,7 @@ FunctionCallInstruction::FunctionCallInstruction(
         std::string functionName,
         std::shared_ptr<BasicBlock> const &parentBlock,
         ast::PrimaryType::Ptr const &returnType
-) : IR(functionName, Operation::call, parentBlock, returnType),
+) : IR(IR::ACCUMULATOR, Operation::call, parentBlock, returnType),
     mFunctionName{std::move(functionName)} {}
 
 std::string FunctionCallInstruction::getFunctionName() const {

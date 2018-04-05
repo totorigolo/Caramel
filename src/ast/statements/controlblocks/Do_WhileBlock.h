@@ -24,37 +24,34 @@
 
 #pragma once
 
-#include "Definition.h"
-#include "../../context/Context.h"
-#include "../../symboltable/FunctionSymbol.h"
+#include "ControlBlock.h"
+#include "../expressions/Expression.h"
 
 
 namespace caramel::ast {
 
-class FunctionDefinition : public Definition {
+class Do_WhileBlock : public ControlBlock {
 public:
-    using Ptr = std::shared_ptr<FunctionDefinition>;
-    using WeakPtr = std::weak_ptr<FunctionDefinition>;
+    using Ptr = std::shared_ptr<Do_WhileBlock>;
+    using WeakPtr = std::weak_ptr<Do_WhileBlock>;
 
-    FunctionDefinition(
-            std::shared_ptr<caramel::ast::Context> context,
-            antlr4::Token *startToken
+    Do_WhileBlock(
+            std::shared_ptr<caramel::ast::Expression> condition,
+            std::vector<std::shared_ptr<caramel::ast::Statement>> block,
+            antlr4::Token *token
     );
-    ~FunctionDefinition() override = default;
-
-public:
-    Symbol::WeakPtr getSymbol();
-    void setSymbol(FunctionSymbol::Ptr functionSymbol);
 
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
-    bool shouldReturnABasicBlock() const override { return true; }
-    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override;
+    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override ;
+    bool shouldReturnABasicBlock() const override ;
 
-protected:
-    std::shared_ptr<Context> mContext;
-    std::shared_ptr<FunctionSymbol> mSymbol;
+private:
+    std::shared_ptr<caramel::ast::Expression> mCondition;
+    std::vector<
+            std::shared_ptr<caramel::ast::Statement>
+    > mBlock;
 };
 
 } // namespace caramel::ast

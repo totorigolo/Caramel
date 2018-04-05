@@ -57,21 +57,19 @@ void FunctionDefinition::visitChildrenAstDot() {
     addEdge(thisId(), mSymbol->thisId());
 }
 
-std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
+ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
         ir::CFG *controlFlow
 ) {
-    ir::BasicBlock::Ptr bb = controlFlow->generateFunctionBlock(mSymbol->getName());
+    ir::BasicBlock::Ptr function_root_bb = controlFlow->generateFunctionBlock(mSymbol->getName());
 
-    controlFlow->enterFunction(bb->getId());
-    bb->addInstruction(std::make_shared<ir::PrologInstruction>(bb, 42)); // FIXME: Function definition IR
+    controlFlow->enterFunction(function_root_bb->getId());
+    function_root_bb->addInstruction(std::make_shared<ir::PrologInstruction>(function_root_bb, 42)); // FIXME: Function definition IR
 
-    // Bind register and stack to parameters
-    size_t rspOffset = 0;
     auto parameters = mSymbol->getParameters();
     for(int i = 0; i < parameters.size(); i++) {
         if(i < 6) {
-            bb->addInstruction(
-                    std::make_shared<ir::CopyInstruction>(bb, parameters[i].primaryType, parameters[i].name, i)
+            function_root_bb->addInstruction(
+                    std::make_shared<ir::CopyInstruction>(function_root_bb, parameters[i].primaryType, parameters[i].name, i)
             );
         } else {
             logger.fatal() << "Unaccepted arguments (out of bound)";
@@ -80,18 +78,34 @@ std::shared_ptr<ir::BasicBlock> FunctionDefinition::getBasicBlock(
 
     }
 
+
+    ir::BasicBlock::Ptr function_end_bb = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_endof_" + mSymbol->getName());
+    function_root_bb->setExitWhenTrue(function_end_bb);
+
+    ir::BasicBlock::Ptr bb = function_root_bb->getNewWhenTrueBasicBlock("_innerbeginof_" + mSymbol->getName());
     for (ast::Statement::Ptr const &statement : mContext->getStatements()) {
         if (statement->shouldReturnAnIR()) {
             bb->addInstruction(statement->getIR(bb));
         } else if (statement->shouldReturnABasicBlock()) {
-            controlFlow->addBasicBlock(statement->getBasicBlock(controlFlow));
+            auto [child_root, child_end] = statement->getBasicBlock(controlFlow);
+
+            if (!bb->getNextWhenTrue()) {
+                logger.fatal() << "BB must have a child.";
+                exit(1);
+            }
+            bb->setExitWhenTrue(child_root);
+            // bb has no when_false
+//            child_end->setExitWhenTrue(bb->getNextWhenTrue());
+            child_end->setExitWhenTrue(function_end_bb);
+
+            bb = child_end->getNewWhenTrueBasicBlock("_funcinnerafter");
         }
     }
 
-    bb->addInstruction(std::make_shared<ir::EpilogInstruction>(bb));
-    controlFlow->leaveFunction(bb->getId());
+    function_end_bb->addInstruction(std::make_shared<ir::EpilogInstruction>(function_root_bb));
+    controlFlow->leaveFunction(function_root_bb->getId());
 
-    return bb;
+    return {function_root_bb, function_end_bb};
 }
 
 } // namespace caramel::ast

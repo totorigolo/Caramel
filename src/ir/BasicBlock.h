@@ -39,6 +39,7 @@ public:
 
     BasicBlock(
             size_t id,
+            size_t functionContext,
             CFG *cfg,
             std::string entryName
     );
@@ -50,7 +51,7 @@ public:
     std::string addInstruction(std::shared_ptr<IR> const &instruction);
 
     std::vector<std::shared_ptr<IR>> & getInstructions();
-    std::string & getLabelName();
+    std::string getLabelName();
 
     std::shared_ptr<BasicBlock> getNextWhenTrue() const;
     std::shared_ptr<BasicBlock> getNextWhenFalse() const;
@@ -59,20 +60,28 @@ public:
     long addSymbol(std::string const &symbolName, ast::PrimaryType::Ptr type, long index);
     long getSymbolIndex(std::string const &symbolName);
 
-    void setMExitWhenTrue(const std::shared_ptr<BasicBlock> &ExitWhenTrue);
-    void setMExitWhenFalse(const std::shared_ptr<BasicBlock> &ExitWhenFalse);
+    void setExitWhenTrue(const std::shared_ptr<BasicBlock> &ExitWhenTrue);
+    void setExitWhenFalse(const std::shared_ptr<BasicBlock> &ExitWhenFalse);
 
     CFG * getCFG();
 
-    size_t getId();
+    void setLabelName(std::string const &name);
+
+    size_t getId() const;
+
+    size_t getFunctionContext() const;
 
     static std::string getNextNumberName();
+    BasicBlock::Ptr getNewWhenTrueBasicBlock(std::string nameSuffix = "");
 
     void addInstructions(std::shared_ptr<BasicBlock> const &child);
 
+public:
+    bool mIsControlBlock = false; // FIXME: suicide me
 
 private:
     size_t mID;
+    size_t mFunctionContext;
     /**
      * pointer to the next basic block, true branch. If nullptr, return from procedure
      */
@@ -82,13 +91,12 @@ private:
      * pointer to the next basic block, false branch. If nullptr, the basic block ends with an unconditional jump
      */
     std::shared_ptr<BasicBlock> mExitWhenFalse;
-    std::string mLabelName;
     CFG *mCfg;
     std::vector<std::shared_ptr<IR>> mInstructions;
     std::map<std::string, int> mSymbolsIndex;
 
-    static long mNextNumberName;
-
+    static long mNextNumberName; // For labels
+    std::string mLabelName;
 };
 
 } // namespace caramel::ir

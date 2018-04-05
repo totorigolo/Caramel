@@ -38,15 +38,15 @@ public:
             std::string const &returnName,
             std::shared_ptr<BasicBlock> const &parentBlock,
             ast::PrimaryType::Ptr const &type,
-            std::string const &left,
-            std::string const &right
+            std::string left,
+            std::string right
     );
 
     ~AdditionInstruction() override = default;
 
-    const std::string &getLeft() const;
+    std::string getLeft() const;
 
-    const std::string &getRight() const;
+    std::string getRight() const;
 
 private:
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
