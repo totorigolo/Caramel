@@ -338,33 +338,6 @@ void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, 
     }
 }
 
-void X86_64IRVisitor::visitJump(JumpInstruction *instruction, std::ostream &os) {
-}
-
-void X86_64IRVisitor::visitJumpEqual(JumpEqualInstruction *instruction, std::ostream &os) {
-
-}
-
-void X86_64IRVisitor::visitJumpLess(JumpLessInstruction *instruction, std::ostream &os) {
-
-}
-
-void X86_64IRVisitor::visitJumpLessOrEqual(JumpLessOrEqualInstruction *instruction, std::ostream &os) {
-
-}
-
-void X86_64IRVisitor::visitJumpGreaterOrEqual(JumpGreaterOrEqualInstruction *instruction, std::ostream &os) {
-
-}
-
-void X86_64IRVisitor::visitJumpGreater(JumpGreaterInstruction *instruction, std::ostream &os) {
-
-}
-
-void X86_64IRVisitor::visitGTE(GTEInstruction *instruction, std::ostream &os) {
-
-}
-
 void X86_64IRVisitor::visitSubtraction(SubtractionInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting subtraction: "
                    << instruction->getLeft() << " - " << instruction->getRight();

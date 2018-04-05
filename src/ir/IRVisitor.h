@@ -113,41 +113,6 @@ public:
             std::ostream &os
     ) = 0;
 
-    virtual void visitJump(
-            JumpInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
-    virtual void visitJumpEqual(
-            JumpEqualInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
-    virtual void visitJumpLess(
-            JumpLessInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
-    virtual void visitJumpLessOrEqual(
-            JumpLessOrEqualInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
-    virtual void visitJumpGreaterOrEqual(
-            JumpGreaterOrEqualInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
-    virtual void visitJumpGreater(
-            JumpGreaterInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
-    virtual void visitGTE(
-            GTEInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
     virtual void visitCallParameter(
             CallParameterInstruction *instruction,
             std::ostream &os

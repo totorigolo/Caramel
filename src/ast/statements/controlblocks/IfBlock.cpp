@@ -26,12 +26,6 @@
 #include "../../../ir/CFG.h"
 #include "../../../ir/BasicBlock.h"
 #include "../../../ir/IR.h"
-#include "../../../ir/instructions/JumpEqualInstruction.h"
-#include "../../../ir/instructions/JumpLessInstruction.h"
-#include "../../../ir/instructions/JumpLessOrEqualInstruction.h"
-#include "../../../ir/instructions/JumpInstruction.h"
-#include "../../../ir/instructions/JumpGreaterInstruction.h"
-#include "../../../ir/instructions/JumpGreaterOrEqualInstruction.h"
 
 
 namespace caramel::ast {
