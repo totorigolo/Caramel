@@ -89,6 +89,8 @@ public:
     std::string toAssembly(ir::BasicBlock::Ptr parentBB, std::string const &anySymbol, size_t bitSize = 32U);
     std::string getSizeSuffix(size_t bitSize);
     std::string getFunctionCallRegister(size_t index, size_t bitSize);
+
+    void visitMultiplication(MultiplicationInstruction *instruction, std::ostream &os) override;
 };
 
 } // namespace caramel::ir::x86_64

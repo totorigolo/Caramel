@@ -36,6 +36,7 @@
 #include "../instructions/SubtractionInstruction.h"
 #include "../instructions/PushInstruction.h"
 #include "../instructions/PopInstruction.h"
+#include "../instructions/MultiplicationInstruction.h"
 
 
 namespace caramel::ir::x86_64 {
@@ -361,6 +362,22 @@ void X86_64IRVisitor::visitPop(PopInstruction *instruction, std::ostream &os) {
 
     os << "  popq " << "   " << destLocation;
 
+}
+
+void X86_64IRVisitor::visitMultiplication(MultiplicationInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting multiplication: "
+                   << instruction->getLeft() << " - " << instruction->getRight();
+
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction, instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction, instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction, instruction->getReturnName(), parameterSize);
+
+    os << "  movl    " << rightLocation // TODO: We might want to change "l" dynamically ?
+       << ", " << storeLocation << '\n';
+
+    os << "  imul" + getSizeSuffix(parameterSize) + "    "
+       << leftLocation << ", " << storeLocation;
 }
 
 } // namespace caramel::ir::x86_64

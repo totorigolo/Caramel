@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,40 +24,36 @@
 
 #pragma once
 
-#include "ControlBlock.h"
-#include "../expressions/Expression.h"
+#include "../IR.h"
 
+namespace caramel::ir {
 
-namespace caramel::ast {
-
-class ForBlock : public ControlBlock {
+class MultiplicationInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<ForBlock>;
-    using WeakPtr = std::weak_ptr<ForBlock>;
+    using Ptr = std::shared_ptr<MultiplicationInstruction>;
+    using WeakPtr = std::shared_ptr<MultiplicationInstruction>;
 
-    ForBlock(
-            std::shared_ptr<caramel::ast::Expression> begin,
-            std::shared_ptr<caramel::ast::Expression> end,
-            std::shared_ptr<caramel::ast::Expression> step,
-            std::vector<std::shared_ptr<caramel::ast::Statement>> block,
-            antlr4::Token *token
+public:
+    explicit MultiplicationInstruction(
+            std::string const &returnName,
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            ast::PrimaryType::Ptr const &type,
+            std::string left,
+            std::string right
     );
 
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
+    ~MultiplicationInstruction() override = default;
 
-    bool shouldReturnABasicBlock() const override;
+    std::string getLeft() const;
 
-    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override;
+    std::string getRight() const;
 
 private:
-    std::shared_ptr<caramel::ast::Expression> mBegin;
-    std::shared_ptr<caramel::ast::Expression> mEnd;
-    std::shared_ptr<caramel::ast::Expression> mStep;
-    std::vector<
-            std::shared_ptr<caramel::ast::Statement>
-    > mBlock;
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
+private:
+    std::string mLeft;
+    std::string mRight;
 };
 
-} // namespace caramel::ast
+} // namespace caramel::ir

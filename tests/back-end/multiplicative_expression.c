@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,42 +22,18 @@
  * SOFTWARE.
 */
 
-#pragma once
 
-#include "ControlBlock.h"
-#include "../expressions/Expression.h"
+int32_t main() {
+//    int32_t a;
 
+    putchar(21*2);
+    putchar('\n');
 
-namespace caramel::ast {
+//    putchar(a);
 
-class ForBlock : public ControlBlock {
-public:
-    using Ptr = std::shared_ptr<ForBlock>;
-    using WeakPtr = std::weak_ptr<ForBlock>;
+//    b = a - 1;
+//    putchar(b);
+//    putchar('\n');
 
-    ForBlock(
-            std::shared_ptr<caramel::ast::Expression> begin,
-            std::shared_ptr<caramel::ast::Expression> end,
-            std::shared_ptr<caramel::ast::Expression> step,
-            std::vector<std::shared_ptr<caramel::ast::Statement>> block,
-            antlr4::Token *token
-    );
-
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
-
-    bool shouldReturnABasicBlock() const override;
-
-    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override;
-
-private:
-    std::shared_ptr<caramel::ast::Expression> mBegin;
-    std::shared_ptr<caramel::ast::Expression> mEnd;
-    std::shared_ptr<caramel::ast::Expression> mStep;
-    std::vector<
-            std::shared_ptr<caramel::ast::Statement>
-    > mBlock;
-
-};
-
-} // namespace caramel::ast
+    return 0;
+}

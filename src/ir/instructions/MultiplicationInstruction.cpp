@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,42 +22,30 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "MultiplicationInstruction.h"
+#include "../IRVisitor.h"
 
-#include "ControlBlock.h"
-#include "../expressions/Expression.h"
+namespace caramel::ir {
 
+MultiplicationInstruction::MultiplicationInstruction(
+        std::string const &returnName,
+        std::shared_ptr<ir::BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string left,
+        std::string right
+) : IR(returnName, Operation::add, parentBlock, type), mLeft{left}, mRight{right} {}
 
-namespace caramel::ast {
+void MultiplicationInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitMultiplication(this, os);
+}
 
-class ForBlock : public ControlBlock {
-public:
-    using Ptr = std::shared_ptr<ForBlock>;
-    using WeakPtr = std::weak_ptr<ForBlock>;
+std::string MultiplicationInstruction::getLeft() const {
+    return mLeft;
+}
 
-    ForBlock(
-            std::shared_ptr<caramel::ast::Expression> begin,
-            std::shared_ptr<caramel::ast::Expression> end,
-            std::shared_ptr<caramel::ast::Expression> step,
-            std::vector<std::shared_ptr<caramel::ast::Statement>> block,
-            antlr4::Token *token
-    );
+std::string MultiplicationInstruction::getRight() const {
+    return mRight;
+}
 
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
+} // namespace caramel::ir
 
-    bool shouldReturnABasicBlock() const override;
-
-    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override;
-
-private:
-    std::shared_ptr<caramel::ast::Expression> mBegin;
-    std::shared_ptr<caramel::ast::Expression> mEnd;
-    std::shared_ptr<caramel::ast::Expression> mStep;
-    std::vector<
-            std::shared_ptr<caramel::ast::Statement>
-    > mBlock;
-
-};
-
-} // namespace caramel::ast
