@@ -46,6 +46,10 @@ public:
     void acceptAstDotVisit() override;
     void visitChildrenAstDot() override;
 
+    bool shouldReturnABasicBlock() const override;
+
+    ir::GetBasicBlockReturn getBasicBlock(ir::CFG *controlFlow) override;
+
 private:
     std::shared_ptr<caramel::ast::Expression> mBegin;
     std::shared_ptr<caramel::ast::Expression> mEnd;
