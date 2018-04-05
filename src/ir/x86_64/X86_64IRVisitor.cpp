@@ -25,6 +25,7 @@
 #include "X86_64IRVisitor.h"
 #include "../BasicBlock.h"
 #include "../instructions/CopyInstruction.h"
+#include "../instructions/ArrayAccessCopyInstruction.h"
 #include "../instructions/EmptyInstruction.h"
 #include "../instructions/PrologInstruction.h"
 #include "../instructions/EpilogInstruction.h"
@@ -95,20 +96,16 @@ std::string X86_64IRVisitor::toAssembly(ir::BasicBlock::Ptr parentBB, std::strin
     logger.trace() << "[x86_64] " << "toAssembly(" << "ir" << ", " << anySymbol << ")";
     std::string r;
 
-    if(anySymbol.empty()) {
-        logger.fatal() << "An IR symbol is empty for IR.";
-        exit(1);
-    }
 //     return anySymbol;
 
     // Is a register
-    if (anySymbol[0] == '%') {
+    if (!anySymbol.empty() && anySymbol[0] == '%') {
         r = registerToAssembly(anySymbol, bitSize);
         // Is a temp var
-    } else if (anySymbol[0] == '!') {
+    } else if (!anySymbol.empty() && anySymbol[0] == '!') {
         r = registerToAssembly(IR::REGISTER_10, bitSize);
         // TODO: Manage multiple registries
-    } else if (anySymbol[0] >= '0' && anySymbol[0] <= '9') {
+    } else if (!anySymbol.empty() && anySymbol[0] >= '0' && anySymbol[0] <= '9') {
         r = "$" + anySymbol;
     } else {
         r = std::to_string(parentBB->getSymbolIndex(anySymbol)) +
@@ -200,10 +197,47 @@ void X86_64IRVisitor::visitCopy(caramel::ir::CopyInstruction *instruction, std::
     // os << "\n#mov copy";
 }
 
+void X86_64IRVisitor::visitArrayAccessCopy(ArrayAccessCopyInstruction *instruction, std::ostream &os) {
+
+//    cltq
+//    movl -16(%rbp,%rax,4), %eax
+
+//    cltq
+//    movl arra(yName,index,type), destination
+
+    auto length = instruction->getType()->getMemoryLength();
+
+    auto index = instruction->getIndex();
+    if (index.empty() || !(index[4] == 'd' || index[1] == 'e')) {
+        logger.warning() << "[x86_64] ArrayAccess with other-than-32-bit index.";
+    }
+
+    os << "  cltq\n";
+
+    std::string arrayAsmName = toAssembly(
+            instruction->getParentBlock(), instruction->getArrayName(), length);
+    arrayAsmName.pop_back();
+
+    std::string indexAsmReg = toAssembly(
+            instruction->getParentBlock(), instruction->getIndex(), length); // length might be wrong
+    if (indexAsmReg[4] == 'd') {
+        indexAsmReg.pop_back();
+    }
+    if (indexAsmReg[1] == 'e') {
+        indexAsmReg[1] = 'r';
+    }
+
+    std::string destAsmReg = toAssembly(
+            instruction->getParentBlock(), instruction->getDestination(), length);
+
+    os << "  movl " << arrayAsmName << "," << indexAsmReg << "," << (length / 8U)
+       << "), " << destAsmReg;
+}
+
 void X86_64IRVisitor::visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting empty";
 
-    os << "  nop # empty with returnName=" << instruction->getReturnName();
+    os << "  # empty with returnName=" << instruction->getReturnName();
 }
 
 void X86_64IRVisitor::visitProlog(caramel::ir::PrologInstruction *instruction, std::ostream &os) {

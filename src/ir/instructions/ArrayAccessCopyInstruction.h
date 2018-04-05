@@ -1,4 +1,3 @@
-
 /*
  * MIT License
  *
@@ -25,39 +24,39 @@
 
 #pragma once
 
-#include "LValue.h"
-#include "../../../symboltable/ArraySymbol.h"
+#include "../IR.h"
 
+namespace caramel::ir {
 
-namespace caramel::ast {
-
-class ArrayAccess : public LValue {
+class ArrayAccessCopyInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<ArrayAccess>;
-    using WeakPtr = std::weak_ptr<ArrayAccess>;
+    using Ptr = std::shared_ptr<ArrayAccessCopyInstruction>;
+    using WeakPtr = std::shared_ptr<ArrayAccessCopyInstruction>;
 
-public:
-    ArrayAccess(
-            caramel::ast::Expression::Ptr index,
-            antlr4::Token *startToken
+    ArrayAccessCopyInstruction(
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            caramel::ast::PrimaryType::Ptr const &type,
+            std::string const &destination,
+            std::string const &index,
+            std::string const &arrayName
     );
-    ~ArrayAccess() override = default;
 
-    Symbol::Ptr getSymbol() const override;
-    void setSymbol(ArraySymbol::Ptr symbol);
+    ~ArrayAccessCopyInstruction() override = default;
 
-    PrimaryType::Ptr getPrimaryType() const override;
+    std::string getDestination() const;
 
-    bool shouldReturnAnIR() const override;
+    std::string getIndex() const;
 
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock) override;
+    std::string getArrayName() const;
 
-    void acceptAstDotVisit() override;
-    void visitChildrenAstDot() override;
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
-    Symbol::Ptr mSymbol;
-    Expression::Ptr mIndex;
+    std::string mIndex;
+    std::string mArrayName;
 };
 
-} // namespace caramel::ast
+} // namespace caramel::ir
+
+
+
