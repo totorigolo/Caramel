@@ -38,7 +38,9 @@ void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> c
     }
     for (IR::Ptr const &instr : basicBlock->getInstructions()) {
         instr->accept(mIRVisitor, os);
-        os << std::endl;
+        if(!instr->isEmpty()) {
+            os << std::endl;
+        }
     }
 
     bool whenTrue = nullptr != basicBlock->getNextWhenTrue();
@@ -57,7 +59,6 @@ void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> c
         logger.debug() << "End of function.";
     }
 
-    os << std::endl;
 }
 
 } // namespace caramel::ir::x86_64

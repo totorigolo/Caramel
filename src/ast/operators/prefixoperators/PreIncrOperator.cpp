@@ -23,17 +23,56 @@
 */
 
 #include "PreIncrOperator.h"
+#include "../../../ir/instructions/AdditionInstruction.h"
+#include "../../statements/expressions/atomicexpression/LValue.h"
+#include "../../../utils/Common.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../ir/instructions/LDConstInstruction.h"
+
+using namespace caramel::utils;
 
 std::shared_ptr<caramel::ir::IR> caramel::ast::PreIncrOperator::buildIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &expression
 ) {
 
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(expression);
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+    LValue::Ptr lvalue = castTo<LValue::Ptr>(expression);
+
+    ir::IR::Ptr copy = std::make_shared<ir::LDConstInstruction>(
+            currentBasicBlock,
+            lvalue->getPrimaryType(),
+            Statement::createVarName(),
+            lvalue->getSymbol()->getName()
+    );
+    std::string tmpName = currentBasicBlock->addInstruction(copy);
+
+    ir::IR::Ptr addition = std::make_shared<ir::AdditionInstruction>(
+            ir::IR::ACCUMULATOR_1,
+            currentBasicBlock,
+            lvalue->getPrimaryType(),
+            "1",
+            tmpName
+    );
+    std::string tmpName2 = currentBasicBlock->addInstruction(addition);
+
+    ir::IR::Ptr copyBack = std::make_shared<ir::LDConstInstruction>(
+            currentBasicBlock,
+            lvalue->getPrimaryType(),
+            lvalue->getSymbol()->getName(),
+            tmpName2
+    );
+    currentBasicBlock->addInstruction(copyBack);
+
+    ir::IR::Ptr copyToRegister = std::make_shared<ir::LDConstInstruction>(
+            currentBasicBlock,
+            lvalue->getPrimaryType(),
+            Statement::createVarName(),
+            lvalue->getSymbol()->getName()
+    );
+    return copyToRegister;
+
 }
 
 caramel::ast::StatementType caramel::ast::PreIncrOperator::getExpressionType() const {

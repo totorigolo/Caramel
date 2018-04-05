@@ -30,10 +30,18 @@ namespace caramel::ast {
 long long Statement::lastTemVarNumber = -1;
 
 Statement::Statement(antlr4::Token *startToken, StatementType type)
-        : mLine{startToken->getLine()},
-          mColumn{startToken->getCharPositionInLine()},
-          mLength{startToken->getText().length()},
-          mType{type} {}
+        :
+        mType{type} {
+    if (nullptr != startToken) {
+        mLine = startToken->getLine();
+        mColumn = startToken->getCharPositionInLine();
+        mLength = startToken->getText().length();
+    } else {
+        mLine = 0;
+        mColumn = 0;
+        mLength = 0;
+    }
+}
 
 size_t Statement::getLine() const {
     return mLine;
