@@ -77,7 +77,8 @@ protected:
     int mNextBasicBlockNumber;
     int mNextFunctionContext;
 
-    std::vector<std::shared_ptr<BasicBlock>> mBasicBlocks;
+    std::vector<std::shared_ptr<BasicBlock>> mFunctionsBasicBlocks;
+    std::vector<caramel::ast::Declaration::Ptr> mGlobalContext;
 };
 
 } // namespace caramel::ast

@@ -210,6 +210,9 @@ public:
     /// Returns WhileBlock::Ptr
     antlrcpp::Any visitWhileBlock(CaramelParser::WhileBlockContext *ctx) override;
 
+    /// Returns DoWhileBlock::Ptr
+    antlrcpp::Any visitDoWhileBlock(CaramelParser::DoWhileBlockContext *ctx) override;
+
 private:
     std::shared_ptr<ast::Context> rootContext(); //
     std::shared_ptr<ast::Context> currentContext(); //

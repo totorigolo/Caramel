@@ -40,7 +40,6 @@ UnaryExpression::getIR(
         std::shared_ptr<ir::BasicBlock> const &currentBasicBlock
 
 ) {
-    CARAMEL_UNUSED(currentBasicBlock);
     return mUnaryOperator->buildIR(currentBasicBlock, mInnerExpression);
 }
 
@@ -56,6 +55,10 @@ void UnaryExpression::visitChildrenAstDot() {
 
 PrimaryType::Ptr UnaryExpression::getPrimaryType() const {
     return mInnerExpression->getPrimaryType();
+}
+
+bool UnaryExpression::shouldReturnAnIR() const {
+    return true;
 }
 
 } // namespace caramel::ast

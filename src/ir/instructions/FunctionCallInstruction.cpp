@@ -31,9 +31,11 @@ namespace caramel::ir {
 FunctionCallInstruction::FunctionCallInstruction(
         std::string functionName,
         std::shared_ptr<BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &returnType
+        ast::PrimaryType::Ptr const &returnType,
+        int argumentsLength
 ) : IR(IR::ACCUMULATOR, Operation::call, parentBlock, returnType),
-    mFunctionName{std::move(functionName)} {}
+    mFunctionName{std::move(functionName)},
+    mArgumentsLength{argumentsLength} {}
 
 std::string FunctionCallInstruction::getFunctionName() const {
     return mFunctionName;
@@ -41,6 +43,10 @@ std::string FunctionCallInstruction::getFunctionName() const {
 
 void FunctionCallInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitFunctionCall(this, os);
+}
+
+int FunctionCallInstruction::getArgumentsLength() const {
+    return mArgumentsLength;
 }
 
 } // namespace caramel::ir

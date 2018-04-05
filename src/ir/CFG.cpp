@@ -25,11 +25,12 @@
 #include "CFG.h"
 #include "BasicBlock.h"
 #include "../Console.h"
-
+#include "../utils/Common.h"
 
 namespace caramel::ir {
 
 using namespace colors;
+using namespace caramel::utils;
 
 CFG::CFG(
         std::string const &fileName,
@@ -40,18 +41,23 @@ CFG::CFG(
     mSymbolIndex{},
     mNextBasicBlockNumber{0},
     mNextFunctionContext{0},
-    mBasicBlocks{} {
+    mFunctionsBasicBlocks{},
+    mGlobalContext{} {
     logger.debug() << "New CFG for " << mFileName << ".";
 
     for (ast::Statement::Ptr const &statement : mRootContext->getStatements()) {
         if (statement->getType() == ast::StatementType::FunctionDefinition) {
 
-            auto [function_begin, function_end] = statement->getBasicBlock(this);
-            mBasicBlocks.push_back(function_begin);
+            auto[function_begin, function_end] = statement->getBasicBlock(this);
+            mFunctionsBasicBlocks.push_back(function_begin);
             CARAMEL_UNUSED(function_end);
 
         } else {
             logger.warning() << "Skipping not-yet-handled non function definition statement in CFG::CFG().";
+
+            if (statement->shouldReturnAnIR()) {
+                mGlobalContext.push_back(castTo<caramel::ast::Declaration::Ptr>(statement));
+            }
 
             // old code:
 //            if (statement->shouldReturnAnIR()) {
@@ -68,7 +74,7 @@ CFG::CFG(
 }
 
 void CFG::addBasicBlock(std::shared_ptr<BasicBlock> basicBlock) {
-    mBasicBlocks.push_back(basicBlock);
+    mFunctionsBasicBlocks.push_back(basicBlock);
 }
 
 bool CFG::hasSymbol(size_t controlBlockId, std::string const &symbolName) {
@@ -148,7 +154,7 @@ std::shared_ptr<BasicBlock> CFG::generateFunctionBlock(std::string entryName) {
 }
 
 std::vector<std::shared_ptr<BasicBlock>> &CFG::getBasicBlocks() {
-    return mBasicBlocks;
+    return mFunctionsBasicBlocks;
 }
 
 std::string &CFG::getFileName() {
@@ -171,15 +177,16 @@ std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
     }
     os << " - mStackSize:\n";
     for (auto const &[basicBlockId, size] : cfg.mStackSize) {
-            os << "    - BB=" << basicBlockId << ", size=" << size << '\n';
+        os << "    - BB=" << basicBlockId << ", size=" << size << '\n';
     }
     os << " - mNextBasicBlockNumber: " << cfg.mNextBasicBlockNumber << '\n'
-       << " - mBasicBlocks: " << cfg.mBasicBlocks.size() << " BBs";
+       << " - mBasicBlocks: " << cfg.mFunctionsBasicBlocks.size() << " BBs";
     return os;
 }
 
 std::shared_ptr<BasicBlock> CFG::generateNamedBasicBlock() {
-    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, mNextFunctionContext, this, BasicBlock::getNextNumberName());
+    return std::make_shared<BasicBlock>(++mNextBasicBlockNumber, mNextFunctionContext, this,
+                                        BasicBlock::getNextNumberName());
 }
 
 } // namespace caramel::ir

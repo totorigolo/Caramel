@@ -29,6 +29,7 @@
 #include "../../../ir/instructions/PrologInstruction.h"
 #include "../../../ir/instructions/EpilogInstruction.h"
 #include "../../../ir/instructions/CopyInstruction.h"
+#include "../../../ir/instructions/PushInstruction.h"
 
 
 namespace caramel::ast {
@@ -63,17 +64,18 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
     ir::BasicBlock::Ptr function_root_bb = controlFlow->generateFunctionBlock(mSymbol->getName());
 
     controlFlow->enterFunction(function_root_bb->getId());
-    function_root_bb->addInstruction(std::make_shared<ir::PrologInstruction>(function_root_bb, 42)); // FIXME: Function definition IR
+    function_root_bb->addInstruction(
+            std::make_shared<ir::PrologInstruction>(function_root_bb, 42)); // FIXME: Function definition IR
 
     auto parameters = mSymbol->getParameters();
-    for(int i = 0; i < parameters.size(); i++) {
-        if(i < 6) {
+    for (size_t i = 0; i < parameters.size(); i++) {
+        if (i < 6) {
             function_root_bb->addInstruction(
-                    std::make_shared<ir::CopyInstruction>(function_root_bb, parameters[i].primaryType, parameters[i].name, i)
+                    std::make_shared<ir::CopyInstruction>(function_root_bb, parameters[i].primaryType,
+                                                          parameters[i].name, i)
             );
         } else {
-            logger.fatal() << "Unaccepted arguments (out of bound)";
-            exit(1);
+            function_root_bb->addSymbol(parameters[i].name, Int64_t::Create(), 16 + (i-6) * 8);
         }
 
     }

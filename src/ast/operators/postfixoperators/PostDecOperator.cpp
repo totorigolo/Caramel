@@ -22,7 +22,7 @@
  * SOFTWARE.
 */
 
-#include "PreIncrOperator.h"
+#include "PostDecOperator.h"
 #include "../../../ir/instructions/AdditionInstruction.h"
 #include "../../statements/expressions/atomicexpression/LValue.h"
 #include "../../../utils/Common.h"
@@ -33,7 +33,7 @@
 
 using namespace caramel::utils;
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::PreIncrOperator::buildIR(
+std::shared_ptr<caramel::ir::IR> caramel::ast::PostDecOperator::buildIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &expression
 ) {
@@ -49,14 +49,14 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::PreIncrOperator::buildIR(
     );
     std::string tmpName = currentBasicBlock->addInstruction(copy);
 
-    ir::IR::Ptr addition = std::make_shared<ir::AdditionInstruction>(
+    ir::IR::Ptr substraction = std::make_shared<ir::SubtractionInstruction>(
             ir::IR::ACCUMULATOR_1,
             currentBasicBlock,
             lvalue->getPrimaryType(),
             "1",
             tmpName
     );
-    std::string tmpName2 = currentBasicBlock->addInstruction(addition);
+    std::string tmpName2 = currentBasicBlock->addInstruction(substraction);
 
     ir::IR::Ptr copyBack = std::make_shared<ir::LDConstInstruction>(
             currentBasicBlock,
@@ -66,20 +66,21 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::PreIncrOperator::buildIR(
     );
     currentBasicBlock->addInstruction(copyBack);
 
-    ir::IR::Ptr copyToRegister = std::make_shared<ir::LDConstInstruction>(
+    ir::IR::Ptr addition = std::make_shared<ir::AdditionInstruction>(
+            ir::IR::ACCUMULATOR_1,
             currentBasicBlock,
             lvalue->getPrimaryType(),
-            Statement::createVarName(),
-            lvalue->getSymbol()->getName()
+            "1",
+            tmpName
     );
-    return copyToRegister;
+    return addition;
 
 }
 
-caramel::ast::StatementType caramel::ast::PreIncrOperator::getExpressionType() const {
+caramel::ast::StatementType caramel::ast::PostDecOperator::getExpressionType() const {
     return StatementType::UnaryAdditiveExpression;
 }
 
-std::string caramel::ast::PreIncrOperator::getToken() const {
+std::string caramel::ast::PostDecOperator::getToken() const {
     return SYMBOL;
 }

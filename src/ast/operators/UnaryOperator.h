@@ -41,6 +41,7 @@ public:
     ~UnaryOperator() override = default;
 
 public:
+
     virtual std::shared_ptr<caramel::ir::IR> buildIR(
             std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
             std::shared_ptr<caramel::ast::Expression> const &innerExpression

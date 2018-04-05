@@ -23,23 +23,35 @@
 */
 
 #include "LogicalNotOperator.h"
+#include "../../../ir/IR.h"
+#include "../../statements/expressions/binaryexpression/BinaryExpression.h"
+#include "../binaryoperators/BinaryOperatorIndex.h"
+#include "../../statements/expressions/atomicexpression/Constant.h"
+#include "../binaryoperators/DiffOperator.h"
+#include "../../../utils/Common.h"
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::LogicalNotOperator::buildIR(
+namespace caramel::ast {
+
+using namespace caramel::utils;
+
+std::shared_ptr<caramel::ir::IR> LogicalNotOperator::buildIR(
         std::shared_ptr<caramel::ir::BasicBlock> const &currentBasicBlock,
-        std::shared_ptr<caramel::ast::Expression> const &expression
+        std::shared_ptr<Expression> const &expression
 ) {
-
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(expression);
-
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+    return std::make_shared<BinaryExpression>(
+            castTo<Expression::Ptr>(expression),
+            castTo<BinaryOperator::Ptr>(std::make_shared<DiffOperator>()),
+            castTo<Expression::Ptr>(Constant::defaultConstant(nullptr)),
+            nullptr
+    )->getIR(currentBasicBlock);
 }
 
-caramel::ast::StatementType caramel::ast::LogicalNotOperator::getExpressionType() const {
+StatementType LogicalNotOperator::getExpressionType() const {
     return StatementType::LogicalNotExpression;
 }
 
-std::string caramel::ast::LogicalNotOperator::getToken() const {
+std::string LogicalNotOperator::getToken() const {
     return SYMBOL;
 }
+
+} // namespace caramel::ast
