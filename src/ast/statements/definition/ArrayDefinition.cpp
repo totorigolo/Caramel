@@ -30,6 +30,7 @@
 #include "../../../ir/BasicBlock.h"
 #include "../../../ir/instructions/CopyInstruction.h"
 #include "../../../ir/instructions/NopInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
 
 
 namespace caramel::ast {
@@ -72,7 +73,7 @@ std::shared_ptr<ir::IR> ArrayDefinition::getIR(ir::BasicBlock::Ptr &currentBasic
         auto const &expression = *it;
         --index;
 
-        std::string valueName = currentBasicBlock->addInstruction(expression->getIR(currentBasicBlock));
+        std::string valueName = SAFE_ADD_INSTRUCTION(expression, currentBasicBlock); // currentBasicBlock->addInstruction(expression->getIR(currentBasicBlock));
         std::string destination = arrayName;
         if (index > 0) {
             destination += "[" + std::to_string(index) + "]";

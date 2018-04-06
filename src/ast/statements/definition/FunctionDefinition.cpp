@@ -30,6 +30,7 @@
 #include "../../../ir/instructions/EpilogInstruction.h"
 #include "../../../ir/instructions/CopyInstruction.h"
 #include "../../../ir/instructions/PushInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
 
 
 namespace caramel::ast {
@@ -91,8 +92,9 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
     ir::BasicBlock::Ptr bb = function_root_bb->getNewWhenTrueBasicBlock("_innerbeginof_" + mSymbol->getName());
     for (ast::Statement::Ptr const &statement : mContext->getStatements()) {
         if (statement->shouldReturnAnIR()) {
-            auto ir = statement->getIR(bb);
-            bb->addInstruction(ir);
+            SAFE_ADD_INSTRUCTION(statement, bb);
+//            auto ir = statement->getIR(bb);
+//            bb->addInstruction(ir);
         } else if (statement->shouldReturnABasicBlock()) {
             auto [child_root, child_end] = statement->getBasicBlock(controlFlow);
 

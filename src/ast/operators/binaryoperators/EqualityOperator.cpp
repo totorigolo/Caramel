@@ -40,13 +40,13 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::EqualityOperator::getIR(
 
     auto maxType = GET_MAX_TYPE(leftExpression, rightExpression);
 
-    std::string left = GET_REGISTER(leftExpression);
+    std::string left = SAFE_ADD_INSTRUCTION(leftExpression, currentBasicBlock);
 
     MOVE_TO(left, ir::IR::ACCUMULATOR_2, maxType);
 
     PUSH(ir::IR::ACCUMULATOR_2);
 
-    std::string right = GET_REGISTER(rightExpression);
+    std::string right = SAFE_ADD_INSTRUCTION(rightExpression, currentBasicBlock);
 
     MOVE_TO(right, ir::IR::ACCUMULATOR_1, maxType);
 

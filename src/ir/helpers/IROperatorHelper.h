@@ -26,9 +26,9 @@
 
 #define GET_MAX_TYPE(leftExpr, rightExpr) PrimaryType::max(leftExpr->getPrimaryType(), rightExpr->getPrimaryType());
 
-#define GET_REGISTER(expr)                                                                          \
-([&] () {auto GET_REG_PLEASE_DONT_HURT_ME = expr->getIR(currentBasicBlock);                \
-return currentBasicBlock->addInstruction(GET_REG_PLEASE_DONT_HURT_ME);})()
+#define SAFE_ADD_INSTRUCTION(expr, block)                                                                   \
+([&] () {auto GET_REG_PLEASE_DONT_HURT_ME = expr->getIR(block);                                     \
+return block->addInstruction(GET_REG_PLEASE_DONT_HURT_ME);})()
 
 #define MOVE_TO(var, to, max)                                                                       \
 currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(                            \

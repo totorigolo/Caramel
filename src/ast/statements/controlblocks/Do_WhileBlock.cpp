@@ -26,6 +26,7 @@
 #include "../../../ir/BasicBlock.h"
 #include "../../../ir/CFG.h"
 #include "IfBlock.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
 
 
 namespace caramel::ast {
@@ -66,7 +67,7 @@ ir::GetBasicBlockReturn Do_WhileBlock::getBasicBlock(
 
     // COND BB
     if (mCondition->shouldReturnAnIR()) {
-        bbDWcond->addInstruction(mCondition->getIR(bbDWcond));
+        SAFE_ADD_INSTRUCTION(mCondition, bbDWcond); // bbDWcond->addInstruction(mCondition->getIR(bbDWcond));
     } else if (mCondition->shouldReturnABasicBlock()) {
         logger.warning() << "Untested BB in while block condition BB.";
 
@@ -83,7 +84,7 @@ ir::GetBasicBlockReturn Do_WhileBlock::getBasicBlock(
     // Action BB
     for (auto const &statement : mBlock) {
         if (statement->shouldReturnAnIR()) {
-            bbDWaction->addInstruction(statement->getIR(bbDWaction));
+            SAFE_ADD_INSTRUCTION(statement, bbDWaction); // bbDWaction->addInstruction(statement->getIR(bbDWaction));
         } else if (statement->shouldReturnABasicBlock()) {
             auto[then_begin, then_end] = statement->getBasicBlock(controlFlow);
 
