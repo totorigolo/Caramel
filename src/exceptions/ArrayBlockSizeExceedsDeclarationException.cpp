@@ -22,22 +22,28 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include <ParserRuleContext.h>
-#include "../Console.h"
-
-#include <stdexcept>
+#include "ArrayBlockSizeExceedsDeclarationException.h"
+#include "Common.h"
 
 
 namespace caramel::exceptions {
 
-class ArrayBlockSizeExceedsDeclarationException{
+using namespace colors;
 
-public:
-    ArrayBlockSizeExceedsDeclarationException(std::string const &name,
-                                              size_t size,
-                                              std::string content);
+ArrayBlockSizeExceedsDeclarationException::ArrayBlockSizeExceedsDeclarationException(
+        std::string const &name,
+        size_t size,
+        std::string content) {
 
-};
+    std::cerr << red << "Array "
+              << name
+              << " block size of "
+              << content
+              << " exceeds the declared size of "
+              << std::to_string(size)
+              << std::endl;
+
+}
+
+
 } // namespace caramel::exceptions

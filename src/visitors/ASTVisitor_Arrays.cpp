@@ -91,8 +91,9 @@ antlrcpp::Any ASTVisitor::visitArrayDefinition(CaramelParser::ArrayDefinitionCon
 
         if (sized && size < content.size()) {
                 throw ArrayBlockSizeExceedsDeclarationException(
-                        "Array " + name + " block size of " + std::to_string(content.size())
-                        + " exceeds the declared size of " + std::to_string(size)
+                        name,
+                        size,
+                        std::to_string(content.size())
                 );
         } else if (!sized) {
             size = content.size();

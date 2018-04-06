@@ -98,7 +98,10 @@ antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
     auto exitSymbol = symbolTable->addFunctionDeclaration(ctx, void_t, "exit", exitParams, exitDecl);
     exitDecl->setFunctionSymbol(exitSymbol);
 
-    context->addStatements(visitStatements(ctx->statements()));
+    try {context->addStatements(visitStatements(ctx->statements()));}
+    catch (...){
+        incrementErrorCount();
+    }
     return context;
 }
 
