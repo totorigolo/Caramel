@@ -48,3 +48,64 @@ cmake ..
 
 # Todo : make some examples
 ```
+
+# Chef commands :
+```bash
+usage: chef.py [-h] [--verbose | --quiet] {clean,build,test} ...
+
+The Caramel Jack of all trades.
+
+optional arguments:
+  -h, --help          show this help message and exit
+  --verbose, -v       increase the verbosity (repeat for even more verbosity)
+  --quiet, -q         decrease the verbosity (repeat for less verbosity)
+
+Available commands:
+  {clean,build,test}
+    clean             Ask the Chef to clean up his workplace.
+    build             Make the Chef cook some Caramel.
+    test              Test the Caramel quality.
+```
+
+## Example for executiong all test
+```bash
+# usage: chef.py test [-h] {grammar,semantic,all} ...
+#
+# optional arguments:
+#   -h, --help            show this help message and exit
+#
+# Available sub-commands:
+#   {grammar,semantic,all}
+#     grammar             Test the Caramel grammar.
+#     semantic            Test the Caramel semantic analysis.
+#     all                 Run all tests.
+
+./chef.py test all -bw
+```
+Will brew the grammar, build the project and execute all the tests.
+
+Tests marked as `[+]` are valid tests that must succed.
+Tests markes as `[-]` are unvalid tests that must failed.
+
+# Grammar
+- [Grammar](doc/grammar.md)
+
+# Semantic
+- [Semantic](doc/semantic.md)
+
+# Phases
+- [Phase 5.1](doc/p_51.md)
+- [Phase 5.2](doc/p_52.md)
+- [Phase 5.3](doc/p_53.md)
+- [Phase 5.4](doc/p_54.md)
+- [Phase 5.5](doc/p_55.md)
+- [Phase 5.6](doc/p_56.md)
+- [Phase 5.7](doc/p_57.md)
+- [Phase 5.8](doc/p_58.md)
+- [Phase 5.9](doc/p_59.md)
+- [Phase 5.10](doc/p_510.md)
+- [Phase 5.11](doc/p_511.md)
+- [Phase 5.12](doc/p_512.md)
+- [Phase 5.13](doc/p_513.md)
+- [Phase 5.14](doc/p_514.md)
+- [Phase 5.15](doc/p_515.md)
