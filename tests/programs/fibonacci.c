@@ -29,33 +29,19 @@ void displayNumber(int32_t number) {
     int32_t i;
     while (number >= 1){
         tab[index]=number%10;
-        putchar('0' + tab[index]);
         number = number/10;
         index = index + 1;
     }
-    putchar('\n');
-    putchar('\n');
-    putchar('a' - 1 + index);
-    putchar('\n');
-    putchar('\n');
-
-    for (i=(index-1);i>=0;i=i-1) {
+    for (i=(index-1);i>=0;i--) {
         putchar('0' + tab[i]);
     }
-    putchar('\n');
-    putchar('\n');
-
-    putchar('\n');
-    putchar('\n');
-
 }
 
 int32_t fibonacci_rec(int32_t n) {
-    int32_t temp;
     if (n <= 1) {
         return n;
     } else {
-        temp = fibonacci_rec(n - 1) + fibonacci_rec(n - 2);
+        return fibonacci_rec(n - 1) + fibonacci_rec(n - 2);
     }
 }
 
@@ -74,16 +60,10 @@ int32_t fibonacci_lin(int32_t n) {
 }
 
 int32_t main() {
-    // 6765
-//    int32_t a = fibonacci_rec(20);
-//    int32_t b = fibonacci_lin(20);
-
-    displayNumber(432);
-
-//    displayNumber(a);
-//    putchar('\n');
-//    displayNumber(b);
-//    putchar('\n');
+    displayNumber(fibonacci_rec(20));
+    putchar('\n');
+    displayNumber(fibonacci_lin(20));
+    putchar('\n');
 
     return 0;
 }
