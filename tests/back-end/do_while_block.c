@@ -8,7 +8,7 @@ int32_t main() {
     int32_t a = 5;
     do {
         putchar('0'+a);
-        a = a - 1;
+        a--;
     } while(a);
     putchar('\n');
     putchar('e');
