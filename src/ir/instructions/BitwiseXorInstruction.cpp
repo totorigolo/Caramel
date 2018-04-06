@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+ * Copyright (c) 2018 insa.4if.hexanome_kalate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,48 +22,29 @@
  * SOFTWARE.
 */
 
+#include "BitwiseXorInstruction.h"
+#include "../IRVisitor.h"
 
-void displayNumber(int32_t number) {
-    int32_t tab[50];
-    int32_t index = 0;
-    int32_t i;
-    while (number >= 1){
-        tab[index]=number%10;
-        number = number/10;
-        index = index + 1;
-    }
-    for (i=(index-1);i>=0;i--) {
-        putchar('0' + tab[i]);
-    }
+namespace caramel::ir {
+
+BitwiseXorInstruction::BitwiseXorInstruction(
+        std::string const &returnName,
+        std::shared_ptr<ir::BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string left,
+        std::string right
+) : IR(returnName, Operation::bxor, parentBlock, type), mLeft{left}, mRight{right} {}
+
+void BitwiseXorInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitBitwiseXor(this, os);
 }
 
-int32_t fibonacci_rec(int32_t n) {
-    if (n <= 1) {
-        return n;
-    } else {
-        return fibonacci_rec(n - 1) + fibonacci_rec(n - 2);
-    }
+std::string BitwiseXorInstruction::getLeft() const {
+    return mLeft;
 }
 
-int32_t fibonacci_lin(int32_t n) {
-    int32_t i = 0;
-    int32_t j = 1;
-    int32_t temp;
-    int32_t k;
-
-    for (k = 0; k < n; k = k+1) {
-        temp = i + j;
-        i = j + 0; // + 0 temp fix for double returns
-        j = temp + 0;
-    }
-    return i;
+std::string BitwiseXorInstruction::getRight() const {
+    return mRight;
 }
 
-int32_t main() {
-    displayNumber(fibonacci_rec(20));
-    putchar('\n');
-    displayNumber(fibonacci_lin(20));
-    putchar('\n');
-
-    return 0;
-}
+} // namespace caramel::ir

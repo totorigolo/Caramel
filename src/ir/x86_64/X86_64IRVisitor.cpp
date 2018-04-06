@@ -44,6 +44,10 @@
 #include "../instructions/DivInstruction.h"
 #include "../instructions/LeftShiftInstruction.h"
 #include "../instructions/RightShiftInstruction.h"
+#include "../instructions/BitwiseAndInstruction.h"
+#include "../instructions/BitwiseOrInstruction.h"
+#include "../instructions/BitwiseXorInstruction.h"
+
 
 
 namespace caramel::ir::x86_64 {
@@ -554,7 +558,35 @@ void X86_64IRVisitor::visitBitwiseAnd(BitwiseAndInstruction *instruction, std::o
     const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
     os << "  mov"+ getSizeSuffix(parameterSize) << "    " << leftLocation << ", " << storeLocation << '\n';
-    os << "  and"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation << '\n';
+    os << "  and"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation;
+
+}
+
+void X86_64IRVisitor::visitBitwiseOr(BitwiseOrInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting bitwise or: "
+                   << instruction->getLeft() << " - " << instruction->getRight();
+
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
+
+    os << "  mov"+ getSizeSuffix(parameterSize) << "    " << leftLocation << ", " << storeLocation << '\n';
+    os << "  or"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation;
+
+}
+
+void X86_64IRVisitor::visitBitwiseXor(BitwiseXorInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting bitwise xor: "
+                   << instruction->getLeft() << " - " << instruction->getRight();
+
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
+
+    os << "  mov"+ getSizeSuffix(parameterSize) << "    " << leftLocation << ", " << storeLocation << '\n';
+    os << "  xor"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation ;
 
 }
 

@@ -8,18 +8,20 @@
 int32_t main() {
 
     int32_t a = 1;
-    int32_t b = 3;
-    int32_t d = 7;
-    int32_t c;
+    int32_t b = 2;
+    int32_t c = 3;
+    int32_t d;
 
-    c = a&b; //1
-    putchar('0' + c);
+    d = a^b; //3
+
+    putchar('0' + d);
     putchar('\n');
 
+    d= b^c; //1
 
-    c = d&b; //3
-    putchar('0' + c);
+    putchar('0' + d);
     putchar('\n');
+
 
     return 0;
 }
