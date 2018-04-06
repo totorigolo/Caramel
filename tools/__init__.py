@@ -42,6 +42,8 @@ PATHS = {
     'grammar-file': 'grammar/Caramel.g4',
     'grammar-test-dir': 'tests/grammar',
     'semantic-test-dir': 'tests/semantic',
+    'backend-test-dir': 'tests/back-end',
+    'programs-test-dir': 'tests/programs',
 }
 
 COMMANDS = {

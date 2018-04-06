@@ -101,7 +101,7 @@ whileBlock
   : WhileKeyWord_ WS_* L_Par_ WS_* expression WS_* R_Par_ WS_* block
   ;
 doWhileBlock
-  : DoKeyWord_ InlineWS_* block InlineWS_* L_Par_ InlineWS_* expression WS_* R_Par_ Semilicon_
+  : DoKeyWord_ InlineWS_* block InlineWS_* WhileKeyWord_ InlineWS_* L_Par_ InlineWS_* expression WS_* R_Par_ Semilicon_
   ;
 forBlock
   : ForKeyword_ WS_* L_Par_

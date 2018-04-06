@@ -92,6 +92,18 @@ def _chef():
     test_common(parser_test_semantic)
     parser_test_semantic.add_argument('-d', '--debug', help='run Caramel as debug', action='store_true')
 
+    # Create the parser for the "test backend" command
+    parser_test_backend = test_subparsers.add_parser('backend', help='Test the Caramel back-end.')
+    parser_test_backend.set_defaults(func=tools.test.test_backend)
+    test_common(parser_test_backend)
+    parser_test_backend.add_argument('-d', '--debug', help='run Caramel as debug', action='store_true')
+
+    # Create the parser for the "test programs" command
+    parser_test_programs = test_subparsers.add_parser('programs', help='Test the execution of some example programs.')
+    parser_test_programs.set_defaults(func=tools.test.test_programs)
+    test_common(parser_test_programs)
+    parser_test_programs.add_argument('-d', '--debug', help='run Caramel as debug', action='store_true')
+
     # Create the parser for the "test all" command
     parser_test_all = test_subparsers.add_parser('all', help='Run all tests.')
     parser_test_all.set_defaults(func=tools.test.test_all)
