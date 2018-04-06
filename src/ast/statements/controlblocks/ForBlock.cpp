@@ -24,6 +24,7 @@
 
 #include "ForBlock.h"
 #include "../../../ir/BasicBlock.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
 
 
 namespace caramel::ast {
@@ -83,7 +84,7 @@ ir::GetBasicBlockReturn ForBlock::getBasicBlock(ir::CFG *controlFlow) {
 
     // INIT BB
     if (mBegin->shouldReturnAnIR()) {
-        bbInit->addInstruction(mBegin->getIR(bbInit));
+        SAFE_ADD_INSTRUCTION(mBegin, bbInit); // bbInit->addInstruction(mBegin->getIR(bbInit));
     } else if (mBegin->shouldReturnABasicBlock()) {
         auto [init_begin, init_end] = mBegin->getBasicBlock(controlFlow);
 
@@ -99,7 +100,7 @@ ir::GetBasicBlockReturn ForBlock::getBasicBlock(ir::CFG *controlFlow) {
 
     // COND BB
     if (mEnd->shouldReturnAnIR()) {
-        bbCond->addInstruction(mEnd->getIR(bbCond));
+        SAFE_ADD_INSTRUCTION(mEnd, bbCond); // bbCond->addInstruction(mEnd->getIR(bbCond));
     } else if (mEnd->shouldReturnABasicBlock()) {
         logger.warning() << "Untested BB in for block condition BB.";
 
@@ -116,7 +117,7 @@ ir::GetBasicBlockReturn ForBlock::getBasicBlock(ir::CFG *controlFlow) {
     // THEN BB
     for (auto const &statement : mBlock) {
         if (statement->shouldReturnAnIR()) {
-            bbThen->addInstruction(statement->getIR(bbThen));
+            SAFE_ADD_INSTRUCTION(statement, bbThen); // bbThen->addInstruction(statement->getIR(bbThen));
         } else if (statement->shouldReturnABasicBlock()) {
             auto [then_begin, then_end] = statement->getBasicBlock(controlFlow);
 
@@ -133,7 +134,7 @@ ir::GetBasicBlockReturn ForBlock::getBasicBlock(ir::CFG *controlFlow) {
 
     // INC BB
     if (mStep->shouldReturnAnIR()) {
-        bbInc->addInstruction(mStep->getIR(bbInc));
+        SAFE_ADD_INSTRUCTION(mStep, bbInc); // bbInc->addInstruction(mStep->getIR(bbInc));
     } else if (mStep->shouldReturnABasicBlock()) {
         auto [inc_begin, inc_end] = mStep->getBasicBlock(controlFlow);
 

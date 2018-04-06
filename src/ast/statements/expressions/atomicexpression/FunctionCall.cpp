@@ -28,6 +28,7 @@
 #include "../../../../ir/BasicBlock.h"
 #include "../../../../ir/instructions/CallParameterInstruction.h"
 #include "../../../../ir/instructions/FunctionCallInstruction.h"
+#include "../../../../ir/helpers/IROperatorHelper.h"
 
 
 namespace caramel::ast {
@@ -78,7 +79,7 @@ std::shared_ptr<ir::IR> FunctionCall::getIR(std::shared_ptr<ir::BasicBlock> &cur
     auto functionSymbol = castTo<FunctionSymbol::Ptr>(mSymbol);
 
     for (int i = int(mArguments.size()) - 1; i >= 0; i--) {
-        std::string tempVar = currentBasicBlock->addInstruction((mArguments[i])->getIR(currentBasicBlock));
+        std::string tempVar = SAFE_ADD_INSTRUCTION((mArguments[i]), currentBasicBlock); // currentBasicBlock->addInstruction((mArguments[i])->getIR(currentBasicBlock));
         currentBasicBlock->addInstruction(
                 std::make_shared<ir::CallParameterInstruction>(
                         currentBasicBlock, i, mArguments[i]->getPrimaryType(), tempVar)

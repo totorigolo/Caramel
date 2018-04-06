@@ -25,6 +25,7 @@
 #include "ReturnStatement.h"
 #include "../../../ir/BasicBlock.h"
 #include "../../../ir/instructions/ReturnInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
 
 
 namespace caramel::ast {
@@ -54,7 +55,7 @@ bool ReturnStatement::shouldReturnAnIR() const {
 
 std::shared_ptr<ir::IR> ReturnStatement::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) {
     if (mExpression) {
-        std::string value = currentBasicBlock->addInstruction(mExpression->getIR(currentBasicBlock));
+        std::string value = SAFE_ADD_INSTRUCTION(mExpression, currentBasicBlock); // currentBasicBlock->addInstruction(mExpression->getIR(currentBasicBlock));
         return std::make_shared<ir::ReturnInstruction>(
                 currentBasicBlock, mExpression->getPrimaryType(), value);
     } else {
