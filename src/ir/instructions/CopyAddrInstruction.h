@@ -24,34 +24,38 @@
 
 #pragma once
 
-#include "LValue.h"
-#include "../../../symboltable/VariableSymbol.h"
+#include "../IR.h"
 
+namespace caramel::ir {
 
-namespace caramel::ast {
-
-class Identifier : public LValue {
+class CopyAddrInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<Identifier>;
-    using WeakPtr = std::weak_ptr<Identifier>;
+    using Ptr = std::shared_ptr<CopyAddrInstruction>;
+    using WeakPtr = std::shared_ptr<CopyAddrInstruction>;
 
-public:
-    explicit Identifier(antlr4::Token *startToken);
-    ~Identifier() override = default;
+    CopyAddrInstruction(
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            caramel::ast::PrimaryType::Ptr const &type,
+            std::string const &destination,
+            std::string const &source
+    );
 
-    Symbol::Ptr getSymbol() const override;
-    void setSymbol(Symbol::Ptr symbol);
+    ~CopyAddrInstruction() override = default;
 
-    PrimaryType::Ptr getPrimaryType() const override;
+    std::string getDestination();
 
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock) override;
+    std::string getSource();
 
-    bool shouldReturnAnIR() const override;
+    int getRegisterNumber();
 
-    void acceptAstDotVisit() override;
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
-    std::shared_ptr<Symbol> mSymbol;
+    std::string mSource;
+    int mRegisterNumber;
 };
 
-} // namespace caramel::ast
+} // namespace caramel::ir
+
+
+

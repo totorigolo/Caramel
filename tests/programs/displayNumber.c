@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,36 +22,31 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "LValue.h"
-#include "../../../symboltable/VariableSymbol.h"
+#include <stdint.h>
+#include <stdio.h>
 
 
-namespace caramel::ast {
+void displayNumber(int32_t number) {
+    int32_t tab[50];
+    int32_t index = 0;
+    int32_t i;
+    while (number >= 1) {
+        tab[index] = number % 10;
+        number = number / 10;
+        index = index + 1;
+    }
 
-class Identifier : public LValue {
-public:
-    using Ptr = std::shared_ptr<Identifier>;
-    using WeakPtr = std::weak_ptr<Identifier>;
+    // TODO : manage signed integers in subtraction (... and others ? :x)
+    // b *displayNumber+913
+    for (i = index; i > 0; i--) { // cond=, inc=901
+        putchar('0' + tab[i - 1]);
+        // b *displayNumber+996
+    }
+}
 
-public:
-    explicit Identifier(antlr4::Token *startToken);
-    ~Identifier() override = default;
+int32_t main() {
 
-    Symbol::Ptr getSymbol() const override;
-    void setSymbol(Symbol::Ptr symbol);
+    displayNumber(20);
 
-    PrimaryType::Ptr getPrimaryType() const override;
-
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock) override;
-
-    bool shouldReturnAnIR() const override;
-
-    void acceptAstDotVisit() override;
-
-private:
-    std::shared_ptr<Symbol> mSymbol;
-};
-
-} // namespace caramel::ast
+    return 0;
+}

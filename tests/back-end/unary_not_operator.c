@@ -22,59 +22,30 @@
  * SOFTWARE.
 */
 
+/*
+ * Multi-line comment.
+ */
+#include <stdio.h>
+#include <stdint.h>
+
+
 int32_t main() {
+    int32_t a = 0, b = 5;
 
-    // 1
-    int32_t a = 1 == 1;
-    int32_t b = 2 > 1;
-    int32_t c = 1 >= 1;
-    int32_t d = 1 < 2;
-    int32_t e = 1 <= 1;
-    int32_t f = 1 != 0;
-    // 0
-    int32_t g = 1 == 0;
-    int32_t h = 2 > 3;
-    int32_t i = 1 >= 2;
-    int32_t j = 3 < 2;
-    int32_t k = 1 <= 0;
-    int32_t l = 1 != 1;
-
-    // complex 1
-    int32_t m = (1 && (4-1) > 2 && 2 != 1) == (0 || 4-2*2 || (4-3));
-    // complex 0
-    int32_t n = (1 && (4-1) > 2 && 2 != 1) == (0 || 4-2*2 == 1 || (4-3) > 2);
-
-    // not ?
-//    int32_t o = !0;
-
+    // 01
     putchar('0' + a);
-    putchar('0' + a + b);
-    putchar('0' + a + b + c);
-    putchar('0' + a + b + c + d);
-    putchar('0' + a + b + c + d + e);
-    putchar('0' + a + b + c + d + e + f);
-    putchar('\n');
-    putchar('0' + g);
-    putchar('0' + g + h);
-    putchar('0' + g + h + i);
-    putchar('0' + g + h + i + j);
-    putchar('0' + g + h + i + j + k);
-    putchar('0' + g + h + i + j + k + l);
-    putchar('\n');
-    putchar('0' + m);
-    putchar('0' + n);
+    putchar('0' + !a);
     putchar('\n');
 
-    if (m <= 1 && n == 0) {
-        putchar('A');
-        putchar('\n');
-    } else {
-        putchar('B');
-        putchar('\n');
-    }
+    // 50
+    putchar('0' + b);
+    putchar('0' + !b);
+    putchar('\n');
 
-//    putchar('\n');
-//    putchar('0' + o);
+    // 24
+    putchar('0' + 1 + !a + !(1 + 2));
+    putchar('0' + 4 - !b + a + !a - !(5 - b));
+    putchar('\n');
 
     return 0;
 }

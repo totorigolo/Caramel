@@ -29,6 +29,7 @@
 #include "../../../ir/instructions/AdditionInstruction.h"
 #include "../../statements/expressions/atomicexpression/LValue.h"
 #include "../../../ir/instructions/PushInstruction.h"
+#include "../../statements/expressions/atomicexpression/Constant.h"
 
 
 namespace caramel::ast {
@@ -64,7 +65,22 @@ std::shared_ptr<ir::IR> AssignmentOperator::getIR(
 
     } else {
         std::string lvalue = currentBasicBlock->addInstruction(mLValue->getIR(currentBasicBlock));
-        std::string rvalue = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
+        std::string rvalue;
+        if (castTo<LValue::Ptr>(rightExpression)) {
+            LValue::Ptr rightExpressionAsLValue = castTo<LValue::Ptr>(rightExpression);
+            rvalue = currentBasicBlock->addInstruction(
+                    std::make_shared<ir::AdditionInstruction>(
+                            Statement::createVarName(),
+                            currentBasicBlock,
+                            rightExpression->getPrimaryType(),
+                            rightExpressionAsLValue->getSymbol()->getName(),
+                            "0"
+                    )
+            );
+        } else {
+            rvalue = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
+        }
+
 
         std::shared_ptr<ir::CopyInstruction> instr = std::make_shared<ir::CopyInstruction>(
                 currentBasicBlock,

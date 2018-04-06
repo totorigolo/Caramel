@@ -22,36 +22,31 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include "../IRVisitor.h"
+#include "CopyAddrInstruction.h"
 
-#include "LValue.h"
-#include "../../../symboltable/VariableSymbol.h"
+namespace caramel::ir {
 
+CopyAddrInstruction::CopyAddrInstruction(
+        std::shared_ptr<BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type, std::string const &destination,
+        std::string const &source
+) : IR(destination, Operation::copy, parentBlock, type), mSource{source}, mRegisterNumber{-1} {}
 
-namespace caramel::ast {
+std::string CopyAddrInstruction::getDestination() {
+    return getReturnName();
+}
 
-class Identifier : public LValue {
-public:
-    using Ptr = std::shared_ptr<Identifier>;
-    using WeakPtr = std::weak_ptr<Identifier>;
+std::string CopyAddrInstruction::getSource() {
+    return mSource;
+}
 
-public:
-    explicit Identifier(antlr4::Token *startToken);
-    ~Identifier() override = default;
+void CopyAddrInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitCopyAddr(this, os);
+}
 
-    Symbol::Ptr getSymbol() const override;
-    void setSymbol(Symbol::Ptr symbol);
+int CopyAddrInstruction::getRegisterNumber() {
+    return mRegisterNumber;
+}
 
-    PrimaryType::Ptr getPrimaryType() const override;
-
-    std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock) override;
-
-    bool shouldReturnAnIR() const override;
-
-    void acceptAstDotVisit() override;
-
-private:
-    std::shared_ptr<Symbol> mSymbol;
-};
-
-} // namespace caramel::ast
+} // namespace caramel::ir

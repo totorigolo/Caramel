@@ -32,6 +32,7 @@ namespace caramel::ir {
 
 class ArrayAccessCopyInstruction;
 class CopyInstruction;
+class CopyAddrInstruction;
 
 class EmptyInstruction;
 
@@ -77,6 +78,11 @@ public:
 
     virtual void visitCopy(
             CopyInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitCopyAddr(
+            CopyAddrInstruction *instruction,
             std::ostream &os
     ) = 0;
 

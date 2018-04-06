@@ -82,6 +82,20 @@ bool CFG::hasSymbol(size_t controlBlockId, std::string const &symbolName) {
            || mSymbols[0].find(symbolName) != mSymbols[0].end();
 }
 
+bool CFG::isSymbolParamArray(size_t controlBlockId, std::string const &symbolName) {
+    if (!hasSymbol(controlBlockId, symbolName)) {
+        logger.fatal() << "Calling CFG::isSymbolArray(" << controlBlockId << ", " << symbolName << ") on unregistered symbol.";
+        exit(1);
+    }
+    return mSymbolIsParamArray[controlBlockId][symbolName];
+}
+
+long CFG::addParamArraySymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type) {
+    mSymbolIsParamArray[controlBlockId][symbolName] = true;
+    long index = mStackSize[controlBlockId] - type->getMemoryLength() / 8U - 4;
+    return addSymbol(controlBlockId, symbolName, type, index);
+}
+
 long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, caramel::ast::PrimaryType::Ptr type) {
     logger.trace() << "[CFG] Adding symbol " << yellow << "@" << controlBlockId << magenta << ": "
                    << grey << symbolName << " of type " << type->getIdentifier();
@@ -97,6 +111,9 @@ long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, carame
         exit(1);
     }
 
+    if (mSymbolIsParamArray[controlBlockId].find(symbolName) == mSymbolIsParamArray[controlBlockId].end()) {
+        mSymbolIsParamArray[controlBlockId][symbolName] = false;
+    }
     mSymbols[controlBlockId][symbolName] = type;
     mStackSize[controlBlockId] = mStackSize[controlBlockId] - type->getMemoryLength() / 8U;
     mSymbolIndex[controlBlockId][symbolName] = mStackSize[controlBlockId];
@@ -115,9 +132,12 @@ long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, ast::P
         return existingIndex;
     }
 
+    if (mSymbolIsParamArray[controlBlockId].find(symbolName) == mSymbolIsParamArray[controlBlockId].end()) {
+        mSymbolIsParamArray[controlBlockId][symbolName] = false;
+    }
     mSymbols[controlBlockId][symbolName] = type;
     mSymbolIndex[controlBlockId][symbolName] = index;
-    if (index > 0) {
+    if (index < 0) {
         logger.warning() << "[CFG] TODO: Check this statement.";
         mStackSize[controlBlockId] = size_t(index);
     }
@@ -135,8 +155,6 @@ long CFG::getSymbolIndex(size_t controlBlockId, std::string const &symbolName) {
         return 0;
     }
 }
-
-
 
 void CFG::enterFunction(size_t controlBlockId) {
     mStackSize[controlBlockId] = 0;
@@ -174,6 +192,7 @@ std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
                << ", name=" << name
                << ", type=" << type->getIdentifier()
                << ", index=" << cfg.mSymbolIndex.at(functionContextId).at(name)
+               << ", paramArray=" << cfg.mSymbolIsParamArray.at(functionContextId).at(name)
                << '\n';
         }
     }

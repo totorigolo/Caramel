@@ -89,6 +89,14 @@ std::string BasicBlock::getLabelName() {
     return mLabelName; // + "_" + std::to_string(getId()) + " " + std::to_string(getFunctionContext());
 }
 
+long BasicBlock::isSymbolParamArray(std::string const &symbolName) {
+    return mCfg->isSymbolParamArray(mFunctionContext, symbolName);
+}
+
+long BasicBlock::addParamArraySymbol(std::string const &symbolName, ast::PrimaryType::Ptr type) {
+    return mCfg->addParamArraySymbol(mFunctionContext, symbolName, type);
+}
+
 long BasicBlock::addSymbol(std::string const &symbolName, ast::PrimaryType::Ptr type) {
     return mCfg->addSymbol(mFunctionContext, symbolName, type);
 }

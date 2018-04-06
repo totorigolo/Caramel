@@ -26,6 +26,8 @@
 #include "../../../../ir/BasicBlock.h"
 #include "../../../../ir/instructions/EmptyInstruction.h"
 #include "../../../../ir/instructions/NopInstruction.h"
+#include "../../../../ir/instructions/CopyAddrInstruction.h"
+
 
 namespace caramel::ast {
 
@@ -36,7 +38,7 @@ Symbol::Ptr Identifier::getSymbol() const {
     return mSymbol;
 }
 
-void Identifier::setSymbol(VariableSymbol::Ptr symbol) {
+void Identifier::setSymbol(Symbol::Ptr symbol) {
     mSymbol = std::move(symbol);
 }
 
@@ -45,7 +47,13 @@ PrimaryType::Ptr Identifier::getPrimaryType() const {
 }
 
 std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) {
-    return std::make_shared<ir::EmptyInstruction>(mSymbol->getName(), currentBasicBlock, mSymbol->getType());
+    if (mSymbol->getSymbolType() == SymbolType::ArraySymbol) {
+        return std::make_shared<ir::CopyAddrInstruction>(
+                currentBasicBlock, mSymbol->getType(), createVarName(), mSymbol->getName()
+        );
+    } else {
+        return std::make_shared<ir::EmptyInstruction>(mSymbol->getName(), currentBasicBlock, mSymbol->getType());
+    }
 }
 
 bool Identifier::shouldReturnAnIR() const {
