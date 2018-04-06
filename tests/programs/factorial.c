@@ -5,34 +5,40 @@
 #include <stdint.h>
 #include <stdio.h>
 
+
 void displayNumber(int32_t number) {
     int32_t tab[50];
     int32_t index = 0;
     int32_t i;
-    while (number >= 1){
-        tab[index]=number%10;
-        number = number/10;
+    while (number >= 1) {
+        tab[index] = number % 10;
+        number = number / 10;
         index = index + 1;
     }
 
-    for (i=(index-1);i>=0;i=i-1) {
-        putchar(tab[i]);
+    // TODO : manage signed integers in subtraction (... and others ? :x)
+    // b *displayNumber+913
+    for (i = index; i > 0; i--) { // cond=, inc=901
+        putchar('0' + tab[i - 1]);
+        // b *displayNumber+996
     }
+    putchar('\n');
 }
 
 
-int32_t factorialSafe(int32_t n) {
-    if (n  < 0){
-        return -1;
-    }else if (n == 0){
+int32_t factorial(int32_t n) {
+    if (n == 0) {
         return 1;
-    }else{
-        return n * factorialSafe(n - 1);
+    } else {
+        return n * factorial(n - 1);
     }
 }
 
-int32_t main(){
-    
+int32_t main() {
+
+    int32_t input;
+    int32_t result;
+
     putchar('S');
     putchar('a');
     putchar('i');
@@ -50,12 +56,23 @@ int32_t main(){
     putchar('f');
     putchar('r');
     putchar('e');
-    putchar(':');
+    putchar(' ');
     putchar('\n');
-    int32_t input = getchar();
-    putchar(input);
 
-    int32_t result = factorialSafe(input);
+    input = getchar() - '0';
+
+    result = factorial(input);
+
+    putchar('R');
+    putchar('e');
+    putchar('s');
+    putchar('u');
+    putchar('l');
+    putchar('t');
+    putchar('a');
+    putchar('t');
+    putchar(' ');
+    putchar('\n');
     displayNumber(result);
 
     return 0;
