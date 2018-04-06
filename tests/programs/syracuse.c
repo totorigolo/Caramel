@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+
 void displayNumber(int32_t number) {
     int32_t tab[50];
     int32_t index = 0;
@@ -23,20 +24,19 @@ void displayNumber(int32_t number) {
     }
 }
 
-int32_t hailstone(int32_t n)
-{
+int32_t hailstone(int32_t n) {
     int32_t tab[100];
-    int32_t index =0;
+    int32_t index = 0;
     int32_t i;
 
 
-    while (n!=1) {
+    while (n != 1) {
         if (index < 100) {
             tab[index] = n;
-            if (n%2 == 0) {
-                n = n/2;
+            if (n % 2 == 0) {
+                n = n / 2;
             } else {
-                n = 3*n+1;
+                n = 3 * n + 1;
             }
         } else {
             n = 1;
@@ -46,7 +46,7 @@ int32_t hailstone(int32_t n)
 
     if (index < 100) {
         tab[index] = 1;
-        index = index +1;
+        index = index + 1;
     }
 
 
@@ -58,10 +58,9 @@ int32_t hailstone(int32_t n)
 }
 
 
-int32_t main(){
-    
-    hailstone(20);
+int32_t main() {
 
+    hailstone(20);
 
 
 }

@@ -16,11 +16,8 @@ void displayNumber(int32_t number) {
         index = index + 1;
     }
 
-    // TODO : manage signed integers in subtraction (... and others ? :x)
-    // b *displayNumber+913
-    for (i = index; i > 0; i--) { // cond=, inc=901
-        putchar('0' + tab[i - 1]);
-        // b *displayNumber+996
+    for (i = (index - 1); i >= 0; i = i - 1) {
+        putchar(tab[i]);
     }
     putchar('\n');
 }

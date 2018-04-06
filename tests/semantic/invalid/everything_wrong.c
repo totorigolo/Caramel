@@ -3,6 +3,9 @@
  * Also shows how it display all the errors
  */
 
+#include <stdint.h>
+#include <stdio.h>
+
 // variable undefined
 int32_t x = y;
 
