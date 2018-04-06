@@ -16,8 +16,8 @@ void displayNumber(int32_t number) {
         index = index + 1;
     }
 
-    for (i = (index - 1); i >= 0; i = i - 1) {
-        putchar(tab[i]);
+    for (i = (index - 1); i >= 0; i--) {
+        putchar('0' + tab[i]);
     }
     putchar('\n');
 }
