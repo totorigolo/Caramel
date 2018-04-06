@@ -134,7 +134,7 @@ Symbol::Ptr SymbolTable::addVariableUsage(
 
     if (isDefined(name)) {
         auto const &symbol = getSymbol(antlrContext, name);
-        if (!(symbol->getSymbolType() == SymbolType::VariableSymbol || symbol->getSymbolType() == SymbolType::ArraySymbol)) {
+        if (symbol->getSymbolType() != SymbolType::VariableSymbol) {
             throw DeclarationMismatchException(
                     antlrContext,
                     name,
