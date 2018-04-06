@@ -365,7 +365,7 @@ antlrcpp::Any ASTVisitor::visitLvalue(CaramelParser::LvalueContext *ctx) {
         return castTo<Expression::Ptr>(arrayAccess);
     } else {
         Identifier::Ptr identifier = std::make_shared<Identifier>(ctx->getStart());
-        VariableSymbol::Ptr variableSymbol = currentContext()->getSymbolTable()->addVariableUsage(
+        Symbol::Ptr variableSymbol = currentContext()->getSymbolTable()->addVariableUsage(
                 ctx, varName, identifier);
         identifier->setSymbol(variableSymbol);
         return castTo<Expression::Ptr>(identifier);

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,30 @@
  * SOFTWARE.
 */
 
-#pragma once
+/*
+ * Multi-line comment.
+ */
+#include <stdio.h>
+#include <stdint.h>
 
-#include "../IR.h"
 
-namespace caramel::ir {
+int32_t main() {
+    int32_t a = 0, b = 5;
 
-class JumpInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<JumpInstruction>;
-    using WeakPtr = std::shared_ptr<JumpInstruction>;
+    // 01
+    putchar('0' + a);
+    putchar('0' + !a);
+    putchar('\n');
 
-public:
-    explicit JumpInstruction(
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            std::string dest
-    );
+    // 50
+    putchar('0' + b);
+    putchar('0' + !b);
+    putchar('\n');
 
-    ~JumpInstruction() override = default;
+    // 24
+    putchar('0' + 1 + !a + !(1 + 2));
+    putchar('0' + 4 - !b + a + !a - !(5 - b));
+    putchar('\n');
 
-    const std::string &getDest() const;
-
-private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-    std::string mDest;
-};
-
-} // namespace caramel::ir
+    return 0;
+}

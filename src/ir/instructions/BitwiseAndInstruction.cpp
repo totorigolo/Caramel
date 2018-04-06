@@ -22,31 +22,29 @@
  * SOFTWARE.
 */
 
-#pragma once
-
-#include "../IR.h"
+#include "BitwiseAndInstruction.h"
+#include "../IRVisitor.h"
 
 namespace caramel::ir {
 
-class JumpLessOrEqualInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<JumpLessOrEqualInstruction>;
-    using WeakPtr = std::shared_ptr<JumpLessOrEqualInstruction>;
+BitwiseAndInstruction::BitwiseAndInstruction(
+        std::string const &returnName,
+        std::shared_ptr<ir::BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string left,
+        std::string right
+) : IR(returnName, Operation::band, parentBlock, type), mLeft{left}, mRight{right} {}
 
-public:
-    explicit JumpLessOrEqualInstruction(
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            std::string dest
-    );
+void BitwiseAndInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitBitwiseAnd(this, os);
+}
 
-    ~JumpLessOrEqualInstruction() override = default;
+std::string BitwiseAndInstruction::getLeft() const {
+    return mLeft;
+}
 
-    const std::string &getDest() const;
-
-private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-    std::string mDest;
-};
+std::string BitwiseAndInstruction::getRight() const {
+    return mRight;
+}
 
 } // namespace caramel::ir

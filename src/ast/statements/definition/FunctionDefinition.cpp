@@ -30,6 +30,7 @@
 #include "../../../ir/instructions/EpilogInstruction.h"
 #include "../../../ir/instructions/CopyInstruction.h"
 #include "../../../ir/instructions/PushInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
 
 
 namespace caramel::ast {
@@ -69,6 +70,10 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
 
     auto parameters = mSymbol->getParameters();
     for (size_t i = 0; i < parameters.size(); i++) {
+        bool isArray = parameters[i].symbolType == SymbolType::ArraySymbol;
+        if (isArray) {
+            function_root_bb->addParamArraySymbol(parameters[i].name, parameters[i].primaryType);
+        }
         if (i < 6) {
             function_root_bb->addInstruction(
                     std::make_shared<ir::CopyInstruction>(function_root_bb, parameters[i].primaryType,
@@ -77,9 +82,7 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
         } else {
             function_root_bb->addSymbol(parameters[i].name, Int64_t::Create(), 16 + i * 8);
         }
-
     }
-
 
     ir::BasicBlock::Ptr function_end_bb = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_endof_" + mSymbol->getName());
     function_root_bb->setExitWhenTrue(function_end_bb);
@@ -89,8 +92,9 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
     ir::BasicBlock::Ptr bb = function_root_bb->getNewWhenTrueBasicBlock("_innerbeginof_" + mSymbol->getName());
     for (ast::Statement::Ptr const &statement : mContext->getStatements()) {
         if (statement->shouldReturnAnIR()) {
-            auto ir = statement->getIR(bb);
-            bb->addInstruction(ir);
+            SAFE_ADD_INSTRUCTION(statement, bb);
+//            auto ir = statement->getIR(bb);
+//            bb->addInstruction(ir);
         } else if (statement->shouldReturnABasicBlock()) {
             auto [child_root, child_end] = statement->getBasicBlock(controlFlow);
 

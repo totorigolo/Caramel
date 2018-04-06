@@ -27,8 +27,9 @@
 #include "../../statements/expressions/binaryexpression/BinaryExpression.h"
 #include "../binaryoperators/BinaryOperatorIndex.h"
 #include "../../statements/expressions/atomicexpression/Constant.h"
-#include "../binaryoperators/DiffOperator.h"
+#include "../binaryoperators/NotEqOperator.h"
 #include "../../../utils/Common.h"
+#include "../binaryoperators/EqualityOperator.h"
 
 namespace caramel::ast {
 
@@ -40,7 +41,7 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::LogicalNotOperator::buildIR(
 ) {
     return std::make_shared<BinaryExpression>(
             castTo<Expression::Ptr>(expression),
-            castTo<BinaryOperator::Ptr>(std::make_shared<DiffOperator>()),
+            castTo<BinaryOperator::Ptr>(std::make_shared<EqualityOperator>()),
             castTo<Expression::Ptr>(Constant::defaultConstant(nullptr)),
             nullptr
     )->getIR(currentBasicBlock);

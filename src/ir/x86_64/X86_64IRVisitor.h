@@ -47,6 +47,8 @@ public:
 
     void visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) override;
 
+    void visitCopyAddr(CopyAddrInstruction *instruction, std::ostream &os) override;
+
     void visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) override;
 
     void visitProlog(caramel::ir::PrologInstruction *instruction, std::ostream &os) override;
@@ -63,20 +65,6 @@ public:
 
     void visitReturn(caramel::ir::ReturnInstruction *instruction, std::ostream &os) override;
 
-    void visitJump(JumpInstruction *instruction, std::ostream &os) override;
-
-    void visitJumpEqual(JumpEqualInstruction *instruction, std::ostream &os) override;
-
-    void visitJumpLess(JumpLessInstruction *instruction, std::ostream &os) override;
-
-    void visitJumpLessOrEqual(JumpLessOrEqualInstruction *instruction, std::ostream &os) override;
-
-    void visitJumpGreaterOrEqual(JumpGreaterOrEqualInstruction *instruction, std::ostream &os) override;
-
-    void visitJumpGreater(JumpGreaterInstruction *instruction, std::ostream &os) override;
-
-    void visitGTE(GTEInstruction *instruction, std::ostream &os) override;
-
     void visitCallParameter(CallParameterInstruction *instruction, std::ostream &os) override;
 
     void visitSubtraction(SubtractionInstruction *instruction, std::ostream &os) override;
@@ -85,14 +73,36 @@ public:
 
     void visitPop(PopInstruction *instruction, std::ostream &os) override;
 
-//private:
+    void visitMultiplication(MultiplicationInstruction *instruction, std::ostream &os) override;
+
+    void visitMod(ModInstruction *instruction, std::ostream &os) override ;
+
+    void visitDivision(DivInstruction *instruction, std::ostream &os) override ;
+
+    void visitFlagToReg(FlagToRegInstruction *instruction, std::ostream &os) override;
+
+    void visitLeftShift(LeftShiftInstruction *instruction, std::ostream &os) override ;
+
+    void visitRightShift(RightShiftInstruction *instruction, std::ostream &os) override;
+
+    void visitBitwiseAnd(BitwiseAndInstruction *instruction, std::ostream &os) override;
+
+    void visitBitwiseOr(BitwiseOrInstruction *instruction, std::ostream &os) override;
+
+    void visitBitwiseXor(BitwiseXorInstruction *instruction, std::ostream &os) override;
+
+
+
+    //private:
     std::string address(std::string const &symbol);
     std::string registerToAssembly(std::string const &register_, size_t bitSize = 32U);
     std::string toAssembly(ir::BasicBlock::Ptr parentBB, std::string const &anySymbol, size_t bitSize = 32U);
     std::string getSizeSuffix(size_t bitSize);
     std::string getFunctionCallRegister(size_t index, size_t bitSize);
+    std::string getRegister(std::string register_, size_t bitSize);
 
-    void visitMultiplication(MultiplicationInstruction *instruction, std::ostream &os) override;
+
+
 };
 
 } // namespace caramel::ir::x86_64

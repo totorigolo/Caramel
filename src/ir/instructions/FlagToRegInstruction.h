@@ -28,25 +28,47 @@
 
 namespace caramel::ir {
 
-class JumpEqualInstruction : public IR {
+enum class FlagToRegType {
+    Less,
+    LessOrEq,
+    Equal,
+    Greater,
+    GreaterOrEq,
+    NotEq
+};
+
+class FlagToRegInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<JumpEqualInstruction>;
-    using WeakPtr = std::shared_ptr<JumpEqualInstruction>;
+    using Ptr = std::shared_ptr<FlagToRegInstruction>;
+    using WeakPtr = std::shared_ptr<FlagToRegInstruction>;
 
 public:
-    explicit JumpEqualInstruction(
+    explicit FlagToRegInstruction(
+            std::string const &returnName,
             std::shared_ptr<BasicBlock> const &parentBlock,
-            std::string dest
+            ast::PrimaryType::Ptr const &type,
+            std::string left,
+            std::string right,
+            FlagToRegType ftrType
     );
 
-    ~JumpEqualInstruction() override = default;
+    ~FlagToRegInstruction() override = default;
 
-    const std::string &getDest() const;
+    std::string getLeft() const;
+
+    std::string getRight() const;
+
+    FlagToRegType getFtrType() const;
 
 private:
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
-    std::string mDest;
+private:
+    std::string mLeft;
+    std::string mRight;
+    FlagToRegType mFtrType;
 };
+
+std::ostream & operator<< (std::ostream & os, FlagToRegType const & ftrType);
 
 } // namespace caramel::ir

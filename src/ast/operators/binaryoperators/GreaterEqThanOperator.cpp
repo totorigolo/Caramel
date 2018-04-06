@@ -23,10 +23,12 @@
 */
 
 #include "GreaterEqThanOperator.h"
-#include "../../../ir/BasicBlock.h"
-#include "../../../ir/instructions/AdditionInstruction.h"
 #include "../../../utils/Common.h"
-#include "../../../ir/instructions/GTEInstruction.h"
+#include "../../../ir/instructions/CopyInstruction.h"
+#include "../../../ir/instructions/PushInstruction.h"
+#include "../../../ir/instructions/PopInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
+#include "../../../ir/instructions/FlagToRegInstruction.h"
 
 using namespace caramel::utils;
 
@@ -36,14 +38,27 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::GreaterEqThanOperator::getIR(
         std::shared_ptr<caramel::ast::Expression> const &rightExpression
 ) {
 
-    std::string var1 = currentBasicBlock->addInstruction(leftExpression->getIR(currentBasicBlock));
-    std::string var2 = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
-    std::string tmp = Statement::createVarName();
+    auto maxType = GET_MAX_TYPE(leftExpression, rightExpression);
 
-    std::shared_ptr<ir::GTEInstruction> instr = std::make_shared<ir::GTEInstruction>(
-            tmp,
+    std::string left = SAFE_ADD_INSTRUCTION(leftExpression, currentBasicBlock);
+
+    MOVE_TO(left, ir::IR::ACCUMULATOR_2, maxType);
+
+    PUSH(ir::IR::ACCUMULATOR_2);
+
+    std::string right = SAFE_ADD_INSTRUCTION(rightExpression, currentBasicBlock);
+
+    MOVE_TO(right, ir::IR::ACCUMULATOR_1, maxType);
+
+    POP(ir::IR::ACCUMULATOR_2);
+
+    std::shared_ptr<ir::FlagToRegInstruction> instr = std::make_shared<ir::FlagToRegInstruction>(
+            ir::IR::ACCUMULATOR_2,
             currentBasicBlock,
-            PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType())
+            PrimaryType::max(leftExpression->getPrimaryType(), rightExpression->getPrimaryType()),
+            ir::IR::ACCUMULATOR_2, // left value
+            ir::IR::ACCUMULATOR_1, // right value (be careful to PUSH/POP)
+            ir::FlagToRegType::GreaterOrEq
     );
     return castTo<ir::IR::Ptr>(instr);
 }

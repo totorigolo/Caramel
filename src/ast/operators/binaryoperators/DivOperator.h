@@ -24,7 +24,10 @@
 
 #pragma once
 
+#include <memory>
+#include <Common.h>
 #include "../BinaryOperator.h"
+
 
 namespace caramel::ast {
 
@@ -52,9 +55,11 @@ public:
     StatementType getExpressionType() const override;
 
     std::string getToken() const override;
+
+    bool shouldReturnAnIR() const override;
+
+    bool shouldReturnABasicBlock() const override;
+
 };
 
 } // namespace caramel::ast
-
-
-

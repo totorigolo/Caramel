@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +22,48 @@
  * SOFTWARE.
 */
 
-#include "JumpInstruction.h"
-#include "../IRVisitor.h"
 
-namespace caramel::ir {
-
-JumpInstruction::JumpInstruction(
-        std::shared_ptr<ir::BasicBlock> const &parentBlock,
-        std::string dest
-) : IR("",
-       Operation::jmp, parentBlock,
-       ast::Void_t::Create()),
-    mDest{std::move(dest)}{}
-
-void JumpInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitJump(this, os);
+void displayNumber(int32_t number) {
+    int32_t tab[50];
+    int32_t index = 0;
+    int32_t i;
+    while (number >= 1){
+        tab[index]=number%10;
+        number = number/10;
+        index = index + 1;
+    }
+    for (i=(index-1);i>=0;i--) {
+        putchar('0' + tab[i]);
+    }
 }
 
-const std::string &JumpInstruction::getDest() const {
-    return mDest;
+int32_t fibonacci_rec(int32_t n) {
+    if (n <= 1) {
+        return n;
+    } else {
+        return fibonacci_rec(n - 1) + fibonacci_rec(n - 2);
+    }
 }
 
-} // namespace caramel::ir
+int32_t fibonacci_lin(int32_t n) {
+    int32_t i = 0;
+    int32_t j = 1;
+    int32_t temp;
+    int32_t k;
+
+    for (k = 0; k < n; k = k+1) {
+        temp = i + j;
+        i = j + 0; // + 0 temp fix for double returns
+        j = temp + 0;
+    }
+    return i;
+}
+
+int32_t main() {
+    displayNumber(fibonacci_rec(20));
+    putchar('\n');
+    displayNumber(fibonacci_lin(20));
+    putchar('\n');
+
+    return 0;
+}

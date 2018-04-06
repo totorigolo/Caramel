@@ -33,7 +33,7 @@ MultiplicationInstruction::MultiplicationInstruction(
         ast::PrimaryType::Ptr const &type,
         std::string left,
         std::string right
-) : IR(returnName, Operation::add, parentBlock, type), mLeft{left}, mRight{right} {}
+) : IR(returnName, Operation::mul, parentBlock, type), mLeft{left}, mRight{right} {}
 
 void MultiplicationInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitMultiplication(this, os);

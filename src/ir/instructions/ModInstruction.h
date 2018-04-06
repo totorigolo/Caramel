@@ -22,25 +22,38 @@
  * SOFTWARE.
 */
 
-#include "JumpLessOrEqualInstruction.h"
-#include "../IRVisitor.h"
+#pragma once
+
+#include "../IR.h"
 
 namespace caramel::ir {
 
-JumpLessOrEqualInstruction::JumpLessOrEqualInstruction(
-        std::shared_ptr<ir::BasicBlock> const &parentBlock,
-        std::string dest
-) : IR("",
-       Operation::jmp_le, parentBlock,
-       ast::Void_t::Create()),
-    mDest{std::move(dest)}{}
+class ModInstruction : public IR {
+public:
+    using Ptr = std::shared_ptr<ModInstruction>;
+    using WeakPtr = std::shared_ptr<ModInstruction>;
 
-void JumpLessOrEqualInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitJumpLessOrEqual(this, os);
-}
+public:
+    explicit ModInstruction(
+            std::string const &returnName,
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            ast::PrimaryType::Ptr const &type,
+            std::string left,
+            std::string right
+    );
 
-const std::string &JumpLessOrEqualInstruction::getDest() const {
-    return mDest;
-}
+    ~ModInstruction() override = default;
+
+    std::string getLeft() const;
+
+    std::string getRight() const;
+
+private:
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+
+private:
+    std::string mLeft;
+    std::string mRight;
+};
 
 } // namespace caramel::ir

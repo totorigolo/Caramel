@@ -24,34 +24,36 @@
 
 #pragma once
 
-#include "../BinaryOperator.h"
+#include "../IR.h"
 
-namespace caramel::ast {
+namespace caramel::ir {
 
-class DiffOperator : public BinaryOperator {
+class DivInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<DiffOperator>;
-    using WeakPtr = std::weak_ptr<DiffOperator>;
-
-    static constexpr const char* SYMBOL = "!=";
+    using Ptr = std::shared_ptr<DivInstruction>;
+    using WeakPtr = std::shared_ptr<DivInstruction>;
 
 public:
-    DiffOperator() = default;
+    explicit DivInstruction(
+            std::string const &returnName,
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            ast::PrimaryType::Ptr const &type,
+            std::string left,
+            std::string right
+    );
 
-public:
-    ~DiffOperator() override = default;
+    ~DivInstruction() override = default;
 
-public:
-    std::shared_ptr<caramel::ir::IR>
-    getIR(
-            std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
-            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-            std::shared_ptr<caramel::ast::Expression> const &rightExpression
-    ) override;
+    std::string getLeft() const;
 
-    StatementType getExpressionType() const override;
+    std::string getRight() const;
 
-    std::string getToken() const override;
+private:
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+
+private:
+    std::string mLeft;
+    std::string mRight;
 };
 
-} // namespace caramel::ast
+} // namespace caramel::ir

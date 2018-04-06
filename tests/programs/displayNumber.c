@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,31 @@
  * SOFTWARE.
 */
 
-#pragma once
+#include <stdint.h>
+#include <stdio.h>
 
-#include "../IR.h"
 
-namespace caramel::ir {
+void displayNumber(int32_t number) {
+    int32_t tab[50];
+    int32_t index = 0;
+    int32_t i;
+    while (number >= 1) {
+        tab[index] = number % 10;
+        number = number / 10;
+        index = index + 1;
+    }
 
-class JumpLessInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<JumpLessInstruction>;
-    using WeakPtr = std::shared_ptr<JumpLessInstruction>;
+    // TODO : manage signed integers in subtraction (... and others ? :x)
+    // b *displayNumber+913
+    for (i = index; i > 0; i--) { // cond=, inc=901
+        putchar('0' + tab[i - 1]);
+        // b *displayNumber+996
+    }
+}
 
-public:
-    explicit JumpLessInstruction(
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            std::string dest
-    );
+int32_t main() {
 
-    ~JumpLessInstruction() override = default;
+    displayNumber(20);
 
-    const std::string &getDest() const;
-
-private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-    std::string mDest;
-};
-
-} // namespace caramel::ir
+    return 0;
+}

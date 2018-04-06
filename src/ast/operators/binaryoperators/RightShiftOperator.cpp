@@ -23,29 +23,60 @@
 */
 
 #include "RightShiftOperator.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../ir/instructions/AdditionInstruction.h"
+#include "../../../utils/Common.h"
+#include "../../../ir/instructions/CopyInstruction.h"
+#include "../../../ir/instructions/PushInstruction.h"
+#include "../../../ir/instructions/PopInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
+#include "../../../ir/instructions/RightShiftInstruction.h"
 
-namespace caramel::ast {
+using namespace caramel::utils;
 
-std::shared_ptr<ir::IR>
-RightShiftOperator::getIR(
+std::shared_ptr<caramel::ir::IR> caramel::ast::RightShiftOperator::getIR(
         std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
-        std::shared_ptr<Expression> const &leftExpression,
-        std::shared_ptr<Expression> const &rightExpression
+        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+        std::shared_ptr<caramel::ast::Expression> const &rightExpression
 ) {
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+    auto maxType = GET_MAX_TYPE(leftExpression, rightExpression);
+
+    std::string left = SAFE_ADD_INSTRUCTION(leftExpression, currentBasicBlock);
+
+    MOVE_TO(left, ir::IR::ACCUMULATOR_2, maxType);
+
+    PUSH(ir::IR::ACCUMULATOR_2);
+
+    std::string right = SAFE_ADD_INSTRUCTION(rightExpression, currentBasicBlock);
+
+    MOVE_TO(right, ir::IR::ACCUMULATOR_1, maxType);
+
+    POP(ir::IR::ACCUMULATOR_2);
+
+    std::shared_ptr<ir::RightShiftInstruction> instr = std::make_shared<ir::RightShiftInstruction>(
+            ir::IR::ACCUMULATOR_2,
+            currentBasicBlock,
+            maxType,
+            ir::IR::ACCUMULATOR_2,
+            ir::IR::ACCUMULATOR_1
+    );
+
+    return castTo<ir::IR::Ptr>(instr);
 }
 
-StatementType RightShiftOperator::getExpressionType() const {
+caramel::ast::StatementType caramel::ast::RightShiftOperator::getExpressionType() const {
     return StatementType::BitwiseShiftExpression;
 }
 
-std::string RightShiftOperator::getToken() const {
+std::string caramel::ast::RightShiftOperator::getToken() const {
     return SYMBOL;
 }
 
-} // namespace caramel::ast
+bool caramel::ast::RightShiftOperator::shouldReturnAnIR() const {
+    return true;
+}
+
+bool caramel::ast::RightShiftOperator::shouldReturnABasicBlock() const {
+    return false;
+}

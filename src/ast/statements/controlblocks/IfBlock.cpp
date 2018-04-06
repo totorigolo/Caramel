@@ -26,12 +26,7 @@
 #include "../../../ir/CFG.h"
 #include "../../../ir/BasicBlock.h"
 #include "../../../ir/IR.h"
-#include "../../../ir/instructions/JumpEqualInstruction.h"
-#include "../../../ir/instructions/JumpLessInstruction.h"
-#include "../../../ir/instructions/JumpLessOrEqualInstruction.h"
-#include "../../../ir/instructions/JumpInstruction.h"
-#include "../../../ir/instructions/JumpGreaterInstruction.h"
-#include "../../../ir/instructions/JumpGreaterOrEqualInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
 
 
 namespace caramel::ast {
@@ -84,23 +79,20 @@ ir::GetBasicBlockReturn IfBlock::getBasicBlock(
     // COND BB
     if (mCondition->shouldReturnAnIR()) {
         // TODO: Grab the returnName here? (I think not)
-        bbCond->addInstruction(mCondition->getIR(bbCond));
+        SAFE_ADD_INSTRUCTION(mCondition, bbCond); // bbCond->addInstruction(mCondition->getIR(bbCond));
     } else if (mCondition->shouldReturnABasicBlock()) {
 
         auto [cond_begin, cond_end] = mCondition->getBasicBlock(controlFlow);
 
-        bbCond->setExitWhenTrue(cond_begin);
-        // bb has no when_false
+        bbCond = cond_begin;
         cond_end->setExitWhenTrue(bbThen);
-        cond_end->setExitWhenFalse(bbElse); //< ?? Check mElseBlock.empty() before
-
-        bbCond = cond_end->getNewWhenTrueBasicBlock("_condafter");
+        cond_end->setExitWhenFalse(bbElse);
     }
 
     // THEN BB
     for (auto const &statement : mThenBlock) {
         if (statement->shouldReturnAnIR()) {
-            bbThen->addInstruction(statement->getIR(bbThen));
+            SAFE_ADD_INSTRUCTION(statement, bbThen); // bbThen->addInstruction(statement->getIR(bbThen));
         } else if (statement->shouldReturnABasicBlock()) {
             auto [then_begin, then_end] = statement->getBasicBlock(controlFlow);
 
@@ -125,7 +117,7 @@ ir::GetBasicBlockReturn IfBlock::getBasicBlock(
     bbElse->setExitWhenTrue(bbEnd);
     for (ast::Statement::Ptr const &statement : mElseBlock){
         if(statement->shouldReturnAnIR()) {
-            bbElse->addInstruction(statement->getIR(bbElse));
+            SAFE_ADD_INSTRUCTION(statement, bbElse); // bbElse->addInstruction(statement->getIR(bbElse));
         } else if (statement->shouldReturnABasicBlock()){
             auto [else_begin, else_end] = statement->getBasicBlock(controlFlow);
 

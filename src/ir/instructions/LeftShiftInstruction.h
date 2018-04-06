@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+ * Copyright (c) 2018 insa.4if.hexanome_kalate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,38 @@
  * SOFTWARE.
 */
 
-#include "DiffOperator.h"
+#pragma once
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::DiffOperator::getIR(
-        std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
-        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-        std::shared_ptr<caramel::ast::Expression> const &rightExpression
-) {
+#include "../IR.h"
 
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+namespace caramel::ir {
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
-}
+class LeftShiftInstruction : public IR {
+public:
+    using Ptr = std::shared_ptr<LeftShiftInstruction>;
+    using WeakPtr = std::shared_ptr<LeftShiftInstruction>;
 
-caramel::ast::StatementType caramel::ast::DiffOperator::getExpressionType() const {
-    return StatementType::EqualityExpression;
-}
+public:
+    explicit LeftShiftInstruction(
+            std::string const &returnName,
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            ast::PrimaryType::Ptr const &type,
+            std::string left,
+            std::string right
+    );
 
-std::string caramel::ast::DiffOperator::getToken() const {
-    return SYMBOL;
-}
+    ~LeftShiftInstruction() override = default;
+
+    std::string getLeft() const;
+
+    std::string getRight() const;
+
+private:
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+
+private:
+    std::string mLeft;
+    std::string mRight;
+};
+
+} // namespace caramel::ir

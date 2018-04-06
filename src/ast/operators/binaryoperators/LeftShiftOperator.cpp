@@ -23,7 +23,16 @@
 */
 
 #include "LeftShiftOperator.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../ir/instructions/AdditionInstruction.h"
+#include "../../../utils/Common.h"
+#include "../../../ir/instructions/CopyInstruction.h"
+#include "../../../ir/instructions/PushInstruction.h"
+#include "../../../ir/instructions/PopInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
+#include "../../../ir/instructions/LeftShiftInstruction.h"
 
+using namespace caramel::utils;
 
 std::shared_ptr<caramel::ir::IR> caramel::ast::LeftShiftOperator::getIR(
         std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
@@ -31,12 +40,29 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::LeftShiftOperator::getIR(
         std::shared_ptr<caramel::ast::Expression> const &rightExpression
 ) {
 
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+    auto maxType = GET_MAX_TYPE(leftExpression, rightExpression);
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+    std::string left = SAFE_ADD_INSTRUCTION(leftExpression, currentBasicBlock);
+
+    MOVE_TO(left, ir::IR::ACCUMULATOR_2, maxType);
+
+    PUSH(ir::IR::ACCUMULATOR_2);
+
+    std::string right = SAFE_ADD_INSTRUCTION(rightExpression, currentBasicBlock);
+
+    MOVE_TO(right, ir::IR::ACCUMULATOR_1, maxType);
+
+    POP(ir::IR::ACCUMULATOR_2);
+
+    std::shared_ptr<ir::LeftShiftInstruction> instr = std::make_shared<ir::LeftShiftInstruction>(
+            ir::IR::ACCUMULATOR_2,
+            currentBasicBlock,
+            maxType,
+            ir::IR::ACCUMULATOR_2,
+            ir::IR::ACCUMULATOR_1
+    );
+
+    return castTo<ir::IR::Ptr>(instr);
 }
 
 caramel::ast::StatementType caramel::ast::LeftShiftOperator::getExpressionType() const {
@@ -45,4 +71,12 @@ caramel::ast::StatementType caramel::ast::LeftShiftOperator::getExpressionType()
 
 std::string caramel::ast::LeftShiftOperator::getToken() const {
     return SYMBOL;
+}
+
+bool caramel::ast::LeftShiftOperator::shouldReturnAnIR() const {
+    return true;
+}
+
+bool caramel::ast::LeftShiftOperator::shouldReturnABasicBlock() const {
+    return false;
 }

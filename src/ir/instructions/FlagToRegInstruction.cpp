@@ -22,26 +22,46 @@
  * SOFTWARE.
 */
 
-#include "JumpGreaterInstruction.h"
+#include "FlagToRegInstruction.h"
 #include "../IRVisitor.h"
 
 namespace caramel::ir {
 
-JumpGreaterInstruction::JumpGreaterInstruction(
+FlagToRegInstruction::FlagToRegInstruction(
+        std::string const &returnName,
         std::shared_ptr<ir::BasicBlock> const &parentBlock,
-        std::string dest
-) : IR("",
-       Operation::jmp_gt, parentBlock,
-       ast::Void_t::Create()
-),
-    mDest{std::move(dest)} {}
+        ast::PrimaryType::Ptr const &type,
+        std::string left,
+        std::string right,
+        FlagToRegType ftrType
+) : IR(returnName, Operation::ftr, parentBlock, type), mLeft{left}, mRight{right}, mFtrType{ftrType} {}
 
-void JumpGreaterInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitJumpGreater(this, os);
+void FlagToRegInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitFlagToReg(this, os);
 }
 
-const std::string &JumpGreaterInstruction::getDest() const {
-    return mDest;
+std::string FlagToRegInstruction::getLeft() const {
+    return mLeft;
+}
+
+std::string FlagToRegInstruction::getRight() const {
+    return mRight;
+}
+
+FlagToRegType FlagToRegInstruction::getFtrType() const {
+    return mFtrType;
+}
+
+std::ostream & operator<< (std::ostream & os, FlagToRegType const & ftrType) {
+    switch (ftrType) {
+        case FlagToRegType::Equal: return os << "e";
+        case FlagToRegType::Greater: return os << "g";
+        case FlagToRegType::GreaterOrEq: return os << "ge";
+        case FlagToRegType::Less: return os << "l";
+        case FlagToRegType::LessOrEq: return os << "le";
+        case FlagToRegType::NotEq: return os << "ne";
+    }
+    return os;
 }
 
 } // namespace caramel::ir

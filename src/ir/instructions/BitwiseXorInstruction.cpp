@@ -21,30 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
 */
-#pragma once
 
-#include <memory>
-#include "../IR.h"
+#include "BitwiseXorInstruction.h"
+#include "../IRVisitor.h"
 
 namespace caramel::ir {
 
-class GTEInstruction : public IR {
-public:
-    using Ptr = std::shared_ptr<GTEInstruction>;
-    using WeakPtr = std::weak_ptr<GTEInstruction>;
+BitwiseXorInstruction::BitwiseXorInstruction(
+        std::string const &returnName,
+        std::shared_ptr<ir::BasicBlock> const &parentBlock,
+        ast::PrimaryType::Ptr const &type,
+        std::string left,
+        std::string right
+) : IR(returnName, Operation::bxor, parentBlock, type), mLeft{left}, mRight{right} {}
 
-public:
-    explicit GTEInstruction(
-            std::string const &returnName,
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            ast::PrimaryType::Ptr const & type
-    );
+void BitwiseXorInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
+    visitor->visitBitwiseXor(this, os);
+}
 
-~GTEInstruction() override  = default;
+std::string BitwiseXorInstruction::getLeft() const {
+    return mLeft;
+}
 
-private:
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream & os);
-
-};
+std::string BitwiseXorInstruction::getRight() const {
+    return mRight;
+}
 
 } // namespace caramel::ir

@@ -22,25 +22,38 @@
  * SOFTWARE.
 */
 
-#include "JumpGreaterOrEqualInstruction.h"
-#include "../IRVisitor.h"
+#pragma once
+
+#include "../IR.h"
 
 namespace caramel::ir {
 
-JumpGreaterOrEqualInstruction::JumpGreaterOrEqualInstruction(
-        std::shared_ptr<ir::BasicBlock> const &parentBlock,
-        std::string dest
-) : IR("",
-       Operation::jmp_ge, parentBlock,
-       ast::Void_t::Create()),
-    mDest{std::move(dest)}{}
+class RightShiftInstruction : public IR {
+public:
+    using Ptr = std::shared_ptr<RightShiftInstruction>;
+    using WeakPtr = std::shared_ptr<RightShiftInstruction>;
 
-void JumpGreaterOrEqualInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitJumpGreaterOrEqual(this, os);
-}
+public:
+    explicit RightShiftInstruction(
+            std::string const &returnName,
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            ast::PrimaryType::Ptr const &type,
+            std::string left,
+            std::string right
+    );
 
-const std::string &JumpGreaterOrEqualInstruction::getDest() const {
-    return mDest;
-}
+    ~RightShiftInstruction() override = default;
+
+    std::string getLeft() const;
+
+    std::string getRight() const;
+
+private:
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+
+private:
+    std::string mLeft;
+    std::string mRight;
+};
 
 } // namespace caramel::ir

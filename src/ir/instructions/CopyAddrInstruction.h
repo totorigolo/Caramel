@@ -28,25 +28,34 @@
 
 namespace caramel::ir {
 
-class JumpGreaterInstruction : public IR {
+class CopyAddrInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<JumpGreaterInstruction>;
-    using WeakPtr = std::shared_ptr<JumpGreaterInstruction>;
+    using Ptr = std::shared_ptr<CopyAddrInstruction>;
+    using WeakPtr = std::shared_ptr<CopyAddrInstruction>;
 
-public:
-    explicit JumpGreaterInstruction(
+    CopyAddrInstruction(
             std::shared_ptr<BasicBlock> const &parentBlock,
-            std::string dest
+            caramel::ast::PrimaryType::Ptr const &type,
+            std::string const &destination,
+            std::string const &source
     );
 
-    ~JumpGreaterInstruction() override = default;
+    ~CopyAddrInstruction() override = default;
 
-    const std::string &getDest() const;
+    std::string getDestination();
 
-private:
+    std::string getSource();
+
+    int getRegisterNumber();
+
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
-    std::string mDest;
+private:
+    std::string mSource;
+    int mRegisterNumber;
 };
 
 } // namespace caramel::ir
+
+
+

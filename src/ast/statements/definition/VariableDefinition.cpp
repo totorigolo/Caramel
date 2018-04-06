@@ -28,6 +28,7 @@
 #include "../../symboltable/VariableSymbol.h"
 #include "../../../ir/BasicBlock.h"
 #include "../../../ir/instructions/CopyInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
 #include <utility>
 
 
@@ -72,8 +73,8 @@ bool VariableDefinition::shouldReturnAnIR() const {
 
 std::shared_ptr<ir::IR> VariableDefinition::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) {
 
-    auto ir = mInitializer->getIR(currentBasicBlock);
-    std::string opName = currentBasicBlock->addInstruction(ir);
+//    auto ir = mInitializer->getIR(currentBasicBlock);
+    std::string opName = SAFE_ADD_INSTRUCTION(mInitializer, currentBasicBlock); // currentBasicBlock->addInstruction(ir);
     std::string identifier = mSymbol.lock()->getName();
 
     return std::make_shared<ir::CopyInstruction>(

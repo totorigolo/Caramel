@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +22,41 @@
  * SOFTWARE.
 */
 
-#include "JumpEqualInstruction.h"
-#include "../IRVisitor.h"
-
-namespace caramel::ir {
-
-JumpEqualInstruction::JumpEqualInstruction(
-        std::shared_ptr<ir::BasicBlock> const &parentBlock,
-        std::string dest
-) : IR(
-        "",
-        Operation::jmp_eq, parentBlock,
-        ast::Void_t::Create()
-),
-    mDest{std::move(dest)} {}
-
-void JumpEqualInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitJumpEqual(this, os);
+void displayNumber(int32_t number) {
+    int32_t tab[50];
+    int32_t index = 0;
+    int32_t i;
+    while (number >= 1){
+        tab[index]=number%10;
+        number = number/10;
+        index = index + 1;
+    }
+    for (i=(index-1);i>=0;i--) {
+        putchar('0' + tab[i]);
+    }
 }
 
-const std::string &JumpEqualInstruction::getDest() const {
-    return mDest;
+int32_t ackermann(int32_t x, int32_t y)
+{
+    if(x<0 || y<0) {
+//        putchar('A');
+        return 0-1;
+    }
+    if(x==0) {
+//        putchar('B');
+        return y+1;
+    }
+    if(y==0) {
+//        putchar('C');
+        return ackermann(x-1,1);
+    }
+//    putchar('D');
+    return ackermann(x-1,ackermann(x,y-1));
 }
 
-} // namespace caramel::ir
+int32_t main() {
+    displayNumber(ackermann(3, 3));
+    putchar('\n');
+
+    return 0;
+}

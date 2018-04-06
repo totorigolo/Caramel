@@ -28,25 +28,32 @@
 
 namespace caramel::ir {
 
-class JumpGreaterOrEqualInstruction : public IR {
+class BitwiseOrInstruction : public IR {
 public:
-    using Ptr = std::shared_ptr<JumpGreaterOrEqualInstruction>;
-    using WeakPtr = std::shared_ptr<JumpGreaterOrEqualInstruction>;
+    using Ptr = std::shared_ptr<BitwiseOrInstruction>;
+    using WeakPtr = std::shared_ptr<BitwiseOrInstruction>;
 
 public:
-    explicit JumpGreaterOrEqualInstruction(
+    explicit BitwiseOrInstruction(
+            std::string const &returnName,
             std::shared_ptr<BasicBlock> const &parentBlock,
-            std::string dest
+            ast::PrimaryType::Ptr const &type,
+            std::string left,
+            std::string right
     );
 
-    ~JumpGreaterOrEqualInstruction() override = default;
+    ~BitwiseOrInstruction() override = default;
 
-    const std::string &getDest() const;
+    std::string getLeft() const;
+
+    std::string getRight() const;
 
 private:
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
-    std::string mDest;
+private:
+    std::string mLeft;
+    std::string mRight;
 };
 
 } // namespace caramel::ir

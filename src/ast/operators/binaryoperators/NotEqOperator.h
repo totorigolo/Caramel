@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,25 +22,36 @@
  * SOFTWARE.
 */
 
-#include "JumpLessInstruction.h"
-#include "../IRVisitor.h"
+#pragma once
 
-namespace caramel::ir {
+#include "../BinaryOperator.h"
 
-JumpLessInstruction::JumpLessInstruction(
-        std::shared_ptr<ir::BasicBlock> const &parentBlock,
-        std::string dest
-) : IR("",
-       Operation::jmp_lt, parentBlock,
-       ast::Void_t::Create()),
-    mDest{std::move(dest)}{}
+namespace caramel::ast {
 
-void JumpLessInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitJumpLess(this, os);
-}
+class NotEqOperator : public BinaryOperator {
+public:
+    using Ptr = std::shared_ptr<NotEqOperator>;
+    using WeakPtr = std::weak_ptr<NotEqOperator>;
 
-const std::string &JumpLessInstruction::getDest() const {
-    return mDest;
-}
+    static constexpr const char* SYMBOL = "!=";
 
-} // namespace caramel::ir
+public:
+    NotEqOperator() = default;
+
+public:
+    ~NotEqOperator() override = default;
+
+public:
+    std::shared_ptr<caramel::ir::IR>
+    getIR(
+            std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
+            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+            std::shared_ptr<caramel::ast::Expression> const &rightExpression
+    ) override;
+
+    StatementType getExpressionType() const override;
+
+    std::string getToken() const override;
+};
+
+} // namespace caramel::ast

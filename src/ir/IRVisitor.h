@@ -32,6 +32,7 @@ namespace caramel::ir {
 
 class ArrayAccessCopyInstruction;
 class CopyInstruction;
+class CopyAddrInstruction;
 
 class EmptyInstruction;
 
@@ -49,22 +50,39 @@ class FunctionCallInstruction;
 class NopInstruction;
 
 class ReturnInstruction;
-class JumpInstruction;
-class JumpEqualInstruction;
-class JumpLessInstruction;
-class JumpLessOrEqualInstruction;
-class JumpGreaterOrEqualInstruction;
-class JumpGreaterInstruction;
-class GTEInstruction;
 class PushInstruction;
 class PopInstruction;
 class MultiplicationInstruction;
+class ModInstruction;
+class DivInstruction;
+class FlagToRegInstruction;
+class LeftShiftInstruction;
+class RightShiftInstruction;
+class BitwiseAndInstruction;
+class BitwiseOrInstruction;
+class BitwiseXorInstruction;
+
 
 class IRVisitor {
 public:
 
+    virtual void visitMod(
+            ModInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitDivision(
+            DivInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
     virtual void visitCopy(
             CopyInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitCopyAddr(
+            CopyAddrInstruction *instruction,
             std::ostream &os
     ) = 0;
 
@@ -113,41 +131,6 @@ public:
             std::ostream &os
     ) = 0;
 
-    virtual void visitJump(
-            JumpInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
-    virtual void visitJumpEqual(
-            JumpEqualInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
-    virtual void visitJumpLess(
-            JumpLessInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
-    virtual void visitJumpLessOrEqual(
-            JumpLessOrEqualInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
-    virtual void visitJumpGreaterOrEqual(
-            JumpGreaterOrEqualInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
-    virtual void visitJumpGreater(
-            JumpGreaterInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
-    virtual void visitGTE(
-            GTEInstruction *instruction,
-            std::ostream &os
-    ) = 0;
-
     virtual void visitCallParameter(
             CallParameterInstruction *instruction,
             std::ostream &os
@@ -170,6 +153,36 @@ public:
 
     virtual void visitMultiplication(
             MultiplicationInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitLeftShift(
+            LeftShiftInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitRightShift(
+            RightShiftInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitBitwiseAnd(
+            BitwiseAndInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitBitwiseOr(
+            BitwiseOrInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitBitwiseXor(
+            BitwiseXorInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitFlagToReg(
+            FlagToRegInstruction *instruction,
             std::ostream &os
     ) = 0;
 

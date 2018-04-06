@@ -28,6 +28,7 @@
 #include <Common.h>
 #include "../BinaryOperator.h"
 
+
 namespace caramel::ast {
 
 class RightShiftOperator : public BinaryOperator {
@@ -44,17 +45,21 @@ public:
     ~RightShiftOperator() override = default;
 
 public:
-    std::shared_ptr<ir::IR> getIR(
-            std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
-            std::shared_ptr<Expression> const &leftExpression,
-            std::shared_ptr<Expression> const &rightExpression
+    std::shared_ptr<caramel::ir::IR>
+    getIR(
+            std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock,
+            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+            std::shared_ptr<caramel::ast::Expression> const &rightExpression
     ) override;
 
     StatementType getExpressionType() const override;
 
     std::string getToken() const override;
+
+    bool shouldReturnAnIR() const override;
+
+    bool shouldReturnABasicBlock() const override;
+
 };
 
-}
-
-
+} // namespace caramel::ast

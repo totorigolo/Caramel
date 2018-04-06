@@ -39,6 +39,13 @@ enum class Operation {
     add,
     sub,
     mul,
+    mod,
+    div,
+    lbs,
+    rbs,
+    band,
+    bor,
+    bxor,
     rmem,
     wmem,
     call,
@@ -54,13 +61,8 @@ enum class Operation {
     epilog,
     leave,
     nope,
-    jmp,
-    jmp_eq,
-    jmp_lt,
-    jmp_le,
-    jmp_ge,
-    jmp_gt,
-    popq
+    popq,
+    ftr // equivalent of ser
 };
 
 class IR {
@@ -70,11 +72,12 @@ public:
 
     static constexpr const char* REGISTER_BASE_POINTER = "%rbp";
     static constexpr const char* REGISTER_STACK_POINTER = "%rsp";
-    static constexpr const char* ACCUMULATOR = "%eax";
+    static constexpr const char* ACCUMULATOR = "%rax";
     static constexpr const char* ACCUMULATOR_1 = "%r10";
     static constexpr const char* ACCUMULATOR_2 = "%r11";
     static constexpr const char* REGISTER_10 = "%r10";
     static constexpr const char* REGISTER_11 = "%r11";
+    static constexpr const char* DATA_REG = "%rdx";
 
 public:
     explicit IR(
