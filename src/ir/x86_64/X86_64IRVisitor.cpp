@@ -129,6 +129,10 @@ std::string X86_64IRVisitor::getRegister(std::string register_, size_t bitSize) 
         REGISTERS[IR::REGISTER_11][16] = "%r11w";
         REGISTERS[IR::REGISTER_11][32] = "%r11d";
         REGISTERS[IR::REGISTER_11][64] = "%r11";
+        REGISTERS[IR::DATA_REG][8] = "%dl";
+        REGISTERS[IR::DATA_REG][16] = "%dx";
+        REGISTERS[IR::DATA_REG][32] = "%edx";
+        REGISTERS[IR::DATA_REG][64] = "%rdx";
         REGISTERS[IR::REGISTER_BASE_POINTER][8] = "%bp"; // < using the 16-bit register
         REGISTERS[IR::REGISTER_BASE_POINTER][16] = "%bp";
         REGISTERS[IR::REGISTER_BASE_POINTER][32] = "%ebp";
@@ -449,9 +453,9 @@ void X86_64IRVisitor::visitFlagToReg(FlagToRegInstruction *instruction, std::ost
                    << instruction->getLeft() << " - " << instruction->getRight();
 
     const auto parameterSize = instruction->getType()->getMemoryLength();
-    // TODO : Change 64 to a defined variable
-    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), 64);
-    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), 64);
+    // TODO : Change 32 to a defined variable
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), 32);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), 32);
     const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), 8);
 
     os << "  cmp     " << rightLocation << ", " << leftLocation << '\n';

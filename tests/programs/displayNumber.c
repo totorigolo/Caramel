@@ -22,59 +22,36 @@
  * SOFTWARE.
 */
 
+void displayNumber(int32_t number) {
+    int32_t tab[50];
+    int32_t index = 0;
+    int32_t i;
+    while (number >= 1){
+        tab[index]=number%10;
+        putchar('0' + tab[index]);
+        number = number/10;
+        index = index + 1;
+    }
+    putchar('a');
+    putchar('\n');
+    putchar('b');
+    putchar('\n');
+
+    i = 3;
+//    putchar('0' + (i > 1-2));
+//    putchar('\n');
+
+    // TODO : manage signed integers in subtraction (... and others ? :x)
+    for (i=(index - 1);i >= 0;i=i-1) {
+        putchar('0' + tab[i]);
+    }
+    putchar('c');
+    putchar('\n');
+}
+
 int32_t main() {
 
-    // 1
-    int32_t a = 1 == 1;
-    int32_t b = 2 > 1;
-    int32_t c = 1 >= 1;
-    int32_t d = 1 < 2;
-    int32_t e = 1 <= 1;
-    int32_t f = 1 != 0;
-    // 0
-    int32_t g = 1 == 0;
-    int32_t h = 2 > 3;
-    int32_t i = 1 >= 2;
-    int32_t j = 3 < 2;
-    int32_t k = 1 <= 0;
-    int32_t l = 1 != 1;
-
-    // complex 1
-    int32_t m = (1 && (4-1) > 2 && 2 != 1) == (0 || 4-2*2 || (4-3));
-    // complex 0
-    int32_t n = (1 && (4-1) > 2 && 2 != 1) == (0 || 4-2*2 == 1 || (4-3) > 2);
-
-    // not ?
-//    int32_t o = !0;
-
-    putchar('0' + a);
-    putchar('0' + a + b);
-    putchar('0' + a + b + c);
-    putchar('0' + a + b + c + d);
-    putchar('0' + a + b + c + d + e);
-    putchar('0' + a + b + c + d + e + f);
-    putchar('\n');
-    putchar('0' + g);
-    putchar('0' + g + h);
-    putchar('0' + g + h + i);
-    putchar('0' + g + h + i + j);
-    putchar('0' + g + h + i + j + k);
-    putchar('0' + g + h + i + j + k + l);
-    putchar('\n');
-    putchar('0' + m);
-    putchar('0' + n);
-    putchar('\n');
-
-    if (m <= 1 && n == 0) {
-        putchar('A');
-        putchar('\n');
-    } else {
-        putchar('B');
-        putchar('\n');
-    }
-
-//    putchar('\n');
-//    putchar('0' + o);
+    displayNumber(20);
 
     return 0;
 }
