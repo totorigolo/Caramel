@@ -24,19 +24,20 @@
 
 #pragma once
 
+#include <ParserRuleContext.h>
+#include "../Console.h"
+
 #include <stdexcept>
+
 
 namespace caramel::exceptions {
 
-class ArraySizeMismatchException : public std::runtime_error {
+class ArraySizeMismatchException{
 
 public:
-    explicit ArraySizeMismatchException(const std::string &__arg) : runtime_error(__arg) {}
-
-    explicit ArraySizeMismatchException(const char * c) : runtime_error(c){}
-
-    explicit ArraySizeMismatchException(const std::runtime_error & ex) : runtime_error(ex){}
+    ArraySizeMismatchException(std::string const &name,
+                               size_t size,
+                               std::string content);
 
 };
-
-} // namespace caramel::exception
+} // namespace caramel::exceptions

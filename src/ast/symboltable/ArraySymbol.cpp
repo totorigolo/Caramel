@@ -78,9 +78,10 @@ void ArraySymbol::setContent(std::vector<Expression::Ptr> &&content) {
     if (mIsSizeDefined) {
         using namespace caramel::exceptions;
         throw ArraySizeMismatchException(
-                "Array " + getName() + " size was declared equals to " + std::to_string(mSize)
-                + " but is " + std::to_string(content.size()) + " in the declaration."
-        );
+                getName(),
+                mSize,
+                std::to_string(content.size())
+                );
     }
     mContent = content;
     logger.warning() << "Verify that content is actually moved.";

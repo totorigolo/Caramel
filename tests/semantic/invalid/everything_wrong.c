@@ -1,12 +1,12 @@
 /*
  * This is an invalid test displaying every kind of errors we can manage
- * Also shows it display all the errors
+ * Also shows how it display all the errors
  */
 
 // variable undefined
 int32_t x = y;
 
-// whole block dismissed because it contains error
+// error in block
 void main(){
     // variable already declared
     extern int32_t a;
