@@ -491,4 +491,18 @@ void X86_64IRVisitor::visitRightShift(RightShiftInstruction *instruction, std::o
 
 }
 
+void X86_64IRVisitor::visitBitwiseAnd(BitwiseAndInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting bitwise and: "
+                   << instruction->getLeft() << " - " << instruction->getRight();
+
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
+
+    os << "  mov"+ getSizeSuffix(parameterSize) << "    " << leftLocation << ", " << storeLocation << '\n';
+    os << "  and"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation << '\n';
+
+}
+
 } // namespace caramel::ir::x86_64

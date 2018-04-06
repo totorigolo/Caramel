@@ -83,6 +83,8 @@ public:
 
     void visitRightShift(RightShiftInstruction *instruction, std::ostream &os) override ;
 
+    void visitBitwiseAnd(BitwiseAndInstruction *instruction, std::ostream &os) override ;
+
 
     //private:
     std::string address(std::string const &symbol);
