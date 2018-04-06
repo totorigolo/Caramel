@@ -70,7 +70,7 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::BitwiseAndOperator::getIR(
 }
 
 caramel::ast::StatementType caramel::ast::BitwiseAndOperator::getExpressionType() const {
-    return StatementType::BitwiseShiftExpression;
+    return StatementType::BitwiseExpression;
 }
 
 std::string caramel::ast::BitwiseAndOperator::getToken() const {

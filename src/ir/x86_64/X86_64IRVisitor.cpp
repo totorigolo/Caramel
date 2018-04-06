@@ -44,6 +44,10 @@
 #include "../instructions/DivInstruction.h"
 #include "../instructions/LeftShiftInstruction.h"
 #include "../instructions/RightShiftInstruction.h"
+#include "../instructions/BitwiseAndInstruction.h"
+#include "../instructions/BitwiseOrInstruction.h"
+#include "../instructions/BitwiseXorInstruction.h"
+
 
 
 namespace caramel::ir::x86_64 {
@@ -198,11 +202,16 @@ std::string X86_64IRVisitor::getFunctionCallRegister(size_t index, size_t bitSiz
 void X86_64IRVisitor::visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting copy: " << instruction->getReturnName();
 
-    const auto parameterSize = instruction->getType()->getMemoryLength();
+    auto parameterSize = instruction->getType()->getMemoryLength();
+    if (instruction->getParentBlock()->hasSymbol(instruction->getDestination())
+            && instruction->getParentBlock()->isSymbolParamArray(instruction->getDestination())) {
+        parameterSize = 64;
+    }
+
     os << "  mov" + getSizeSuffix(parameterSize) + "    ";
 
     if (instruction->getRegisterNumber() != -1) {
-        os << getFunctionCallRegister(instruction->getRegisterNumber(), 32);
+        os << getFunctionCallRegister(instruction->getRegisterNumber(), parameterSize);
     } else {
         os << toAssembly(instruction->getParentBlock(), instruction->getSource(), parameterSize);
     }
@@ -214,8 +223,8 @@ void X86_64IRVisitor::visitCopyAddr(CopyAddrInstruction *instruction, std::ostre
     logger.trace() << "[x86_64] " << "visiting copy addr: " << instruction->getReturnName();
 
 //    leaq -32(%rbp), %rax
-    const auto parameterSize = instruction->getType()->getMemoryLength();
-    os << "  leaq    " << toAssembly(instruction->getParentBlock(), instruction->getSource(), parameterSize)
+//    const auto parameterSize = instruction->getType()->getMemoryLength();
+    os << "  leaq    " << toAssembly(instruction->getParentBlock(), instruction->getSource(), 64)
        << ", " << toAssembly(instruction->getParentBlock(), instruction->getDestination(), 64);
 }
 
@@ -269,8 +278,8 @@ void X86_64IRVisitor::visitArrayAccessCopy(ArrayAccessCopyInstruction *instructi
 */
 
         std::string indexAsmReg = toAssembly(
-                instruction->getParentBlock(), instruction->getIndex(), 32); // length might be wrong
-        os << "  movl    " << indexAsmReg << ", " << getRegister(IR::ACCUMULATOR, 32) << '\n';
+                instruction->getParentBlock(), instruction->getIndex(), 64); // length might be wrong
+        os << "  movq    " << indexAsmReg << ", " << getRegister(IR::ACCUMULATOR, 64) << '\n';
         os << "  cltq\n";
 
 
@@ -283,7 +292,7 @@ void X86_64IRVisitor::visitArrayAccessCopy(ArrayAccessCopyInstruction *instructi
 
         os << "  addq    " << getRegister(IR::DATA_REG, 64) << ", " << getRegister(IR::ACCUMULATOR, 64) << '\n';
 
-        os << "  movl    (" << getRegister(IR::ACCUMULATOR, 64) << "), " << getRegister(IR::ACCUMULATOR, length) << '\n';
+        os << "  movq    (" << getRegister(IR::ACCUMULATOR, 64) << "), " << getRegister(IR::ACCUMULATOR, 64) << '\n';
 
         std::string destAsmReg = toAssembly(
                 instruction->getParentBlock(), instruction->getDestination(), length);
@@ -418,7 +427,7 @@ void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, 
     int index = instruction->getIndex();
     if (index < 6) {
         os << "  pushq    " << getFunctionCallRegister(index, 64) << '\n';
-        os << "  mov" + getSizeSuffix(64) + "    " << toAssembly(instruction->getParentBlock(), instruction->getValue(), 64)
+        os << "  movq    " << toAssembly(instruction->getParentBlock(), instruction->getValue(), 64)
            << ", " << getFunctionCallRegister(index, 64) << '\n';
 
         //  os << "\n#mov call";
@@ -549,7 +558,35 @@ void X86_64IRVisitor::visitBitwiseAnd(BitwiseAndInstruction *instruction, std::o
     const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
     os << "  mov"+ getSizeSuffix(parameterSize) << "    " << leftLocation << ", " << storeLocation << '\n';
-    os << "  and"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation << '\n';
+    os << "  and"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation;
+
+}
+
+void X86_64IRVisitor::visitBitwiseOr(BitwiseOrInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting bitwise or: "
+                   << instruction->getLeft() << " - " << instruction->getRight();
+
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
+
+    os << "  mov"+ getSizeSuffix(parameterSize) << "    " << leftLocation << ", " << storeLocation << '\n';
+    os << "  or"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation;
+
+}
+
+void X86_64IRVisitor::visitBitwiseXor(BitwiseXorInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting bitwise xor: "
+                   << instruction->getLeft() << " - " << instruction->getRight();
+
+    const auto parameterSize = instruction->getType()->getMemoryLength();
+    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
+    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
+    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
+
+    os << "  mov"+ getSizeSuffix(parameterSize) << "    " << leftLocation << ", " << storeLocation << '\n';
+    os << "  xor"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation ;
 
 }
 

@@ -26,7 +26,6 @@
 
 #include "IR.h"
 #include "instructions/CallParameterInstruction.h"
-#include "instructions/BitwiseAndInstruction.h"
 
 
 namespace caramel::ir {
@@ -59,6 +58,10 @@ class DivInstruction;
 class FlagToRegInstruction;
 class LeftShiftInstruction;
 class RightShiftInstruction;
+class BitwiseAndInstruction;
+class BitwiseOrInstruction;
+class BitwiseXorInstruction;
+
 
 class IRVisitor {
 public:
@@ -165,6 +168,16 @@ public:
 
     virtual void visitBitwiseAnd(
             BitwiseAndInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitBitwiseOr(
+            BitwiseOrInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitBitwiseXor(
+            BitwiseXorInstruction *instruction,
             std::ostream &os
     ) = 0;
 
