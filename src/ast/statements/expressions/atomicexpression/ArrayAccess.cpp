@@ -28,6 +28,7 @@
 #include "../../../../ir/instructions/NopInstruction.h"
 #include "../../../../ir/instructions/ArrayAccessCopyInstruction.h"
 #include "../../../../ir/instructions/PopInstruction.h"
+#include "../../../../ir/helpers/IROperatorHelper.h"
 
 namespace caramel::ast {
 
@@ -64,7 +65,7 @@ bool ArrayAccess::shouldReturnAnIR() const {
 std::shared_ptr<ir::IR> ArrayAccess::getIR(std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock) {
 
 //    movl -4(%rbp), %eax
-    auto indexSrc = currentBasicBlock->addInstruction(mIndex->getIR(currentBasicBlock));
+    std::string indexSrc = SAFE_ADD_INSTRUCTION(mIndex, currentBasicBlock); // currentBasicBlock->addInstruction(mIndex->getIR(currentBasicBlock));
     auto prevSrc = currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(
             currentBasicBlock, mSymbol->getType(), createVarName(), indexSrc
     ));

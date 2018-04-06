@@ -30,6 +30,7 @@
 #include "../../statements/expressions/atomicexpression/LValue.h"
 #include "../../../ir/instructions/PushInstruction.h"
 #include "../../statements/expressions/atomicexpression/Constant.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
 
 
 namespace caramel::ast {
@@ -48,12 +49,12 @@ std::shared_ptr<ir::IR> AssignmentOperator::getIR(
 
     if (mLValue->getType() == StatementType::ArrayAccess) {
 
-        std::string rvalue = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
+        std::string rvalue = SAFE_ADD_INSTRUCTION(rightExpression, currentBasicBlock); //currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
         currentBasicBlock->addInstruction(std::make_shared<ir::PushInstruction>(
                 currentBasicBlock, rightExpression->getPrimaryType(), rvalue
         ));
 
-        std::string lvalue = currentBasicBlock->addInstruction(mLValue->getIR(currentBasicBlock));
+        std::string lvalue = SAFE_ADD_INSTRUCTION(mLValue, currentBasicBlock); // currentBasicBlock->addInstruction(mLValue->getIR(currentBasicBlock));
 
         std::shared_ptr<ir::CopyInstruction> instr = std::make_shared<ir::CopyInstruction>(
                 currentBasicBlock,
@@ -64,7 +65,7 @@ std::shared_ptr<ir::IR> AssignmentOperator::getIR(
         return castTo<ir::IR::Ptr>(instr);
 
     } else {
-        std::string lvalue = currentBasicBlock->addInstruction(mLValue->getIR(currentBasicBlock));
+        std::string lvalue =  SAFE_ADD_INSTRUCTION(mLValue, currentBasicBlock); // currentBasicBlock->addInstruction(mLValue->getIR(currentBasicBlock));
         std::string rvalue;
         if (castTo<LValue::Ptr>(rightExpression)) {
             LValue::Ptr rightExpressionAsLValue = castTo<LValue::Ptr>(rightExpression);
@@ -78,7 +79,7 @@ std::shared_ptr<ir::IR> AssignmentOperator::getIR(
                     )
             );
         } else {
-            rvalue = currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
+            rvalue = SAFE_ADD_INSTRUCTION(rightExpression, currentBasicBlock); // currentBasicBlock->addInstruction(rightExpression->getIR(currentBasicBlock));
         }
 
 

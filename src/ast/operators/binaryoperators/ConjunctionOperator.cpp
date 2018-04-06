@@ -28,6 +28,7 @@
 #include "../../../ir/instructions/EmptyInstruction.h"
 #include "../../../ir/instructions/NopInstruction.h"
 #include "../../../utils/Common.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
 
 using namespace caramel::ast;
 using namespace caramel::utils;
@@ -85,8 +86,7 @@ ir::GetBasicBlockReturn ConjunctionOperator::getBasicBlock(ir::CFG *controlFlow,
     ir::BasicBlock::Ptr lastLeftBlock;
 
     if (leftExpression->shouldReturnAnIR()) {
-        auto ir = leftExpression->getIR(startBlock);
-        startBlock->addInstruction(ir);
+        SAFE_ADD_INSTRUCTION(leftExpression, startBlock);
         lastLeftBlock = startBlock;
     } else {
         auto leftBlockChain = leftExpression->getBasicBlock(controlFlow);
@@ -108,8 +108,9 @@ ir::GetBasicBlockReturn ConjunctionOperator::getBasicBlock(ir::CFG *controlFlow,
     if (rightExpression->shouldReturnAnIR()) {
         ir::BasicBlock::Ptr midBlock = controlFlow->generateBasicBlock(
                 ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_mid");
-        auto ir = rightExpression->getIR(midBlock);
-        midBlock->addInstruction(ir);
+        SAFE_ADD_INSTRUCTION(rightExpression, midBlock);
+//        auto ir = rightExpression->getIR(midBlock);
+//        midBlock->addInstruction(ir);
 
         logger.warning() << "ConjunctionOperator[midBlock] Does it? #" << midBlock->getId();
         midBlock->setExitWhenTrue(trueBlock);

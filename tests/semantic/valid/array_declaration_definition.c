@@ -11,7 +11,7 @@ extern int32_t note[];
 int32_t main(int32_t, char argv[]) {
     int8_t tab1[5];
     int8_t tab2[] = {1, 2, 3};
-    int8_t tab3[5] = {1, 2, 3, 4, 5};
+    int8_t tab3[4] = {1, 2, 3, 4, 5};
     int32_t notes[] = {
             12, 18,
             7 + 5,
