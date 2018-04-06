@@ -81,9 +81,14 @@ public:
 
     void visitLeftShift(LeftShiftInstruction *instruction, std::ostream &os) override ;
 
-    void visitRightShift(RightShiftInstruction *instruction, std::ostream &os) override ;
+    void visitRightShift(RightShiftInstruction *instruction, std::ostream &os) override;
 
-    void visitBitwiseAnd(BitwiseAndInstruction *instruction, std::ostream &os) override ;
+    void visitBitwiseAnd(BitwiseAndInstruction *instruction, std::ostream &os) override;
+
+    void visitBitwiseOr(BitwiseOrInstruction *instruction, std::ostream &os) override;
+
+    void visitBitwiseXor(BitwiseXorInstruction *instruction, std::ostream &os) override;
+
 
 
     //private:

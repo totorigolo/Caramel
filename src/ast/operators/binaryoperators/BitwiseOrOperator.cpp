@@ -23,6 +23,20 @@
 */
 
 #include "BitwiseOrOperator.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../ir/instructions/AdditionInstruction.h"
+#include "../../../utils/Common.h"
+#include "../../../ir/instructions/CopyInstruction.h"
+#include "../../../ir/instructions/PushInstruction.h"
+#include "../../../ir/instructions/PopInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
+#include "../../../ir/instructions/RightShiftInstruction.h"
+#include "../BinaryOperator.h"
+#include "../../../ir/instructions/BitwiseOrInstruction.h"
+
+using namespace caramel::utils;
+
+
 
 std::shared_ptr<caramel::ir::IR> caramel::ast::BitwiseOrOperator::getIR(
         std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
@@ -30,12 +44,29 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::BitwiseOrOperator::getIR(
         std::shared_ptr<caramel::ast::Expression> const &rightExpression
 ) {
 
-    CARAMEL_UNUSED(currentBasicBlock);
-    CARAMEL_UNUSED(leftExpression);
-    CARAMEL_UNUSED(rightExpression);
+    auto maxType = GET_MAX_TYPE(leftExpression, rightExpression);
 
-    // TODO : Implement the IR generation which happens right here.
-    throw caramel::exceptions::NotImplementedException(__FILE__);
+    std::string left = GET_REGISTER(leftExpression);
+
+    MOVE_TO(left, ir::IR::ACCUMULATOR_2, maxType);
+
+    PUSH(ir::IR::ACCUMULATOR_2);
+
+    std::string right = GET_REGISTER(rightExpression);
+
+    MOVE_TO(right, ir::IR::ACCUMULATOR_1, maxType);
+
+    POP(ir::IR::ACCUMULATOR_2);
+
+    std::shared_ptr<ir::BitwiseOrInstruction> instr = std::make_shared<ir::BitwiseOrInstruction>(
+            ir::IR::ACCUMULATOR,
+            currentBasicBlock,
+            maxType,
+            ir::IR::ACCUMULATOR_2,
+            ir::IR::ACCUMULATOR_1
+    );
+
+    return castTo<ir::IR::Ptr>(instr);
 }
 
 caramel::ast::StatementType caramel::ast::BitwiseOrOperator::getExpressionType() const {
@@ -45,3 +76,13 @@ caramel::ast::StatementType caramel::ast::BitwiseOrOperator::getExpressionType()
 std::string caramel::ast::BitwiseOrOperator::getToken() const {
     return SYMBOL;
 }
+
+bool caramel::ast::BitwiseOrOperator::shouldReturnAnIR() const {
+    return true;
+}
+
+bool caramel::ast::BitwiseOrOperator::shouldReturnABasicBlock() const {
+    return false;
+}
+
+

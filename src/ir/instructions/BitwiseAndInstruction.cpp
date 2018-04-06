@@ -33,7 +33,7 @@ BitwiseAndInstruction::BitwiseAndInstruction(
         ast::PrimaryType::Ptr const &type,
         std::string left,
         std::string right
-) : IR(returnName, Operation::rbs, parentBlock, type), mLeft{left}, mRight{right} {}
+) : IR(returnName, Operation::band, parentBlock, type), mLeft{left}, mRight{right} {}
 
 void BitwiseAndInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitBitwiseAnd(this, os);
