@@ -56,6 +56,8 @@ public:
     std::vector<std::shared_ptr<BasicBlock>> & getBasicBlocks();
 
     bool hasSymbol(size_t controlBlockId, std::string const &symbolName);
+    bool isSymbolParamArray(size_t controlBlockId, std::string const &symbolName);
+    long addParamArraySymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type);
     long addSymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type);
     long addSymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type, long index);
     long getSymbolIndex(size_t controlBlockId, std::string const &symbolName);
@@ -79,6 +81,7 @@ protected:
 
     std::map<size_t, std::map<std::string, ast::PrimaryType::Ptr>> mSymbols;
     std::map<size_t, std::map<std::string, long>> mSymbolIndex;
+    std::map<size_t, std::map<std::string, bool>> mSymbolIsParamArray;
     std::map<size_t, long> mStackSize;
 
     int mNextBasicBlockNumber;

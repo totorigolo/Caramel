@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+ * Copyright (c) 2018 insa.4if.hexanome_kalate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,31 +22,40 @@
  * SOFTWARE.
 */
 
-#include <stdint.h>
-#include <stdio.h>
+#pragma once
+
+#include "../IR.h"
+
+namespace caramel::ir {
+
+class CopyAddrInstruction : public IR {
+public:
+    using Ptr = std::shared_ptr<CopyAddrInstruction>;
+    using WeakPtr = std::shared_ptr<CopyAddrInstruction>;
+
+    CopyAddrInstruction(
+            std::shared_ptr<BasicBlock> const &parentBlock,
+            caramel::ast::PrimaryType::Ptr const &type,
+            std::string const &destination,
+            std::string const &source
+    );
+
+    ~CopyAddrInstruction() override = default;
+
+    std::string getDestination();
+
+    std::string getSource();
+
+    int getRegisterNumber();
+
+    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
+
+private:
+    std::string mSource;
+    int mRegisterNumber;
+};
+
+} // namespace caramel::ir
 
 
-void displayNumber(int32_t number) {
-    int32_t tab[50];
-    int32_t index = 0;
-    int32_t i;
-    while (number >= 1) {
-        tab[index] = number % 10;
-        number = number / 10;
-        index = index + 1;
-    }
 
-    // TODO : manage signed integers in subtraction (... and others ? :x)
-    // b *displayNumber+913
-    for (i = index; i > 0; i--) { // cond=, inc=901
-        putchar('0' + tab[i - 1]);
-        // b *displayNumber+996
-    }
-}
-
-int32_t main() {
-
-    displayNumber(20);
-
-    return 0;
-}

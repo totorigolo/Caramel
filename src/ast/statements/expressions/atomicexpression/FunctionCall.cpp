@@ -77,11 +77,11 @@ std::shared_ptr<ir::IR> FunctionCall::getIR(std::shared_ptr<ir::BasicBlock> &cur
     std::string functionName = mSymbol->getName();
     auto functionSymbol = castTo<FunctionSymbol::Ptr>(mSymbol);
 
-    std::vector<std::string> arguments;
-    for(int i = mArguments.size() - 1; i >= 0; i--) {
+    for (int i = int(mArguments.size()) - 1; i >= 0; i--) {
         std::string tempVar = currentBasicBlock->addInstruction((mArguments[i])->getIR(currentBasicBlock));
         currentBasicBlock->addInstruction(
-                std::make_shared<ir::CallParameterInstruction>(currentBasicBlock, i, mArguments[i]->getPrimaryType(), tempVar)
+                std::make_shared<ir::CallParameterInstruction>(
+                        currentBasicBlock, i, mArguments[i]->getPrimaryType(), tempVar)
         );
     }
 

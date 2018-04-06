@@ -69,6 +69,10 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
 
     auto parameters = mSymbol->getParameters();
     for (size_t i = 0; i < parameters.size(); i++) {
+        bool isArray = parameters[i].symbolType == SymbolType::ArraySymbol;
+        if (isArray) {
+            function_root_bb->addParamArraySymbol(parameters[i].name, parameters[i].primaryType);
+        }
         if (i < 6) {
             function_root_bb->addInstruction(
                     std::make_shared<ir::CopyInstruction>(function_root_bb, parameters[i].primaryType,
@@ -77,9 +81,7 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
         } else {
             function_root_bb->addSymbol(parameters[i].name, Int64_t::Create(), 16 + i * 8);
         }
-
     }
-
 
     ir::BasicBlock::Ptr function_end_bb = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_endof_" + mSymbol->getName());
     function_root_bb->setExitWhenTrue(function_end_bb);

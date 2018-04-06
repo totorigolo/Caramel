@@ -47,6 +47,8 @@ public:
 
     void visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) override;
 
+    void visitCopyAddr(CopyAddrInstruction *instruction, std::ostream &os) override;
+
     void visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) override;
 
     void visitProlog(caramel::ir::PrologInstruction *instruction, std::ostream &os) override;

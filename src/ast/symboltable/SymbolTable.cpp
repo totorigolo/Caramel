@@ -125,7 +125,7 @@ VariableSymbol::Ptr SymbolTable::addVariableDefinition(
     }
 }
 
-VariableSymbol::Ptr SymbolTable::addVariableUsage(
+Symbol::Ptr SymbolTable::addVariableUsage(
         antlr4::ParserRuleContext *antlrContext,
         std::string const &name,
         const Statement::Ptr &statement
@@ -134,7 +134,7 @@ VariableSymbol::Ptr SymbolTable::addVariableUsage(
 
     if (isDefined(name)) {
         auto const &symbol = getSymbol(antlrContext, name);
-        if (symbol->getSymbolType() != SymbolType::VariableSymbol) {
+        if (!(symbol->getSymbolType() == SymbolType::VariableSymbol || symbol->getSymbolType() == SymbolType::ArraySymbol)) {
             throw DeclarationMismatchException(
                     antlrContext,
                     name,
@@ -142,9 +142,8 @@ VariableSymbol::Ptr SymbolTable::addVariableUsage(
                     mSymbolMap[name]
             );
         }
-        auto const &variableSymbol = castTo<VariableSymbol::Ptr>(symbol);
-        variableSymbol->addUsage(statement);
-        return variableSymbol;
+        symbol->addUsage(statement);
+        return symbol;
     } else {
         SymbolTable::Ptr parent = getParentTable();
         if (parent) {

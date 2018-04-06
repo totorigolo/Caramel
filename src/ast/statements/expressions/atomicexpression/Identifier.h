@@ -40,7 +40,7 @@ public:
     ~Identifier() override = default;
 
     Symbol::Ptr getSymbol() const override;
-    void setSymbol(VariableSymbol::Ptr symbol);
+    void setSymbol(Symbol::Ptr symbol);
 
     PrimaryType::Ptr getPrimaryType() const override;
 
@@ -51,7 +51,7 @@ public:
     void acceptAstDotVisit() override;
 
 private:
-    std::shared_ptr<VariableSymbol> mSymbol;
+    std::shared_ptr<Symbol> mSymbol;
 };
 
 } // namespace caramel::ast

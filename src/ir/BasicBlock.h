@@ -56,6 +56,8 @@ public:
     std::shared_ptr<BasicBlock> getNextWhenTrue() const;
     std::shared_ptr<BasicBlock> getNextWhenFalse() const;
 
+    long isSymbolParamArray(std::string const &symbolName);
+    long addParamArraySymbol(std::string const &symbolName, ast::PrimaryType::Ptr type);
     long addSymbol(std::string const &symbolName, ast::PrimaryType::Ptr type);
     long addSymbol(std::string const &symbolName, ast::PrimaryType::Ptr type, long index);
     long getSymbolIndex(std::string const &symbolName);

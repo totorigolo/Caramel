@@ -22,31 +22,27 @@
  * SOFTWARE.
 */
 
-#include <stdint.h>
+/*
+ * Multi-line comment.
+ */
 #include <stdio.h>
-
-
-void displayNumber(int32_t number) {
-    int32_t tab[50];
-    int32_t index = 0;
-    int32_t i;
-    while (number >= 1) {
-        tab[index] = number % 10;
-        number = number / 10;
-        index = index + 1;
-    }
-
-    // TODO : manage signed integers in subtraction (... and others ? :x)
-    // b *displayNumber+913
-    for (i = index; i > 0; i--) { // cond=, inc=901
-        putchar('0' + tab[i - 1]);
-        // b *displayNumber+996
-    }
-}
+#include <stdint.h>
 
 int32_t main() {
+    int32_t a = 0, b = 5;
 
-    displayNumber(20);
+    a = a - 1;
+    putchar('5' + a);       // 4
+    putchar('\n');
+
+    putchar('5' + (a - 1)); // 3
+    putchar('\n');
+
+    putchar('5' + b - 2);   // 8
+    putchar('\n');
+
+    putchar('5' + b - 7);   // 3
+    putchar('\n');
 
     return 0;
 }
