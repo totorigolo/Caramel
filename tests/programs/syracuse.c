@@ -6,12 +6,8 @@
 #include <stdio.h>
 
 
+int32_t main() {
 
-
-
-
-int32_t main(){
-    
     putchar('S');
     putchar('a');
     putchar('i');
@@ -31,7 +27,6 @@ int32_t main(){
     putchar('e');
     putchar(':');
     putchar('\n');
-
 
 
 }

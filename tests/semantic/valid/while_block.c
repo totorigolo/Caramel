@@ -2,6 +2,8 @@
  * Multi-line comment.
  */
 
+#include <stdint.h>
+#include <stdio.h>
 
 int32_t main(int32_t, char argv) {
     int8_t a = 1;

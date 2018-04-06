@@ -2,7 +2,8 @@
  * One error in main(), an other in foo()
  */
 
-
+#include <stdint.h>
+#include <stdio.h>
 
 
 int32_t main() {
@@ -13,8 +14,7 @@ int32_t main() {
 
 int32_t foo(int32_t a, int32_t b, int32_t c);
 
-int32_t foo(int32_t a, int32_t b)
-{
-    a+b;
+int32_t foo(int32_t a, int32_t b) {
+    a + b;
     return 0;
 }

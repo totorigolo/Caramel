@@ -22,17 +22,20 @@
  * SOFTWARE.
 */
 
+#include <stdint.h>
+#include <stdio.h>
+
 
 void displayNumber(int32_t number) {
     int32_t tab[50];
     int32_t index = 0;
     int32_t i;
-    while (number >= 1){
-        tab[index]=number%10;
-        number = number/10;
+    while (number >= 1) {
+        tab[index] = number % 10;
+        number = number / 10;
         index = index + 1;
     }
-    for (i=(index-1);i>=0;i--) {
+    for (i = (index - 1); i >= 0; i--) {
         putchar('0' + tab[i]);
     }
 }
@@ -51,7 +54,7 @@ int32_t fibonacci_lin(int32_t n) {
     int32_t temp;
     int32_t k;
 
-    for (k = 0; k < n; k = k+1) {
+    for (k = 0; k < n; k = k + 1) {
         temp = i + j;
         i = j + 0; // + 0 temp fix for double returns
         j = temp + 0;

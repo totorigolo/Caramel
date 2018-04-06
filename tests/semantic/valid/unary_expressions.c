@@ -22,7 +22,8 @@
  * SOFTWARE.
 */
 
-//int32_t i = 0;
+#include <stdint.h>
+#include <stdio.h>
 
 int32_t main(int32_t, char argv) {
     int32_t i = 0;

@@ -2,6 +2,9 @@
  * Multi-line comment.
  */
 
+#include <stdint.h>
+#include <stdio.h>
+
 int64_t b[2];
 b = 2;
 
