@@ -277,26 +277,47 @@ void X86_64IRVisitor::visitArrayAccessCopy(ArrayAccessCopyInstruction *instructi
   movl (%rax), %r10d
 */
 
+        // get index value => EAX
         std::string indexAsmReg = toAssembly(
                 instruction->getParentBlock(), instruction->getIndex(), 64); // length might be wrong
         os << "  movq    " << indexAsmReg << ", " << getRegister(IR::ACCUMULATOR, 64) << '\n';
         os << "  cltq\n";
 
-
+        // calculate offset => RDX
         indexAsmReg = getRegister(IR::ACCUMULATOR, 64);
         os << "  leaq    0(," << indexAsmReg << ", " << (length / 8U) << "), " << getRegister(IR::DATA_REG, 64) << '\n';
 
+        // get array address => EAX
         std::string arrayAsmName = toAssembly(
                 instruction->getParentBlock(), instruction->getArrayName(), length);
         os << "  movq    " << arrayAsmName << ", " << getRegister(IR::ACCUMULATOR, 64) << '\n';
 
+        // calculate cell address => EAX
         os << "  addq    " << getRegister(IR::DATA_REG, 64) << ", " << getRegister(IR::ACCUMULATOR, 64) << '\n';
 
-        os << "  movq    (" << getRegister(IR::ACCUMULATOR, 64) << "), " << getRegister(IR::ACCUMULATOR, 64) << '\n';
+        if (instruction->isLValue()) {
+            // fart
 
-        std::string destAsmReg = toAssembly(
-                instruction->getParentBlock(), instruction->getDestination(), length);
-        os << "  movl    " << getRegister(IR::ACCUMULATOR, length) << ", " << destAsmReg;
+            // move value to cell, and "returns" value => dest
+            std::string destAsmReg = toAssembly(
+                    instruction->getParentBlock(), instruction->getDestination(), 64);
+            os << "  movq    " << destAsmReg
+               << ", " << address(getRegister(IR::ACCUMULATOR, 64))
+               << '\n';
+
+            // move dest to => EAX
+            os << "  movq    " << destAsmReg << ", " << getRegister(IR::ACCUMULATOR, 64) << '\n';
+
+        } else {
+            // move cell value to => EAX
+            os << "  movq    " << "(" << getRegister(IR::ACCUMULATOR, 64) << ")"
+               << ", " << getRegister(IR::ACCUMULATOR, 64)
+               << '\n';
+
+            std::string destAsmReg = toAssembly(
+                    instruction->getParentBlock(), instruction->getDestination(), length);
+            os << "  movl    " << getRegister(IR::ACCUMULATOR, length) << ", " << destAsmReg;
+        }
     }
 
     os << "\n  # end of arrayAccess of " << instruction->getArrayName();
@@ -410,10 +431,13 @@ void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, s
     logger.trace() << "[x86_64] " << "visiting return: " << instruction->getReturnName();
 
     const auto returnSize = instruction->getType()->getMemoryLength();
-    os << "  mov" + getSizeSuffix(returnSize) + "    "
-       << toAssembly(instruction->getParentBlock(), instruction->getSource(), returnSize)
-       << ", " << toAssembly(instruction->getParentBlock(), IR::ACCUMULATOR, 32) // TODO: See TODO in getSizeSuffix()
-       << "\n";
+    if(returnSize) {
+        os << "  mov" + getSizeSuffix(returnSize) + "    "
+           << toAssembly(instruction->getParentBlock(), instruction->getSource(), returnSize)
+           << ", " << toAssembly(instruction->getParentBlock(), IR::ACCUMULATOR, 32) // TODO: See TODO in getSizeSuffix()
+           << "\n";
+    } // void_t is returned
+
     size_t functionContext = instruction->getParentBlock()->getFunctionContext();
 
      os << "  jmp    " << instruction->getParentBlock()->getCFG()->getFunctionEndBasicBlock(functionContext)->getLabelName();

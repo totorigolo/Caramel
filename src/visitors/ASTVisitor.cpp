@@ -99,7 +99,8 @@ antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
     exitDecl->setFunctionSymbol(exitSymbol);
 
     try {context->addStatements(visitStatements(ctx->statements()));}
-    catch (...){
+    catch (std::runtime_error e){
+        logger.fatal() << e.what();
         incrementErrorCount();
     }
     return context;

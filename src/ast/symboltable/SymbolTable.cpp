@@ -134,7 +134,9 @@ Symbol::Ptr SymbolTable::addVariableUsage(
 
     if (isDefined(name)) {
         auto const &symbol = getSymbol(antlrContext, name);
-        if (symbol->getSymbolType() != SymbolType::VariableSymbol) {
+
+        if (symbol->getSymbolType() != SymbolType::VariableSymbol &&
+            symbol->getSymbolType() != SymbolType::ArraySymbol) {
             throw DeclarationMismatchException(
                     antlrContext,
                     name,
@@ -142,8 +144,10 @@ Symbol::Ptr SymbolTable::addVariableUsage(
                     mSymbolMap[name]
             );
         }
+
         symbol->addUsage(statement);
         return symbol;
+
     } else {
         SymbolTable::Ptr parent = getParentTable();
         if (parent) {

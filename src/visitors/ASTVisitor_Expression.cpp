@@ -246,6 +246,13 @@ antlrcpp::Any ASTVisitor::visitAssignment(CaramelParser::AssignmentContext *ctx)
     logger.trace() << "visiting assignment: " << grey << ctx->getText();
 
     Expression::Ptr lvalue = visitLvalue(ctx->lvalue());
+    Expression::Ptr rvalue = visitExpression(ctx->expression());
+    if(std::dynamic_pointer_cast<Identifier>(rvalue)) {
+        Identifier::Ptr rvalueAsLValue = castTo<Identifier::Ptr>(rvalue);
+        if(rvalueAsLValue->getSymbol()->getSymbolType() == SymbolType::ArraySymbol) {
+            throw std::runtime_error("Cannot assign an array to a variable");
+        }
+    }
     return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
             lvalue,
             castTo<BinaryOperator::Ptr>(std::make_shared<AssignmentOperator>(castTo<LValue::Ptr>(lvalue))),
