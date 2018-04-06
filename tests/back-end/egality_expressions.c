@@ -21,6 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
 */
+#include <stdint.h>
+#include <stdio.h>
+
+
 
 int32_t main() {
 

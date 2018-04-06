@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h>
 
 int32_t function(int32_t a) {
    return a+1;

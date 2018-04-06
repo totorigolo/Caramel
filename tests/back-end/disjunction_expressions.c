@@ -21,6 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
 */
+#include <stdint.h>
+#include <stdio.h>
+
+
 
 int32_t foo(int32_t a, int32_t b) {
     int32_t useless = 1 + 2 + 8 * 4 - 4 || 1 || 5;

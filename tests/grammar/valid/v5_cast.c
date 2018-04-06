@@ -1,3 +1,6 @@
+#include <stdint.h>
+#include <stdio.h>
+
 int a = (int) 10;
 int a = (int) a/b;
 int a = (int) (a/b);

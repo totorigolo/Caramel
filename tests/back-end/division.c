@@ -1,8 +1,10 @@
 /*
  * Multi-line comment.
  */
-
 #include <stdint.h>
+#include <stdio.h>
+
+
 
 int32_t foo() {
     return 3;
