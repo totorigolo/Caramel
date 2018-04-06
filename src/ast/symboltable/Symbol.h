@@ -53,7 +53,7 @@ public:
     std::shared_ptr<Declaration> getDeclaration();
     std::shared_ptr<Definition> getDefinition();
 
-    std::shared_ptr<PrimaryType> getType() const;
+    virtual std::shared_ptr<PrimaryType> getType() const;
 
     void addDeclaration(const std::shared_ptr<Declaration> &declaration);
     void addDefinition(const std::shared_ptr<Definition> &definition);
