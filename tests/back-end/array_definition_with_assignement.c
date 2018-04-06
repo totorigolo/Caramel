@@ -3,6 +3,9 @@
  */
 
 #include <stdint.h>
+#include <stdio.h>
+
+
 
 int32_t main() {
     int32_t tab1[] = {1 + 1, 2 - 1, 3 * 5};

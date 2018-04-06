@@ -1,3 +1,6 @@
+#include <stdint.h>
+#include <stdio.h>
+
 rtyvjrt
 j FILE *thj
 ehj= e=h e

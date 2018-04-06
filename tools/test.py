@@ -32,6 +32,22 @@ import shlex
 import os
 
 
+def _return_code_to_str(code):
+    codes = {
+        # POSIX kill signals
+        -1: 'SIGHUP',
+        -2: 'SIGINT',
+        -3: 'SIGQUIT',
+        -4: 'SIGILL',
+        -6: 'SIGABRT',
+        -8: 'SIGFPE',
+        -9: 'SIGKILL',
+    }
+    if code in codes:
+        return codes[code]
+    return str(code)
+
+
 class Test:
     def __init__(self, name: str, full_path, should_fail: bool):
         self.name = name
@@ -118,22 +134,6 @@ class GrammarTest(Test):
 
 
 class SemanticTest(Test):
-    @staticmethod
-    def _return_code_to_str(code):
-        codes = {
-            # POSIX kill signals
-            -1: 'SIGHUP',
-            -2: 'SIGINT',
-            -3: 'SIGQUIT',
-            -4: 'SIGILL',
-            -6: 'SIGABRT',
-            -8: 'SIGFPE',
-            -9: 'SIGKILL',
-        }
-        if code in codes:
-            return codes[code]
-        return str(code)
-
     @trace
     def execute(self, open_gui=False, open_gui_on_failure=False, show_stdout=False, show_stderr=False):
         start_time = time()
@@ -177,7 +177,81 @@ class SemanticTest(Test):
             else:
                 logger.info(
                     'Test {}'.format(self.display_name),
-                    colored('failed #{}.'.format(SemanticTest._return_code_to_str(test_process.returncode)),
+                    colored('failed #{}.'.format(_return_code_to_str(test_process.returncode)),
+                            color='red', attrs=['bold']),
+                    colored('[%s]' % seconds_to_string(self.state['time']), color='yellow')
+                )
+                if open_gui_on_failure and not open_gui:
+                    self.execute(open_gui=True, open_gui_on_failure=False)
+
+            # Show stdout or stderr if asked
+            if show_stdout or open_gui:
+                if self.state['stdout'] == 0:
+                    print(colored('No stdout output.', attrs=['bold']))
+                else:
+                    print('\n'.join([
+                        '#' * 20,
+                        colored('stdout output:', attrs=['bold']),
+                        ''.join(out_str),
+                        '-' * 20,
+                    ]))
+            if show_stderr or open_gui:
+                if self.state['stderr'] == 0:
+                    print(colored('No stderr output.', attrs=['bold']))
+                else:
+                    print('\n'.join([
+                        '#' * 20,
+                        colored('stderr output:', attrs=['bold']),
+                        ''.join(error_str),
+                        '-' * 20,
+                    ]))
+
+
+class BackendTest(Test):
+    @trace
+    def execute(self, open_gui=False, open_gui_on_failure=False, show_stdout=False, show_stderr=False):
+        start_time = time()
+
+        command = './build/cpp-bin/Caramel --good-defaults {}'.format(self.full_path)
+        logger.trace('Test command:', command)
+
+        if len(self.full_path) == 0:  # Interactive test
+            print('Enter grammar test input: (ended by ^D)')
+        with subprocess.Popen(
+                shlex.split(command),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                env={'LD_LIBRARY_PATH': 'lib'}
+        ) as test_process:
+            test_process.wait()
+
+            # Get stdout and stderr
+            out_str = list(map(lambda s: s.decode("utf-8"), test_process.stdout.readlines()))
+            error_str = list(map(lambda s: s.decode("utf-8"), test_process.stderr.readlines()))
+
+            # Save the test state
+            self.state = {
+                'stdout': sum(len(line.strip()) for line in out_str),
+                'stderr': sum(len(line.strip()) for line in error_str),
+                'return_code': test_process.returncode,
+                'time': time() - start_time
+            }
+
+            # Determine if unexpected errors, or successes, occurred
+            errors = test_process.returncode != 0
+            self.succeeded = errors if self.should_fail else not errors
+
+            # Feed our user
+            if self.succeeded:
+                logger.info(
+                    'Test {}'.format(self.display_name),
+                    colored('succeeded.', color='green', attrs=['bold']),
+                    colored('[%s]' % seconds_to_string(self.state['time']), color='yellow')
+                )
+            else:
+                logger.info(
+                    'Test {}'.format(self.display_name),
+                    colored('failed #{}.'.format(_return_code_to_str(test_process.returncode)),
                             color='red', attrs=['bold']),
                     colored('[%s]' % seconds_to_string(self.state['time']), color='yellow')
                 )
@@ -237,7 +311,7 @@ class Tests:
 
         # Discover the tests
         nb_tests_before = len(self.tests)
-        for test_directory in sorted(os.listdir(base_directory)):
+        for test_directory in ['.', *sorted(os.listdir(base_directory))]:
             logger.debug('Looking for tests in:', test_directory)
             if os.path.isdir(os.path.join(base_directory, test_directory)):
                 for test_file in sorted(os.listdir(os.path.join(base_directory, test_directory))):
@@ -284,6 +358,16 @@ class SemanticTests(Tests):
     def add_test(self, name: str, full_path, should_fail: bool):
         self.tests.append(SemanticTest(name, full_path, should_fail))
         logger.debug('Added semantic test {}.'.format(name))
+
+
+class BackendTests(Tests):
+    def __init__(self):
+        super().__init__()
+
+    @trace
+    def add_test(self, name: str, full_path, should_fail: bool):
+        self.tests.append(BackendTest(name, full_path, should_fail))
+        logger.debug('Added back-end test {}.'.format(name))
 
 
 @trace
@@ -347,6 +431,43 @@ def test_semantic(args):
 
 
 @trace
+def test_backend(args):
+    # TODO: Refactor => factorize semantic and back-end?
+
+    logger.info('Running back-end tests...')
+
+    if args.build:
+        from tools.build import build_grammar, build_caramel
+        build_grammar(args)
+        build_caramel(args)
+
+    if args.interactive and len(args.test_files) > 0:
+        logger.warn('Running in interactive mode, ignoring test files.')
+        args.test_files = []
+
+    if args.all:
+        args.test_files = None
+
+    # Run the tests
+    backend_tests = BackendTests()
+    if args.interactive:
+        backend_tests.add_test('interactive test', '', False)
+    else:
+        backend_tests.discover(PATHS['backend-test-dir'], only=args.test_files)
+    backend_tests.run_all(
+        open_gui=args.gui,
+        open_gui_on_failure=args.gui_on_failure,
+        show_stdout=args.stdout,
+        show_stderr=args.stderr,
+    )
+
+
+@trace
+def test_programs(args):
+    logger.warn('Programs tests not implemented :(')
+
+
+@trace
 def test_all(args):
     logger.info('Running all tests...')
 
@@ -363,3 +484,17 @@ def test_all(args):
     semantic_args.gui = False
     semantic_args.gui_on_failure = False
     test_semantic(semantic_args)
+
+    # Execute back-end tests
+    backend_args = copy(args)
+    backend_args.all = True
+    backend_args.gui = False
+    backend_args.gui_on_failure = False
+    test_backend(backend_args)
+
+    # Execute programs tests
+    programs_args = copy(args)
+    programs_args.all = True
+    programs_args.gui = False
+    programs_args.gui_on_failure = False
+    test_programs(programs_args)

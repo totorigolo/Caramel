@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 
-extern int32_t notes[];
+extern int32_t note[];
 
 int32_t main(int32_t, char argv[]) {
     int8_t tab1[5];

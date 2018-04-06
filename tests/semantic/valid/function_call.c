@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdint.h>
 
-int32_t foo(int16_t a, int32_t b, int64_t c);
-int32_t foo(int16_t a, int32_t b, int64_t c);
-int32_t foo(int16_t a, int32_t b, int64_t c);
+int32_t foo(int32_t a, int32_t b, int32_t c);
+int32_t foo(int32_t a, int32_t b, int32_t c);
+int32_t foo(int32_t a, int32_t b, int32_t c);
 
 int32_t main() {
     int16_t var = 5;
@@ -15,6 +15,6 @@ int32_t main() {
     return 0;
 }
 
-int32_t foo(int16_t a, int32_t b, int64_t c) {
+int32_t foo(int32_t a, int32_t b, int32_t c) {
     return b;
 }

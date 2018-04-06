@@ -1,3 +1,6 @@
+#include <stdint.h>
+#include <stdio.h>
+
 extern int a [];
 int tab[] = {1,2};
 int tab[] = {};

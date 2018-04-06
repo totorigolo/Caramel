@@ -3,6 +3,9 @@
  */
 
 #include <stdint.h>
+#include <stdio.h>
+
+
 
 int32_t vice() {
     int32_t tab1[4] = {1, 2, 3, 4};
