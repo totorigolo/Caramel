@@ -12,7 +12,7 @@ int32_t vice() {
     int32_t tab2[4] = {6, 7, 8, 9};
     int32_t i = 0;
 
-    for (i = 0; 4 - i; i = i + 1) {
+    for (i = 0; 4 - i; i++) {
         putchar('0' + tab1[i]);
         putchar('=');
         putchar('>');
@@ -20,11 +20,11 @@ int32_t vice() {
         putchar('0' + tab2[i]);
         putchar('\n');
     }
-    for (i = 0; 4 - i; i = i + 1) {
+    for (i = 0; 4 - i; i++) {
         putchar('0' + tab1[i]);
     }
     putchar('\n');
-    for (i = 0; 4 - i; i = i + 1) {
+    for (i = 0; 4 - i; i++) {
         putchar('0' + tab2[i]);
     }
     putchar('\n');
@@ -37,7 +37,7 @@ int32_t versa() {
     int32_t tab2[4] = {6, 7, 8, 9};
     int32_t i = 0;
 
-    for (i = 0; 4 - i; i = i + 1) {
+    for (i = 0; 4 - i; i++) {
         putchar('0' + tab1[i]);
         putchar('=');
         putchar('>');
@@ -45,11 +45,11 @@ int32_t versa() {
         putchar('0' + tab2[4 - 1 - i]);
         putchar('\n');
     }
-    for (i = 0; 4 - i; i = i + 1) {
+    for (i = 0; 4 - i; i++) {
         putchar('0' + tab1[i]);
     }
     putchar('\n');
-    for (i = 0; 4 - i; i = i + 1) {
+    for (i = 0; 4 - i; i++) {
         putchar('0' + tab2[i]);
     }
     putchar('\n');

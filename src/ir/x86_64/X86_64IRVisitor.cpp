@@ -48,6 +48,7 @@
 #include "../instructions/BitwiseOrInstruction.h"
 #include "../instructions/BitwiseXorInstruction.h"
 
+#define COMMENT_INDENT "                 "
 
 
 namespace caramel::ir::x86_64 {
@@ -58,11 +59,6 @@ std::string X86_64IRVisitor::address(std::string const &symbol) {
     return "(" + symbol + ")";
 }
 
-std::string X86_64IRVisitor::registerToAssembly(std::string const &register_, size_t bitSize) {
-    logger.trace() << "[x86_64] " << "registerToAssembly(" << register_ << ")";
-    return getRegister(register_, bitSize);
-}
-
 std::string X86_64IRVisitor::toAssembly(ir::BasicBlock::Ptr parentBB, std::string const &anySymbol, size_t bitSize) {
     logger.trace() << "[x86_64] " << "toAssembly(" << "ir" << ", " << anySymbol << ")";
     std::string r;
@@ -71,16 +67,16 @@ std::string X86_64IRVisitor::toAssembly(ir::BasicBlock::Ptr parentBB, std::strin
 
     // Is a register
     if (!anySymbol.empty() && anySymbol[0] == '%') {
-        r = registerToAssembly(anySymbol, bitSize);
+        r = regToAsm(anySymbol, bitSize);
         // Is a temp var
-    } else if (!anySymbol.empty() && anySymbol[0] == '!') {
-        r = registerToAssembly(IR::REGISTER_10, bitSize);
+    } else if (!anySymbol.empty() && anySymbol[0] == '!' && false) {
+        r = regToAsm(IR::REGISTER_10, bitSize);
         // TODO: Manage multiple registries
     } else if (!anySymbol.empty() && anySymbol[0] >= '0' && anySymbol[0] <= '9') {
         r = "$" + anySymbol;
     } else {
         r = std::to_string(parentBB->getSymbolIndex(anySymbol)) +
-            address(registerToAssembly(IR::REGISTER_BASE_POINTER, 64)); // always %rbp
+            address(regToAsm(IR::BASE_POINTER_REG, 64)); // always %rbp
     }
 
     logger.trace() << "[x86_64] " << "  => " << r;
@@ -110,93 +106,51 @@ std::string X86_64IRVisitor::getSizeSuffix(size_t bitSize) {
     }
 }
 
-std::string X86_64IRVisitor::getRegister(std::string register_, size_t bitSize) {
-    static bool init = false;
-    static std::map<std::string, std::map<size_t, std::string>> REGISTERS;
-    if (!init) {
-        REGISTERS[IR::ACCUMULATOR][8] = "%al";
-        REGISTERS[IR::ACCUMULATOR][16] = "%ax";
-        REGISTERS[IR::ACCUMULATOR][32] = "%eax";
-        REGISTERS[IR::ACCUMULATOR][64] = "%rax";
-        REGISTERS[IR::ACCUMULATOR_1][8] = "%r10b";
-        REGISTERS[IR::ACCUMULATOR_1][16] = "%r10w";
-        REGISTERS[IR::ACCUMULATOR_1][32] = "%r10d";
-        REGISTERS[IR::ACCUMULATOR_1][64] = "%r10";
-        REGISTERS[IR::ACCUMULATOR_2][8] = "%r11b";
-        REGISTERS[IR::ACCUMULATOR_2][16] = "%r11w";
-        REGISTERS[IR::ACCUMULATOR_2][32] = "%r11d";
-        REGISTERS[IR::ACCUMULATOR_2][64] = "%r11";
-        REGISTERS[IR::REGISTER_10][8] = "%r10b";
-        REGISTERS[IR::REGISTER_10][16] = "%r10w";
-        REGISTERS[IR::REGISTER_10][32] = "%r10d";
-        REGISTERS[IR::REGISTER_10][64] = "%r10";
-        REGISTERS[IR::REGISTER_11][8] = "%r11b";
-        REGISTERS[IR::REGISTER_11][16] = "%r11w";
-        REGISTERS[IR::REGISTER_11][32] = "%r11d";
-        REGISTERS[IR::REGISTER_11][64] = "%r11";
-        REGISTERS[IR::DATA_REG][8] = "%dl";
-        REGISTERS[IR::DATA_REG][16] = "%dx";
-        REGISTERS[IR::DATA_REG][32] = "%edx";
-        REGISTERS[IR::DATA_REG][64] = "%rdx";
-        REGISTERS[IR::REGISTER_BASE_POINTER][8] = "%bp"; // < using the 16-bit register
-        REGISTERS[IR::REGISTER_BASE_POINTER][16] = "%bp";
-        REGISTERS[IR::REGISTER_BASE_POINTER][32] = "%ebp";
-        REGISTERS[IR::REGISTER_BASE_POINTER][64] = "%rbp";
-        REGISTERS[IR::REGISTER_STACK_POINTER][8] = "%sp"; // < using the 16-bit register
-        REGISTERS[IR::REGISTER_STACK_POINTER][16] = "%sp";
-        REGISTERS[IR::REGISTER_STACK_POINTER][32] = "%esp";
-        REGISTERS[IR::REGISTER_STACK_POINTER][64] = "%rsp";
-        init = true;
-    }
+std::string X86_64IRVisitor::regToAsm(std::string register_, size_t bitSize) {
+    static std::map<std::string, std::map<size_t, std::string>> const REGISTERS = {
+            {IR::COUNTER_REG,       {{8,  "%cl"},   {16, "%cx"},   {32, "%ecx"},  {64, "%rcx"}}},
+            {IR::DATA_REG,          {{8,  "%dl"},   {16, "%dx"},   {32, "%edx"},  {64, "%rdx"}}},
+            {IR::BASE_REG,          {{8,  "%bl"},   {16, "%bx"},   {32, "%ebx"},  {64, "%rbx"}}},
+            {IR::SOURCE_REG,        {{16, "%si"},   {32, "%esi"},  {64, "%rsi"}}},
+            {IR::DEST_REG,          {{16, "%di"},   {32, "%edi"},  {64, "%rdi"}}},
+            {IR::BASE_POINTER_REG,  {{16, "%bp"},   {32, "%ebp"},  {64, "%rbp"}}},
+            {IR::STACK_POINTER_REG, {{16, "%sp"},   {32, "%esp"},  {64, "%rsp"}}},
+            {IR::ACCUMULATOR,       {{8,  "%al"},   {16, "%ax"},   {32, "%eax"},  {64, "%rax"}}},
+            {IR::ACCUMULATOR_1,     {{8,  "%r10b"}, {16, "%r10w"}, {32, "%r10d"}, {64, "%r10"}}},
+            {IR::ACCUMULATOR_2,     {{8,  "%r11b"}, {16, "%r11w"}, {32, "%r11d"}, {64, "%r11"}}},
+            {IR::REGISTER_8,        {{8,  "%r8b"},  {16, "%r8w"},  {32, "%r8d"},  {64, "%r8"}}},
+            {IR::REGISTER_9,        {{8,  "%r9b"},  {16, "%r9w"},  {32, "%r9d"},  {64, "%r9"}}},
+            {IR::REGISTER_10,       {{8,  "%r10b"}, {16, "%r10w"}, {32, "%r10d"}, {64, "%r10"}}},
+            {IR::REGISTER_11,       {{8,  "%r11b"}, {16, "%r11w"}, {32, "%r11d"}, {64, "%r11"}}}
+    };
 
-    if (REGISTERS[register_].find(bitSize) == REGISTERS[register_].end()) {
-        logger.fatal() << "The size " << bitSize << " is not valid!";
+    if (REGISTERS.find(register_) == REGISTERS.end()) {
+        logger.fatal() << "The register " << register_ << " does not exist!";
         exit(1);
     }
-    return REGISTERS[register_][bitSize];
+    if (REGISTERS.at(register_).find(bitSize) == REGISTERS.at(register_).end()) {
+        logger.fatal() << "The size " << bitSize << " is not valid for " << register_ << "!";
+        exit(1);
+    }
+    return REGISTERS.at(register_).at(bitSize);
 }
 
-std::string X86_64IRVisitor::getFunctionCallRegister(size_t index, size_t bitSize) {
-    static bool init = false;
-    static std::map<size_t, std::map<size_t, std::string>> FC_REGISTERS;
-    if (!init) {
-        FC_REGISTERS[0][8] = "%di"; // < using the 16-bit register
-        FC_REGISTERS[0][16] = "%di";
-        FC_REGISTERS[0][32] = "%edi";
-        FC_REGISTERS[0][64] = "%rdi";
-        FC_REGISTERS[1][8] = "%si"; // < using the 16-bit register
-        FC_REGISTERS[1][16] = "%si";
-        FC_REGISTERS[1][32] = "%esi";
-        FC_REGISTERS[1][64] = "%rsi";
-        FC_REGISTERS[2][8] = "%dx"; // < using the 16-bit register
-        FC_REGISTERS[2][16] = "%dx";
-        FC_REGISTERS[2][32] = "%edx";
-        FC_REGISTERS[2][64] = "%rdx";
-        FC_REGISTERS[3][8] = "%cx"; // < using the 16-bit register
-        FC_REGISTERS[3][16] = "%cx";
-        FC_REGISTERS[3][32] = "%ecx";
-        FC_REGISTERS[3][64] = "%rcx";
-        FC_REGISTERS[4][8] = "%r8d"; // < using the 32-bit register
-        FC_REGISTERS[4][16] = "%r8d"; // < using the 32-bit register
-        FC_REGISTERS[4][32] = "%r8d";
-        FC_REGISTERS[4][64] = "%r8";
-        FC_REGISTERS[5][8] = "%r9d"; // < using the 32-bit register
-        FC_REGISTERS[5][16] = "%r9d"; // < using the 32-bit register
-        FC_REGISTERS[5][32] = "%r9d";
-        FC_REGISTERS[5][64] = "%r9";
-        init = true;
-    }
+std::string X86_64IRVisitor::getFCReg(size_t index) {
+    static std::map<size_t, std::string> const FC_REGISTERS = {
+            {0, IR::DEST_REG},
+            {1, IR::SOURCE_REG},
+            {2, IR::DATA_REG},
+            {3, IR::COUNTER_REG},
+            {4, IR::REGISTER_8},
+            {5, IR::REGISTER_9}
+    };
 
     if (index >= NB_FUNCTION_CALL_REGISTERS) {
         logger.fatal() << "There are only " << NB_FUNCTION_CALL_REGISTERS << " function call "
                        << "registers, but you're asking for the " << index << "-th one!";
         exit(1);
     }
-    if (FC_REGISTERS[index].find(bitSize) == FC_REGISTERS[index].end()) {
-        logger.fatal() << "The size " << bitSize << " is not valid!";
-        exit(1);
-    }
-    return FC_REGISTERS[index][bitSize];
+    return FC_REGISTERS.at(index);
 }
 
 void X86_64IRVisitor::visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) {
@@ -208,15 +162,16 @@ void X86_64IRVisitor::visitCopy(caramel::ir::CopyInstruction *instruction, std::
         parameterSize = 64;
     }
 
-    os << "  mov" + getSizeSuffix(parameterSize) + "    ";
-
-    if (instruction->getRegisterNumber() != -1) {
-        os << getFunctionCallRegister(instruction->getRegisterNumber(), parameterSize);
-    } else {
-        os << toAssembly(instruction->getParentBlock(), instruction->getSource(), parameterSize);
+    std::string src = instruction->getSource();
+    if (instruction->getRegisterNumber() != -1) { // an argument passed in registers
+        src = getFCReg(size_t(instruction->getRegisterNumber()));
     }
-    os << ", " << toAssembly(instruction->getParentBlock(), instruction->getDestination(), parameterSize);
-    // os << "\n#mov copy";
+
+    writeMove(instruction->getParentBlock(), os,
+              src, parameterSize,
+              instruction->getDestination(), parameterSize);
+
+    os << COMMENT_INDENT << "# copyInstr";
 }
 
 void X86_64IRVisitor::visitCopyAddr(CopyAddrInstruction *instruction, std::ostream &os) {
@@ -249,25 +204,29 @@ void X86_64IRVisitor::visitArrayAccessCopy(ArrayAccessCopyInstruction *instructi
                 instruction->getParentBlock(), instruction->getArrayName(), length);
         arrayAsmName.pop_back();
 
-        std::string indexAsmReg = toAssembly(
-                instruction->getParentBlock(), instruction->getIndex(), length); // length might be wrong
-        if (indexAsmReg[4] == 'd') {
-            indexAsmReg.pop_back();
-        }
-        if (indexAsmReg[1] == 'e') {
-            indexAsmReg[1] = 'r';
-        }
+        writeMove(instruction->getParentBlock(), os,
+                  instruction->getIndex(), length,
+                  IR::DATA_REG, length);
+        os << '\n';
 
-        std::string destAsmReg = toAssembly(
-                instruction->getParentBlock(), instruction->getDestination(), length);
+        std::string indexAsmReg = regToAsm(IR::DATA_REG, 64);
 
         if (instruction->isLValue()) {
+            std::string destAsmReg = toAssembly(
+                    instruction->getParentBlock(), instruction->getDestination(), length);
+
             os << "  movl    " << destAsmReg << ", " << arrayAsmName << "," << indexAsmReg << "," << (length / 8U) << ")";
         } else {
             os << "  movl    " << arrayAsmName << "," << indexAsmReg << "," << (length / 8U)
-               << "), " << destAsmReg;
+               << "), " << regToAsm(IR::ACCUMULATOR, 32);
+            os << '\n';
+
+            writeMove(instruction->getParentBlock(), os,
+                      IR::ACCUMULATOR, length,
+                      instruction->getDestination(), length);
         }
-    } else {
+
+    } else { // Array as argument == pointer
 
 /*
   cltq
@@ -279,24 +238,24 @@ void X86_64IRVisitor::visitArrayAccessCopy(ArrayAccessCopyInstruction *instructi
 
         std::string indexAsmReg = toAssembly(
                 instruction->getParentBlock(), instruction->getIndex(), 64); // length might be wrong
-        os << "  movq    " << indexAsmReg << ", " << getRegister(IR::ACCUMULATOR, 64) << '\n';
+        os << "  movq    " << indexAsmReg << ", " << regToAsm(IR::ACCUMULATOR, 64) << '\n';
         os << "  cltq\n";
 
 
-        indexAsmReg = getRegister(IR::ACCUMULATOR, 64);
-        os << "  leaq    0(," << indexAsmReg << ", " << (length / 8U) << "), " << getRegister(IR::DATA_REG, 64) << '\n';
+        indexAsmReg = regToAsm(IR::ACCUMULATOR, 64);
+        os << "  leaq    0(," << indexAsmReg << ", " << (length / 8U) << "), " << regToAsm(IR::DATA_REG, 64) << '\n';
 
         std::string arrayAsmName = toAssembly(
                 instruction->getParentBlock(), instruction->getArrayName(), length);
-        os << "  movq    " << arrayAsmName << ", " << getRegister(IR::ACCUMULATOR, 64) << '\n';
+        os << "  movq    " << arrayAsmName << ", " << regToAsm(IR::ACCUMULATOR, 64) << '\n';
 
-        os << "  addq    " << getRegister(IR::DATA_REG, 64) << ", " << getRegister(IR::ACCUMULATOR, 64) << '\n';
+        os << "  addq    " << regToAsm(IR::DATA_REG, 64) << ", " << regToAsm(IR::ACCUMULATOR, 64) << '\n';
 
-        os << "  movq    (" << getRegister(IR::ACCUMULATOR, 64) << "), " << getRegister(IR::ACCUMULATOR, 64) << '\n';
+        os << "  movq    (" << regToAsm(IR::ACCUMULATOR, 64) << "), " << regToAsm(IR::ACCUMULATOR, 64) << '\n';
 
         std::string destAsmReg = toAssembly(
                 instruction->getParentBlock(), instruction->getDestination(), length);
-        os << "  movl    " << getRegister(IR::ACCUMULATOR, length) << ", " << destAsmReg;
+        os << "  movl    " << regToAsm(IR::ACCUMULATOR, length) << ", " << destAsmReg;
     }
 
     os << "\n  # end of arrayAccess of " << instruction->getArrayName();
@@ -332,14 +291,15 @@ void X86_64IRVisitor::visitMod(caramel::ir::ModInstruction *instruction, std::os
                    << instruction->getLeft() << " % " << instruction->getRight();
 
     const auto parameterSize = instruction->getType()->getMemoryLength();
-    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
     const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
     const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
-    os << "  movl    " << leftLocation
-       << ", " << "%eax" << '\n'; // TODO : Not write %eax directly
-    os << "  cltd" << '\n';
+    writeMove(instruction->getParentBlock(), os,
+              instruction->getLeft(), parameterSize,
+              IR::ACCUMULATOR, parameterSize);
+    os << '\n';
 
+    os << "  cltd" << '\n';
     os << "  idivl    " << rightLocation << '\n';
 
 }
@@ -349,14 +309,14 @@ void X86_64IRVisitor::visitDivision(caramel::ir::DivInstruction *instruction, st
                    << instruction->getLeft() << " / " << instruction->getRight();
 
     const auto parameterSize = instruction->getType()->getMemoryLength();
-    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
     const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
-    const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
-    os << "  movl    " << leftLocation
-       << ", " << storeLocation << '\n';
+    writeMove(instruction->getParentBlock(), os,
+              instruction->getLeft(), parameterSize,
+              instruction->getReturnName(), parameterSize);
+    os << '\n';
+
     os << "  cltd" << '\n';
-
     os << "  idivl    " << rightLocation;
 
 }
@@ -366,26 +326,31 @@ void X86_64IRVisitor::visitAddition(caramel::ir::AdditionInstruction *instructio
                    << instruction->getLeft() << " + " << instruction->getRight();
 
     const auto parameterSize = instruction->getType()->getMemoryLength();
-    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
-    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
     const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
-    os << "  movl    " << rightLocation
-                       << ", " << storeLocation << '\n';
+    writeMove(instruction->getParentBlock(), os,
+              instruction->getRight(), parameterSize,
+              instruction->getReturnName(), parameterSize);
+    os << '\n';
+
+    writeMove(instruction->getParentBlock(), os,
+              instruction->getLeft(), parameterSize,
+              IR::ACCUMULATOR, parameterSize);
+    os << '\n';
 
     os << "  add" + getSizeSuffix(parameterSize) + "    "
-       << leftLocation << ", " << storeLocation;
+       << regToAsm(IR::ACCUMULATOR, parameterSize) << ", " << storeLocation;
 
+    os << COMMENT_INDENT << "# addInstr";
 }
 
 void X86_64IRVisitor::visitLdConst(caramel::ir::LDConstInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting ldconst: " << instruction->getDestination() << " = "
                    << instruction->getValue();
 
-    os << "  movl    " << toAssembly(instruction->getParentBlock(), instruction->getValue())
-       << ", " << toAssembly(instruction->getParentBlock(), instruction->getDestination());
-
-    // os << "\n#mov ldconst";
+    writeMove(instruction->getParentBlock(), os,
+              instruction->getValue(), 32, // TODO: LDConst 32-bit?
+              instruction->getDestination(), 32);
 }
 
 void X86_64IRVisitor::visitNope(caramel::ir::NopInstruction *instruction, std::ostream &os) {
@@ -399,7 +364,7 @@ void X86_64IRVisitor::visitFunctionCall(caramel::ir::FunctionCallInstruction *in
     logger.trace() << "[x86_64] " << "visiting functionCall: " << instruction->getFunctionName();
     os << "  call    " << instruction->getFunctionName();
     for (int i = 0; i < 6 && i < instruction->getArgumentsLength(); i++) {
-        os << "\n  popq     " << getFunctionCallRegister(size_t(i), 64);
+        os << "\n  popq     " << regToAsm(getFCReg(size_t(i)), 64);
     }
     if (instruction->getArgumentsLength() > 6) {
         os << "\n  addq    $" << (instruction->getArgumentsLength() - 6) * 8 << ", %rsp";
@@ -410,12 +375,12 @@ void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, s
     logger.trace() << "[x86_64] " << "visiting return: " << instruction->getReturnName();
 
     const auto returnSize = instruction->getType()->getMemoryLength();
-    os << "  mov" + getSizeSuffix(returnSize) + "    "
-       << toAssembly(instruction->getParentBlock(), instruction->getSource(), returnSize)
-       << ", " << toAssembly(instruction->getParentBlock(), IR::ACCUMULATOR, 32) // TODO: See TODO in getSizeSuffix()
-       << "\n";
-    size_t functionContext = instruction->getParentBlock()->getFunctionContext();
+    writeMove(instruction->getParentBlock(), os,
+              instruction->getSource(), returnSize,
+              IR::ACCUMULATOR, returnSize);
+    os << '\n';
 
+    size_t functionContext = instruction->getParentBlock()->getFunctionContext();
      os << "  jmp    " << instruction->getParentBlock()->getCFG()->getFunctionEndBasicBlock(functionContext)->getLabelName();
 
     // os << "\n#mov return";
@@ -424,11 +389,13 @@ void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, s
 void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting call parameter: " << instruction->getValue();
 
-    int index = instruction->getIndex();
+    size_t index = instruction->getIndex();
     if (index < 6) {
-        os << "  pushq    " << getFunctionCallRegister(index, 64) << '\n';
-        os << "  movq    " << toAssembly(instruction->getParentBlock(), instruction->getValue(), 64)
-           << ", " << getFunctionCallRegister(index, 64) << '\n';
+        os << "  pushq    " << regToAsm(getFCReg(index), 64) << '\n';
+
+        writeMove(instruction->getParentBlock(), os,
+                  instruction->getValue(), 64, // TODO: call parameter = 64-bit?
+                  getFCReg(index), 64);
 
         //  os << "\n#mov call";
     } else {
@@ -442,14 +409,14 @@ void X86_64IRVisitor::visitSubtraction(SubtractionInstruction *instruction, std:
 
     const auto parameterSize = instruction->getType()->getMemoryLength();
     const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
-    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
     const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
-    os << "  movl    " << rightLocation // TODO: We might want to change "l" dynamically ?
-       << ", " << storeLocation << '\n';
+    writeMove(instruction->getParentBlock(), os,
+              instruction->getRight(), parameterSize,
+              instruction->getReturnName(), parameterSize);
+    os << '\n';
 
-    os << "  sub" + getSizeSuffix(parameterSize) + "    "
-       << leftLocation << ", " << storeLocation;
+    os << "  sub" + getSizeSuffix(parameterSize) + "    " << leftLocation << ", " << storeLocation;
 }
 
 void X86_64IRVisitor::visitPush(PushInstruction *instruction, std::ostream &os) {
@@ -490,11 +457,12 @@ void X86_64IRVisitor::visitMultiplication(MultiplicationInstruction *instruction
 
     const auto parameterSize = instruction->getType()->getMemoryLength();
     const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
-    const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
     const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
-    os << "  movl    " << rightLocation // TODO: We might want to change "l" dynamically ?
-       << ", " << storeLocation << '\n';
+    writeMove(instruction->getParentBlock(), os,
+              instruction->getRight(), parameterSize,
+              instruction->getReturnName(), parameterSize);
+    os << '\n';
 
     os << "  imul" + getSizeSuffix(parameterSize) + "    "
        << leftLocation << ", " << storeLocation;
@@ -514,7 +482,6 @@ void X86_64IRVisitor::visitFlagToReg(FlagToRegInstruction *instruction, std::ost
 
     os << "  set" << instruction->getFtrType() << "    " << "%cl\n";
     os << "  movzbl    %cl, " << storeLocation;
-
 }
 
 void X86_64IRVisitor::visitLeftShift(LeftShiftInstruction *instruction, std::ostream &os) {
@@ -529,8 +496,6 @@ void X86_64IRVisitor::visitLeftShift(LeftShiftInstruction *instruction, std::ost
     os << "  movb    " << rightLocation << ", %cl" << '\n';
     os << "  sal" + getSizeSuffix(parameterSize) << "    " << "%cl"
        << ", " << leftLocation;
-
-
 }
 
 void X86_64IRVisitor::visitRightShift(RightShiftInstruction *instruction, std::ostream &os) {
@@ -545,7 +510,6 @@ void X86_64IRVisitor::visitRightShift(RightShiftInstruction *instruction, std::o
     os << "  movb    " << rightLocation << ", %cl" << '\n';
     os << "  sar" + getSizeSuffix(parameterSize) << "    " << "%cl"
        << ", " << leftLocation;
-
 }
 
 void X86_64IRVisitor::visitBitwiseAnd(BitwiseAndInstruction *instruction, std::ostream &os) {
@@ -553,13 +517,15 @@ void X86_64IRVisitor::visitBitwiseAnd(BitwiseAndInstruction *instruction, std::o
                    << instruction->getLeft() << " - " << instruction->getRight();
 
     const auto parameterSize = instruction->getType()->getMemoryLength();
-    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
     const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
     const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
-    os << "  mov"+ getSizeSuffix(parameterSize) << "    " << leftLocation << ", " << storeLocation << '\n';
-    os << "  and"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation;
+    writeMove(instruction->getParentBlock(), os,
+              instruction->getLeft(), parameterSize,
+              instruction->getReturnName(), parameterSize);
+    os << '\n';
 
+    os << "  and"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation;
 }
 
 void X86_64IRVisitor::visitBitwiseOr(BitwiseOrInstruction *instruction, std::ostream &os) {
@@ -567,13 +533,15 @@ void X86_64IRVisitor::visitBitwiseOr(BitwiseOrInstruction *instruction, std::ost
                    << instruction->getLeft() << " - " << instruction->getRight();
 
     const auto parameterSize = instruction->getType()->getMemoryLength();
-    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
     const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
     const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
-    os << "  mov"+ getSizeSuffix(parameterSize) << "    " << leftLocation << ", " << storeLocation << '\n';
-    os << "  or"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation;
+    writeMove(instruction->getParentBlock(), os,
+              instruction->getLeft(), parameterSize,
+              instruction->getReturnName(), parameterSize);
+    os << '\n';
 
+    os << "  or"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation;
 }
 
 void X86_64IRVisitor::visitBitwiseXor(BitwiseXorInstruction *instruction, std::ostream &os) {
@@ -581,13 +549,52 @@ void X86_64IRVisitor::visitBitwiseXor(BitwiseXorInstruction *instruction, std::o
                    << instruction->getLeft() << " - " << instruction->getRight();
 
     const auto parameterSize = instruction->getType()->getMemoryLength();
-    const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), parameterSize);
     const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
     const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
-    os << "  mov"+ getSizeSuffix(parameterSize) << "    " << leftLocation << ", " << storeLocation << '\n';
-    os << "  xor"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation ;
+    writeMove(instruction->getParentBlock(), os,
+              instruction->getLeft(), parameterSize,
+              instruction->getReturnName(), parameterSize);
+    os << '\n';
 
+    os << "  xor"+ getSizeSuffix(parameterSize) << "    " << rightLocation << ", " << storeLocation ;
+}
+
+void X86_64IRVisitor::writeMove(BasicBlock::Ptr const &bb, std::ostream &os,
+                                std::string src, size_t srcSize,
+                                std::string dest, size_t destSize) {
+    static std::map<size_t, std::string> const movInstr = {
+            {8, "movb"},
+            {16, "movw"},
+            {32, "movl"},
+            {64, "movq"}
+    };
+
+    auto const maxSize = std::max(srcSize, destSize);
+
+    // Special case for %si and %di, which aren't 8-bit
+    if (srcSize == 8 && (src == IR::SOURCE_REG || src == IR::DEST_REG)) {
+        writeMove(bb, os, src, 32, IR::REGISTER_10, 32);
+        os << '\n';
+        src = IR::REGISTER_10;
+    }
+    if (destSize == 8 && (dest == IR::SOURCE_REG || dest == IR::DEST_REG)) {
+        writeMove(bb, os, dest, 32, IR::REGISTER_11, 32);
+        os << '\n';
+        dest = IR::REGISTER_11;
+    }
+    auto srcAsm = toAssembly(bb, src, srcSize);
+    auto destAsm = toAssembly(bb, dest, destSize);
+
+    bool const srcMem = srcAsm[0] != '%' && srcAsm[0] != '$';
+    bool const destMem = destAsm[0] != '%' && destAsm[0] != '$';
+    if (srcMem && destMem) {
+        os << "  " << movInstr.at(maxSize) << "    " << srcAsm << ", " << regToAsm(IR::DATA_REG, maxSize);
+        os << '\n';
+        os << "  " << movInstr.at(maxSize) << "    " << regToAsm(IR::DATA_REG, maxSize) << ", " << destAsm;
+    } else {
+        os << "  " << movInstr.at(maxSize) << "    " << srcAsm << ", " << destAsm;
+    }
 }
 
 } // namespace caramel::ir::x86_64

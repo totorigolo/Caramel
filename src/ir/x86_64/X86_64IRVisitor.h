@@ -41,6 +41,7 @@ public:
 
 public:
     explicit X86_64IRVisitor() = default;
+
     virtual ~X86_64IRVisitor() = default;
 
     void visitArrayAccessCopy(ArrayAccessCopyInstruction *instruction, std::ostream &os) override;
@@ -75,13 +76,13 @@ public:
 
     void visitMultiplication(MultiplicationInstruction *instruction, std::ostream &os) override;
 
-    void visitMod(ModInstruction *instruction, std::ostream &os) override ;
+    void visitMod(ModInstruction *instruction, std::ostream &os) override;
 
-    void visitDivision(DivInstruction *instruction, std::ostream &os) override ;
+    void visitDivision(DivInstruction *instruction, std::ostream &os) override;
 
     void visitFlagToReg(FlagToRegInstruction *instruction, std::ostream &os) override;
 
-    void visitLeftShift(LeftShiftInstruction *instruction, std::ostream &os) override ;
+    void visitLeftShift(LeftShiftInstruction *instruction, std::ostream &os) override;
 
     void visitRightShift(RightShiftInstruction *instruction, std::ostream &os) override;
 
@@ -91,18 +92,22 @@ public:
 
     void visitBitwiseXor(BitwiseXorInstruction *instruction, std::ostream &os) override;
 
+private:
+    void writeMove(BasicBlock::Ptr const &bb, std::ostream &os,
+                   std::string src, size_t srcSize,
+                   std::string dest, size_t destSize);
 
-
+public: // FIXME
     //private:
     std::string address(std::string const &symbol);
-    std::string registerToAssembly(std::string const &register_, size_t bitSize = 32U);
+
     std::string toAssembly(ir::BasicBlock::Ptr parentBB, std::string const &anySymbol, size_t bitSize = 32U);
+
     std::string getSizeSuffix(size_t bitSize);
-    std::string getFunctionCallRegister(size_t index, size_t bitSize);
-    std::string getRegister(std::string register_, size_t bitSize);
 
+    std::string getFCReg(size_t index);
 
-
+    std::string regToAsm(std::string register_, size_t bitSize);
 };
 
 } // namespace caramel::ir::x86_64

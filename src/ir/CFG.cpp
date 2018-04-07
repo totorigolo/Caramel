@@ -96,6 +96,23 @@ long CFG::addParamArraySymbol(size_t controlBlockId, std::string const &symbolNa
     return addSymbol(controlBlockId, symbolName, type, index);
 }
 
+long CFG::addArraySymbol(size_t controlBlockId,
+                         std::string const &symbolName, ast::PrimaryType::Ptr type, size_t length) {
+    if (length == 0) {
+        logger.fatal() << "You can't use 0-length arrays.";
+        exit(1);
+    }
+    for (size_t i = 0; i < length - 1; ++i) {
+        size_t ip = length - (i + 1);
+        logger.trace() << "[CFG] Adding array symbol element " << yellow << "@" << controlBlockId << magenta << ": "
+                       << grey << symbolName << "[" << ip << "]" << " of type " << type->getIdentifier();
+        addSymbol(controlBlockId, symbolName + '[' + std::to_string(ip) + ']', type);
+    }
+    logger.trace() << "[CFG] Adding array symbol element " << yellow << "@" << controlBlockId << magenta << ": "
+                   << grey << symbolName << "[0]" << " of type " << type->getIdentifier();
+    return addSymbol(controlBlockId, symbolName, type);
+}
+
 long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, caramel::ast::PrimaryType::Ptr type) {
     logger.trace() << "[CFG] Adding symbol " << yellow << "@" << controlBlockId << magenta << ": "
                    << grey << symbolName << " of type " << type->getIdentifier();
@@ -192,7 +209,7 @@ std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
                << ", name=" << name
                << ", type=" << type->getIdentifier()
                << ", index=" << cfg.mSymbolIndex.at(functionContextId).at(name)
-               << ", paramArray=" << cfg.mSymbolIsParamArray.at(functionContextId).at(name)
+               << ", isParamArray=" << std::boolalpha << cfg.mSymbolIsParamArray.at(functionContextId).at(name)
                << '\n';
         }
     }

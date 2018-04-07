@@ -14,7 +14,7 @@ int32_t main() {
     tab[2] = 5;
     tab[i] = 7;
 
-    for (i = 0; 5 - i; i = i + 1) {
+    for (i = 0; 5 - i; i++) {
         putchar('0' + tab[i]);
         putchar('\n');
     }

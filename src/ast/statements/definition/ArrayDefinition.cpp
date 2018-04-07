@@ -66,21 +66,24 @@ std::shared_ptr<ir::IR> ArrayDefinition::getIR(ir::BasicBlock::Ptr &currentBasic
 
     auto arraySymbol = mSymbol.lock();
     auto arrayName = arraySymbol->getName();
+    auto arrayType = arraySymbol->getType();
     auto const &content = arraySymbol->getContent();
+
+    currentBasicBlock->addArraySymbol(arrayName, arrayType, arraySymbol->getSize());
 
     long index = arraySymbol->getSize();
     for (auto it = content.rbegin(), it_end = content.rend(); it != it_end; ++it) {
         auto const &expression = *it;
         --index;
 
-        std::string valueName = SAFE_ADD_INSTRUCTION(expression, currentBasicBlock); // currentBasicBlock->addInstruction(expression->getIR(currentBasicBlock));
+        std::string valueName = SAFE_ADD_INSTRUCTION(expression, currentBasicBlock);
         std::string destination = arrayName;
         if (index > 0) {
             destination += "[" + std::to_string(index) + "]";
         }
         currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(
                 currentBasicBlock,
-                arraySymbol->getType(),
+                arrayType,
                 destination,
                 valueName
         ));

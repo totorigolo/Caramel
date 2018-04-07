@@ -62,7 +62,7 @@ std::string DeclarationMismatchException::buildMismatchSymbolTypeErrorMessage(st
             res << "type";
             break;
     }
-    res << "'" << variableName << "' which has a previous occurrence as a " << symbol->getSymbolType();
+    res << " '" << variableName << "' which has a previous occurrence as a " << symbol->getSymbolType();
     return res.str();
 }
 

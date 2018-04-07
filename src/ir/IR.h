@@ -70,14 +70,20 @@ public:
     using Ptr = std::shared_ptr<IR>;
     using WeakPt = std::weak_ptr<IR>;
 
-    static constexpr const char* REGISTER_BASE_POINTER = "%rbp";
-    static constexpr const char* REGISTER_STACK_POINTER = "%rsp";
+    static constexpr const char* COUNTER_REG = "%rcx";
+    static constexpr const char* DATA_REG = "%rdx";
+    static constexpr const char* BASE_REG = "%rbx";
+    static constexpr const char* SOURCE_REG = "%rsi";
+    static constexpr const char* DEST_REG = "%rdi";
+    static constexpr const char* BASE_POINTER_REG = "%rbp";
+    static constexpr const char* STACK_POINTER_REG = "%rsp";
     static constexpr const char* ACCUMULATOR = "%rax";
-    static constexpr const char* ACCUMULATOR_1 = "%r10";
-    static constexpr const char* ACCUMULATOR_2 = "%r11";
+    static constexpr const char* ACCUMULATOR_1 = "%r10"; // FIXME: deprecated
+    static constexpr const char* ACCUMULATOR_2 = "%r11"; // FIXME: deprecated
+    static constexpr const char* REGISTER_8 = "%r8";
+    static constexpr const char* REGISTER_9 = "%r9";
     static constexpr const char* REGISTER_10 = "%r10";
     static constexpr const char* REGISTER_11 = "%r11";
-    static constexpr const char* DATA_REG = "%rdx";
 
 public:
     explicit IR(

@@ -58,6 +58,7 @@ public:
     bool hasSymbol(size_t controlBlockId, std::string const &symbolName);
     bool isSymbolParamArray(size_t controlBlockId, std::string const &symbolName);
     long addParamArraySymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type);
+    long addArraySymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type, size_t length);
     long addSymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type);
     long addSymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type, long index);
     long getSymbolIndex(size_t controlBlockId, std::string const &symbolName);

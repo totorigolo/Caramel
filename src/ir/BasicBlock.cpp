@@ -60,7 +60,8 @@ std::string BasicBlock::addInstruction(std::shared_ptr<IR> const &instruction) {
 
     size_t memoryLength = instruction->getType()->getMemoryLength();
     std::string returnName = instruction->getReturnName();
-    if (!returnName.empty() && returnName[0] != '!' && returnName[0] != '%' && memoryLength > 0) {
+//    if (!returnName.empty() && returnName[0] != '!' && returnName[0] != '%' && memoryLength > 0) {
+    if (!returnName.empty() && returnName[0] != '%' && memoryLength > 0) {
         if (!mCfg->hasSymbol(mFunctionContext, returnName)) {
             mCfg->addSymbol(mFunctionContext, returnName, instruction->getType());
         }
@@ -99,6 +100,10 @@ long BasicBlock::isSymbolParamArray(std::string const &symbolName) {
 
 long BasicBlock::addParamArraySymbol(std::string const &symbolName, ast::PrimaryType::Ptr type) {
     return mCfg->addParamArraySymbol(mFunctionContext, symbolName, type);
+}
+
+long BasicBlock::addArraySymbol(std::string const &symbolName, ast::PrimaryType::Ptr type, size_t length) {
+    return mCfg->addArraySymbol(mFunctionContext, symbolName, type, length);
 }
 
 long BasicBlock::addSymbol(std::string const &symbolName, ast::PrimaryType::Ptr type) {
