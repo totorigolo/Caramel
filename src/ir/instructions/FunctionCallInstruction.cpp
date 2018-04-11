@@ -33,7 +33,7 @@ FunctionCallInstruction::FunctionCallInstruction(
         std::shared_ptr<BasicBlock> const &parentBlock,
         ast::PrimaryType::Ptr const &returnType,
         int argumentsLength
-) : IR(IR::ACCUMULATOR, Operation::call, parentBlock, returnType),
+) : IR(ast::Statement::createVarName(), Operation::call, parentBlock, returnType),
     mFunctionName{std::move(functionName)},
     mArgumentsLength{argumentsLength} {}
 

@@ -30,23 +30,40 @@ void displayNumber(int32_t number) {
     int32_t tab[50];
     int32_t index = 0;
     int32_t i;
-    while (number >= 1) {
-        tab[index] = number % 10;
-        number = number / 10;
-        index = index + 1;
+
+    // Negative numbers
+    if (number < 0) {
+        putchar('-');
+        number *= -1;
     }
 
-    // TODO : manage signed integers in subtraction (... and others ? :x)
-    // b *displayNumber+913
-    for (i = index; i > 0; i--) { // cond=, inc=901
+    while (number >= 1) {
+        tab[index] = number % 10;
+        number /= 10;
+        index++;
+    }
+    if (index == 0) { // special case for displayNumber(0)
+        tab[index] = 0;
+        index = 1;
+    }
+
+    for (i = index; i > 0; i--) {
         putchar('0' + tab[i - 1]);
-        // b *displayNumber+996
     }
 }
 
 int32_t main() {
-
-    displayNumber(20);
-
+    displayNumber(-1);
+    putchar('\n');
+    displayNumber(0);
+    putchar('\n');
+    displayNumber(1);
+    putchar('\n');
+    displayNumber(42);
+    putchar('\n');
+    displayNumber(1337);
+    putchar('\n');
+    displayNumber(-1337);
+    putchar('\n');
     return 0;
 }

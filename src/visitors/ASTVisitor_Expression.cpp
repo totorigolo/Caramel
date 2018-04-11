@@ -243,15 +243,19 @@ antlrcpp::Any ASTVisitor::visitDisjunction(CaramelParser::DisjunctionContext *ct
 }
 
 antlrcpp::Any ASTVisitor::visitAssignment(CaramelParser::AssignmentContext *ctx) {
-    logger.trace() << "visiting assignment: " << grey << ctx->getText();
+    logger.trace() << "visiting assignment expression: " << grey << ctx->getText();
 
-    Expression::Ptr lvalue = visitLvalue(ctx->lvalue());
-    return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
-            lvalue,
-            castTo<BinaryOperator::Ptr>(std::make_shared<AssignmentOperator>(castTo<LValue::Ptr>(lvalue))),
-            visitExpression(ctx->expression()),
-            ctx->getStart()
-    ));
+    if (ctx->children.size() == 1) {
+        // One children = No BinaryExpression at this step.
+        return visitChildren(ctx).as<Expression::Ptr>();
+    } else {
+        return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
+                visitLvalue(ctx->lvalue()),
+                visitAssignmentOperator(ctx->assignmentOperator()),
+                visitExpression(ctx->expression()),
+                ctx->getStart()
+        ));
+    }
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -310,7 +314,7 @@ ASTVisitor::visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionCon
 // Binary Operators
 
 antlrcpp::Any
-ASTVisitor::visitAdditiveOperator(caramel_unused CaramelParser::AdditiveOperatorContext *ctx) {
+ASTVisitor::visitAdditiveOperator(CaramelParser::AdditiveOperatorContext *ctx) {
     logger.trace() << "visiting additive operator: " << grey << ctx->getText();
     return FIND_BINARY_OP(ctx);
 }
@@ -333,6 +337,11 @@ antlrcpp::Any ASTVisitor::visitComparativeOperator(CaramelParser::ComparativeOpe
 
 antlrcpp::Any ASTVisitor::visitEqualityOperator(CaramelParser::EqualityOperatorContext *ctx) {
     logger.trace() << "visiting equality operator: " << grey << ctx->getText();
+    return FIND_BINARY_OP(ctx);
+}
+
+antlrcpp::Any ASTVisitor::visitAssignmentOperator(CaramelParser::AssignmentOperatorContext *ctx) {
+    logger.trace() << "visiting assignment operator: " << grey << ctx->getText();
     return FIND_BINARY_OP(ctx);
 }
 
@@ -365,8 +374,7 @@ antlrcpp::Any ASTVisitor::visitLvalue(CaramelParser::LvalueContext *ctx) {
         return castTo<Expression::Ptr>(arrayAccess);
     } else {
         Identifier::Ptr identifier = std::make_shared<Identifier>(ctx->getStart());
-        Symbol::Ptr variableSymbol = currentContext()->getSymbolTable()->addVariableUsage(
-                ctx, varName, identifier);
+        Symbol::Ptr variableSymbol = currentContext()->getSymbolTable()->addVariableUsage(ctx, varName, identifier);
         identifier->setSymbol(variableSymbol);
         return castTo<Expression::Ptr>(identifier);
     }
@@ -393,6 +401,7 @@ antlrcpp::Any ASTVisitor::visitCharConstant(CaramelParser::CharConstantContext *
         else if (ctx->getText() == "'\\''") value = '\'';
         else if (ctx->getText() == "'\\\"'") value = '"';
         else if (ctx->getText() == "'\\\\'") value = '\\';
+        else if (ctx->getText() == "'\\0'") value = '\0';
     }
     return castTo<AtomicExpression::Ptr>(std::make_shared<Constant>(value, ctx->start));
 }

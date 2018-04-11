@@ -33,6 +33,7 @@ struct Config {
     bool staticAnalysis = false;
     bool optimize = false;
     bool compile = false;
+    bool assemble = false;
     bool syntaxTreeDot = false;
     bool astDot = false;
     std::string sourceFile;

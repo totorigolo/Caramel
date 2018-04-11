@@ -29,8 +29,8 @@
 
 namespace caramel::ast {
 
-FunctionSymbol::FunctionSymbol(const std::string &name, const PrimaryType::Ptr &type)
-        : Symbol(name, type, SymbolType::FunctionSymbol), mContext{}, mParameters() {}
+FunctionSymbol::FunctionSymbol(const std::string &name, const PrimaryType::Ptr &type, bool variadic)
+        : Symbol(name, type, SymbolType::FunctionSymbol), mContext{}, mVariadic{variadic}, mParameters{} {}
 
 std::shared_ptr<Context> FunctionSymbol::getContext() {
     return mContext;
@@ -38,6 +38,10 @@ std::shared_ptr<Context> FunctionSymbol::getContext() {
 
 void FunctionSymbol::setContext(std::shared_ptr<Context> context) {
     mContext = std::move(context);
+}
+
+bool FunctionSymbol::isVariadic() const {
+    return mVariadic;
 }
 
 std::vector<FunctionParameterSignature> FunctionSymbol::getParameters() const {

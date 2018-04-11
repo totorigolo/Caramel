@@ -6,13 +6,12 @@
 #include <stdio.h>
 
 
-
 int32_t main() {
     int32_t a = 5;
     do {
-        putchar('0'+a);
+        putchar('0' + a);
         a--;
-    } while(a);
+    } while (a);
     putchar('\n');
     putchar('e');
     putchar('x');

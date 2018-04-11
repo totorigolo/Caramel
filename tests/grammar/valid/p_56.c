@@ -1,8 +1,11 @@
-int32_t main(){
-    if(1<2)  {
+#include <stdint.h>
+#include <stdio.h>
+
+
+int32_t main() {
+    if (1 < 2) {
         putchar('V');
-    }
-    else {
+    } else {
         putchar('F');
     }
     putchar('\n');

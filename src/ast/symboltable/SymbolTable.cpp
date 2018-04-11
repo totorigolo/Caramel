@@ -134,7 +134,8 @@ Symbol::Ptr SymbolTable::addVariableUsage(
 
     if (isDefined(name)) {
         auto const &symbol = getSymbol(antlrContext, name);
-        if (symbol->getSymbolType() != SymbolType::VariableSymbol) {
+        if (symbol->getSymbolType() != SymbolType::VariableSymbol &&
+            symbol->getSymbolType() != SymbolType::ArraySymbol) {
             throw DeclarationMismatchException(
                     antlrContext,
                     name,
@@ -283,7 +284,8 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDeclaration(
         PrimaryType::Ptr const &returnType,
         std::string const &name,
         std::vector<FunctionParameterSignature> parameters,
-        const Declaration::Ptr &declaration
+        const Declaration::Ptr &declaration,
+        bool variadic
 ) {
     logger.trace() << "SymbolTable::addFunctionDeclaration(" << name << ", " << returnType->getIdentifier() << ")";
 
@@ -341,7 +343,7 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDeclaration(
         functionSymbol->addDeclaration(declaration);
         return functionSymbol;
     } else {
-        FunctionSymbol::Ptr functionSymbol = std::make_shared<FunctionSymbol>(name, returnType);
+        FunctionSymbol::Ptr functionSymbol = std::make_shared<FunctionSymbol>(name, returnType, variadic);
         mSymbolMap[name] = functionSymbol;
         functionSymbol->setParameters(std::move(parameters));
         functionSymbol->addDeclaration(declaration);
@@ -355,7 +357,8 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
         PrimaryType::Ptr const &returnType,
         std::string const &name,
         std::vector<Symbol::Ptr> parameters,
-        const Definition::Ptr &definition
+        const Definition::Ptr &definition,
+        bool variadic
 ) {
     logger.trace() << "SymbolTable::addFunctionDefinition(" << name << ", " << returnType->getIdentifier() << ")";
 
@@ -427,7 +430,7 @@ FunctionSymbol::Ptr SymbolTable::addFunctionDefinition(
         functionSymbol->addDefinition(definition);
         return functionSymbol;
     } else {
-        FunctionSymbol::Ptr functionSymbol = std::make_shared<FunctionSymbol>(name, returnType);
+        FunctionSymbol::Ptr functionSymbol = std::make_shared<FunctionSymbol>(name, returnType, variadic);
         mSymbolMap[name] = functionSymbol;
         functionSymbol->setContext(functionContext);
         functionSymbol->setParameters(std::move(parameters));
@@ -482,23 +485,25 @@ FunctionSymbol::Ptr SymbolTable::addFunctionCall(
         }
         auto functionSymbol = castTo<FunctionSymbol::Ptr>(symbol);
 
-        // Check if the arguments match with the function parameters types
-        std::vector<PrimaryType::Ptr> const &argumentsTypes = functionCall->getArgumentsPrimaryTypes();
-        auto const &parameters = functionSymbol->getParameters();
-        if (argumentsTypes.size() != parameters.size()) {
-            throw FunctionCallArgumentsNumberMismatchException(
-                    "The function " + name + " takes " + std::to_string(parameters.size()) + " arguments, "
-                    + "but " + std::to_string(argumentsTypes.size()) + " were given."
-            );
-        }
-        for (size_t i = 0; i < argumentsTypes.size(); ++i) {
-            if (!parameters[i].primaryType->greaterThan(argumentsTypes[i])) {
-                std::stringstream errorMessage;
-                errorMessage
-                        << "The function " << name << " " << i << " parameter is of type "
-                        << parameters[i].primaryType->getIdentifier()
-                        << ", but got a " << argumentsTypes[i]->getIdentifier() << ".";
-                throw FunctionCallArgumentsTypeMismatchException(errorMessage.str());
+        // Check if the arguments match with the function parameters types, if it's not a variadic function
+        if (!functionSymbol->isVariadic()) {
+            std::vector<PrimaryType::Ptr> const &argumentsTypes = functionCall->getArgumentsPrimaryTypes();
+            auto const &parameters = functionSymbol->getParameters();
+            if (argumentsTypes.size() != parameters.size()) {
+                throw FunctionCallArgumentsNumberMismatchException(
+                        "The function " + name + " takes " + std::to_string(parameters.size()) + " arguments, "
+                        + "but " + std::to_string(argumentsTypes.size()) + " were given."
+                );
+            }
+            for (size_t i = 0; i < argumentsTypes.size(); ++i) {
+                if (!parameters[i].primaryType->greaterThan(argumentsTypes[i])) {
+                    std::stringstream errorMessage;
+                    errorMessage
+                            << "The function " << name << " " << (i+1) << "-th parameter is of type "
+                            << parameters[i].primaryType->getIdentifier()
+                            << ", but got a " << argumentsTypes[i]->getIdentifier() << ".";
+                    throw FunctionCallArgumentsTypeMismatchException(errorMessage.str());
+                }
             }
         }
 

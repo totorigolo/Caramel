@@ -6,9 +6,8 @@
 #include <stdio.h>
 
 
-
 int32_t main() {
-    int32_t tab[5];
+    int32_t tab[5] = {};
     int32_t i = 3;
 
     tab[2] = 5;

@@ -40,8 +40,20 @@
 #include "BitwiseXorOperator.h"
 #include "DisjunctionOperator.h"
 #include "ConjunctionOperator.h"
-#include "AssignmentOperator.h"
 #include "ModOperator.h"
+#include "AssignmentOperator.h"
+#include "PlusAssignmentOperator.h"
+#include "MinusAssignmentOperator.h"
+#include "TimesAssignmentOperator.h"
+#include "DivAssignmentOperator.h"
+#include "ModAssignmentOperator.h"
+#include "BitwiseAndAssignmentOperator.h"
+#include "BitwiseOrAssignmentOperator.h"
+#include "BitwiseXorAssignmentOperator.h"
+#include "LeftShiftAssignmentOperator.h"
+#include "RightShiftAssignmentOperator.h"
+
+#include <cstdlib>
 
 
 #define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<BinaryOperator>(make_shared<op>())))
@@ -83,17 +95,25 @@ caramel::ast::BinaryOperatorIndex::BinaryOperatorIndex() {
     // Conjunction & Disjunction operators
     BIND(ConjunctionOperator);
     BIND(DisjunctionOperator);
+
+    // Assignment operators
+    BIND(AssignmentOperator);
+    BIND(PlusAssignmentOperator);
+    BIND(MinusAssignmentOperator);
+    BIND(TimesAssignmentOperator);
+    BIND(DivAssignmentOperator);
+    BIND(ModAssignmentOperator);
+    BIND(BitwiseAndAssignmentOperator);
+    BIND(BitwiseOrAssignmentOperator);
+    BIND(BitwiseXorAssignmentOperator);
+    BIND(LeftShiftAssignmentOperator);
+    BIND(RightShiftAssignmentOperator);
 }
 
 caramel::ast::BinaryOperator::Ptr caramel::ast::BinaryOperatorIndex::getOpForToken(std::string token) {
     auto it = index.find(token);
 
     if (it == index.end()) {
-        if (token == "=") {
-            logger.fatal() << "The = operator has to be handled manually, because it needs an lvalue.";
-            exit(1);
-        }
-
         logger.fatal() << "Operator " << token << " not found.";
         exit(1);
     }

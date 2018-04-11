@@ -159,13 +159,13 @@ arrayAccess
   : L_Bracket_ InlineWS_* expression InlineWS_* R_Bracket_
   ;
 
-assignment
-  : lvalue InlineWS_* assignmentOperator WS_* expression
-  ;
-
 expression
   : assignment
-  | disjunction
+  ;
+
+assignment
+  : disjunction
+  | lvalue InlineWS_* assignmentOperator WS_* expression
   ;
 
 disjunction
@@ -231,7 +231,7 @@ equalityOperator : ( EqualityOp_ | DiffOp_ ) ;
 postfixUnaryOperator : ( IncOp_ | DecOp_ ) ;
 prefixUnaryOperator : ( Minus_ | IncOp_ | DecOp_ | LogicalNot_ ' '* | BitwiseNot_ ' '* | cast InlineWS_*) ;
 bitwiseShiftOperator : ( RightShiftOp_ | LeftShiftOp_ ) ;
-assignmentOperator : ( Assignment_ | PlusAssign_ | MinusAssign_ | TimesAssign_ | DivAssign_ | ModAssign_ | BitwiseAndAssign_ | BitwiseOrAssign_ | BitwiseXorAssign_ | BitwiseNotAssign_ ) ;
+assignmentOperator : ( Assignment_ | PlusAssign_ | MinusAssign_ | TimesAssign_ | DivAssign_ | ModAssign_ | BitwiseAndAssign_ | BitwiseOrAssign_ | BitwiseXorAssign_ | BitwiseNotAssign_ | LeftShiftAssign_ | RightShiftAssign_ ) ;
 
 postfixUnaryOperation
   : postfixUnaryOperator
@@ -249,6 +249,8 @@ numberConstant
 positiveConstant : PositiveNumber;
 charConstant
   : '\''.'\''
+  | '\'' (':'|'#') '\''
+  | EscapedZero_
   | EscapedNL_
   | EscapedCR_
   | EscapedTB_
@@ -299,6 +301,8 @@ BitwiseOrAssign_ : '|=' ;
 BitwiseXorAssign_ : '^=' ;
 BitwiseAndAssign_ : '&=' ;
 BitwiseNotAssign_ : '~=' ;
+RightShiftAssign_ : '>>=' ;
+LeftShiftAssign_ : '<<=' ;
 Plus_ : '+' ;
 Minus_ : '-' ;
 Times_ : '*' ;
@@ -324,6 +328,7 @@ FragmentIdentifier_ : ( Underscore_ | Underscore_? Letter_ AnyCharacter_* ) ;
 AnyCharacter_ : ( Underscore_ | Letter_ | Digit_ ) ;
 Assignment_ : '=' ;
 Comma_ : ',' ;
+EscapedZero_ : '\'\\\\0\'';
 EscapedNL_ : '\'\\\\n\'';
 EscapedCR_ : '\'\\\\r\'';
 EscapedTB_ : '\'\\\\t\'';

@@ -26,9 +26,9 @@
 
 #define GET_MAX_TYPE(leftExpr, rightExpr) PrimaryType::max(leftExpr->getPrimaryType(), rightExpr->getPrimaryType());
 
-#define SAFE_ADD_INSTRUCTION(expr, block)                                                                   \
-([&] () {auto GET_REG_PLEASE_DONT_HURT_ME = expr->getIR(block);                                     \
-return block->addInstruction(GET_REG_PLEASE_DONT_HURT_ME);})()
+#define SAFE_ADD_INSTRUCTION(expr, block)                                                           \
+([&] () { auto __tmp_instr__ = expr->getIR(block);                                                  \
+          return block->addInstruction(__tmp_instr__);})()
 
 #define MOVE_TO(var, to, max)                                                                       \
 currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(                            \
@@ -37,25 +37,3 @@ currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(        
     to,                                                                                             \
     var                                                                                             \
 ))
-
-#define PUSH(src)                                                                                    \
-currentBasicBlock->addInstruction(std::make_shared<ir::PushInstruction>(                             \
-        currentBasicBlock,                                                                           \
-        maxType,                                                                                     \
-        src                                                                                          \
-))
-
-#define POP(dest)                                                                                    \
-currentBasicBlock->addInstruction(std::make_shared<ir::PopInstruction>(                              \
-        currentBasicBlock,                                                                           \
-        maxType,                                                                                     \
-        dest                                                                                         \
-));
-
-#define OP_TO_ACC(Instruction, var, max)                                                            \
-std::make_shared<Instruction>(                                                                      \
-    ir::IR::ACCUMULATOR,                                                                            \
-    currentBasicBlock,                                                                              \
-    max,                                                                                            \
-    var                                                                                             \
-);

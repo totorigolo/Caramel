@@ -1,10 +1,13 @@
-#include<inttypes.h>
-int32_t main(){
+#include <stdint.h>
+#include <stdio.h>
+
+
+int32_t main() {
     int32_t i;
-    i=0;
-    while(i<5)  {
+    i = 0;
+    while (i < 5) {
         putchar('V');
-        i=i+1;
+        i = i + 1;
     }
     putchar('\n');
 }

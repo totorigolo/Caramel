@@ -46,6 +46,10 @@ public:
     Symbol::Ptr getSymbol() const override;
     void setSymbol(ArraySymbol::Ptr symbol);
 
+    Expression::Ptr getIndex() const;
+
+    std::string getArrayName() const;
+
     PrimaryType::Ptr getPrimaryType() const override;
 
     bool shouldReturnAnIR() const override;

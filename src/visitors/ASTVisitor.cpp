@@ -77,10 +77,14 @@ antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
 //    };
 //    auto putsSymbol = symbolTable->addFunctionDeclaration(ctx, void_t, "puts", putsParams, putsDecl);
 //    putsDecl->setFunctionSymbol(putsSymbol);
+    // printf
+    auto printfDecl = std::make_shared<FunctionDeclaration>(ctx->getStart());
+    std::vector<FunctionParameterSignature> printfParams = {};
+    auto printfSymbol = symbolTable->addFunctionDeclaration(ctx, void_t, "printf", printfParams, printfDecl, true);
+    printfDecl->setFunctionSymbol(printfSymbol);
     // putchar
     auto putcharDecl = std::make_shared<FunctionDeclaration>(ctx->getStart());
     std::vector<FunctionParameterSignature> putcharParams = {
-//            {"c", char_t, SymbolType::VariableSymbol}
             {"c", int32_t, SymbolType::VariableSymbol}
     };
     auto putcharSymbol = symbolTable->addFunctionDeclaration(ctx, void_t, "putchar", putcharParams, putcharDecl);
@@ -99,8 +103,9 @@ antlrcpp::Any ASTVisitor::visitR(CaramelParser::RContext *ctx) {
     exitDecl->setFunctionSymbol(exitSymbol);
 
     try {context->addStatements(visitStatements(ctx->statements()));}
-    catch (...){
+    catch(caramel::exceptions::SemanticError &semanticError){
         incrementErrorCount();
+        semanticError.explain(utils::SourceFileUtil(mSourceFilename));
     }
     return context;
 }
@@ -284,10 +289,10 @@ antlrcpp::Any ASTVisitor::visitChildren(antlr4::tree::ParseTree *node) {
 void ASTVisitor::incrementErrorCount(){
     mErrorCount++;
 }
+
 int ASTVisitor::getErrorCount(){
     return mErrorCount;
 }
-
 
 ContextPusher::ContextPusher(ASTVisitor &ASTVisitor)
         : mASTVisitor(ASTVisitor) {

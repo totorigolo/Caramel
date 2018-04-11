@@ -109,7 +109,8 @@ public:
             std::shared_ptr<PrimaryType> const &returnType,
             std::string const &name,
             std::vector<FunctionParameterSignature> parameters,
-            const std::shared_ptr<Declaration> &declaration
+            const std::shared_ptr<Declaration> &declaration,
+            bool variadic = false
     );
 
     FunctionSymbol::Ptr addFunctionDefinition(
@@ -118,7 +119,8 @@ public:
             std::shared_ptr<PrimaryType> const &returnType,
             std::string const &name,
             std::vector<std::shared_ptr<Symbol>> parameters,
-            const std::shared_ptr<Definition> &definition
+            const std::shared_ptr<Definition> &definition,
+            bool variadic = false
     );
 
     Symbol::Ptr addFunctionParameter(

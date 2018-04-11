@@ -29,7 +29,8 @@
 #include <stdint.h>
 
 int32_t main() {
-    int32_t a = getchar() - '0';
+//    int32_t a = getchar() - '0';
+    int32_t a = '5' - '0';
     putchar('0' + a + a + a + a + a + a);
     putchar('\n');
     putchar('0' + a);

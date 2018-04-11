@@ -36,28 +36,18 @@ using namespace caramel::utils;
 std::shared_ptr<caramel::ir::IR> caramel::ast::PlusOperator::getIR(
         std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
-        std::shared_ptr<caramel::ast::Expression> const &rightExpression) {
-
+        std::shared_ptr<caramel::ast::Expression> const &rightExpression
+) {
     auto maxType = GET_MAX_TYPE(leftExpression, rightExpression);
-
     std::string left = SAFE_ADD_INSTRUCTION(leftExpression, currentBasicBlock);
-
-    MOVE_TO(left, ir::IR::ACCUMULATOR_2, maxType);
-
-    PUSH(ir::IR::ACCUMULATOR_2);
-
     std::string right = SAFE_ADD_INSTRUCTION(rightExpression, currentBasicBlock);
 
-    MOVE_TO(right, ir::IR::ACCUMULATOR_1, maxType);
-
-    POP(ir::IR::ACCUMULATOR_2);
-
     std::shared_ptr<ir::AdditionInstruction> instr = std::make_shared<ir::AdditionInstruction>(
-            ir::IR::ACCUMULATOR_2,
+            Statement::createVarName(),
             currentBasicBlock,
             maxType,
-            ir::IR::ACCUMULATOR_1,
-            ir::IR::ACCUMULATOR_2
+            left,
+            right
     );
 
     return castTo<ir::IR::Ptr>(instr);

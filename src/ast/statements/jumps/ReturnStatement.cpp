@@ -45,8 +45,10 @@ void ReturnStatement::acceptAstDotVisit() {
 }
 
 void ReturnStatement::visitChildrenAstDot() {
-    addEdge(thisId(), mExpression->thisId());
-    mExpression->acceptAstDotVisit();
+    if (mExpression) {
+        addEdge(thisId(), mExpression->thisId());
+        mExpression->acceptAstDotVisit();
+    }
 }
 
 bool ReturnStatement::shouldReturnAnIR() const {

@@ -30,13 +30,24 @@ void displayNumber(int32_t number) {
     int32_t tab[50];
     int32_t index = 0;
     int32_t i;
+
+    // Negative numbers
+    if (number < 0) {
+        putchar('-');
+        number *= -1;
+    }
+
     while (number >= 1) {
         tab[index] = number % 10;
-        number = number / 10;
-        index = index + 1;
+        number /= 10;
+        index++;
     }
-    for (i = (index - 1); i >= 0; i--) {
-        putchar('0' + tab[i]);
+    if (index == 0) { // special case for displayNumber(0)
+        index = 1;
+    }
+
+    for (i = index; i > 0; i--) {
+        putchar('0' + tab[i - 1]);
     }
 }
 

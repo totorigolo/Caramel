@@ -39,14 +39,14 @@ public:
     explicit LValue(antlr4::Token *startToken, StatementType type = StatementType::LValue);
     ~LValue() override = default;
 
-    bool isUsedInLeft() const;
+    bool isUsedAsLeftValue() const;
 
-    void setIsUsedInLeft(bool isUsedInLeft);
+    void setIsUsedAsLeftValue(bool isUsedInLeft);
 
     virtual Symbol::Ptr getSymbol() const = 0;
 
 private:
-    bool mIsUsedInLeft;
+    bool mIsUsedAsLeftValue;
 };
 
 } // namespace caramel::ast

@@ -44,11 +44,11 @@ public:
 
     virtual ~X86_64IRVisitor() = default;
 
-    void visitArrayAccessCopy(ArrayAccessCopyInstruction *instruction, std::ostream &os) override;
-
     void visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) override;
 
     void visitCopyAddr(CopyAddrInstruction *instruction, std::ostream &os) override;
+
+    void visitArrayAccess(ArrayAccessInstruction *instruction, std::ostream &os) override;
 
     void visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) override;
 
@@ -93,9 +93,26 @@ public:
     void visitBitwiseXor(BitwiseXorInstruction *instruction, std::ostream &os) override;
 
 private:
+    std::tuple<size_t, std::string, std::string>
+    prepareInstr(BasicBlock::Ptr const &bb, std::ostream &os,
+                 std::string src, size_t srcSize,
+                 std::string dest, size_t destSize);
+
     void writeMove(BasicBlock::Ptr const &bb, std::ostream &os,
                    std::string src, size_t srcSize,
                    std::string dest, size_t destSize);
+
+    void writeCmp(BasicBlock::Ptr const &bb, std::ostream &os,
+                  std::string src, size_t srcSize,
+                  std::string dest, size_t destSize);
+
+    void writeAdd(BasicBlock::Ptr const &bb, std::ostream &os,
+                  std::string src, size_t srcSize,
+                  std::string dest, size_t destSize);
+
+    void writeSub(BasicBlock::Ptr const &bb, std::ostream &os,
+                  std::string src, size_t srcSize,
+                  std::string dest, size_t destSize);
 
 public: // FIXME
     //private:

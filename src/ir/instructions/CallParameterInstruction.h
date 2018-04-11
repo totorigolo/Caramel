@@ -38,7 +38,8 @@ public:
             std::shared_ptr<BasicBlock> parentBlock,
             int index,
             ast::PrimaryType::Ptr type,
-            std::string const &value
+            std::string const &value,
+            bool isAddress = false
     );
 
     ~CallParameterInstruction() override = default;
@@ -47,11 +48,14 @@ public:
 
     int getIndex() const;
 
+    bool isAddress() const;
+
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
     int mIndex;
     std::string mValue;
+    bool mIsAddress;
 };
 
 } // namespace caramel::ir

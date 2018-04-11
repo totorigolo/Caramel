@@ -26,6 +26,7 @@
 #include "PreIncrOperator.h"
 #include "PreDecrOperator.h"
 #include "LogicalNotOperator.h"
+#include "PreNegOperator.h"
 
 #define BIND(op) index.insert(make_pair(op::SYMBOL, dynamic_pointer_cast<UnaryOperator>(make_shared<op>())))
 
@@ -38,6 +39,7 @@ caramel::ast::PrefixOperatorIndex::PrefixOperatorIndex() {
 
     BIND(LogicalNotOperator);
 
+    BIND(PreNegOperator);
 }
 
 caramel::ast::UnaryOperator::Ptr caramel::ast::PrefixOperatorIndex::getOpForToken(std::string token) {

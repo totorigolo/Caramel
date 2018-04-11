@@ -30,8 +30,12 @@ namespace caramel::ir {
 CallParameterInstruction::CallParameterInstruction(
         std::shared_ptr<BasicBlock> parentBlock,
         int index,
-        ast::PrimaryType::Ptr type, std::string const &value
-) : IR(value, Operation::movq, parentBlock, type), mIndex{index}, mValue{value} {}
+        ast::PrimaryType::Ptr type, std::string const &value,
+        bool isAddress
+) : IR(value, Operation::movq, parentBlock, type),
+    mIndex{index},
+    mValue{value},
+    mIsAddress{isAddress} {}
 
 std::string CallParameterInstruction::getValue() const {
     return mValue;
@@ -43,6 +47,10 @@ int CallParameterInstruction::getIndex() const {
 
 void CallParameterInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitCallParameter(this, os);
+}
+
+bool CallParameterInstruction::isAddress() const {
+    return mIsAddress;
 }
 
 } // namespace caramel::ir

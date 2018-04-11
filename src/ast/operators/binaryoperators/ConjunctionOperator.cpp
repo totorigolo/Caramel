@@ -52,14 +52,12 @@ ir::GetBasicBlockReturn ConjunctionOperator::getBasicBlock(ir::CFG *controlFlow,
 
     ir::BasicBlock::Ptr constEnd = endBlock;
 
-    logger.warning() << "ConjunctionOperator[startBlock - getBBmain] Does it? #" << startBlock->getId();
     startBlock->setExitWhenTrue(trueBlock);
     startBlock->setExitWhenFalse(falseBlock);
 
     std::string returnName = Statement::createVarName();
     PrimaryType::Ptr Int64Type = std::make_shared<Int64_t>();
 
-    logger.warning() << "ConjunctionOperator[trueBlock - getBBmain] Does it? #" << trueBlock->getId();
     trueBlock->setExitWhenTrue(endBlock);
     trueBlock->addInstruction(std::make_shared<ir::LDConstInstruction>(
             trueBlock,
@@ -68,7 +66,6 @@ ir::GetBasicBlockReturn ConjunctionOperator::getBasicBlock(ir::CFG *controlFlow,
             "1"
     ));
 
-    logger.warning() << "ConjunctionOperator[falseBlock - getBBmain] Does it? #" << falseBlock->getId();
     falseBlock->setExitWhenTrue(endBlock);
     falseBlock->addInstruction(std::make_shared<ir::LDConstInstruction>(
             falseBlock,
@@ -95,37 +92,22 @@ ir::GetBasicBlockReturn ConjunctionOperator::getBasicBlock(ir::CFG *controlFlow,
 
         startBlock = leftBlockChain.begin;
         lastLeftBlock = leftBlockChain.end;
-
-//        logger.warning() << "ConjunctionOperator[startBlock - leftBB] Does it? #" << startBlock->getId();
-//        startBlock->setExitWhenTrue(leftBlockChain.begin);
-//        lastLeftBlock = leftBlockChain.end;
-//
-//        logger.warning() << "ConjunctionOperator[lastLeftBlock - leftBB] Does it? #" << lastLeftBlock->getId();
-//
-//        lastLeftBlock->setExitWhenFalse(falseBlock);
     }
 
     if (rightExpression->shouldReturnAnIR()) {
         ir::BasicBlock::Ptr midBlock = controlFlow->generateBasicBlock(
                 ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_mid");
         SAFE_ADD_INSTRUCTION(rightExpression, midBlock);
-//        auto ir = rightExpression->getIR(midBlock);
-//        midBlock->addInstruction(ir);
 
-        logger.warning() << "ConjunctionOperator[midBlock] Does it? #" << midBlock->getId();
         midBlock->setExitWhenTrue(trueBlock);
         midBlock->setExitWhenFalse(falseBlock);
 
-        logger.warning() << "ConjunctionOperator[lastLeftBlock - rightIR] Does it? #" << lastLeftBlock->getId();
         lastLeftBlock->setExitWhenTrue(midBlock);
     } else {
         auto rightBlockChain = rightExpression->getBasicBlock(controlFlow);
 
-        logger.warning() << "ConjunctionOperator[lastLeftBlock - rightBB] Does it? #" << lastLeftBlock->getId();
         lastLeftBlock->setExitWhenTrue(rightBlockChain.begin);
 
-
-        logger.warning() << "ConjunctionOperator[rightBlockChain] Does it? #" << rightBlockChain.end->getId();
         rightBlockChain.end->setExitWhenTrue(trueBlock);
         rightBlockChain.end->setExitWhenFalse(falseBlock);
     }
@@ -149,7 +131,6 @@ std::shared_ptr<ir::IR> ConjunctionOperator::getIR(std::shared_ptr<ir::BasicBloc
         end->setExitWhenFalse(nextFalse);
     }
 
-    logger.warning() << "ConjunctionOperator[getIR] Does it? #" << currentBasicBlock->getId();
     currentBasicBlock->setExitWhenTrue(start);
     currentBasicBlock->setExitWhenFalse(nullptr);
     currentBasicBlock = end;

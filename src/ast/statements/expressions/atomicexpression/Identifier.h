@@ -44,6 +44,8 @@ public:
 
     PrimaryType::Ptr getPrimaryType() const override;
 
+    bool isAddress() const;
+
     std::shared_ptr<ir::IR> getIR(std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock) override;
 
     bool shouldReturnAnIR() const override;

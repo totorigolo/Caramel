@@ -58,21 +58,24 @@ int main(int argc, const char *argv[]) {
     using caramel::colors::reset;
     logger.debug() << "Generated assembly code:\n" << reset << assembly;
 
-    // Compile the assembly and run it, on Linux
-    // TODO: Dirty, change this.
-#ifdef __linux__
-    logger.info() << "Assembling the Caramel output...";
     std::ofstream assemblyOutputFile("assembly.s");
     assemblyOutputFile << assembly;
     assemblyOutputFile.close();
-    system("gcc assembly.s -no-pie -o caramel.out");
 
-    logger.info() << "Starting the Caramel-compiled program...";
-    const int ret = system("./caramel.out");
-    logger.info() << "End of the execution. It returned: " << ret << '.';
+    // Compile the assembly and run it, on Linux
+    if (config.assemble) {
+        // TODO: Dirty, change this.
+#ifdef __linux__
+        logger.info() << "Assembling the Caramel output...";
+        system("gcc ./assembly.s -no-pie -o ./caramel.out");
+
+        logger.info() << "Starting the Caramel-compiled program...";
+        const int ret = system("./caramel.out");
+        logger.info() << "End of the execution. It returned: " << ret << '.';
 #else
-    logger.info() << "No assembly compilation on Windows.";
+        logger.info() << "No assembly compilation on Windows.";
 #endif
+    }
 
     return EXIT_SUCCESS;
 }
@@ -106,6 +109,10 @@ Config parseArgs(int argc, const char *argv[]) {
         TCLAP::SwitchArg compileArg("c", "compile", "Generate assembly code");
         cmd.add(compileArg);
 
+        // Assemble flag
+        TCLAP::SwitchArg assembleArg("A", "assemble", "Generate executable with an assembler");
+        cmd.add(assembleArg);
+
         // Source file
         TCLAP::UnlabeledValueArg<string> sourceFileArg("source-file", "The source file", true,
                                                        {}, "string");
@@ -127,6 +134,7 @@ Config parseArgs(int argc, const char *argv[]) {
         config.staticAnalysis = staticAnalysisArg.getValue();
         config.optimize = optimizeArg.getValue();
         config.compile = compileArg.getValue();
+        config.assemble = assembleArg.getValue();
         config.syntaxTreeDot = syntaxTreeDotArg.getValue();
         config.astDot = astDotArg.getValue();
         config.sourceFile = sourceFileArg.getValue();
@@ -136,6 +144,7 @@ Config parseArgs(int argc, const char *argv[]) {
             if (!staticAnalysisArg.isSet()) config.staticAnalysis = true;
             if (!optimizeArg.isSet()) config.optimize = true;
             if (!compileArg.isSet()) config.compile = true;
+            if (!assembleArg.isSet()) config.assemble = false;
             if (!syntaxTreeDotArg.isSet()) config.syntaxTreeDot = false;
             if (!astDotArg.isSet()) config.astDot = false;
         }

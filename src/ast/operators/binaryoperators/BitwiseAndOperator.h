@@ -59,7 +59,6 @@ public:
     bool shouldReturnAnIR() const override;
 
     bool shouldReturnABasicBlock() const override;
-
 };
 
 } // namespace caramel::ast

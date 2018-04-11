@@ -43,12 +43,15 @@ public:
 public:
     FunctionSymbol(
             const std::string &name,
-            const std::shared_ptr<PrimaryType> &type
+            const std::shared_ptr<PrimaryType> &type,
+            bool variadic = false
     );
     ~FunctionSymbol() override = default;
 
     std::shared_ptr<Context> getContext();
     void setContext(std::shared_ptr<Context> context);
+
+    bool isVariadic() const;
 
     std::vector<FunctionParameterSignature> getParameters() const;
     void setParameters(std::vector<Symbol::Ptr> const &parameters);
@@ -59,6 +62,7 @@ public:
 
 private:
     std::shared_ptr<Context> mContext;
+    bool mVariadic; // TODO: Quick and dirty, it should be in mParameters as last parameter
     std::vector<FunctionParameterSignature> mParameters;
 };
 

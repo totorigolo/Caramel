@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,43 +24,39 @@
 
 #pragma once
 
-#include "../IR.h"
+#include "../BinaryOperator.h"
 
-namespace caramel::ir {
 
-class ArrayAccessCopyInstruction : public IR {
+namespace caramel::ast {
+
+class TimesAssignmentOperator : public BinaryOperator {
 public:
-    using Ptr = std::shared_ptr<ArrayAccessCopyInstruction>;
-    using WeakPtr = std::shared_ptr<ArrayAccessCopyInstruction>;
+    using Ptr = std::shared_ptr<TimesAssignmentOperator>;
+    using WeakPtr = std::weak_ptr<TimesAssignmentOperator>;
 
-    ArrayAccessCopyInstruction(
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            caramel::ast::PrimaryType::Ptr const &type,
-            std::string const &destination,
-            std::string const &index,
-            std::string const &arrayName,
-            bool lvalue
-    );
+    static constexpr const char* SYMBOL = "*=";
 
-    ~ArrayAccessCopyInstruction() override = default;
+public:
+    TimesAssignmentOperator() = default;
+    ~TimesAssignmentOperator() override = default;
 
-    std::string getDestination() const;
+public:
+    std::shared_ptr<caramel::ir::IR>
+    getIR(
+            std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock,
+            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+            std::shared_ptr<caramel::ast::Expression> const &rightExpression
+    ) override;
 
-    std::string getIndex() const;
+    StatementType getExpressionType() const override;
 
-    std::string getArrayName() const;
+    std::string getToken() const override;
 
-    bool isLValue() const;
+    bool shouldReturnAnIR() const override;
 
-    void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-private:
-    std::string mIndex;
-    std::string mArrayName;
-    bool mLValue;
+    bool shouldReturnABasicBlock() const override;
 };
 
-} // namespace caramel::ir
-
+} // namespace caramel::ast
 
 

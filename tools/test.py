@@ -48,6 +48,9 @@ def _return_code_to_str(code):
     return str(code)
 
 
+failed_tests = []
+
+
 class Test:
     def __init__(self, name: str, full_path, should_fail: bool):
         self.name = name
@@ -107,6 +110,7 @@ class GrammarTest(Test):
                     colored('failed.', color='red', attrs=['bold']),
                     colored('[%s]' % seconds_to_string(self.state['time']), color='yellow')
                 )
+                failed_tests.append(self.display_name)
                 if open_gui_on_failure and not open_gui:
                     self.execute(open_gui=True, open_gui_on_failure=False)
 
@@ -142,7 +146,7 @@ class SemanticTest(Test):
         logger.trace('Test command:', command)
 
         if len(self.full_path) == 0:  # Interactive test
-            print('Enter grammar test input: (ended by ^D)')
+            print('Enter semantic test input: (ended by ^D)')
         with subprocess.Popen(
                 shlex.split(command),
                 stdout=subprocess.PIPE,
@@ -181,6 +185,7 @@ class SemanticTest(Test):
                             color='red', attrs=['bold']),
                     colored('[%s]' % seconds_to_string(self.state['time']), color='yellow')
                 )
+                failed_tests.append(self.display_name)
                 if open_gui_on_failure and not open_gui:
                     self.execute(open_gui=True, open_gui_on_failure=False)
 
@@ -212,16 +217,70 @@ class BackendTest(Test):
     def execute(self, open_gui=False, open_gui_on_failure=False, show_stdout=False, show_stderr=False):
         start_time = time()
 
-        command = './build/cpp-bin/Caramel --good-defaults {}'.format(self.full_path)
-        logger.trace('Test command:', command)
+        logger.info('Testing {}...'.format(self.display_name))
 
-        if len(self.full_path) == 0:  # Interactive test
-            print('Enter grammar test input: (ended by ^D)')
+        # Get the GCC outputs
+        gcc_flags = '-O0 -mno-red-zone -Wno-implicit-function-declaration'  # -Wall -Wextra -Wpedantic'
+        gcc_build_command = 'gcc {} {} -o ./build/cpp-bin/gcc.out'.format(gcc_flags, self.full_path)
+        gcc_run_command = './build/cpp-bin/gcc.out'
+        logger.trace('GCC build command:', gcc_build_command)
+        exec_(gcc_build_command)
+        logger.trace('GCC exec command:', gcc_run_command)
         with subprocess.Popen(
-                shlex.split(command),
+                shlex.split(gcc_run_command),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+        ) as test_process:
+            test_process.wait()
+            # Get stdout and stderr
+            gcc_stdout = list(map(lambda s: s.decode("utf-8"), test_process.stdout.readlines()))
+            gcc_stderr = list(map(lambda s: s.decode("utf-8"), test_process.stderr.readlines()))
+
+        initial_cwd = os.getcwd()
+        os.chdir('./build/cpp-bin')
+
+        # Get the Caramel outputs
+        compile_command = './Caramel --good-defaults {}'.format(os.path.join('../..', self.full_path))
+        assemble_command = 'gcc ./assembly.s -no-pie -o ./caramel.out'
+        run_command = './caramel.out'
+        logger.trace('Compile command:', compile_command)
+        logger.trace('Assemble command:', assemble_command)
+        logger.trace('Run command:', run_command)
+
+        # Compile with Caramel
+        if len(self.full_path) == 0:  # Interactive test
+            print('Enter back-end test input: (ended by ^D)')
+        with subprocess.Popen(
+                shlex.split(compile_command),
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                env={'LD_LIBRARY_PATH': 'lib'}
+                env={'LD_LIBRARY_PATH': '../../lib'}
+        ) as test_process:
+            test_process.wait()
+
+            # Get stdout and stderr
+            out_str = list(map(lambda s: s.decode("utf-8"), test_process.stdout.readlines()))
+            error_str = list(map(lambda s: s.decode("utf-8"), test_process.stderr.readlines()))
+
+            # Save the test state
+            caramel_state = {
+                'stderr': error_str,
+                'stdout_lines': sum(len(line.strip()) for line in out_str),
+                'stderr_lines': sum(len(line.strip()) for line in error_str),
+                'return_code': test_process.returncode,
+                'time': time() - start_time
+            }
+            if caramel_state['stdout_lines'] != 0:
+                logger.warn('Caramel wrote on stdout!')
+
+        # Assemble with GCC
+        exec_(assemble_command)
+
+        # Execute
+        with subprocess.Popen(
+                shlex.split(run_command),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
         ) as test_process:
             test_process.wait()
 
@@ -231,14 +290,21 @@ class BackendTest(Test):
 
             # Save the test state
             self.state = {
-                'stdout': sum(len(line.strip()) for line in out_str),
-                'stderr': sum(len(line.strip()) for line in error_str),
+                'stdout_lines': sum(len(line.strip()) for line in out_str),
+                'stderr_lines': sum(len(line.strip()) for line in error_str),
+                'caramel_stderr': caramel_state['stderr'],
+                'caramel_stderr_lines': caramel_state['stderr_lines'],
+                'gcc_stdout_lines': sum(len(line.strip()) for line in gcc_stdout),
+                'gcc_stderr_lines': sum(len(line.strip()) for line in gcc_stderr),
+                'correct_stdout': out_str == gcc_stdout,
                 'return_code': test_process.returncode,
                 'time': time() - start_time
             }
+            if self.state['stderr_lines'] != 0:
+                logger.warn('Unhandled: the test program wrote on stderr. Ignoring.')
 
             # Determine if unexpected errors, or successes, occurred
-            errors = test_process.returncode != 0
+            errors = not self.state['correct_stdout']
             self.succeeded = errors if self.should_fail else not errors
 
             # Feed our user
@@ -255,30 +321,40 @@ class BackendTest(Test):
                             color='red', attrs=['bold']),
                     colored('[%s]' % seconds_to_string(self.state['time']), color='yellow')
                 )
+                failed_tests.append(self.display_name)
                 if open_gui_on_failure and not open_gui:
                     self.execute(open_gui=True, open_gui_on_failure=False)
 
             # Show stdout or stderr if asked
             if show_stdout or open_gui:
-                if self.state['stdout'] == 0:
+                if self.state['stdout_lines'] == 0 and self.state['gcc_stdout_lines'] == 0:
                     print(colored('No stdout output.', attrs=['bold']))
                 else:
                     print('\n'.join([
                         '#' * 20,
-                        colored('stdout output:', attrs=['bold']),
+                        colored('GCC stdout:', attrs=['bold']),
+                        ''.join(gcc_stdout),
+                    ]))
+                    print('\n'.join([
+                        colored('Caramel-compiled stdout:', attrs=['bold']),
                         ''.join(out_str),
                         '-' * 20,
                     ]))
             if show_stderr or open_gui:
-                if self.state['stderr'] == 0:
+                if self.state['caramel_stderr_lines'] == 0 and self.state['gcc_stderr_lines'] == 0:
                     print(colored('No stderr output.', attrs=['bold']))
                 else:
                     print('\n'.join([
                         '#' * 20,
-                        colored('stderr output:', attrs=['bold']),
-                        ''.join(error_str),
+                        colored('GCC stderr:', attrs=['bold']),
+                        colored(''.join(gcc_stderr), color='grey'),
+                    ]))
+                    print('\n'.join([
+                        colored('Caramel stderr:', attrs=['bold']),
+                        ''.join(self.state['caramel_stderr']),
                         '-' * 20,
                     ]))
+        os.chdir(initial_cwd)
 
 
 class Tests:
@@ -371,6 +447,12 @@ class BackendTests(Tests):
 
 
 @trace
+def print_failed_tests():
+    if len(failed_tests) > 0:
+        logger.warn('{} failed tests:'.format(len(failed_tests)), failed_tests)
+
+
+@trace
 def test_grammar(args):
     logger.info('Running grammar tests...')
 
@@ -398,6 +480,8 @@ def test_grammar(args):
         show_stdout=args.stdout,
         show_stderr=args.stderr,
     )
+
+    print_failed_tests()
 
 
 @trace
@@ -428,6 +512,8 @@ def test_semantic(args):
         show_stdout=args.stdout,
         show_stderr=args.stderr,
     )
+
+    print_failed_tests()
 
 
 @trace
@@ -461,10 +547,39 @@ def test_backend(args):
         show_stderr=args.stderr,
     )
 
+    print_failed_tests()
+
 
 @trace
 def test_programs(args):
-    logger.warn('Programs tests not implemented :(')
+    # TODO: This is a copy-paste of test_backend()
+
+    if args.build:
+        from tools.build import build_grammar, build_caramel
+        build_grammar(args)
+        build_caramel(args)
+
+    if args.interactive and len(args.test_files) > 0:
+        logger.warn('Running in interactive mode, ignoring test files.')
+        args.test_files = []
+
+    if args.all:
+        args.test_files = None
+
+    # Run the tests
+    backend_tests = BackendTests()
+    if args.interactive:
+        backend_tests.add_test('interactive test', '', False)
+    else:
+        backend_tests.discover(PATHS['programs-test-dir'], only=args.test_files)
+    backend_tests.run_all(
+        open_gui=args.gui,
+        open_gui_on_failure=args.gui_on_failure,
+        show_stdout=args.stdout,
+        show_stderr=args.stderr,
+    )
+
+    print_failed_tests()
 
 
 @trace
@@ -498,3 +613,5 @@ def test_all(args):
     programs_args.gui = False
     programs_args.gui_on_failure = False
     test_programs(programs_args)
+
+    print_failed_tests()

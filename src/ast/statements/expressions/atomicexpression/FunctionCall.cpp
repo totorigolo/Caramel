@@ -29,6 +29,7 @@
 #include "../../../../ir/instructions/CallParameterInstruction.h"
 #include "../../../../ir/instructions/FunctionCallInstruction.h"
 #include "../../../../ir/helpers/IROperatorHelper.h"
+#include "Identifier.h"
 
 
 namespace caramel::ast {
@@ -74,16 +75,16 @@ void FunctionCall::visitChildrenAstDot() {
 }
 
 std::shared_ptr<ir::IR> FunctionCall::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) {
-
     std::string functionName = mSymbol->getName();
     auto functionSymbol = castTo<FunctionSymbol::Ptr>(mSymbol);
 
     for (int i = int(mArguments.size()) - 1; i >= 0; i--) {
-        std::string tempVar = SAFE_ADD_INSTRUCTION((mArguments[i]), currentBasicBlock); // currentBasicBlock->addInstruction((mArguments[i])->getIR(currentBasicBlock));
-        currentBasicBlock->addInstruction(
-                std::make_shared<ir::CallParameterInstruction>(
-                        currentBasicBlock, i, mArguments[i]->getPrimaryType(), tempVar)
-        );
+        std::string callParameterValue = SAFE_ADD_INSTRUCTION(mArguments[i], currentBasicBlock);
+        bool isAddress = mArguments[i]->getType() == StatementType::Identifier
+                         && castTo<ast::Identifier::Ptr>(mArguments[i])->isAddress();
+        currentBasicBlock->addInstruction(std::make_shared<ir::CallParameterInstruction>(
+                currentBasicBlock, i, mArguments[i]->getPrimaryType(), callParameterValue, isAddress
+        ));
     }
 
     return std::make_shared<ir::FunctionCallInstruction>(

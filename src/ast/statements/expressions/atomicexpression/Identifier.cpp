@@ -46,10 +46,14 @@ PrimaryType::Ptr Identifier::getPrimaryType() const {
     return mSymbol->getType();
 }
 
+bool Identifier::isAddress() const {
+    return mSymbol->getSymbolType() == SymbolType::ArraySymbol;
+}
+
 std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) {
-    if (mSymbol->getSymbolType() == SymbolType::ArraySymbol) {
+    if (isAddress()) {
         return std::make_shared<ir::CopyAddrInstruction>(
-                currentBasicBlock, mSymbol->getType(), createVarName(), mSymbol->getName()
+                currentBasicBlock, createVarName(), mSymbol->getName()
         );
     } else {
         return std::make_shared<ir::EmptyInstruction>(mSymbol->getName(), currentBasicBlock, mSymbol->getType());

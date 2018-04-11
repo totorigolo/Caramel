@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 insa.4if.hexanome_kalate
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,41 +22,41 @@
  * SOFTWARE.
 */
 
-#include "../IRVisitor.h"
-#include "ArrayAccessCopyInstruction.h"
+#pragma once
 
-namespace caramel::ir {
+#include "../BinaryOperator.h"
 
-ArrayAccessCopyInstruction::ArrayAccessCopyInstruction(
-        std::shared_ptr<BasicBlock> const &parentBlock,
-        caramel::ast::PrimaryType::Ptr const &type,
-        std::string const &destination,
-        std::string const &index,
-        std::string const &arrayName,
-        bool lvalue
-) : IR(destination, Operation::copy, parentBlock, type),
-    mIndex{index},
-    mArrayName{arrayName},
-    mLValue{lvalue} {}
 
-std::string ArrayAccessCopyInstruction::getDestination() const {
-    return getReturnName();
-}
+namespace caramel::ast {
 
-std::string ArrayAccessCopyInstruction::getIndex() const {
-    return mIndex;
-}
+class PlusAssignmentOperator : public BinaryOperator {
+public:
+    using Ptr = std::shared_ptr<PlusAssignmentOperator>;
+    using WeakPtr = std::weak_ptr<PlusAssignmentOperator>;
 
-std::string ArrayAccessCopyInstruction::getArrayName() const {
-    return mArrayName;
-}
+    static constexpr const char* SYMBOL = "+=";
 
-bool ArrayAccessCopyInstruction::isLValue() const {
-    return mLValue;
-}
+public:
+    PlusAssignmentOperator() = default;
+    ~PlusAssignmentOperator() override = default;
 
-void ArrayAccessCopyInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
-    visitor->visitArrayAccessCopy(this, os);
-}
+public:
+    std::shared_ptr<caramel::ir::IR>
+    getIR(
+            std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock,
+            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+            std::shared_ptr<caramel::ast::Expression> const &rightExpression
+    ) override;
 
-} // namespace caramel::ir
+    StatementType getExpressionType() const override;
+
+    std::string getToken() const override;
+
+    bool shouldReturnAnIR() const override;
+
+    bool shouldReturnABasicBlock() const override;
+};
+
+} // namespace caramel::ast
+
+

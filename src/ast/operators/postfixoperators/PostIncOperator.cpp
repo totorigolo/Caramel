@@ -23,13 +23,13 @@
 */
 
 #include "PostIncOperator.h"
+#include "../../../utils/Common.h"
+#include "../../../ir/BasicBlock.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
+#include "../../../ir/instructions/CopyInstruction.h"
+#include "../../../ir/instructions/EmptyInstruction.h"
 #include "../../../ir/instructions/AdditionInstruction.h"
 #include "../../statements/expressions/atomicexpression/LValue.h"
-#include "../../../utils/Common.h"
-#include "../../../ir/helpers/IROperatorHelper.h"
-#include "../../../ir/BasicBlock.h"
-#include "../../../ir/instructions/LDConstInstruction.h"
-#include "../../../ir/instructions/SubtractionInstruction.h"
 
 using namespace caramel::utils;
 
@@ -37,44 +37,37 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::PostIncOperator::buildIR(
         std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock,
         std::shared_ptr<caramel::ast::Expression> const &expression
 ) {
-
-
-    LValue::Ptr lvalue = castTo<LValue::Ptr>(expression);
-
-    ir::IR::Ptr copy = std::make_shared<ir::LDConstInstruction>(
+    auto lvalue = castTo<LValue::Ptr>(expression);
+    std::string oldValue = Statement::createVarName();
+    currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(
             currentBasicBlock,
-            lvalue->getPrimaryType(),
-            Statement::createVarName(),
+            expression->getPrimaryType(),
+            oldValue,
             lvalue->getSymbol()->getName()
-    );
-    std::string tmpName = currentBasicBlock->addInstruction(copy);
+    ));
 
-    ir::IR::Ptr addition = std::make_shared<ir::AdditionInstruction>(
-            ir::IR::ACCUMULATOR_1,
+    std::string tmpName = Statement::createVarName();
+    std::string lvalueRegister = SAFE_ADD_INSTRUCTION(expression, currentBasicBlock);
+    currentBasicBlock->addInstruction(castTo<ir::IR::Ptr>(std::make_shared<ir::AdditionInstruction>(
+            tmpName,
             currentBasicBlock,
-            lvalue->getPrimaryType(),
-            "1",
-            tmpName
-    );
-    std::string tmpName2 = currentBasicBlock->addInstruction(addition);
+            expression->getPrimaryType(),
+            lvalueRegister,
+            "1"
+    )));
 
-    ir::IR::Ptr copyBack = std::make_shared<ir::LDConstInstruction>(
+    currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(
             currentBasicBlock,
-            lvalue->getPrimaryType(),
+            expression->getPrimaryType(),
             lvalue->getSymbol()->getName(),
-            tmpName2
-    );
-    currentBasicBlock->addInstruction(copyBack);
-
-    ir::IR::Ptr substraction = std::make_shared<ir::SubtractionInstruction>(
-            ir::IR::ACCUMULATOR_1,
-            currentBasicBlock,
-            lvalue->getPrimaryType(),
-            "1",
             tmpName
-    );
-    return substraction;
+    ));
 
+    return castTo<ir::IR::Ptr>(std::make_shared<ir::EmptyInstruction>(
+            oldValue,
+            currentBasicBlock,
+            expression->getPrimaryType()
+    ));
 }
 
 caramel::ast::StatementType caramel::ast::PostIncOperator::getExpressionType() const {

@@ -29,9 +29,11 @@ namespace caramel::ir {
 
 CopyAddrInstruction::CopyAddrInstruction(
         std::shared_ptr<BasicBlock> const &parentBlock,
-        ast::PrimaryType::Ptr const &type, std::string const &destination,
+        std::string const &destination,
         std::string const &source
-) : IR(destination, Operation::copy, parentBlock, type), mSource{source}, mRegisterNumber{-1} {}
+) : IR(destination, Operation::copy, parentBlock, ast::Void_t::Create()),
+    mSource{std::move(source)},
+    mRegisterNumber{-1} {}
 
 std::string CopyAddrInstruction::getDestination() {
     return getReturnName();

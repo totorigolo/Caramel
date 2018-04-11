@@ -1,6 +1,26 @@
-//
-// Created by alexandre on 05/04/18.
-//
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+*/
 
 #include <stdint.h>
 #include <stdio.h>
@@ -10,16 +30,25 @@ void displayNumber(int32_t number) {
     int32_t tab[50];
     int32_t index = 0;
     int32_t i;
-    while (number >= 1) {
-        tab[index] = number % 10;
-        number = number / 10;
-        index = index + 1;
+
+    // Negative numbers
+    if (number < 0) {
+        putchar('-');
+        number *= -1;
     }
 
-    for (i = (index - 1); i >= 0; i--) {
-        putchar('0' + tab[i]);
+    while (number >= 1) {
+        tab[index] = number % 10;
+        number /= 10;
+        index++;
     }
-    putchar('\n');
+    if (index == 0) { // special case for displayNumber(0)
+        index = 1;
+    }
+
+    for (i = index; i > 0; i--) {
+        putchar('0' + tab[i - 1]);
+    }
 }
 
 
@@ -32,45 +61,11 @@ int32_t factorial(int32_t n) {
 }
 
 int32_t main() {
-
-    int32_t input;
-    int32_t result;
-
-    putchar('S');
-    putchar('a');
-    putchar('i');
-    putchar('s');
-    putchar('i');
-    putchar('r');
-    putchar(' ');
-    putchar('l');
-    putchar('e');
-    putchar(' ');
-    putchar('c');
-    putchar('h');
-    putchar('i');
-    putchar('f');
-    putchar('f');
-    putchar('r');
-    putchar('e');
-    putchar(' ');
-    putchar('\n');
-
-    input = getchar() - '0';
-
-    result = factorial(input);
-
-    putchar('R');
-    putchar('e');
-    putchar('s');
-    putchar('u');
-    putchar('l');
-    putchar('t');
-    putchar('a');
-    putchar('t');
-    putchar(' ');
-    putchar('\n');
-    displayNumber(result);
+    int32_t i;
+    for (i = 0; i < 12; i++) {
+        displayNumber(factorial(i));
+        putchar('\n');
+    }
 
     return 0;
 

@@ -133,6 +133,7 @@ long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, carame
     }
     mSymbols[controlBlockId][symbolName] = type;
     mStackSize[controlBlockId] = mStackSize[controlBlockId] - type->getMemoryLength() / 8U;
+    mTopStackMemberSize[controlBlockId] = type->getMemoryLength();
     mSymbolIndex[controlBlockId][symbolName] = mStackSize[controlBlockId];
 
     logger.trace() << "[CFG] " << "  => " << mStackSize[controlBlockId];
@@ -154,6 +155,7 @@ long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, ast::P
     }
     mSymbols[controlBlockId][symbolName] = type;
     mSymbolIndex[controlBlockId][symbolName] = index;
+    mTopStackMemberSize[controlBlockId] = type->getMemoryLength();
     if (index < 0) {
         logger.warning() << "[CFG] TODO: Check this statement.";
         mStackSize[controlBlockId] = size_t(index);
@@ -217,6 +219,10 @@ std::ostream &operator<<(std::ostream &os, CFG const &cfg) {
     for (auto const &[basicBlockId, size] : cfg.mStackSize) {
         os << "    - BB=" << basicBlockId << ", size=" << size << '\n';
     }
+    os << " - mTopStackMemberSize:\n";
+    for (auto const &[basicBlockId, size] : cfg.mTopStackMemberSize) {
+        os << "    - BB=" << basicBlockId << ", size=" << size << '\n';
+    }
     os << " - mNextBasicBlockNumber: " << cfg.mNextBasicBlockNumber << '\n'
        << " - mBasicBlocks: " << cfg.mFunctionsBasicBlocks.size() << " BBs";
     return os;
@@ -227,10 +233,18 @@ std::shared_ptr<BasicBlock> CFG::generateNamedBasicBlock() {
                                         BasicBlock::getNextNumberName());
 }
 
+size_t CFG::getStackSize(size_t functionBasicBlockIndex) const {
+    long stackSize = -mStackSize.at(functionBasicBlockIndex)
+                     + mTopStackMemberSize.at(functionBasicBlockIndex) / 8U;
+    if (stackSize < 0) {
+        logger.fatal() << "Negative stack size: " << stackSize << ". CFG: " << *this;
+        exit(0);
+    }
+    return size_t(stackSize);
+}
 
 void CFG::addFunctionBBEnd(size_t functionId, BasicBlock::Ptr functionBBEnd) {
-    mFunctionBBEnd[functionId] = functionBBEnd;
-
+    mFunctionBBEnd[functionId] = std::move(functionBBEnd);
 }
 
 std::shared_ptr<BasicBlock> CFG::getFunctionEndBasicBlock(size_t functionBasicBlockIndex) {

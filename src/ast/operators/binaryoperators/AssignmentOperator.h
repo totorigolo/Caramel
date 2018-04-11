@@ -42,7 +42,7 @@ public:
     static constexpr const char* SYMBOL = "=";
 
 public:
-    AssignmentOperator(std::shared_ptr<LValue> lvalue);
+    AssignmentOperator() = default;
     ~AssignmentOperator() override = default;
 
 public:
@@ -55,9 +55,6 @@ public:
     StatementType getExpressionType() const override;
 
     std::string getToken() const override;
-
-private:
-    std::shared_ptr<LValue> mLValue;
 };
 
 } // namespace caramel::ast

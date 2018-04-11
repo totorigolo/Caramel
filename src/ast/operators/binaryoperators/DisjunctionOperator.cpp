@@ -52,14 +52,12 @@ ir::GetBasicBlockReturn DisjunctionOperator::getBasicBlock(ir::CFG *controlFlow,
 
     ir::BasicBlock::Ptr constEnd = endBlock;
 
-    logger.warning() << "DisjunctionOperator[startBlock - getBBmain] Does it? #" << startBlock->getId();
     startBlock->setExitWhenTrue(trueBlock);
     startBlock->setExitWhenFalse(falseBlock);
 
     std::string returnName = Statement::createVarName();
     PrimaryType::Ptr Int64Type = std::make_shared<Int64_t>();
 
-    logger.warning() << "DisjunctionOperator[trueBlock - getBBmain] Does it? #" << trueBlock->getId();
     trueBlock->setExitWhenTrue(endBlock);
     trueBlock->addInstruction(std::make_shared<ir::LDConstInstruction>(
             trueBlock,
@@ -68,7 +66,6 @@ ir::GetBasicBlockReturn DisjunctionOperator::getBasicBlock(ir::CFG *controlFlow,
             "1"
     ));
 
-    logger.warning() << "DisjunctionOperator[falseBlock - getBBmain] Does it? #" << falseBlock->getId();
     falseBlock->setExitWhenTrue(endBlock);
     falseBlock->addInstruction(std::make_shared<ir::LDConstInstruction>(
             falseBlock,
@@ -87,8 +84,6 @@ ir::GetBasicBlockReturn DisjunctionOperator::getBasicBlock(ir::CFG *controlFlow,
 
     if (leftExpression->shouldReturnAnIR()) {
         SAFE_ADD_INSTRUCTION(leftExpression, startBlock);
-//        auto ir = leftExpression->getIR(startBlock);
-//        startBlock->addInstruction(ir);
         lastLeftBlock = startBlock;
     } else {
         auto leftBlockChain = leftExpression->getBasicBlock(controlFlow);
@@ -97,44 +92,27 @@ ir::GetBasicBlockReturn DisjunctionOperator::getBasicBlock(ir::CFG *controlFlow,
 
         startBlock = leftBlockChain.begin;
         lastLeftBlock = leftBlockChain.end;
-
-//        logger.warning() << "DisjunctionOperator[startBlock - leftBB] Does it? #" << startBlock->getId();
-//        startBlock->setExitWhenTrue(leftBlockChain.begin);
-//        lastLeftBlock = leftBlockChain.end;
-//
-//        logger.warning() << "DisjunctionOperator[lastLeftBlock - leftBB] Does it? #" << lastLeftBlock->getId();
-//
-//        lastLeftBlock->setExitWhenFalse(falseBlock);
     }
 
     if (rightExpression->shouldReturnAnIR()) {
         ir::BasicBlock::Ptr midBlock = controlFlow->generateBasicBlock(
                 ir::BasicBlock::getNextNumberName() + "_" + std::to_string(currentNb) + "_and_mid");
         SAFE_ADD_INSTRUCTION(rightExpression, midBlock);
-//        auto ir = rightExpression->getIR(midBlock);
-//        midBlock->addInstruction(ir);
 
-        logger.warning() << "DisjunctionOperator[midBlock] Does it? #" << midBlock->getId();
         midBlock->setExitWhenTrue(trueBlock);
         midBlock->setExitWhenFalse(falseBlock);
-
-        logger.warning() << "DisjunctionOperator[lastLeftBlock - rightIR] Does it? #" << lastLeftBlock->getId();
 
         lastLeftBlock->setExitWhenFalse(midBlock); //< this is the only difference with conjunction !
     } else {
         auto rightBlockChain = rightExpression->getBasicBlock(controlFlow);
 
-        logger.warning() << "DisjunctionOperator[lastLeftBlock - rightBB] Does it? #" << lastLeftBlock->getId();
         lastLeftBlock->setExitWhenFalse(rightBlockChain.begin); //< this is the only difference with conjunction !
 
-
-        logger.warning() << "DisjunctionOperator[rightBlockChain] Does it? #" << rightBlockChain.end->getId();
         rightBlockChain.end->setExitWhenTrue(trueBlock);
         rightBlockChain.end->setExitWhenFalse(falseBlock);
     }
 
     return {startBlock, constEnd};
-
 }
 
 std::shared_ptr<ir::IR> DisjunctionOperator::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock,
@@ -152,7 +130,6 @@ std::shared_ptr<ir::IR> DisjunctionOperator::getIR(std::shared_ptr<ir::BasicBloc
         end->setExitWhenFalse(nextFalse);
     }
 
-    logger.warning() << "DisjunctionOperator[getIR] Does it? #" << currentBasicBlock->getId();
     currentBasicBlock->setExitWhenTrue(start);
     currentBasicBlock->setExitWhenFalse(nullptr);
     currentBasicBlock = end;

@@ -28,15 +28,15 @@
 namespace caramel::ast {
 
 LValue::LValue(antlr4::Token *startToken, StatementType type)
-        : AtomicExpression(startToken, type), mIsUsedInLeft{false} {
+        : AtomicExpression(startToken, type), mIsUsedAsLeftValue{false} {
 }
 
-bool LValue::isUsedInLeft() const {
-    return mIsUsedInLeft;
+bool LValue::isUsedAsLeftValue() const {
+    return mIsUsedAsLeftValue;
 }
 
-void LValue::setIsUsedInLeft(bool isUsedInLeft) {
-    mIsUsedInLeft = isUsedInLeft;
+void LValue::setIsUsedAsLeftValue(bool isUsedInLeft) {
+    mIsUsedAsLeftValue = isUsedInLeft;
 }
 
 } // namespace caramel::ast

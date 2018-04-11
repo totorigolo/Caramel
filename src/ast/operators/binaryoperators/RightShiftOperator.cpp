@@ -39,30 +39,17 @@ std::shared_ptr<caramel::ir::IR> caramel::ast::RightShiftOperator::getIR(
         std::shared_ptr<caramel::ast::Expression> const &leftExpression,
         std::shared_ptr<caramel::ast::Expression> const &rightExpression
 ) {
-
     auto maxType = GET_MAX_TYPE(leftExpression, rightExpression);
-
     std::string left = SAFE_ADD_INSTRUCTION(leftExpression, currentBasicBlock);
-
-    MOVE_TO(left, ir::IR::ACCUMULATOR_2, maxType);
-
-    PUSH(ir::IR::ACCUMULATOR_2);
-
     std::string right = SAFE_ADD_INSTRUCTION(rightExpression, currentBasicBlock);
 
-    MOVE_TO(right, ir::IR::ACCUMULATOR_1, maxType);
-
-    POP(ir::IR::ACCUMULATOR_2);
-
-    std::shared_ptr<ir::RightShiftInstruction> instr = std::make_shared<ir::RightShiftInstruction>(
-            ir::IR::ACCUMULATOR_2,
+    return castTo<ir::IR::Ptr>(std::make_shared<ir::RightShiftInstruction>(
+            Statement::createVarName(),
             currentBasicBlock,
             maxType,
-            ir::IR::ACCUMULATOR_2,
-            ir::IR::ACCUMULATOR_1
-    );
-
-    return castTo<ir::IR::Ptr>(instr);
+            left,
+            right
+    ));
 }
 
 caramel::ast::StatementType caramel::ast::RightShiftOperator::getExpressionType() const {

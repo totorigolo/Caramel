@@ -22,65 +22,55 @@
  * SOFTWARE.
 */
 
-#include "PostDecOperator.h"
-#include "../../../ir/instructions/AdditionInstruction.h"
-#include "../../statements/expressions/atomicexpression/LValue.h"
+#include "MinusAssignmentOperator.h"
 #include "../../../utils/Common.h"
-#include "../../../ir/helpers/IROperatorHelper.h"
 #include "../../../ir/BasicBlock.h"
-#include "../../../ir/instructions/LDConstInstruction.h"
+#include "../../../ir/helpers/IROperatorHelper.h"
+#include "../../../ir/instructions/CopyInstruction.h"
 #include "../../../ir/instructions/SubtractionInstruction.h"
+#include "../../statements/expressions/atomicexpression/LValue.h"
+
 
 using namespace caramel::utils;
 
-std::shared_ptr<caramel::ir::IR> caramel::ast::PostDecOperator::buildIR(
+std::shared_ptr<caramel::ir::IR> caramel::ast::MinusAssignmentOperator::getIR(
         std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock,
-        std::shared_ptr<caramel::ast::Expression> const &expression
+        std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+        std::shared_ptr<caramel::ast::Expression> const &rightExpression
 ) {
+    std::string right = SAFE_ADD_INSTRUCTION(rightExpression, currentBasicBlock);
 
-
-    LValue::Ptr lvalue = castTo<LValue::Ptr>(expression);
-
-    ir::IR::Ptr copy = std::make_shared<ir::LDConstInstruction>(
+    std::string tmpName = Statement::createVarName();
+    std::string lvalueRegister = SAFE_ADD_INSTRUCTION(leftExpression, currentBasicBlock);
+    currentBasicBlock->addInstruction(castTo<ir::IR::Ptr>(std::make_shared<ir::SubtractionInstruction>(
+            tmpName,
             currentBasicBlock,
-            lvalue->getPrimaryType(),
-            Statement::createVarName(),
-            lvalue->getSymbol()->getName()
-    );
-    std::string tmpName = currentBasicBlock->addInstruction(copy);
+            leftExpression->getPrimaryType(),
+            lvalueRegister,
+            right
+    )));
 
-    ir::IR::Ptr substraction = std::make_shared<ir::SubtractionInstruction>(
-            ir::IR::ACCUMULATOR_1,
+    auto lvalue = castTo<LValue::Ptr>(leftExpression);
+    return castTo<ir::IR::Ptr>(std::make_shared<ir::CopyInstruction>(
             currentBasicBlock,
-            lvalue->getPrimaryType(),
-            "1",
-            tmpName
-    );
-    std::string tmpName2 = currentBasicBlock->addInstruction(substraction);
-
-    ir::IR::Ptr copyBack = std::make_shared<ir::LDConstInstruction>(
-            currentBasicBlock,
-            lvalue->getPrimaryType(),
+            leftExpression->getPrimaryType(),
             lvalue->getSymbol()->getName(),
-            tmpName2
-    );
-    currentBasicBlock->addInstruction(copyBack);
-
-    ir::IR::Ptr addition = std::make_shared<ir::AdditionInstruction>(
-            ir::IR::ACCUMULATOR_1,
-            currentBasicBlock,
-            lvalue->getPrimaryType(),
-            "1",
             tmpName
-    );
-    return addition;
-
+    ));
 }
 
-caramel::ast::StatementType caramel::ast::PostDecOperator::getExpressionType() const {
+caramel::ast::StatementType caramel::ast::MinusAssignmentOperator::getExpressionType() const {
     return StatementType::UnaryAdditiveExpression;
 }
 
-std::string caramel::ast::PostDecOperator::getToken() const {
+std::string caramel::ast::MinusAssignmentOperator::getToken() const {
     return SYMBOL;
+}
+
+bool caramel::ast::MinusAssignmentOperator::shouldReturnAnIR() const {
+    return true;
+}
+
+bool caramel::ast::MinusAssignmentOperator::shouldReturnABasicBlock() const {
+    return false;
 }

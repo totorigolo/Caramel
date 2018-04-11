@@ -94,7 +94,7 @@ bool BasicBlock::hasSymbol(std::string const &symbolName) const {
     return mCfg->hasSymbol(mFunctionContext, symbolName);
 }
 
-long BasicBlock::isSymbolParamArray(std::string const &symbolName) {
+bool BasicBlock::isSymbolParamArray(std::string const &symbolName) {
     return mCfg->isSymbolParamArray(mFunctionContext, symbolName);
 }
 

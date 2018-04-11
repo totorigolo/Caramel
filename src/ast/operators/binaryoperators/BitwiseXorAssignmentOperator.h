@@ -24,33 +24,37 @@
 
 #pragma once
 
-#include "../UnaryOperator.h"
+#include "../BinaryOperator.h"
+
 
 namespace caramel::ast {
 
-class PostDecOperator : public UnaryOperator {
+class BitwiseXorAssignmentOperator : public BinaryOperator {
 public:
-    using Ptr = std::shared_ptr<PostDecOperator>;
-    using WeakPtr = std::weak_ptr<PostDecOperator>;
+    using Ptr = std::shared_ptr<BitwiseXorAssignmentOperator>;
+    using WeakPtr = std::weak_ptr<BitwiseXorAssignmentOperator>;
 
-    static constexpr const char* SYMBOL = "--";
-
-public:
-    PostDecOperator() = default;
+    static constexpr const char* SYMBOL = "^=";
 
 public:
-    ~PostDecOperator() override = default;
+    BitwiseXorAssignmentOperator() = default;
+    ~BitwiseXorAssignmentOperator() override = default;
 
 public:
     std::shared_ptr<caramel::ir::IR>
-    buildIR(
+    getIR(
             std::shared_ptr<caramel::ir::BasicBlock> &currentBasicBlock,
-            std::shared_ptr<caramel::ast::Expression> const &expression
+            std::shared_ptr<caramel::ast::Expression> const &leftExpression,
+            std::shared_ptr<caramel::ast::Expression> const &rightExpression
     ) override;
 
     StatementType getExpressionType() const override;
 
     std::string getToken() const override;
+
+    bool shouldReturnAnIR() const override;
+
+    bool shouldReturnABasicBlock() const override;
 };
 
 } // namespace caramel::ast

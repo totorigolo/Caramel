@@ -63,9 +63,9 @@ public:
     long addSymbol(size_t controlBlockId, std::string const &symbolName, ast::PrimaryType::Ptr type, long index);
     long getSymbolIndex(size_t controlBlockId, std::string const &symbolName);
 
-    std::shared_ptr<BasicBlock> getFunctionBasicBlock(size_t functionBasicBlockIndex);
     std::shared_ptr<BasicBlock> getFunctionEndBasicBlock(size_t functionBasicBlockIndex);
 
+    size_t getStackSize(size_t functionBasicBlockIndex) const;
 
     void addFunctionBBEnd(size_t functionId, std::shared_ptr<BasicBlock> functionBBEnd);
 
@@ -84,6 +84,7 @@ protected:
     std::map<size_t, std::map<std::string, long>> mSymbolIndex;
     std::map<size_t, std::map<std::string, bool>> mSymbolIsParamArray;
     std::map<size_t, long> mStackSize;
+    std::map<size_t, long> mTopStackMemberSize;
 
     int mNextBasicBlockNumber;
     int mNextFunctionContext;

@@ -54,5 +54,3 @@ public:
 };
 
 } // namespace caramel::ast
-
-

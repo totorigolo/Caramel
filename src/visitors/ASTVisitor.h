@@ -141,6 +141,7 @@ public:
     /// Returns Expression::Ptr
     antlrcpp::Any visitPrefixUnaryExpression(CaramelParser::PrefixUnaryExpressionContext *ctx) override;
 
+    /// Returns Expression::Ptr
     antlrcpp::Any visitPostfixUnaryExpression(CaramelParser::PostfixUnaryExpressionContext *ctx) override;
 
     /// Returns Expression::Ptr
@@ -184,6 +185,9 @@ public:
 
     /// Returns BinaryOperator::Ptr
     antlrcpp::Any visitAdditiveOperator(CaramelParser::AdditiveOperatorContext *ctx) override;
+
+    /// Returns BinaryOperator::Ptr
+    antlrcpp::Any visitAssignmentOperator(CaramelParser::AssignmentOperatorContext *ctx) override;
 
     /// Returns BinaryOperator::Ptr
     antlrcpp::Any visitEqualityOperator(CaramelParser::EqualityOperatorContext *ctx) override;

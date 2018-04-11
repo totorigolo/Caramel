@@ -63,7 +63,8 @@ enum class StatementType {
     // UnaryExpression w/ sub-types
     UnaryExpression,
     UnaryAdditiveExpression,
-    LogicalNotExpression
+    LogicalNotExpression,
+    NegativeExpression
 };
 
 inline std::ostream & operator<<(std::ostream &os, const StatementType &type) {
@@ -99,6 +100,7 @@ inline std::ostream & operator<<(std::ostream &os, const StatementType &type) {
         case StatementType::UnaryExpression: return os << "UnaryExpression";
         case StatementType::UnaryAdditiveExpression: return os << "UnaryAdditiveExpression";
         case StatementType::LogicalNotExpression: return os << "LogicalNotExpression";
+        case StatementType::NegativeExpression: return os << "NegativeExpression";
     }
     return os;
 }

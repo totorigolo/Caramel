@@ -25,6 +25,7 @@
 #include "Constant.h"
 #include "../../../../ir/IR.h"
 #include "../../../../ir/instructions/LDConstInstruction.h"
+#include "../../../../ir/instructions/EmptyInstruction.h"
 
 
 namespace caramel::ast {
@@ -60,12 +61,14 @@ bool Constant::shouldReturnAnIR() const {
 }
 
 std::shared_ptr<ir::IR> Constant::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) {
-
     std::string tempVar = createVarName();
     std::string constValue = std::to_string(getValue());
     // Todo: check if Int64_t for constant is good or not
     return std::make_shared<ir::LDConstInstruction>(
             currentBasicBlock, Int64_t::Create(), tempVar, constValue);
+
+//    return std::make_shared<ir::EmptyInstruction>(
+//            std::to_string(getValue()), currentBasicBlock, Int64_t::Create());
 }
 
 } // namespace caramel::ast
