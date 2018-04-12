@@ -24,19 +24,28 @@
 
 #pragma once
 
-#include "Logger.h"
+#include "../BasicBlock.h"
+#include <memory>
 
-#include <string>
+namespace caramel::ir::Pdf {
 
+class PdfIRVisitor;
 
-struct Config {
-    bool staticAnalysis = false;
-    bool optimize = false;
-    bool compile = false;
-    bool assemble = false;
-    bool syntaxTreeDot = false;
-    bool astDot = false;
-    bool irDot = false;
-    std::string sourceFile;
-    LoggerLevel verbosity = INFO;
+class PdfBasicBlockVisitor {
+public:
+    using Ptr = std::shared_ptr<PdfBasicBlockVisitor>;
+    using WeakPtr = std::shared_ptr<PdfBasicBlockVisitor>;
+
+    explicit PdfBasicBlockVisitor();
+    virtual ~PdfBasicBlockVisitor() = default;
+
+    void generateAssembly(std::shared_ptr<ir::BasicBlock> const &basicBlock, std::ostream &os);
+
+private:
+    std::shared_ptr<PdfIRVisitor> mIRVisitor;
+
 };
+
+} // namespace caramel::ir::Pdf
+
+

@@ -32,6 +32,7 @@
 #include "BackEnd.h"
 
 #include "tclap.h"
+#include "ir/pdf/PdfCFGVisitor.h"
 #include "ir/x86_64/X86_64CFGVisitor.h"
 
 #include <iostream>
@@ -48,33 +49,52 @@ int main(int argc, const char *argv[]) {
     // Get the AST from the front-end
     caramel::ast::Context::Ptr astRoot{caramel::frontEnd(config)};
 
-    // Get the x86_64 assembly from the back-end
-    std::stringstream assemblySS;
-    caramel::ir::CFGVisitor::Ptr arch = std::shared_ptr<caramel::ir::CFGVisitor>(new caramel::ir::x86_64::X86_64CFGVisitor);
-    caramel::BackEnd::generateAssembly(config.sourceFile, astRoot, assemblySS, arch);
-    std::string assembly = assemblySS.str();
+    // Generate the IR pdf
+    if (config.irDot) {
+        std::stringstream irPdfSS;
+        caramel::ir::CFGVisitor::Ptr irPdfArch = std::shared_ptr<caramel::ir::CFGVisitor>(
+                new caramel::ir::Pdf::PdfCFGVisitor);
+        caramel::BackEnd::generateAssembly(config.sourceFile, astRoot, irPdfSS, irPdfArch);
 
-    // Print the assembly on the standard output
-    using caramel::colors::reset;
-    logger.debug() << "Generated assembly code:\n" << reset << assembly;
+        std::ofstream irDotFile("ir.dot");
+        irDotFile << irPdfSS.str();
+        irDotFile.close();
 
-    std::ofstream assemblyOutputFile("assembly.s");
-    assemblyOutputFile << assembly;
-    assemblyOutputFile.close();
-
-    // Compile the assembly and run it, on Linux
-    if (config.assemble) {
+        // Generate the PDF
         // TODO: Dirty, change this.
-#ifdef __linux__
-        logger.info() << "Assembling the Caramel output...";
-        system("gcc ./assembly.s -no-pie -o ./caramel.out");
+        system("dot -T pdf -o ir.pdf ir.dot");
+    }
 
-        logger.info() << "Starting the Caramel-compiled program...";
-        const int ret = system("./caramel.out");
-        logger.info() << "End of the execution. It returned: " << ret << '.';
+    // Get the x86_64 assembly from the back-end
+    if (config.compile) {
+        std::stringstream assemblySS;
+        caramel::ir::CFGVisitor::Ptr arch = std::shared_ptr<caramel::ir::CFGVisitor>(
+                new caramel::ir::x86_64::X86_64CFGVisitor);
+        caramel::BackEnd::generateAssembly(config.sourceFile, astRoot, assemblySS, arch);
+        std::string assembly = assemblySS.str();
+
+        // Print the assembly on the standard output
+        using caramel::colors::reset;
+        logger.debug() << "Generated assembly code:\n" << reset << assembly;
+
+        std::ofstream assemblyOutputFile("assembly.s");
+        assemblyOutputFile << assembly;
+        assemblyOutputFile.close();
+
+        // Compile the assembly and run it, on Linux
+        if (config.assemble) {
+            // TODO: Dirty, change this.
+#ifdef __linux__
+            logger.info() << "Assembling the Caramel output...";
+            system("gcc ./assembly.s -no-pie -o ./caramel.out");
+
+            logger.info() << "Starting the Caramel-compiled program...";
+            const int ret = system("./caramel.out");
+            logger.info() << "End of the execution. It returned: " << ret << '.';
 #else
-        logger.info() << "No assembly compilation on Windows.";
+            logger.info() << "No assembly compilation on Windows.";
 #endif
+        }
     }
 
     return EXIT_SUCCESS;
@@ -104,6 +124,10 @@ Config parseArgs(int argc, const char *argv[]) {
         // AST - DOT export
         TCLAP::SwitchArg astDotArg("", "ast-dot", "Generate a DOT of the AST");
         cmd.add(astDotArg);
+
+        // IR - DOT export
+        TCLAP::SwitchArg irDotArg("", "ir-dot", "Generate a DOT of the IR");
+        cmd.add(irDotArg);
 
         // Compile flag
         TCLAP::SwitchArg compileArg("c", "compile", "Generate assembly code");
@@ -137,6 +161,7 @@ Config parseArgs(int argc, const char *argv[]) {
         config.assemble = assembleArg.getValue();
         config.syntaxTreeDot = syntaxTreeDotArg.getValue();
         config.astDot = astDotArg.getValue();
+        config.irDot = irDotArg.getValue();
         config.sourceFile = sourceFileArg.getValue();
         config.verbosity = LoggerLevel(INFO + verboseArg.getValue() - quietArg.getValue());
 
@@ -147,6 +172,7 @@ Config parseArgs(int argc, const char *argv[]) {
             if (!assembleArg.isSet()) config.assemble = false;
             if (!syntaxTreeDotArg.isSet()) config.syntaxTreeDot = false;
             if (!astDotArg.isSet()) config.astDot = false;
+            if (!irDotArg.isSet()) config.irDot = false;
         }
 
         return config;
