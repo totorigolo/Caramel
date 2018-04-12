@@ -24,11 +24,13 @@
 
 #pragma once
 
-#include <ostream>
 #include "../ast/statements/Statement.h"
 #include "../ast/symboltable/Symbol.h"
 #include "../ast/context/Context.h"
 #include "BasicBlock.h"
+
+#include <ostream>
+#include <stack>
 
 namespace caramel::ir {
 
@@ -65,6 +67,10 @@ public:
 
     std::shared_ptr<BasicBlock> getFunctionEndBasicBlock(size_t functionBasicBlockIndex);
 
+    void pushCurrentControlBlockEndBB(std::shared_ptr<BasicBlock> bbend);
+    void popCurrentControlBlockEndBB();
+    std::shared_ptr<BasicBlock> getCurrentControlBlockEndBB();
+
     size_t getStackSize(size_t functionBasicBlockIndex) const;
 
     void addFunctionBBEnd(size_t functionId, std::shared_ptr<BasicBlock> functionBBEnd);
@@ -92,8 +98,8 @@ protected:
     std::vector<std::shared_ptr<BasicBlock>> mFunctionsBasicBlocks;
     std::map<size_t, std::shared_ptr<BasicBlock>> mFunctionBBEnd;
     std::vector<caramel::ast::Declaration::Ptr> mGlobalContext;
+
+    std::stack<std::shared_ptr<BasicBlock>> mControlBlockEndBBStack;
 };
 
 } // namespace caramel::ast
-
-

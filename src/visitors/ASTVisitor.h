@@ -75,6 +75,9 @@ public:
     /// Returns Jump::Ptr
     antlrcpp::Any visitReturnJump(CaramelParser::ReturnJumpContext *ctx) override;
 
+    /// Returns Jump::Ptr
+    antlrcpp::Any visitBreakJump(CaramelParser::BreakJumpContext *ctx) override;
+
     //--------------------------------------------------------------------------------------------------------
     // Variables
 

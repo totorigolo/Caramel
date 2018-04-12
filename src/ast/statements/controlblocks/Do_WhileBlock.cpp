@@ -61,6 +61,8 @@ ir::GetBasicBlockReturn Do_WhileBlock::getBasicBlock(
     ir::BasicBlock::Ptr bbDWaction = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_DWaction");
     ir::BasicBlock::Ptr bbDWend = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_DWend");
 
+    controlFlow->pushCurrentControlBlockEndBB(bbDWend);
+
     bbDWaction->setExitWhenTrue(bbDWcond);
     bbDWcond->setExitWhenTrue(bbDWaction);
     bbDWcond->setExitWhenFalse(bbDWend);
@@ -97,6 +99,8 @@ ir::GetBasicBlockReturn Do_WhileBlock::getBasicBlock(
             bbDWaction = then_end->getNewWhenTrueBasicBlock("_DWthenafter");
         }
     }
+
+    controlFlow->popCurrentControlBlockEndBB();
 
     return {bbDWaction, bbDWend};
 }

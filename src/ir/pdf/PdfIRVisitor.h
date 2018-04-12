@@ -63,6 +63,8 @@ public:
 
     void visitFunctionCall(caramel::ir::FunctionCallInstruction *instruction, std::ostream &os) override;
 
+    void visitBreak(caramel::ir::BreakInstruction *instruction, std::ostream &os) override;
+
     void visitReturn(caramel::ir::ReturnInstruction *instruction, std::ostream &os) override;
 
     void visitCallParameter(CallParameterInstruction *instruction, std::ostream &os) override;

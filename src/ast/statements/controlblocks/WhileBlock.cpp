@@ -61,13 +61,15 @@ ir::GetBasicBlockReturn WhileBlock::getBasicBlock(
     ir::BasicBlock::Ptr bbWthen = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_Wthen");
     ir::BasicBlock::Ptr bbWend = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_Wend");
 
+    controlFlow->pushCurrentControlBlockEndBB(bbWend);
+
     bbWcond->setExitWhenTrue(bbWthen);
     bbWcond->setExitWhenFalse(bbWend);
     bbWthen->setExitWhenTrue(bbWcond);
 
     // COND BB
     if (mCondition->shouldReturnAnIR()) {
-        SAFE_ADD_INSTRUCTION(mCondition, bbWcond); // bbWcond->addInstruction(mCondition->getIR(bbWcond));
+        SAFE_ADD_INSTRUCTION(mCondition, bbWcond);
     } else if (mCondition->shouldReturnABasicBlock()) {
         logger.warning() << "Untested BB in while block condition BB.";
 
@@ -84,7 +86,7 @@ ir::GetBasicBlockReturn WhileBlock::getBasicBlock(
     // THEN BB
     for (auto const &statement : mBlock) {
         if (statement->shouldReturnAnIR()) {
-            SAFE_ADD_INSTRUCTION(statement, bbWthen); // bbWthen->addInstruction(statement->getIR(bbWthen));
+            SAFE_ADD_INSTRUCTION(statement, bbWthen);
         } else if (statement->shouldReturnABasicBlock()) {
             auto[then_begin, then_end] = statement->getBasicBlock(controlFlow);
 
@@ -97,6 +99,8 @@ ir::GetBasicBlockReturn WhileBlock::getBasicBlock(
             bbWthen = then_end->getNewWhenTrueBasicBlock("_Wthenafter");
         }
     }
+
+    controlFlow->popCurrentControlBlockEndBB();
 
     return {bbWcond, bbWend};
 }

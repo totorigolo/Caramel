@@ -76,6 +76,8 @@ ir::GetBasicBlockReturn ForBlock::getBasicBlock(ir::CFG *controlFlow) {
     ir::BasicBlock::Ptr bbInc = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_Finc");
     ir::BasicBlock::Ptr bbEnd = controlFlow->generateBasicBlock(ir::BasicBlock::getNextNumberName() + "_Fend");
 
+    controlFlow->pushCurrentControlBlockEndBB(bbEnd);
+
     bbInit->setExitWhenTrue(bbCond);
     bbCond->setExitWhenTrue(bbThen);
     bbCond->setExitWhenFalse(bbEnd);
@@ -96,7 +98,6 @@ ir::GetBasicBlockReturn ForBlock::getBasicBlock(ir::CFG *controlFlow) {
 
         bbInit = init_end->getNewWhenTrueBasicBlock("_Finitafter");
     }
-
 
     // COND BB
     if (mEnd->shouldReturnAnIR()) {
@@ -131,7 +132,6 @@ ir::GetBasicBlockReturn ForBlock::getBasicBlock(ir::CFG *controlFlow) {
         }
     }
 
-
     // INC BB
     if (mStep->shouldReturnAnIR()) {
         SAFE_ADD_INSTRUCTION(mStep, bbInc); // bbInc->addInstruction(mStep->getIR(bbInc));
@@ -147,9 +147,9 @@ ir::GetBasicBlockReturn ForBlock::getBasicBlock(ir::CFG *controlFlow) {
         bbInc = inc_end->getNewWhenTrueBasicBlock("_Fincafter");
     }
 
+    controlFlow->popCurrentControlBlockEndBB();
 
     return {bbInit, bbEnd};
-
 }
 
 

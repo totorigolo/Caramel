@@ -33,6 +33,7 @@
 #include "../instructions/LDConstInstruction.h"
 #include "../instructions/FunctionCallInstruction.h"
 #include "../instructions/NopInstruction.h"
+#include "../instructions/BreakInstruction.h"
 #include "../instructions/ReturnInstruction.h"
 #include "../instructions/AdditionInstruction.h"
 #include "../instructions/SubtractionInstruction.h"
@@ -120,6 +121,12 @@ void PdfIRVisitor::visitFunctionCall(caramel::ir::FunctionCallInstruction *instr
        << "ret=" << instruction->getReturnName() << ", "
        << "function=" << instruction->getFunctionName() << ", "
        << "nb_args=" << instruction->getArgumentsLength();
+}
+
+void PdfIRVisitor::visitBreak(caramel::ir::BreakInstruction *instruction, std::ostream &os) {
+    os << "break: "
+       << "jumpBB=" << instruction->getDestBBLabel() << ", "
+       << "ret=" << instruction->getReturnName();
 }
 
 void PdfIRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, std::ostream &os) {

@@ -33,6 +33,7 @@
 #include "../instructions/LDConstInstruction.h"
 #include "../instructions/FunctionCallInstruction.h"
 #include "../instructions/NopInstruction.h"
+#include "../instructions/BreakInstruction.h"
 #include "../instructions/ReturnInstruction.h"
 #include "../instructions/AdditionInstruction.h"
 #include "../instructions/SubtractionInstruction.h"
@@ -429,6 +430,12 @@ void X86_64IRVisitor::visitFunctionCall(caramel::ir::FunctionCallInstruction *in
     if (instruction->getArgumentsLength() > 6) {
         os << "\n  addq    $" << (instruction->getArgumentsLength() - 6) * 8 << ", %rsp";
     }
+}
+
+void X86_64IRVisitor::visitBreak(caramel::ir::BreakInstruction *instruction, std::ostream &os) {
+    logger.trace() << "[x86_64] " << "visiting break: " << instruction->getReturnName();
+
+     os << "  jmp    " << instruction->getDestBBLabel();
 }
 
 void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, std::ostream &os) {

@@ -52,11 +52,9 @@ static std::string replace_leading_dot(std::string const &name) {
 
 void PdfBasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> const &basicBlock, std::ostream &os) {
 
-    std::string mLabelName = basicBlock->getLabelName();
+    std::string mLabelName = replace_leading_dot(basicBlock->getLabelName());
     if (mLabelName.empty()) {
         mLabelName = "unnamed_BB_" + std::to_string(long(this));
-    } else if (mLabelName[0] == '.') {
-        mLabelName[0] = '_';
     }
 
     std::stringstream instructionsSS;

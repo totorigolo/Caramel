@@ -251,4 +251,27 @@ std::shared_ptr<BasicBlock> CFG::getFunctionEndBasicBlock(size_t functionBasicBl
     return mFunctionBBEnd.at(functionBasicBlockIndex);
 }
 
+void CFG::pushCurrentControlBlockEndBB(BasicBlock::Ptr bbend) {
+    logger.trace() << "[CFG] Pushing control-block end-BB: " << bbend->getLabelName();
+
+    mControlBlockEndBBStack.push(bbend);
+}
+
+void CFG::popCurrentControlBlockEndBB() {
+    logger.trace() << "[CFG] Popping control-block end-BB.";
+
+    mControlBlockEndBBStack.pop();
+}
+
+BasicBlock::Ptr CFG::getCurrentControlBlockEndBB() {
+    logger.trace() << "[CFG] Getting control-block end-BB:";
+
+    if (mControlBlockEndBBStack.empty()) {
+        logger.fatal() << "The control-block end-BB stack is empty!";
+        exit(1);
+    }
+    logger.trace() << "[CFG] => " << mControlBlockEndBBStack.top()->getLabelName();
+    return mControlBlockEndBBStack.top();
+}
+
 } // namespace caramel::ir

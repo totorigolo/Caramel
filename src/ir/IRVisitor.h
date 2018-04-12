@@ -50,7 +50,9 @@ class FunctionCallInstruction;
 
 class NopInstruction;
 
+class BreakInstruction;
 class ReturnInstruction;
+
 class PushInstruction;
 class PopInstruction;
 class MultiplicationInstruction;
@@ -124,6 +126,11 @@ public:
 
     virtual void visitFunctionCall(
             FunctionCallInstruction *instruction,
+            std::ostream &os
+    ) = 0;
+
+    virtual void visitBreak(
+            BreakInstruction *instruction,
             std::ostream &os
     ) = 0;
 

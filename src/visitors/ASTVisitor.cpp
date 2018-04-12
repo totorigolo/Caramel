@@ -26,6 +26,7 @@
 #include "../Logger.h"
 #include "../utils/Common.h"
 #include "../ast/statements/jumps/Jump.h"
+#include "../ast/statements/jumps/BreakStatement.h"
 #include "../ast/statements/jumps/ReturnStatement.h"
 #include "../ast/statements/controlblocks/ControlBlock.h"
 #include "../ast/statements/definition/FunctionDefinition.h"
@@ -259,6 +260,12 @@ antlrcpp::Any ASTVisitor::visitReturnJump(CaramelParser::ReturnJumpContext *ctx)
     } else {
         return castTo<Jump::Ptr>(std::make_shared<ReturnStatement>(ctx->getStart()));
     }
+}
+
+antlrcpp::Any ASTVisitor::visitBreakJump(CaramelParser::BreakJumpContext *ctx) {
+    logger.trace() << "visiting break jump: " << grey <<ctx->getText();
+
+    return castTo<Jump::Ptr>(std::make_shared<BreakStatement>(ctx->getStart()));
 }
 
 std::shared_ptr<Context> ASTVisitor::rootContext() {
