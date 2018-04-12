@@ -43,11 +43,13 @@ void X86_64BasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> c
 
     bool whenTrue = nullptr != basicBlock->getNextWhenTrue();
     bool whenFalse = nullptr != basicBlock->getNextWhenFalse();
+    if (basicBlock->getInstructions().empty() && whenFalse) {
+        logger.fatal() << "Empty BB with false jump for BB #" << basicBlock->getId() << ". "
+                << "The whenTrue link has been removed to prevent infinite loop.";
+        os << "  jmp    " << basicBlock->getNextWhenFalse()->getLabelName();
+        return;
+    }
     if (whenFalse) {
-        if (basicBlock->getInstructions().empty()) {
-            logger.fatal() << "Empty BB with false jump for BB #" << basicBlock->getId();
-            return;
-        }
         auto condInstr = basicBlock->getInstructions().back();
         auto lastReturnName = condInstr->getReturnName();
         auto lastReturnBitSize = condInstr->getType()->getMemoryLength();
