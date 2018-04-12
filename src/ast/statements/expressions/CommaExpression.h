@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 Kalate Hexanome, 4IF, INSA Lyon
+ * Copyright (c) 2018 insa.4if.hexanome_kalate
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,18 +23,35 @@
 */
 
 #pragma once
-#include "../../ir/BasicBlock.h"
 
-#define GET_MAX_TYPE(leftExpr, rightExpr) PrimaryType::max(leftExpr->getPrimaryType(), rightExpr->getPrimaryType());
+#include "Expression.h"
+#include "../../symboltable/SymbolType.h"
 
-#define SAFE_ADD_INSTRUCTION(expr, block)                                                           \
-([&] () { auto __tmp_instr__ = expr->getIR(block);                                                  \
-          return block->addInstruction(__tmp_instr__);})()
+#include <memory>
+#include <vector>
 
-#define MOVE_TO(var, to, max)                                                                       \
-currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(                            \
-    currentBasicBlock,                                                                              \
-    max,                                                                                            \
-    to,                                                                                             \
-    var                                                                                             \
-))
+
+namespace caramel::ast {
+
+class CommaExpression : public Expression {
+public:
+    using Ptr = std::shared_ptr<CommaExpression>;
+    using WeakPtr = std::weak_ptr<CommaExpression>;
+
+public:
+    explicit CommaExpression(antlr4::Token *startToken, std::vector<Expression::Ptr> expressions);
+    ~CommaExpression() override  = default;
+
+    PrimaryType::Ptr getPrimaryType() const override;
+
+    bool shouldReturnAnIR() const override;
+    std::shared_ptr<ir::IR> getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) override;
+
+    void acceptAstDotVisit() override;
+    void visitChildrenAstDot() override;
+
+private:
+    std::vector<Expression::Ptr> mExpressions;
+};
+
+} // namespace caramel::ast

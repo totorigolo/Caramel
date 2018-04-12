@@ -41,6 +41,7 @@ enum class StatementType {
     Jump,
     ReturnStatement,
     Expression,
+    CommaExpression,
     AtomicExpression,
     Constant,
     ConstString,
@@ -81,6 +82,7 @@ inline std::ostream & operator<<(std::ostream &os, const StatementType &type) {
         case StatementType::Jump: return os << "Jump";
         case StatementType::ReturnStatement: return os << "ReturnStatement";
         case StatementType::Expression: return os << "Expression";
+        case StatementType::CommaExpression: return os << "CommaExpression";
         case StatementType::AtomicExpression: return os << "AtomicExpression";
         case StatementType::Constant: return os << "Constant";
         case StatementType::ConstString: return os << "ConstString";

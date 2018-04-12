@@ -118,8 +118,8 @@ antlrcpp::Any ASTVisitor::visitArrayBlock(CaramelParser::ArrayBlockContext *ctx)
     logger.trace() << "visiting array block: " << grey <<ctx->getText();
 
     std::vector<Expression::Ptr> expressions;
-    for (auto expression : ctx->expression()) {
-        Expression::Ptr exp = visitExpression(expression);
+    for (auto expression : ctx->expressionNoComma()) {
+        Expression::Ptr exp = visitExpressionNoComma(expression);
         expressions.push_back(exp);
     }
     return expressions;

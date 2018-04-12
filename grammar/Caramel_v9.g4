@@ -57,7 +57,7 @@ variableDefinition
   : typeParameter InlineWS_* (variableDefinitionAssignment|validIdentifier) (WS_* Comma_ WS_* (variableDefinitionAssignment|validIdentifier))*
   ;
 variableDefinitionAssignment
-  : validIdentifier WS_* Assignment_ InlineWS_* expression ;
+  : validIdentifier WS_* Assignment_ InlineWS_* expressionNoComma ;
 
 arrayUnsizedInner
   : typeParameter InlineWS_+ validIdentifier InlineWS_* L_Bracket_ R_Bracket_
@@ -118,7 +118,7 @@ block
 
 arrayBlock
   : L_CBracket_ WS_* R_CBracket_
-  | L_CBracket_ WS_* expression (WS_* Comma_ WS_* expression)* Comma_? WS_* R_CBracket_
+  | L_CBracket_ WS_* expressionNoComma (WS_* Comma_ WS_* expressionNoComma)* Comma_? WS_* R_CBracket_
   ;
 
 // Function definition helpers
@@ -130,7 +130,7 @@ functionArgument
   : typeParameter WS_* validIdentifier? WS_* (functionArgumentArraySuffix)?
   ;
 functionArgumentArraySuffix
-  : '[' WS_* (expression)? WS_* ']'
+  : '[' WS_* (expressionNoComma)? WS_* ']'
   ;
 
 // Type & identifiers
@@ -153,7 +153,7 @@ atomicExpression // As right value
   ;
 callSufix
   : L_Par_ R_Par_
-  | L_Par_ WS_* expression (Comma_ WS_* expression)* Comma_? WS_* R_Par_
+  | L_Par_ WS_* expressionNoComma (Comma_ WS_* expressionNoComma)* Comma_? WS_* R_Par_
   ;
 arrayAccess
   : L_Bracket_ InlineWS_* expression InlineWS_* R_Bracket_
@@ -161,11 +161,16 @@ arrayAccess
 
 expression
   : assignment
+  | expressionNoComma (Comma_ WS_* expressionNoComma)+
+  ;
+
+expressionNoComma
+  : assignment
   ;
 
 assignment
   : disjunction
-  | lvalue InlineWS_* assignmentOperator WS_* expression
+  | lvalue InlineWS_* assignmentOperator WS_* expressionNoComma
   ;
 
 disjunction

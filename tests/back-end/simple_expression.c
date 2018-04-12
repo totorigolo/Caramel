@@ -22,19 +22,19 @@
  * SOFTWARE.
 */
 
-#pragma once
-#include "../../ir/BasicBlock.h"
+/*
+ * Multi-line comment.
+ */
+#include <stdio.h>
+#include <stdint.h>
 
-#define GET_MAX_TYPE(leftExpr, rightExpr) PrimaryType::max(leftExpr->getPrimaryType(), rightExpr->getPrimaryType());
 
-#define SAFE_ADD_INSTRUCTION(expr, block)                                                           \
-([&] () { auto __tmp_instr__ = expr->getIR(block);                                                  \
-          return block->addInstruction(__tmp_instr__);})()
+int32_t main() {
+    putchar('0' + (3 * 5 - 9)); // 6
+    putchar('\n');
 
-#define MOVE_TO(var, to, max)                                                                       \
-currentBasicBlock->addInstruction(std::make_shared<ir::CopyInstruction>(                            \
-    currentBasicBlock,                                                                              \
-    max,                                                                                            \
-    to,                                                                                             \
-    var                                                                                             \
-))
+    putchar('0' + (10 / 3 + 4 - 8 % 3)); // 5
+    putchar('\n');
+
+    return 0;
+}

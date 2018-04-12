@@ -25,6 +25,7 @@
 #include "ASTVisitor.h"
 #include "../Logger.h"
 #include "../utils/Common.h"
+#include "../ast/statements/expressions/CommaExpression.h"
 #include "../ast/statements/expressions/atomicexpression/Constant.h"
 #include "../ast/statements/expressions/atomicexpression/Identifier.h"
 #include "../ast/statements/expressions/atomicexpression/ArrayAccess.h"
@@ -55,7 +56,21 @@ using namespace caramel::visitors;
 
 antlrcpp::Any ASTVisitor::visitExpression(CaramelParser::ExpressionContext *ctx) {
     logger.trace() << "visiting expression: " << grey << ctx->getText();
-    return CaramelBaseVisitor::visitExpression(ctx);
+
+    if (ctx->children.size() == 1) {
+        // One children = No comma expression.
+        return visitChildren(ctx).as<Expression::Ptr>();
+    } else {
+        std::vector<Expression::Ptr> expressions;
+        for (auto expression : ctx->expressionNoComma()) {
+            Expression::Ptr expr = visitExpressionNoComma(expression);
+            expressions.push_back(expr);
+        }
+        return castTo<Expression::Ptr>(std::make_shared<CommaExpression>(
+                ctx->getStart(),
+                expressions
+        ));
+    }
 }
 
 antlrcpp::Any ASTVisitor::visitAdditiveExpression(CaramelParser::AdditiveExpressionContext *ctx) {
@@ -142,8 +157,8 @@ antlrcpp::Any ASTVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionC
     if (ctx->validIdentifier()) {
         std::string varName = visitValidIdentifier(ctx->validIdentifier());
         std::vector<Expression::Ptr> arguments;
-        for (auto expression : ctx->callSufix()->expression()) {
-            Expression::Ptr exp = visitExpression(expression);
+        for (auto expression : ctx->callSufix()->expressionNoComma()) {
+            Expression::Ptr exp = visitExpressionNoComma(expression);
             arguments.push_back(exp);
         }
 
@@ -217,7 +232,6 @@ antlrcpp::Any ASTVisitor::visitConjunction(CaramelParser::ConjunctionContext *ct
         // One children = No BinaryExpression at this step.
         return visitChildren(ctx).as<Expression::Ptr>();
     } else {
-
         return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
                 visitConjunction(ctx->conjunction(0)),
                 mBinaryOperatorIndex.getOpForToken(ConjunctionOperator::SYMBOL),
@@ -252,7 +266,7 @@ antlrcpp::Any ASTVisitor::visitAssignment(CaramelParser::AssignmentContext *ctx)
         return castTo<Expression::Ptr>(std::make_shared<BinaryExpression>(
                 visitLvalue(ctx->lvalue()),
                 visitAssignmentOperator(ctx->assignmentOperator()),
-                visitExpression(ctx->expression()),
+                visitExpressionNoComma(ctx->expressionNoComma()),
                 ctx->getStart()
         ));
     }

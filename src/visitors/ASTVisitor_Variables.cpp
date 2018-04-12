@@ -76,9 +76,9 @@ antlrcpp::Any ASTVisitor::visitVariableDefinition(CaramelParser::VariableDefinit
     for (auto *varWithValue : ctx->variableDefinitionAssignment()) {
         std::string name = visitValidIdentifier(varWithValue->validIdentifier());
 
-        Expression::Ptr expression = visitExpression(varWithValue->expression());
+        Expression::Ptr expression = visitExpressionNoComma(varWithValue->expressionNoComma());
         logger.trace() << "New variable declared: '" << grey << name << " = "
-                       << varWithValue->expression()->getText();
+                       << varWithValue->expressionNoComma()->getText();
 
         VariableDefinition::Ptr variableDef = std::make_shared<VariableDefinition>(
                 expression, varWithValue->getStart());
