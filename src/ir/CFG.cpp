@@ -234,8 +234,9 @@ std::shared_ptr<BasicBlock> CFG::generateNamedBasicBlock() {
 }
 
 size_t CFG::getStackSize(size_t functionBasicBlockIndex) const {
-    long stackSize = -mStackSize.at(functionBasicBlockIndex)
-                     + mTopStackMemberSize.at(functionBasicBlockIndex) / 8U;
+    long topStackMemberSize = mTopStackMemberSize.find(functionBasicBlockIndex) == mTopStackMemberSize.end()
+                              ? 0U : mTopStackMemberSize.at(functionBasicBlockIndex);
+    long stackSize = -mStackSize.at(functionBasicBlockIndex) + topStackMemberSize / 8U;
     if (stackSize < 0) {
         logger.fatal() << "Negative stack size: " << stackSize << ". CFG: " << *this;
         exit(0);
