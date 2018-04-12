@@ -192,6 +192,8 @@ void X86_64IRVisitor::visitArrayAccess(ArrayAccessInstruction *instruction, std:
     logger.trace() << "[x86_64] " << "visiting array access: " << instruction->getReturnName();
 
     os << "  # common begin of arrayAccess of " << instruction->getArrayName() << '\n';
+    os << "  pushq " << toAssembly(instruction->getParentBlock(), IR::DATA_REG, 64);
+    os << '\n';
 
     auto length = instruction->getType()->getMemoryLength();
 
@@ -289,6 +291,10 @@ void X86_64IRVisitor::visitArrayAccess(ArrayAccessInstruction *instruction, std:
                       instruction->getDestination(), length
             );
         }
+
+        os << '\n';
+        os << "  popq " << toAssembly(instruction->getParentBlock(), IR::DATA_REG, 64);
+
         os << "\n  # end of remote arrayAccess of " << instruction->getArrayName();
     }
 }
@@ -328,6 +334,9 @@ void X86_64IRVisitor::visitMod(caramel::ir::ModInstruction *instruction, std::os
     const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), parameterSize);
     const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), parameterSize);
 
+    os << "  pushq " << toAssembly(instruction->getParentBlock(), IR::DATA_REG, 64);
+    os << '\n';
+
     writeMove(instruction->getParentBlock(), os,
               instruction->getLeft(), parameterSize,
               IR::ACCUMULATOR, parameterSize);
@@ -339,6 +348,9 @@ void X86_64IRVisitor::visitMod(caramel::ir::ModInstruction *instruction, std::os
     writeMove(instruction->getParentBlock(), os,
               IR::DATA_REG, parameterSize,
               instruction->getReturnName(), parameterSize);
+    os << '\n';
+
+    os << "  popq " << toAssembly(instruction->getParentBlock(), IR::DATA_REG, 64);
 }
 
 void X86_64IRVisitor::visitDivision(caramel::ir::DivInstruction *instruction, std::ostream &os) {
@@ -538,7 +550,7 @@ void X86_64IRVisitor::visitFlagToReg(FlagToRegInstruction *instruction, std::ost
     // TODO : Change 32 to a defined variable
     const std::string leftLocation = toAssembly(instruction->getParentBlock(), instruction->getLeft(), 32);
     const std::string rightLocation = toAssembly(instruction->getParentBlock(), instruction->getRight(), 32);
-    const std::string tmpLocation = toAssembly(instruction->getParentBlock(), IR::DATA_REG, 32);
+    const std::string tmpLocation = toAssembly(instruction->getParentBlock(), IR::REGISTER_10, 32);
     const std::string storeLocation = toAssembly(instruction->getParentBlock(), instruction->getReturnName(), 32);
 
     writeCmp(instruction->getParentBlock(), os,
@@ -550,7 +562,7 @@ void X86_64IRVisitor::visitFlagToReg(FlagToRegInstruction *instruction, std::ost
     os << "  set" << instruction->getFtrType() << "    " << "%cl\n";
     os << "  movzbl    %cl, " << tmpLocation << '\n';
     writeMove(instruction->getParentBlock(), os,
-              IR::DATA_REG, 32,
+              IR::REGISTER_10, 32,
               instruction->getReturnName(), 32);
 }
 
@@ -679,9 +691,9 @@ X86_64IRVisitor::prepareInstr(BasicBlock::Ptr const &bb, std::ostream &os,
     bool const srcMem = srcAsm[0] != '%' && srcAsm[0] != '$';
     bool const destMem = destAsm[0] != '%' && destAsm[0] != '$';
     if (srcMem && destMem) {
-        writeMove(bb, os, src, srcSize, IR::DATA_REG, srcSize);
+        writeMove(bb, os, src, srcSize, IR::REGISTER_10, srcSize);
         os << '\n';
-        srcAsm = regToAsm(IR::DATA_REG, maxSize);
+        srcAsm = regToAsm(IR::REGISTER_10, maxSize);
     }
 
     return {maxSize, srcAsm, destAsm};
