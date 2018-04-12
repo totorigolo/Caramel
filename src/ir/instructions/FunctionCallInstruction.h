@@ -39,11 +39,14 @@ public:
             std::string functionName,
             std::shared_ptr<BasicBlock> const &parentBlock,
             ast::PrimaryType::Ptr const &returnType,
-            int argumentsLength
+            int argumentsLength,
+            bool isVariadic = false
     );
 
 public:
     std::string getFunctionName() const;
+
+    bool isVariadic() const;
 
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
@@ -52,6 +55,7 @@ public:
 private:
     std::string mFunctionName;
     int mArgumentsLength;
+    bool mIsVariadic;
 };
 
 } // namespace caramel::ir

@@ -39,7 +39,7 @@ using namespace caramel::visitors;
 
 
 antlrcpp::Any ASTVisitor::visitControlBlock(CaramelParser::ControlBlockContext *ctx) {
-    logger.trace() << "visiting array block: " << grey <<ctx->getText();
+    logger.trace() << "visiting control block: " << grey <<ctx->getText();
 
     if (ctx->ifBlock()) {
         return castAnyTo<IfBlock::Ptr, ControlBlock::Ptr>(visitIfBlock(ctx->ifBlock()));

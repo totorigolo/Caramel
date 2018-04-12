@@ -414,6 +414,14 @@ void X86_64IRVisitor::visitNope(caramel::ir::NopInstruction *instruction, std::o
 void X86_64IRVisitor::visitFunctionCall(caramel::ir::FunctionCallInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting functionCall: " << instruction->getFunctionName();
 
+    if (instruction->isVariadic()) {
+        // https://stackoverflow.com/questions/6212665/why-is-eax-zeroed-before-a-call-to-printf#6212835
+        writeMove(instruction->getParentBlock(), os,
+                  "0", 64,
+                  IR::ACCUMULATOR, 64);
+        os << '\n';
+    }
+
     os << "  call    " << instruction->getFunctionName();
 
     auto returnSize = instruction->getType()->getMemoryLength();
@@ -456,7 +464,7 @@ void X86_64IRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, s
 void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, std::ostream &os) {
     logger.trace() << "[x86_64] " << "visiting call parameter: " << instruction->getValue();
 
-    size_t index = instruction->getIndex();
+    auto index = size_t(instruction->getIndex());
     if (index < 6) {
         os << "  pushq    " << regToAsm(getFCReg(index), 64) << '\n';
 

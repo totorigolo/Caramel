@@ -32,10 +32,12 @@ FunctionCallInstruction::FunctionCallInstruction(
         std::string functionName,
         std::shared_ptr<BasicBlock> const &parentBlock,
         ast::PrimaryType::Ptr const &returnType,
-        int argumentsLength
+        int argumentsLength,
+        bool isVariadic
 ) : IR(ast::Statement::createVarName(), Operation::call, parentBlock, returnType),
     mFunctionName{std::move(functionName)},
-    mArgumentsLength{argumentsLength} {}
+    mArgumentsLength{argumentsLength},
+    mIsVariadic{isVariadic} {}
 
 std::string FunctionCallInstruction::getFunctionName() const {
     return mFunctionName;
@@ -47,6 +49,10 @@ void FunctionCallInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, 
 
 int FunctionCallInstruction::getArgumentsLength() const {
     return mArgumentsLength;
+}
+
+bool FunctionCallInstruction::isVariadic() const {
+    return mIsVariadic;
 }
 
 } // namespace caramel::ir

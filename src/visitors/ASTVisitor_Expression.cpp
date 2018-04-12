@@ -175,8 +175,8 @@ antlrcpp::Any ASTVisitor::visitAtomicExpression(CaramelParser::AtomicExpressionC
         return castAnyTo<AtomicExpression::Ptr, Expression::Ptr>(visitNumberConstant(ctx->numberConstant()));
     } else if (ctx->expression()) {
         return visitExpression(ctx->expression());
-    } else { // if (ctx->stringConstant()) {
-        logger.fatal() << "ConstString constants aren't handled yet!";
+    } else {
+        logger.fatal() << "The grammar has changed.";
         exit(1);
     }
 }

@@ -91,7 +91,8 @@ std::shared_ptr<ir::IR> FunctionCall::getIR(std::shared_ptr<ir::BasicBlock> &cur
             functionName,
             currentBasicBlock,
             functionSymbol->getType(),
-            mArguments.size()
+            mArguments.size(),
+            functionSymbol->isVariadic()
     );
 }
 

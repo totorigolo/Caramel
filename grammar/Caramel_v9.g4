@@ -147,7 +147,6 @@ atomicExpression // As right value
   : L_Par_ WS_* expression WS_* R_Par_ // '(' e ')'
   | numberConstant
   | charConstant
-  | stringConstant
   | lvalue
   | validIdentifier callSufix
   ;
@@ -263,9 +262,6 @@ charConstant
   | EscapedSimpeQuote_
   | EscapedDoubleQuote_
   | EscapedAntibackslash_
-  ;
-stringConstant
-  : '"' ~('"')*? '"'
   ;
 
 InstructionSeparator : Semilicon_ ;
