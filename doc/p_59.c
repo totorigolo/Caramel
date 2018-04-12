@@ -7,8 +7,10 @@ int32_t main() {
     int32_t b[1];
 
     a = 'O';
-    b[1] = 'K';
+    b[0] = 'K';
     putchar(a);
-    putchar(b[1]);
-    putchar(' ');
+    putchar(b[0]);
+    putchar('\n');
+
+    return 0;
 }

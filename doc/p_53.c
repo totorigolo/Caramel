@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 
-int32_t main() {
+void main() {
     putchar('O');
     putchar('K');
-    putchar(' ');
+    putchar('\n');
 }

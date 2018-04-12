@@ -20,10 +20,6 @@ for the CS department - INSA Lyon 2018.
 
 ## How to download the compiler
 
-The library uses GoogleTest for its tests, using git sub-modules. Hence, you have to use one of the following to fetch the GoogleTest sources:
-
-**TODO : Update this part**
-
 ```shell
 # Git clone with SSH
 git clone --recursive git@gitlab.com:hexanome-kalate/pld-comp.git
@@ -38,7 +34,7 @@ git submodule update --init --recursive
 
 ## How to run the examples
 
-**Caramel requires a C++14 compiler, at least GCC 6, and CMake 3.8.**
+**Caramel requires a C++17 compiler (at least GCC 6) and CMake 3.8.**
 
 ```shell
 # Generate the Makefile using CMake
@@ -117,10 +113,11 @@ Tests markes as `[-]` are unvalid tests that must failed.
 - [x] more than 6 args function call
 - [x] recursive function call
 - [x] operators priority
-- [x] complex nested expression (ex: foo(1 || 4 & 2) || 1>2 || (1==1 && 4>3))
+- [x] complex nested expression (ex: `foo(1 || 4 & 2) || (1>2, 2<4, foo(97 & 8 || 7)) || (1==1 && 4>3)`)
 - [x] if ... then ... else
 - [x] while block
 - [x] do while block
 - [x] for block
-- [ ] real stack size (in prolog)
+- [x] real stack size (in prolog)
+- [x] break / return
 - [ ] correct types handling (int8_t, int16_t -> int32_t)

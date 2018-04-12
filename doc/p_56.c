@@ -4,9 +4,11 @@
 
 int32_t main() {
     if (1 < 2) {
-        putchar('V');
+        putchar('O');
+        putchar('K');
     } else {
-        putchar('F');
+        putchar('K');
+        putchar('O');
     }
     putchar('\n');
 }

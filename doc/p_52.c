@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 
-int main() {
+void main() {
     int64_t x;
-    int64_t y;
-    int64_t z;
+    int16_t y;
+    int32_t z;
 }

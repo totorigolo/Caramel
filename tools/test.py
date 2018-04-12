@@ -243,11 +243,9 @@ class BackendTest(Test):
         compile_command = './Caramel --good-defaults {}'.format(os.path.join('../..', self.full_path))
         assemble_command = 'gcc ./assembly.s -no-pie -o ./caramel.out'
         run_command = './caramel.out'
-        logger.trace('Compile command:', compile_command)
-        logger.trace('Assemble command:', assemble_command)
-        logger.trace('Run command:', run_command)
 
         # Compile with Caramel
+        logger.trace('Compile command:', compile_command)
         if len(self.full_path) == 0:  # Interactive test
             print('Enter back-end test input: (ended by ^D)')
         with subprocess.Popen(
@@ -274,86 +272,93 @@ class BackendTest(Test):
                 logger.warn('Caramel wrote on stdout!')
 
         # Assemble with GCC
+        logger.trace('Assemble command:', assemble_command)
         exec_(assemble_command)
 
         # Execute
-        with subprocess.Popen(
-                shlex.split(run_command),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
-        ) as test_process:
-            test_process.wait()
+        try:
+            logger.trace('Run command:', run_command)
+            with subprocess.Popen(
+                    shlex.split(run_command),
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE
+            ) as test_process:
+                test_process.wait()
 
-            # Get stdout and stderr
-            out_str = list(map(lambda s: s.decode("utf-8"), test_process.stdout.readlines()))
-            error_str = list(map(lambda s: s.decode("utf-8"), test_process.stderr.readlines()))
+                # Get stdout and stderr
+                out_str = list(map(lambda s: s.decode("utf-8"), test_process.stdout.readlines()))
+                error_str = list(map(lambda s: s.decode("utf-8"), test_process.stderr.readlines()))
 
-            # Save the test state
-            self.state = {
-                'stdout_lines': sum(len(line.strip()) for line in out_str),
-                'stderr_lines': sum(len(line.strip()) for line in error_str),
-                'caramel_stderr': caramel_state['stderr'],
-                'caramel_stderr_lines': caramel_state['stderr_lines'],
-                'gcc_stdout_lines': sum(len(line.strip()) for line in gcc_stdout),
-                'gcc_stderr_lines': sum(len(line.strip()) for line in gcc_stderr),
-                'correct_stdout': out_str == gcc_stdout,
-                'return_code': test_process.returncode,
-                'time': time() - start_time
-            }
-            if self.state['stderr_lines'] != 0:
-                logger.warn('Unhandled: the test program wrote on stderr. Ignoring.')
+                # Save the test state
+                self.state = {
+                    'stdout_lines': sum(len(line.strip()) for line in out_str),
+                    'stderr_lines': sum(len(line.strip()) for line in error_str),
+                    'caramel_stderr': caramel_state['stderr'],
+                    'caramel_stderr_lines': caramel_state['stderr_lines'],
+                    'gcc_stdout_lines': sum(len(line.strip()) for line in gcc_stdout),
+                    'gcc_stderr_lines': sum(len(line.strip()) for line in gcc_stderr),
+                    'correct_stdout': out_str == gcc_stdout,
+                    'return_code': test_process.returncode,
+                    'time': time() - start_time
+                }
+                if self.state['stderr_lines'] != 0:
+                    logger.warn('Unhandled: the test program wrote on stderr. Ignoring.')
 
-            # Determine if unexpected errors, or successes, occurred
-            errors = not self.state['correct_stdout']
-            self.succeeded = errors if self.should_fail else not errors
+                # Determine if unexpected errors, or successes, occurred
+                errors = not self.state['correct_stdout']
+                self.succeeded = errors if self.should_fail else not errors
 
-            # Feed our user
-            if self.succeeded:
-                logger.info(
-                    'Test {}'.format(self.display_name),
-                    colored('succeeded.', color='green', attrs=['bold']),
-                    colored('[%s]' % seconds_to_string(self.state['time']), color='yellow')
-                )
-            else:
-                logger.info(
-                    'Test {}'.format(self.display_name),
-                    colored('failed #{}.'.format(_return_code_to_str(test_process.returncode)),
-                            color='red', attrs=['bold']),
-                    colored('[%s]' % seconds_to_string(self.state['time']), color='yellow')
-                )
-                failed_tests.append(self.display_name)
-                if open_gui_on_failure and not open_gui:
-                    self.execute(open_gui=True, open_gui_on_failure=False)
-
-            # Show stdout or stderr if asked
-            if show_stdout or open_gui:
-                if self.state['stdout_lines'] == 0 and self.state['gcc_stdout_lines'] == 0:
-                    print(colored('No stdout output.', attrs=['bold']))
+                # Feed our user
+                if self.succeeded:
+                    logger.info(
+                        'Test {}'.format(self.display_name),
+                        colored('succeeded.', color='green', attrs=['bold']),
+                        colored('[%s]' % seconds_to_string(self.state['time']), color='yellow')
+                    )
                 else:
-                    print('\n'.join([
-                        '#' * 20,
-                        colored('GCC stdout:', attrs=['bold']),
-                        ''.join(gcc_stdout),
-                    ]))
-                    print('\n'.join([
-                        colored('Caramel-compiled stdout:', attrs=['bold']),
-                        ''.join(out_str),
-                        '-' * 20,
-                    ]))
-            if show_stderr or open_gui:
-                if self.state['caramel_stderr_lines'] == 0 and self.state['gcc_stderr_lines'] == 0:
-                    print(colored('No stderr output.', attrs=['bold']))
-                else:
-                    print('\n'.join([
-                        '#' * 20,
-                        colored('GCC stderr:', attrs=['bold']),
-                        colored(''.join(gcc_stderr), color='grey'),
-                    ]))
-                    print('\n'.join([
-                        colored('Caramel stderr:', attrs=['bold']),
-                        ''.join(self.state['caramel_stderr']),
-                        '-' * 20,
-                    ]))
+                    logger.info(
+                        'Test {}'.format(self.display_name),
+                        colored('failed #{}.'.format(_return_code_to_str(test_process.returncode)),
+                                color='red', attrs=['bold']),
+                        colored('[%s]' % seconds_to_string(self.state['time']), color='yellow')
+                    )
+                    failed_tests.append(self.display_name)
+                    if open_gui_on_failure and not open_gui:
+                        self.execute(open_gui=True, open_gui_on_failure=False)
+
+                # Show stdout or stderr if asked
+                if show_stdout or open_gui:
+                    if self.state['stdout_lines'] == 0 and self.state['gcc_stdout_lines'] == 0:
+                        print(colored('No stdout output.', attrs=['bold']))
+                    else:
+                        print('\n'.join([
+                            '#' * 20,
+                            colored('GCC stdout:', attrs=['bold']),
+                            ''.join(gcc_stdout),
+                        ]))
+                        print('\n'.join([
+                            colored('Caramel-compiled stdout:', attrs=['bold']),
+                            ''.join(out_str),
+                            '-' * 20,
+                        ]))
+                if show_stderr or open_gui:
+                    if self.state['caramel_stderr_lines'] == 0 and self.state['gcc_stderr_lines'] == 0:
+                        print(colored('No stderr output.', attrs=['bold']))
+                    else:
+                        print('\n'.join([
+                            '#' * 20,
+                            colored('GCC stderr:', attrs=['bold']),
+                            colored(''.join(gcc_stderr), color='grey'),
+                        ]))
+                        print('\n'.join([
+                            colored('Caramel stderr:', attrs=['bold']),
+                            ''.join(self.state['caramel_stderr']),
+                            '-' * 20,
+                        ]))
+        except FileNotFoundError:
+            print("Caramel's stderr:")
+            print(''.join(caramel_state['stderr']))
+            exit(1)
         os.chdir(initial_cwd)
 
 
