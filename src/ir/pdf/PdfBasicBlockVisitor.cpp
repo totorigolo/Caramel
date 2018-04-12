@@ -66,10 +66,16 @@ void PdfBasicBlockVisitor::generateAssembly(std::shared_ptr<ir::BasicBlock> cons
         instructionsSS << std::endl;
     }
 
-    os << "\tbb" << mLabelName << "[label=\"" << escapeQuote(instructionsSS.str()) << "\"];\n";
-
     bool whenTrue = nullptr != basicBlock->getNextWhenTrue();
     bool whenFalse = nullptr != basicBlock->getNextWhenFalse();
+    bool error = whenFalse && basicBlock->getInstructions().empty();
+
+    os << "\tbb" << mLabelName << "[label=\"" << escapeQuote(instructionsSS.str()) << "\"";
+    if (error) {
+        os << ", style=filled, fillcolor=red";
+    }
+    os << "];\n";
+
     if (whenTrue) {
         os << "\tbb" << mLabelName
            << " -> " << "bb" << replace_leading_dot(basicBlock->getNextWhenTrue()->getLabelName());

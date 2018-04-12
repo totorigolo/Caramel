@@ -52,24 +52,35 @@
 namespace caramel::ir::Pdf {
 
 void PdfIRVisitor::visitCopy(caramel::ir::CopyInstruction *instruction, std::ostream &os) {
-    os << "copy: " << instruction->getReturnName();
+    os << "copy: "
+       << "src=" << instruction->getSource() << ", "
+       << "dest=" << instruction->getDestination() << ", "
+       << "ret=" << instruction->getReturnName();
 }
 
 void PdfIRVisitor::visitCopyAddr(CopyAddrInstruction *instruction, std::ostream &os) {
-    os << "copy addr: " << instruction->getReturnName();
+    os << "copy addr: "
+       << "src=" << instruction->getSource() << ", "
+       << "dest=" << instruction->getDestination() << ", "
+       << "ret=" << instruction->getReturnName();
 }
 
 void PdfIRVisitor::visitArrayAccess(ArrayAccessInstruction *instruction, std::ostream &os) {
-    os << "array access: " << instruction->getReturnName();
+    os << "array access: "
+       << "array=" << instruction->getArrayName() << ", "
+       << "index=" << instruction->getIndex() << ", "
+       << "dest=" << instruction->getDestination() << ", "
+       << "ret=" << instruction->getReturnName();
 }
 
 void PdfIRVisitor::visitEmpty(caramel::ir::EmptyInstruction *instruction, std::ostream &os) {
-    os << "empty";
-    CARAMEL_UNUSED(instruction);
+    os << "empty: "
+       << "ret=" << instruction->getReturnName();
 }
 
 void PdfIRVisitor::visitProlog(caramel::ir::PrologInstruction *instruction, std::ostream &os) {
-    os << "prolog: " << instruction->getReturnName();
+    os << "prolog";
+    CARAMEL_UNUSED(instruction);
 }
 
 void PdfIRVisitor::visitEpilog(caramel::ir::EpilogInstruction *instruction, std::ostream &os) {
@@ -79,22 +90,24 @@ void PdfIRVisitor::visitEpilog(caramel::ir::EpilogInstruction *instruction, std:
 
 void PdfIRVisitor::visitMod(caramel::ir::ModInstruction *instruction, std::ostream &os) {
     os << "modulo: "
+       << instruction->getReturnName() << " = "
        << instruction->getLeft() << " % " << instruction->getRight();
 }
 
 void PdfIRVisitor::visitDivision(caramel::ir::DivInstruction *instruction, std::ostream &os) {
     os << "division: "
+       << instruction->getReturnName() << " = "
        << instruction->getLeft() << " / " << instruction->getRight();
 }
 
 void PdfIRVisitor::visitAddition(caramel::ir::AdditionInstruction *instruction, std::ostream &os) {
     os << "addition: "
+       << instruction->getReturnName() << " = "
        << instruction->getLeft() << " + " << instruction->getRight();
 }
 
 void PdfIRVisitor::visitLdConst(caramel::ir::LDConstInstruction *instruction, std::ostream &os) {
-    os << "ldconst: " << instruction->getDestination() << " = "
-       << instruction->getValue();
+    os << "ldconst: " << instruction->getDestination() << " = " << instruction->getValue();
 }
 
 void PdfIRVisitor::visitNope(caramel::ir::NopInstruction *instruction, std::ostream &os) {
@@ -103,19 +116,28 @@ void PdfIRVisitor::visitNope(caramel::ir::NopInstruction *instruction, std::ostr
 }
 
 void PdfIRVisitor::visitFunctionCall(caramel::ir::FunctionCallInstruction *instruction, std::ostream &os) {
-    os << "functionCall: " << instruction->getFunctionName();
+    os << "function call: "
+       << "ret=" << instruction->getReturnName() << ", "
+       << "function=" << instruction->getFunctionName() << ", "
+       << "nb_args=" << instruction->getArgumentsLength();
 }
 
 void PdfIRVisitor::visitReturn(caramel::ir::ReturnInstruction *instruction, std::ostream &os) {
-    os << "return: " << instruction->getReturnName();
+    os << "return: "
+       << "ret=" << instruction->getReturnName() << ", "
+       << "source=" << instruction->getSource();
 }
 
 void PdfIRVisitor::visitCallParameter(CallParameterInstruction *instruction, std::ostream &os) {
-    os << "call parameter: " << instruction->getValue();
+    os << "call parameter: "
+       << "index=" << instruction->getIndex() << ", "
+       << "value=" << instruction->getValue() << ", "
+       << "ret=" << instruction->getReturnName();
 }
 
 void PdfIRVisitor::visitSubtraction(SubtractionInstruction *instruction, std::ostream &os) {
     os << "subtraction: "
+       << instruction->getReturnName() << " = "
        << instruction->getLeft() << " - " << instruction->getRight();
 }
 
@@ -129,36 +151,65 @@ void PdfIRVisitor::visitPop(PopInstruction *instruction, std::ostream &os) {
 
 void PdfIRVisitor::visitMultiplication(MultiplicationInstruction *instruction, std::ostream &os) {
     os << "multiplication: "
+       << instruction->getReturnName() << " = "
        << instruction->getLeft() << " * " << instruction->getRight();
 }
 
 void PdfIRVisitor::visitFlagToReg(FlagToRegInstruction *instruction, std::ostream &os) {
-    os << "flag to reg: "
-       << instruction->getLeft() << " - " << instruction->getRight();
+    std::string operator_;
+    switch (instruction->getFtrType()) {
+        case FlagToRegType::Less:
+            operator_ = "<";
+            break;
+        case FlagToRegType::LessOrEq:
+            operator_ = "<=";
+            break;
+        case FlagToRegType::Equal:
+            operator_ = "==";
+            break;
+        case FlagToRegType::Greater:
+            operator_ = ">";
+            break;
+        case FlagToRegType::GreaterOrEq:
+            operator_ = ">=";
+            break;
+        case FlagToRegType::NotEq:
+            operator_ = "!=";
+            break;
+    }
+
+    os << "comparison (flag to reg): "
+       << instruction->getReturnName() << " = "
+       << instruction->getLeft() << " " << operator_ << " " << instruction->getRight();
 }
 
 void PdfIRVisitor::visitLeftShift(LeftShiftInstruction *instruction, std::ostream &os) {
     os << "left shift: "
+       << instruction->getReturnName() << " = "
        << instruction->getLeft() << " << " << instruction->getRight();
 }
 
 void PdfIRVisitor::visitRightShift(RightShiftInstruction *instruction, std::ostream &os) {
     os << "right shift: "
+       << instruction->getReturnName() << " = "
        << instruction->getLeft() << " >> " << instruction->getRight();
 }
 
 void PdfIRVisitor::visitBitwiseAnd(BitwiseAndInstruction *instruction, std::ostream &os) {
     os << "bitwise and: "
+       << instruction->getReturnName() << " = "
        << instruction->getLeft() << " & " << instruction->getRight();
 }
 
 void PdfIRVisitor::visitBitwiseOr(BitwiseOrInstruction *instruction, std::ostream &os) {
     os << "bitwise or: "
+       << instruction->getReturnName() << " = "
        << instruction->getLeft() << " | " << instruction->getRight();
 }
 
 void PdfIRVisitor::visitBitwiseXor(BitwiseXorInstruction *instruction, std::ostream &os) {
     os << "bitwise xor: "
+       << instruction->getReturnName() << " = "
        << instruction->getLeft() << " ^ " << instruction->getRight();
 }
 
