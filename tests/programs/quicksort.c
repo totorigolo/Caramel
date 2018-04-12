@@ -67,7 +67,7 @@ void echanger(int32_t tableau[], int32_t a, int32_t b, int32_t size) {
     displayTab(tableau, size);
 }
 
-void quickSort(int32_t tableau[], int32_t debut, int32_t fin, int32_t size) {
+void quicksort(int32_t tableau[], int32_t debut, int32_t fin, int32_t size) {
     int32_t gauche = debut - 1;
     int32_t droite = fin + 1;
     int32_t pivot = tableau[debut];
@@ -100,9 +100,9 @@ void quickSort(int32_t tableau[], int32_t debut, int32_t fin, int32_t size) {
 
     /* Maintenant, tous les éléments inférieurs au pivot sont avant ceux
        supérieurs au pivot. On a donc deux groupes de cases à trier. On utilise
-       pour cela... la méthode quickSort elle-même ! */
-    quickSort(tableau, debut, droite, size);
-    quickSort(tableau, droite + 1, fin, size);
+       pour cela... la méthode quicksort elle-même ! */
+    quicksort(tableau, debut, droite, size);
+    quicksort(tableau, droite + 1, fin, size);
 }
 
 int32_t main() {
@@ -111,7 +111,7 @@ int32_t main() {
 
     displayTab(a, n);
 
-    quickSort(a, 0, n - 1, n);
+    quicksort(a, 0, n - 1, n);
 
     displayTab(a, n);
 
