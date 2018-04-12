@@ -24,10 +24,10 @@
 
 #include "ControlBlock.h"
 
+
 namespace caramel::ast {
 
-ControlBlock::ControlBlock(
-        antlr4::Token *startToken
-) : Statement(startToken) {}
+ControlBlock::ControlBlock(antlr4::Token *startToken, StatementType type)
+        : Statement(startToken, type) {}
 
 } // namespace caramel::ast

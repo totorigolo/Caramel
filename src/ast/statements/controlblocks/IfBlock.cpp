@@ -36,8 +36,10 @@ IfBlock::IfBlock(
         std::vector<std::shared_ptr<caramel::ast::Statement>> const &thenBlock,
         std::vector<std::shared_ptr<caramel::ast::Statement>> const &elseBlock,
         antlr4::Token *startToken
-) : ControlBlock(startToken), mCondition{condition}, mThenBlock{thenBlock}, mElseBlock{elseBlock} {
-}
+) : ControlBlock(startToken, StatementType::IfBlock),
+    mCondition{condition},
+    mThenBlock{thenBlock},
+    mElseBlock{elseBlock} {}
 
 void IfBlock::acceptAstDotVisit() {
     addNode(thisId(), "If");

@@ -66,7 +66,14 @@ enum class StatementType {
     UnaryExpression,
     UnaryAdditiveExpression,
     LogicalNotExpression,
-    NegativeExpression
+    NegativeExpression,
+
+    // Control blocks
+    ControlBlock,
+    IfBlock,
+    WhileBlock,
+    DoWhileBlock,
+    ForBlock
 };
 
 inline std::ostream & operator<<(std::ostream &os, const StatementType &type) {
@@ -105,6 +112,11 @@ inline std::ostream & operator<<(std::ostream &os, const StatementType &type) {
         case StatementType::UnaryAdditiveExpression: return os << "UnaryAdditiveExpression";
         case StatementType::LogicalNotExpression: return os << "LogicalNotExpression";
         case StatementType::NegativeExpression: return os << "NegativeExpression";
+        case StatementType::ControlBlock: return os << "ControlBlock";
+        case StatementType::IfBlock: return os << "IfBlock";
+        case StatementType::WhileBlock: return os << "WhileBlock";
+        case StatementType::DoWhileBlock: return os << "DoWhileBlock";
+        case StatementType::ForBlock: return os << "ForBlock";
     }
     return os;
 }

@@ -35,7 +35,9 @@ WhileBlock::WhileBlock(
         std::shared_ptr<caramel::ast::Expression> condition,
         std::vector<std::shared_ptr<caramel::ast::Statement>> block,
         antlr4::Token *token
-) : ControlBlock(token), mCondition{std::move(condition)}, mBlock{std::move(block)} {}
+) : ControlBlock(token, StatementType::WhileBlock),
+    mCondition{std::move(condition)},
+    mBlock{std::move(block)} {}
 
 void WhileBlock::acceptAstDotVisit() {
     addNode(thisId(), "While");

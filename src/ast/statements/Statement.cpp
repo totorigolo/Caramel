@@ -25,13 +25,13 @@
 #include "Statement.h"
 #include "../../ir/IR.h"
 
+
 namespace caramel::ast {
 
 long long Statement::lastTemVarNumber = -1;
 
 Statement::Statement(antlr4::Token *startToken, StatementType type)
-        :
-        mType{type} {
+        : mType{type} {
     if (nullptr != startToken) {
         mLine = startToken->getLine();
         mColumn = startToken->getCharPositionInLine();
@@ -40,6 +40,10 @@ Statement::Statement(antlr4::Token *startToken, StatementType type)
         mLine = 0;
         mColumn = 0;
         mLength = 0;
+    }
+
+    if (type == StatementType::Unknown) {
+        logger.warning() << "Statement with Unknown StatementType created!";
     }
 }
 

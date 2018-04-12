@@ -47,9 +47,7 @@ ArraySymbol::ArraySymbol(const std::string &mName, const TypeSymbol::Ptr &aliasT
 ArraySymbol::ArraySymbol(const std::string &mName, const PrimaryType::Ptr &mType, std::vector<Expression::Ptr> &&content)
         : Symbol(mName, mType, SymbolType::ArraySymbol),
           mIsSizeDefined{true}, mSize{content.size()},
-          mIsContentDefined{true}, mContent{content} {
-    logger.warning() << "Verify that content is actually moved.";
-}
+          mIsContentDefined{true}, mContent{content} {}
 
 ArraySymbol::ArraySymbol(const std::string &mName, const TypeSymbol::Ptr &mType, std::vector<Expression::Ptr> &&content)
         : ArraySymbol(mName, mType->getType(), std::forward<decltype(mContent)>(content)) {}
@@ -84,7 +82,6 @@ void ArraySymbol::setContent(std::vector<Expression::Ptr> &&content) {
                 );
     }
     mContent = content;
-    logger.warning() << "Verify that content is actually moved.";
     mIsContentDefined = true;
     mSize = mContent.size();
     mIsSizeDefined = true;

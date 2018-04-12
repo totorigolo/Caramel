@@ -35,7 +35,10 @@ ForBlock::ForBlock(
         std::shared_ptr<caramel::ast::Expression> step,
         std::vector<std::shared_ptr<caramel::ast::Statement>> block,
         antlr4::Token *token
-) : ControlBlock(token), mBegin{std::move(begin)}, mEnd{std::move(end)}, mStep{std::move(step)},
+) : ControlBlock(token, StatementType::ForBlock),
+    mBegin{std::move(begin)},
+    mEnd{std::move(end)},
+    mStep{std::move(step)},
     mBlock{std::move(block)} {}
 
 void ForBlock::acceptAstDotVisit() {

@@ -74,7 +74,6 @@ public:
     StatementType getType() const;
 
     virtual bool shouldReturnAnIR() const {
-        logger.warning() << "No IR for statement of type: " << getType();
         return false;
     }
 

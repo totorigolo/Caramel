@@ -37,7 +37,7 @@ public:
     using WeakPtr = std::weak_ptr<ControlBlock>;
 
 protected:
-    explicit ControlBlock(antlr4::Token *startToken);
+    explicit ControlBlock(antlr4::Token *startToken, StatementType type = StatementType::ControlBlock);
 
     ~ControlBlock() override = default;
 };

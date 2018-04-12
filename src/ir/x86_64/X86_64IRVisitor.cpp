@@ -199,9 +199,9 @@ void X86_64IRVisitor::visitArrayAccess(ArrayAccessInstruction *instruction, std:
     auto length = instruction->getType()->getMemoryLength();
 
     auto const index = instruction->getIndex();
-    if (index.empty() || !(index[4] == 'd' || index[1] == 'e')) {
-        logger.warning() << "[x86_64] ArrayAccess with other-than-32-bit index.";
-    }
+//    if (index.empty() || !(index[4] == 'd' || index[1] == 'e')) {
+//        logger.warning() << "[x86_64] ArrayAccess with other-than-32-bit index.";
+//    }
 
     // Copy the index to ACCUMULATOR
     writeMove(instruction->getParentBlock(), os,
