@@ -54,7 +54,6 @@ def _chef():
 
     # create the parser for the "build" command
     parser_build = subparsers.add_parser('build', help='Make the Chef cook some Caramel.')
-    parser_build.add_argument('-w', '--brew', help='brew the grammar file', action='store_true')
     parser_build.add_argument('-g', '--grammar', help='build the grammar', action='store_true')
     parser_build.add_argument('-c', '--caramel', help='build the compiler', action='store_true')
     parser_build.add_argument('-d', '--debug', help='build as debug', action='store_true')
@@ -67,7 +66,6 @@ def _chef():
     # create the "test" command common arguments
     def test_common(sub_test_parser: argparse.ArgumentParser):
         sub_test_parser.add_argument('-b', '--build', help='build before running tests', action='store_true')
-        sub_test_parser.add_argument('-w', '--brew', help='brew the grammar file', action='store_true')
         sub_test_parser.add_argument('-O', '--stdout', help='show the tests stdout output', action='store_true')
         sub_test_parser.add_argument('-E', '--stderr', help='show the tests stderr output', action='store_true')
         sub_test_parser.add_argument('-i', '--interactive', help='run a test in interactive mode', action='store_true')

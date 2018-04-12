@@ -169,9 +169,9 @@ def build_grammar_java():
 
 @trace
 def build_grammar(args):
-    if args.brew:
-        filename = get_latest_grammar_file()
-        brew_grammar_file(filename)
+    filename = get_latest_grammar_file()
+    brew_grammar_file(filename)
+
     build_grammar_java()
     build_grammar_cpp()
 
@@ -214,8 +214,6 @@ def build(args):
 
     if args.grammar:
         build_grammar(args)
-    elif args.brew:
-        logger.warn("Grammar won't be brewed since it's not built.")
 
     if args.caramel:
         build_caramel(args)
