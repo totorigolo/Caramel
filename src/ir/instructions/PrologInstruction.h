@@ -38,16 +38,12 @@ public:
     using WeakPtr = std::shared_ptr<PrologInstruction>;
 
     explicit PrologInstruction(
-            std::shared_ptr<BasicBlock> const &parentBlock,
-            size_t size
+            std::shared_ptr<BasicBlock> const &parentBlock
     );
 
     ~PrologInstruction() override = default;
 
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
-
-private:
-    size_t mSize;
 };
 
 } // namespace caramel::ir

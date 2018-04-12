@@ -330,17 +330,18 @@ void ContextPusher::verifUsageStatic(ast::Context::Ptr context) {
     logger.trace() << "Running static analysis on: " << *mASTVisitor.mContextStack.top();
 
     auto symbolTable = context->getSymbolTable();
-    for (auto symbolMapElem : symbolTable->getSymbols()) {
-        auto symbol = symbolMapElem.second;
-        if (symbolTable->isDeclared(symbolMapElem.first)) {
-            if (!symbolTable->isDefined(symbolMapElem.first)) {
-                logger.warning() << "The element '" << symbolMapElem.first << "' was declared but never defined";
+    for (auto &[name, symbol] : symbolTable->getSymbols()) {
+        if (name.length() >= 2 && name[0] == '_' && name[1] == '_') continue;
+
+        if (symbolTable->isDeclared(name)) {
+            if (!symbolTable->isDefined(name)) {
+                logger.warning() << "The element '" << name << "' was declared but never defined";
             }
         }
-        if (symbolTable->isDefined(symbolMapElem.first)) {
+        if (symbolTable->isDefined(name)) {
             if (symbol->getSymbolType() != ast::SymbolType::TypeSymbol && symbol->getName() != "main") {
                 if (symbol->getOccurrences().empty()) {
-                    logger.warning() << "The element '" << symbolMapElem.first << "' was declared but never used";
+                    logger.warning() << "The element '" << name << "' was declared but never used";
                 }
             }
 

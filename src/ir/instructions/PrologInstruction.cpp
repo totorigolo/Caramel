@@ -28,10 +28,8 @@
 namespace caramel::ir {
 
 PrologInstruction::PrologInstruction(
-        std::shared_ptr<BasicBlock> const &parentBlock,
-        size_t size
-) : IR(Operation::prolog, parentBlock, ast::Void_t::Create()),
-    mSize{size} {}
+        std::shared_ptr<BasicBlock> const &parentBlock
+) : IR(Operation::prolog, parentBlock, ast::Void_t::Create()) {}
 
 void PrologInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) {
     visitor->visitProlog(this, os);

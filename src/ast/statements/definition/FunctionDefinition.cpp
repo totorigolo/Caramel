@@ -65,8 +65,7 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
     ir::BasicBlock::Ptr function_root_bb = controlFlow->generateFunctionBlock(mSymbol->getName());
 
     controlFlow->enterFunction(function_root_bb->getId());
-    function_root_bb->addInstruction(
-            std::make_shared<ir::PrologInstruction>(function_root_bb, 42)); // FIXME: Function definition IR
+    function_root_bb->addInstruction(std::make_shared<ir::PrologInstruction>(function_root_bb));
 
     auto parameters = mSymbol->getParameters();
     for (size_t i = 0; i < parameters.size(); i++) {
@@ -74,6 +73,13 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
         if (isArray) {
             function_root_bb->addParamArraySymbol(parameters[i].name, parameters[i].primaryType);
         }
+
+        // Unnamed arguments
+        if (parameters[i].name.empty()
+            || (parameters[i].name.length() >= 2 && parameters[i].name[0] == '_' && parameters[i].name[1] == '_')) {
+            break;
+        }
+
         if (i < 6) {
             function_root_bb->addInstruction(
                     std::make_shared<ir::CopyInstruction>(function_root_bb, parameters[i].primaryType,
@@ -93,8 +99,6 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
     for (ast::Statement::Ptr const &statement : mContext->getStatements()) {
         if (statement->shouldReturnAnIR()) {
             SAFE_ADD_INSTRUCTION(statement, bb);
-//            auto ir = statement->getIR(bb);
-//            bb->addInstruction(ir);
         } else if (statement->shouldReturnABasicBlock()) {
             auto [child_root, child_end] = statement->getBasicBlock(controlFlow);
 
@@ -104,7 +108,6 @@ ir::GetBasicBlockReturn FunctionDefinition::getBasicBlock(
             }
             bb->setExitWhenTrue(child_root);
             // bb has no when_false
-//            child_end->setExitWhenTrue(bb->getNextWhenTrue());
             child_end->setExitWhenTrue(function_end_bb);
 
             bb = child_end->getNewWhenTrueBasicBlock("_funcinnerafter");
