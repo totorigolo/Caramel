@@ -253,7 +253,7 @@ numberConstant
 positiveConstant : PositiveNumber;
 charConstant
   : '\''.'\''
-  | '\'' (':'|'#') '\''
+  | '\'' (':'|'#'|'$') '\''
   | EscapedZero_
   | EscapedNL_
   | EscapedCR_

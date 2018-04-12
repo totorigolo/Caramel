@@ -25,15 +25,18 @@
 #include "../IRVisitor.h"
 #include "CopyAddrInstruction.h"
 
+
 namespace caramel::ir {
 
 CopyAddrInstruction::CopyAddrInstruction(
         std::shared_ptr<BasicBlock> const &parentBlock,
         std::string const &destination,
-        std::string const &source
-) : IR(destination, Operation::copy, parentBlock, ast::Void_t::Create()),
-    mSource{std::move(source)},
-    mRegisterNumber{-1} {}
+        std::string const &source,
+        bool localArray
+) : IR(destination, Operation::copy, parentBlock, ast::Int64_t::Create()),
+    mSource{source},
+    mRegisterNumber{-1},
+    mIsLocalArray{localArray} {}
 
 std::string CopyAddrInstruction::getDestination() {
     return getReturnName();
@@ -49,6 +52,10 @@ void CopyAddrInstruction::accept(std::shared_ptr<IRVisitor> const &visitor, std:
 
 int CopyAddrInstruction::getRegisterNumber() {
     return mRegisterNumber;
+}
+
+bool CopyAddrInstruction::isLocalArray() const {
+    return mIsLocalArray;
 }
 
 } // namespace caramel::ir

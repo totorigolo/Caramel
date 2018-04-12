@@ -27,7 +27,7 @@
 
 
 void displayNumber(int32_t number) {
-    int32_t tab[50];
+    int32_t tab[50] = {0};
     int32_t index = 0;
     int32_t i;
 

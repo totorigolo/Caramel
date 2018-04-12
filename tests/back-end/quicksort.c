@@ -24,38 +24,53 @@
 #include <stdint.h>
 #include <stdio.h>
 
-void displayNumber(int32_t number);
 
-void echanger(int32_t tableau[], int32_t a, int32_t b) {
+void displayNumber(int32_t number) {
+    int32_t tab[50] = {0};
+    int32_t index = 0;
+    int32_t i;
 
-    int32_t temp = tableau[a];
+    // Negative numbers
+    if (number < 0) {
+        putchar('-');
+        number *= -1;
+    }
 
-    putchar('b');
-    putchar(' ');
-    displayNumber(tableau[a]);
-    putchar(' ');
-    displayNumber(tableau[b]);
+    while (number >= 1) {
+        tab[index] = number % 10;
+        number /= 10;
+        index++;
+    }
+    if (index == 0) { // special case for displayNumber(0)
+        index = 1;
+    }
+
+    for (i = index; i > 0; i--) {
+        putchar('0' + tab[i - 1]);
+    }
+}
+
+void displayTab(int32_t tab[], int32_t size) {
+    int32_t i;
+    for (i = 0; i < size; i++) {
+        displayNumber(tab[i]);
+        putchar(' ');
+    }
     putchar('\n');
+}
 
+void echanger(int32_t tableau[], int32_t a, int32_t b, int32_t size) {
+    int32_t temp = tableau[a];
     tableau[a] = tableau[b];
     tableau[b] = temp;
 
-    putchar('a');
-    putchar(' ');
-    displayNumber(tableau[a]);
-    putchar(' ');
-    displayNumber(tableau[b]);
-    putchar('\n');
-
+    displayTab(tableau, size);
 }
 
-
-void quickSort(int32_t tableau[], int32_t debut, int32_t fin) {
-
+void quickSort(int32_t tableau[], int32_t debut, int32_t fin, int32_t size) {
     int32_t gauche = debut - 1;
     int32_t droite = fin + 1;
     int32_t pivot = tableau[debut];
-    int32_t cont = 1;
 
     /* Si le tableau est de longueur nulle, il n'y a rien à faire. */
     if (debut >= fin) {
@@ -65,9 +80,7 @@ void quickSort(int32_t tableau[], int32_t debut, int32_t fin) {
     /* Sinon, on parcourt le tableau, une fois de droite à gauche, et une
        autre de gauche à droite, à la recherche d'éléments mal placés,
        que l'on permute. Si les deux parcours se croisent, on arrête. */
-
-    while (cont) {
-
+    while (1) {
         droite--;
         while (tableau[droite] > pivot) {
             droite--;
@@ -79,67 +92,28 @@ void quickSort(int32_t tableau[], int32_t debut, int32_t fin) {
         }
 
         if (gauche < droite) {
-            echanger(tableau, gauche, droite);
+            echanger(tableau, gauche, droite, size);
         } else {
-            cont = 0;
+            break;
         }
-
     }
-
 
     /* Maintenant, tous les éléments inférieurs au pivot sont avant ceux
        supérieurs au pivot. On a donc deux groupes de cases à trier. On utilise
        pour cela... la méthode quickSort elle-même ! */
-    quickSort(tableau, debut, droite);
-    quickSort(tableau, droite + 1, fin);
-
+    quickSort(tableau, debut, droite, size);
+    quickSort(tableau, droite + 1, fin, size);
 }
 
 int32_t main() {
-    int32_t a[] = {4, 65, 2, 0 - 31, 0, 99, 2, 83, 782, 1};
+    int32_t a[] = {4, 65, 2, -31, 0, 99, 2, 83, 782, 1};
     int32_t n = 10;
-    int32_t i;
 
-    a[13] = 0;
+    displayTab(a, n);
 
-    for (i = 0; i < n; i++) {
-        displayNumber(a[i]);
-        putchar(' ');
-    }
-    putchar('\n');
+    quickSort(a, 0, n - 1, n);
 
-    quickSort(a, 0, n);
-
-    for (i = 0; i < n; i++) {
-        displayNumber(a[i]);
-        putchar(' ');
-    }
-    putchar('\n');
+    displayTab(a, n);
 
     return 0;
-}
-
-void displayNumber(int32_t number) {
-    int32_t tab[50];
-    int32_t index = 0;
-    int32_t i;
-    int32_t number_;
-    if (number < 0) {
-        putchar('-');
-        number_ = 0 - number;
-    } else {
-        number_ = number;
-    }
-    while (number_ >= 1) {
-        tab[index] = number_ % 10;
-        number_ = number_ / 10;
-        index = index + 1;
-    }
-
-    // TODO : manage signed integers in subtraction (... and others ? :x)
-    // b *displayNumber+913
-    for (i = index; i > 0; i--) { // cond=, inc=901
-        putchar('0' + tab[i - 1]);
-        // b *displayNumber+996
-    }
 }

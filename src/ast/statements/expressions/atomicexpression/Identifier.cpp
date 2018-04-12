@@ -27,6 +27,7 @@
 #include "../../../../ir/instructions/EmptyInstruction.h"
 #include "../../../../ir/instructions/NopInstruction.h"
 #include "../../../../ir/instructions/CopyAddrInstruction.h"
+#include "../../../../utils/Common.h"
 
 
 namespace caramel::ast {
@@ -52,8 +53,9 @@ bool Identifier::isAddress() const {
 
 std::shared_ptr<ir::IR> Identifier::getIR(std::shared_ptr<ir::BasicBlock> &currentBasicBlock) {
     if (isAddress()) {
+        auto arraySymbol = utils::castTo<ArraySymbol::Ptr>(mSymbol);
         return std::make_shared<ir::CopyAddrInstruction>(
-                currentBasicBlock, createVarName(), mSymbol->getName()
+                currentBasicBlock, createVarName(), arraySymbol->getName(), arraySymbol->isContentDefined()
         );
     } else {
         return std::make_shared<ir::EmptyInstruction>(mSymbol->getName(), currentBasicBlock, mSymbol->getType());

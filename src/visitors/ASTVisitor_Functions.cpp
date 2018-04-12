@@ -130,7 +130,6 @@ antlrcpp::Any ASTVisitor::visitFunctionArgument(CaramelParser::FunctionArgumentC
 
     // The argument is an array
     if (ctx->functionArgumentArraySuffix()) {
-        logger.warning() << "Array function parameters aren't handled yet.";
         return FunctionParameterSignature(name, type->getType(), SymbolType::ArraySymbol);
     } else {
         return FunctionParameterSignature(name, type->getType(), SymbolType::VariableSymbol);

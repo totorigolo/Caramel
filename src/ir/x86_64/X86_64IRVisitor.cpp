@@ -184,9 +184,15 @@ void X86_64IRVisitor::visitCopyAddr(CopyAddrInstruction *instruction, std::ostre
     auto const src = instruction->getSource();
     auto const dest = instruction->getDestination();
 
-    os << "  leaq    " << toAssembly(bb, src, 64) << ", " << regToAsm(IR::ACCUMULATOR, 64);
-    os << '\n';
-    os << "  movq    " << regToAsm(IR::ACCUMULATOR, 64) << ", " << toAssembly(bb, dest, 64);
+    if (instruction->isLocalArray()) {
+        os << "  leaq    " << toAssembly(bb, src, 64) << ", " << regToAsm(IR::ACCUMULATOR, 64);
+        os << '\n';
+        os << "  movq    " << regToAsm(IR::ACCUMULATOR, 64) << ", " << toAssembly(bb, dest, 64);
+    } else {
+        writeMove(bb, os,
+                  instruction->getSource(), 64,
+                  instruction->getDestination(), 64);
+    }
 }
 
 void X86_64IRVisitor::visitArrayAccess(ArrayAccessInstruction *instruction, std::ostream &os) {
@@ -466,7 +472,9 @@ void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, 
 
     auto index = size_t(instruction->getIndex());
     if (index < 6) {
-        os << "  pushq    " << regToAsm(getFCReg(index), 64) << '\n';
+        os << "  pushq    " << regToAsm(getFCReg(index), 64);
+        os << COMMENT_INDENT << "# call Param #1";
+        os << '\n';
 
         auto length = instruction->getType()->getMemoryLength();
         if (instruction->isAddress()) {
@@ -475,11 +483,13 @@ void X86_64IRVisitor::visitCallParameter(CallParameterInstruction *instruction, 
         writeMove(instruction->getParentBlock(), os,
                   instruction->getValue(), length,
                   getFCReg(index), length);
+        os << COMMENT_INDENT << "# call Param #2";
     } else {
         os << "  pushq   " << toAssembly(instruction->getParentBlock(), instruction->getValue(), 64);
+        os << COMMENT_INDENT << "# call Param #3";
     }
 
-    os << COMMENT_INDENT << "# call Param";
+//    os << COMMENT_INDENT << "# call Param";
 }
 
 void X86_64IRVisitor::visitSubtraction(SubtractionInstruction *instruction, std::ostream &os) {

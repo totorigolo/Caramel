@@ -36,7 +36,8 @@ public:
     CopyAddrInstruction(
             std::shared_ptr<BasicBlock> const &parentBlock,
             std::string const &destination,
-            std::string const &source
+            std::string const &source,
+            bool localArray = true
     );
 
     ~CopyAddrInstruction() override = default;
@@ -47,11 +48,14 @@ public:
 
     int getRegisterNumber();
 
+    bool isLocalArray() const;
+
     void accept(std::shared_ptr<IRVisitor> const &visitor, std::ostream &os) override;
 
 private:
     std::string mSource;
     int mRegisterNumber;
+    bool mIsLocalArray;
 };
 
 } // namespace caramel::ir

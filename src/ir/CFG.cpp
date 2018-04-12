@@ -157,7 +157,6 @@ long CFG::addSymbol(size_t controlBlockId, std::string const &symbolName, ast::P
     mSymbolIndex[controlBlockId][symbolName] = index;
     mTopStackMemberSize[controlBlockId] = type->getMemoryLength();
     if (index < 0) {
-        logger.warning() << "[CFG] TODO: Check this statement.";
         mStackSize[controlBlockId] = size_t(index);
     }
 
