@@ -34,13 +34,21 @@ git submodule update --init --recursive
 
 ## How to run the examples
 
-**Caramel requires a C++17 compiler (at least GCC 6) and CMake 3.8.**
+**Caramel requires a C++17 compiler (at least GCC 6) and at least CMake 3.8.**
+
+If you have a C++17 compiler installed, but not defined as your default C++ compiler,
+you can invoque Chef this way:
+
+```shell
+# Invoke Chef, specifying the C++ compiler
+CXX=/usr/bin/gcc-6 ./chef.py build -a
+```
 
 ### Chef commands :
 
 Caramel uses Chef, it's cooking assistant, for almost every operations.
 
-```bash
+```shell
 $ ./chef.py -h
 usage: chef.py [-h] [--verbose | --quiet] {clean,build,test} ...
 
@@ -60,7 +68,7 @@ Available commands:
 
 Some commands:
 
-```bash
+```shell
 # Build the Antlr parser and Caramel. This is rarely needed as `test all -b` does the same, and more.
 ./chef.py build -a
 
@@ -70,7 +78,7 @@ Some commands:
 
 
 ### Example for executing all test
-```bash
+```shell
 $ ./chef.py test -h
 usage: chef.py test [-h] {grammar,semantic,backend,programs,all} ...
 
@@ -101,7 +109,7 @@ For these two, just enter a digit then press Enter.
 We encourage you to run `./build/cpp-bin/Caramel --help` to see every
 Caramel options. Here is the most common usage:
 
-```bash
+```shell
 # Compile (-c), assemble (-A) and execute (-A again), with static analysis (-a)
 # the source file path/to/source/file.c. -vv increase the verbosity.
 # --ast-dot generates the ast.pdf file, and --ir-dot the ir.pdf file.
@@ -120,7 +128,7 @@ xdg-open ir.pdf
 libantlr4-runtime.so.4.7.1: cannot open shared object file: No such file or directory
 ```
 You just have to prepend `LD_LIBRARY_PATH=lib`:
-```bash
+```shell
 LD_LIBRARY_PATH=../../lib ./Caramel ...
 ```
 
@@ -132,7 +140,7 @@ tests, and by showing us the syntax tree. Chef has a lot of useful
 options, so we won't show them all. Please refer to the help through
 the `--help` flag.
 
-```bash
+```shell
 # Build the Antlr parser and run all the grammar tests, showing the syntax tree for failed tests
 ./chef.py test grammar -baG
 
@@ -148,7 +156,7 @@ the `--help` flag.
 
 As for the grammar, we used Chef for executing the tests:
 
-```bash
+```shell
 # Run semantic tests
 ./chef.py test semantic -ba
 ```
@@ -156,7 +164,7 @@ As for the grammar, we used Chef for executing the tests:
 But we also developped a PDF export of the AST, to have a better insight
 of our work. It's available as a command line argument for Caramel:
 
-```bash
+```shell
 # Generate the ast.pdf file
 cd ./build/cpp-bin
 ./Caramel --ast-dot
@@ -182,7 +190,7 @@ cd ./build/cpp-bin
 
 As for the semantic phase, we used Chef and Caramel:
 
-```bash
+```shell
 # Run back-end tests
 ./chef.py test semantic -ba
 
