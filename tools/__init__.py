@@ -72,7 +72,7 @@ def seconds_to_string(seconds: float):
 
 @trace
 def exec_(command: str):
-    subprocess.run(shlex.split(command))
+    subprocess.call(shlex.split(command))
 
 
 @trace

@@ -392,7 +392,7 @@ class Tests:
 
         # Discover the tests
         nb_tests_before = len(self.tests)
-        for test_directory in ['.', *sorted(os.listdir(base_directory))]:
+        for test_directory in ['.'] + list(sorted(os.listdir(base_directory))):
             logger.debug('Looking for tests in:', test_directory)
             if os.path.isdir(os.path.join(base_directory, test_directory)):
                 for test_file in sorted(os.listdir(os.path.join(base_directory, test_directory))):

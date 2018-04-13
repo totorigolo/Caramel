@@ -26,6 +26,7 @@ from tools.logger import trace
 from tools import seconds_to_string, exec_, mkdir_and_cd
 from tools import COMMANDS, PATHS, INJECTED_TOKENS_SEPARATOR
 from tools import colored
+from collections import OrderedDict
 from time import time
 import re
 import os
@@ -81,7 +82,7 @@ def brew_grammar_file(grammar_file_name):
             splitted_grammar = grammar.split(INJECTED_TOKENS_SEPARATOR)
             if len(splitted_grammar) == 2:
                 tokens_array = splitted_grammar[1].split(';\n')
-                tokens = {}
+                tokens = OrderedDict()
                 for token in tokens_array:
                     if len(token) != 0:
                         stripped_token = strip_token(token)
