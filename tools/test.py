@@ -122,7 +122,7 @@ class GrammarTest(Test):
                     print('\n'.join([
                         '#' * 20,
                         colored('stdout output:', attrs=['bold']),
-                        *out_str,
+                        ''.join(out_str),
                         '-' * 20,
                     ]))
             if show_stderr or open_gui:
@@ -132,7 +132,7 @@ class GrammarTest(Test):
                     print('\n'.join([
                         '#' * 20,
                         colored('stderr output:', attrs=['bold']),
-                        *error_str,
+                        ''.join(error_str),
                         '-' * 20,
                     ]))
 
