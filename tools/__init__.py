@@ -23,7 +23,7 @@
 
 try:
     from termcolor import colored
-except ModuleNotFoundError:
+except ImportError:
     from sys import stderr
     print('You should install `termcolor` to have the colored console output.', file=stderr)
     # noinspection PyUnusedLocal
